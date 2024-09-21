@@ -1,30 +1,6 @@
 // auth.dto.ts
 import { IsEmail, IsMobilePhone, IsNotEmpty, IsEnum, IsOptional } from 'class-validator';
-
-export enum UserRole {
-  Admin = 'Admin',
-  Customer = 'Customer',
-  Vendor = 'Vendor',
-}
-
-export enum UserStatus {
-  Active = 'Active',
-  Suspended = 'Suspended',
-}
-
-export class Address {
-  @IsNotEmpty()
-  street!: string;
-
-  @IsNotEmpty()
-  city!: string;
-
-  @IsNotEmpty()
-  state!: string;
-
-  @IsNotEmpty()
-  pinCode!: string;
-}
+import { Address, UserRole, UserStatus } from 'users/users.dto';
 
 export class AuthDto {
 
@@ -62,3 +38,4 @@ export class AuthDto {
 
 
 }
+

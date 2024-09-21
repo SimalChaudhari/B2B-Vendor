@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { AuthDto } from './auth.dto';
-import { User, UserDocument } from './auth.model';
+import { User, UserDocument } from './../users/users.model';
 import { MailerService } from '@nestjs-modules/mailer'; // For sending email
 import { randomBytes } from 'crypto'; // To generate random tokens
 import * as bcrypt from 'bcrypt';
@@ -13,8 +13,9 @@ import { generateOTP, sendOtpEmail, sendOtpSms, validateEmail } from 'utils/auth
 export class AuthService {
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
-    private jwtService: JwtService,
-    private mailerService: MailerService, // Inject MailerService for sending emails
+
+    private readonly jwtService: JwtService, // Inject JwtService
+    private readonly mailerService: MailerService, // If used
   ) { }
 
   // Register method as an arrow function

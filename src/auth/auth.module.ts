@@ -3,14 +3,14 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
-import { User, UserSchema } from './auth.model';
+import { User, UserSchema } from './../users/users.model';
 import { MailerModule } from '@nestjs-modules/mailer';
 import * as dotenv from 'dotenv';
 dotenv.config(); // Load environment variables
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+  MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     JwtModule.register({
       secret: process.env.JWT_SECRET, // Use your JWT secret from the .env file
       signOptions: { expiresIn: '60s' }, // Set your token expiration
