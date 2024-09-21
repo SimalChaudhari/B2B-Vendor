@@ -18,9 +18,6 @@ export class User {
   @Prop({ required: true, unique: true })
   mobile: number; // Added mobile field
 
-  @Prop({ required: true })
-  password: string;
-
   @Prop({ enum: ['Active', 'Suspended'], default: 'Active' })
   status: 'Active' | 'Suspended'; // Added status field
 
@@ -31,10 +28,10 @@ export class User {
   profile: string; // Added mobile field
 
   @Prop()
-  resetPasswordToken?: string;
+  otp?: string;
 
   @Prop()
-  resetPasswordExpires?: Date;
+  otpExpires?: Date;
 
   @Prop({
     type: [{
@@ -52,18 +49,17 @@ export class User {
     pinCode: string;
   }[];
 
-  constructor(email: string, mobile: number, password: string, firstName: string, lastName: string, profile: string,resetPasswordToken:string,resetPasswordExpires:Date) {
+  constructor(email: string, mobile: number, firstName: string, lastName: string, profile: string,otp:string,otpExpires:Date) {
     this.firstName = firstName;
     this.lastName = lastName;
     this.email = email;
     this.mobile = mobile;
-    this.password = password;
     this.profile = profile;
     this.status = 'Active'; // Default status
-    this.role = 'Customer' // Default role
+    this.role = 'Customer'; // Default role
     this.addresses = []; // Default to empty array
-    this.resetPasswordToken = resetPasswordToken;
-    this.resetPasswordExpires = resetPasswordExpires;
+    this.otp = otp;
+    this.otpExpires = otpExpires;
   }
 }
 

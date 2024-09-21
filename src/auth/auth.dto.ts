@@ -1,5 +1,5 @@
 // auth.dto.ts
-import { IsEmail, IsMobilePhone, IsNotEmpty, Length, MinLength, IsString, IsEnum, IsOptional } from 'class-validator';
+import { IsEmail, IsMobilePhone, IsNotEmpty, IsEnum, IsOptional } from 'class-validator';
 
 export enum UserRole {
   Admin = 'Admin',
@@ -40,12 +40,8 @@ export class AuthDto {
   @IsEmail()
   email!: string;
 
-  @MinLength(10, { message: 'Mobile Number 10 Should have a 10 digit' }) // Corrected to use @MinLength
   @IsMobilePhone()
   mobile!: number;
-
-  @MinLength(6, { message: 'Password must be at least 6 characters long' }) // Corrected to use @MinLength
-  password!: string;
 
   @IsOptional()
   @IsEnum(UserRole)
@@ -59,8 +55,10 @@ export class AuthDto {
   addresses?: Address[]; // Optional addresses field
 
   @IsOptional()
-  resetPasswordToken?: string;
+  otp?: string; // Optional addresses field
 
   @IsOptional()
-  resetPasswordExpires?: Date;
+  otpExpires?: Date; // Optional addresses field
+
+
 }

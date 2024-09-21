@@ -7,6 +7,7 @@ import { User, UserDocument } from './auth.model';
 import { MailerService } from '@nestjs-modules/mailer'; // For sending email
 import { randomBytes } from 'crypto'; // To generate random tokens
 import * as bcrypt from 'bcrypt';
+import { generateOTP, sendOtpEmail, sendOtpSms, validateEmail } from 'utils/auth.utils';
 
 @Injectable()
 export class AuthService {
@@ -16,8 +17,8 @@ export class AuthService {
     private mailerService: MailerService, // Inject MailerService for sending emails
   ) { }
 
-  // Register method
-  async register(authDto: AuthDto): Promise<User> {
+  // Register method as an arrow function
+  register = async (authDto: AuthDto): Promise<{ message: string; user: User }> => {
     try {
       // Check for existing email or mobile number
       const [existingEmailUser, existingMobileUser] = await Promise.all([
@@ -31,50 +32,113 @@ export class AuthService {
       if (existingMobileUser) {
         throw new ConflictException('Mobile number already exists');
       }
-      const hashedPassword = await bcrypt.hash(authDto.password, 10);
+
       const newUser = new this.userModel({
         firstName: authDto.firstName,
         lastName: authDto.lastName,
         email: authDto.email,
         mobile: authDto.mobile,
-        password: hashedPassword,
         role: authDto.role,
         status: authDto.status,
         profile: authDto.profile,
         addresses: authDto.addresses,
       });
-      return await newUser.save();
+      const savedUser = await newUser.save();
+
+      return {
+        message: 'Registration successful',
+        user: savedUser,
+      };
     } catch (err: unknown) {
       if (err instanceof Error) {
-        throw new BadRequestException(err.message); // Or whatever exception fits your case
+        throw new BadRequestException(err.message);
       }
-      throw err; // Rethrow other errors
+      throw err;
     }
   }
 
-  // Login  method
-  async login(authDto: AuthDto): Promise<{ access_token: string; user: Partial<User> }> {
+
+  // Login method with OTP logic (arrow function)
+  verifyOtp = async (authDto: AuthDto): Promise<{ message: string }> => {
     try {
-      // Check if the input is an email or mobile number
-      const isEmail = this.validateEmail(authDto.email);
-      const user = await this.userModel.findOne(isEmail ? { email: authDto.email } : { mobile: authDto.email });
+      // Ensure either email or mobile is provided
+      if (!authDto.email && !authDto.mobile) {
+        throw new BadRequestException('Either email or mobile number must be provided.');
+      }
+
+      const isEmail = validateEmail(authDto.email);
+      const user = await this.userModel.findOne(isEmail ? { email: authDto.email } : { mobile: authDto.mobile });
 
       if (!user) {
         throw new NotFoundException('User not found');
       }
 
-      const isPasswordValid = await bcrypt.compare(authDto.password, user.password);
-      if (!isPasswordValid) {
-        throw new UnauthorizedException('Invalid credentials');
+      const otp = generateOTP();
+      const otpExpires = new Date(Date.now() + 5 * 60 * 1000); // OTP expires in 5 minutes
+
+      // Hash the OTP before saving
+      const hashedOtp = await bcrypt.hash(otp, 10); // 10 is the salt rounds
+      user.otp = hashedOtp;
+      user.otpExpires = otpExpires;
+      await user.save();
+
+      // Send OTP via email or SMS
+      if (isEmail) {
+        await sendOtpEmail(user.email, otp);
+      } else {
+        await sendOtpSms(user.mobile.toString(), otp);
       }
+
+      return { message: 'OTP sent successfully' };
+
+    } catch (error: any) {
+      if (error instanceof NotFoundException || error instanceof UnauthorizedException) {
+        throw error;
+      }
+      throw new BadRequestException('OTP failed. Please check your credentials and try again.', error.message);
+    }
+  };
+
+  // Method to verify OTP and complete login (arrow function)
+  login = async (authDto: AuthDto): Promise<{ access_token: string; user: Partial<User> }> => {
+    try {
+      // Ensure either email or mobile is provided
+      if (!authDto.email && !authDto.mobile) {
+        throw new BadRequestException('Either email or mobile number must be provided.');
+      }
+
+      const isEmail = validateEmail(authDto.email);
+      const user = await this.userModel.findOne(isEmail ? { email: authDto.email } : { mobile: authDto.mobile });
+
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      // Ensure otp and otpExpires are defined
+      if (!user.otp || !user.otpExpires || user.otpExpires < new Date()) {
+        throw new UnauthorizedException('Invalid or expired OTP');
+      }
+
+      // Ensure authDto.otp is a string
+      if (!authDto.otp) {
+        throw new UnauthorizedException('OTP must be provided.');
+      }
+
+      // Verify the OTP against the hashed OTP in the database
+      const isOtpValid = await bcrypt.compare(authDto.otp, user.otp);
+      if (!isOtpValid) {
+        throw new UnauthorizedException('Invalid OTP');
+      }
+
+      // OTP is valid, clear it from the user record
+      user.otp = undefined; // Remove the OTP
+      user.otpExpires = undefined; // Remove OTP expiration
+      await user.save(); // Save the updated user
 
       const payload = { email: user.email, sub: user._id };
 
-      // Create a user object without the password
-      const { password, ...userWithoutPassword } = user.toObject();
-
       return {
-        user: userWithoutPassword,
+        user: user.toObject(),
         access_token: this.jwtService.sign(payload),
       };
 
@@ -87,64 +151,7 @@ export class AuthService {
     }
   }
 
-  // Helper function to validate if the input is an email or not
-  private validateEmail(input: string): boolean {
-    // Basic email regex validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(input);
-  }
 
-  // Forgot password method
-  async forgotPassword(email: string): Promise<{ message: string }> {
-    const user = await this.userModel.findOne({ email });
-    if (!user) {
-      throw new NotFoundException('User with this email does not exist');
-    }
 
-    // Generate a reset token
-    const resetToken = randomBytes(32).toString('hex');
-    const resetTokenHash = await bcrypt.hash(resetToken, 10);
 
-    // Store the hashed token and set an expiration for it (e.g., 1 hour)
-    user.resetPasswordToken = resetTokenHash;
-    // user.resetPasswordExpires = new Date(Date.now() + 3600000); // Token expires in 1 hour
-    user.resetPasswordExpires = new Date(Date.now() + 60000); // Token expires in 1 minute (60,000 ms)
-
-    await user.save();
-
-    // Send an email with the reset link (assuming MailerService is configured)
-    await this.mailerService.sendMail({
-      to: email,
-      subject: 'Password Reset Request',
-      text: `You requested a password reset. Use the following token to reset your password: ${resetToken}`,
-    });
-
-    return { message: 'Password reset link sent to your email' };
-  }
-
-  // Reset password method
-  async resetPassword(resetToken: string, newPassword: string): Promise<{ message: string }> {
-    const user = await this.userModel.findOne({
-      resetPasswordExpires: { $gt: Date.now() }, // Check if token is still valid
-    });
-
-    if (!user) {
-      throw new NotFoundException('Reset token is invalid or has expired');
-    }
-
-    // Compare the provided reset token with the hashed token in the database
-    if (typeof user.resetPasswordToken === 'string') {
-      const isValidToken = await bcrypt.compare(resetToken, user.resetPasswordToken);
-      if (!isValidToken) {
-        throw new UnauthorizedException('Invalid or expired token');
-      }
-    }
-    // Hash the new password and save it
-    user.password = await bcrypt.hash(newPassword, 10);
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpires = undefined; // Clear reset token and expiration
-    await user.save();
-
-    return { message: 'Password has been successfully reset' };
-  }
 }

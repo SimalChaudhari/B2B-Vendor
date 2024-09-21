@@ -1,37 +1,39 @@
-import { BadRequestException, Body, Controller, Post } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Post,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto } from './auth.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   @Post('register')
   async register(@Body() authDto: AuthDto) {
     return this.authService.register(authDto);
   }
 
+  @Post('verify-otp')
+  async verifyOtp(@Body() authDto: AuthDto) {
+    try {
+      return await this.authService.verifyOtp(authDto);
+    } catch (error: any) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
   @Post('login')
   async login(@Body() authDto: AuthDto) {
-    return this.authService.login(authDto);
-  }
-
-  @Post('forgot-password')
-  async forgotPassword(@Body('email') email: string) {
-    if (!email) {
-      throw new BadRequestException('Email is required');
+    try {
+      // Validate the input and call the login method from authService
+      const result = await this.authService.login(authDto);
+      return result;
+    } catch (error: any) {
+      throw new BadRequestException(error.message);
     }
-    return this.authService.forgotPassword(email);
-  }
-
-  @Post('reset-password')
-  async resetPassword(
-    @Body('resetToken') resetToken: string,
-    @Body('newPassword') newPassword: string,
-  ) {
-    if (!resetToken || !newPassword) {
-      throw new BadRequestException('Token and new password are required');
-    }
-    return this.authService.resetPassword(resetToken, newPassword);
   }
 }
