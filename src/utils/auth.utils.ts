@@ -1,4 +1,5 @@
 import * as crypto from 'crypto';
+import { UserRole } from 'users/users.dto';
 // Utility function to validate if the input is an email or not
 export const validateEmail = (input: string): boolean => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -19,3 +20,11 @@ export const sendOtpSms = async (mobile: string, otp: string): Promise<void> => 
   // Implement actual SMS sending logic here
   console.log(`OTP sent to mobile ${mobile}: ${otp}`);
 };
+
+export function isAdmin(userRole: UserRole): userRole is UserRole.Admin {
+  return userRole === UserRole.Admin;
+}
+
+export function isVendor(userRole: UserRole): userRole is UserRole.Vendor {
+  return userRole === UserRole.Vendor;
+}

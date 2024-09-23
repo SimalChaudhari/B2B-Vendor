@@ -136,7 +136,8 @@ export class AuthService {
       user.otpExpires = undefined; // Remove OTP expiration
       await user.save(); // Save the updated user
 
-      const payload = { email: user.email, sub: user._id };
+      const payload = { email: user.email, sub: user._id, role: user.role };
+
 
       return {
         user: user.toObject(),

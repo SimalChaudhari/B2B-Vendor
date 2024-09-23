@@ -13,7 +13,7 @@ dotenv.config(); // Load environment variables
   MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     JwtModule.register({
       secret: process.env.JWT_SECRET, // Use your JWT secret from the .env file
-      signOptions: { expiresIn: '60s' }, // Set your token expiration
+      signOptions: { }, // Set your token expiration
     }),
 
     MailerModule.forRoot({
