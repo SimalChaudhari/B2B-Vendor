@@ -4,13 +4,14 @@ import { UserController } from './users.controller';
 import { UserService, } from './users.service';
 import { User, UserSchema } from './users.model';
 import { JwtModule } from '@nestjs/jwt';
+// import { FirebaseService } from 'service/firebase.service';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     JwtModule.register({
       secret: process.env.JWT_SECRET, // Use your JWT secret from the .env file
-      signOptions: {  }, // Set your token expiration
+      signOptions: { }, // Set your token expiration
     }),
   ],
   controllers: [UserController],
