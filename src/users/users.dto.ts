@@ -1,5 +1,5 @@
-// auth.dto.ts
 import { IsEmail, IsMobilePhone, IsNotEmpty, IsEnum, IsOptional } from 'class-validator';
+
 export enum UserRole {
     Admin = 'Admin',
     Customer = 'Customer',
@@ -11,21 +11,7 @@ export enum UserStatus {
     Suspended = 'Suspended',
 }
 
-export class Address {
-    @IsNotEmpty()
-    address!: string;
 
-    @IsNotEmpty()
-    city!: string;
-
-    @IsNotEmpty()
-    state!: string;
-
-    @IsNotEmpty()
-    pinCode!: string;
-}
-
-// DTO for updating a user
 export class UpdateUserDto {
     @IsNotEmpty()
     firstName?: string;
@@ -47,15 +33,10 @@ export class UpdateUserDto {
 
     @IsOptional()
     @IsEnum(UserRole)
-    role?: UserRole; // Optional role field
+    role?: UserRole;
 
     @IsOptional()
     @IsEnum(UserStatus)
-    status?: UserStatus; // Optional status field
-
-    @IsOptional()
-    addresses?: Address[]; // Optional addresses field
-
+    status?: UserStatus;
 
 }
-

@@ -1,23 +1,23 @@
+// src/app.module.ts
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { AuthModule } from './auth/auth.module';
-
-import * as dotenv from 'dotenv';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthModule } from './auth/auth.module'; // Adjust the path as necessary
 import { UserModule } from 'users/users.module';
-import { ProductModule } from 'admin/products/product.module';
-import { CategoryModule } from 'admin/categories/category.module';
-import { OfferModule } from 'admin/offer/offer.module';
-
-dotenv.config();
 
 @Module({
   imports: [
-    MongooseModule.forRoot(process.env.MONGODB_URI || 'mongodb+srv://dev4:0HCuUNNZHfU0e9gC@cluster0.kmnexdn.mongodb.net/b2b-vendor'),
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: 'localhost',
+      port: 5432,
+      username: 'postgres',
+      password: 'root',
+      database: 'b2b_vendor',
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      synchronize: true, // Set to false in production
+    }),
     AuthModule,
-    UserModule,
-    ProductModule,
-    CategoryModule,
-    OfferModule
+    UserModule
   ],
 })
-export class AppModule { }
+export class AppModule {}

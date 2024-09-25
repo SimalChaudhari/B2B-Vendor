@@ -1,44 +1,24 @@
-// auth.dto.ts
-import { IsEmail, IsMobilePhone, IsNotEmpty, IsEnum, IsOptional } from 'class-validator';
-import { Address, UserRole, UserStatus } from 'users/users.dto';
+// src/auth/auth.dto.ts
+import { IsEmail, IsMobilePhone, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class AuthDto {
-
+  @IsString()
   @IsNotEmpty()
   firstName!: string;
 
+  @IsString()
   @IsNotEmpty()
   lastName!: string;
 
-  @IsOptional()
-  profile?: string;
-
   @IsEmail()
+  @IsNotEmpty()
   email!: string;
 
+  @IsMobilePhone()
   @IsNotEmpty()
   mobile!: string;
 
-  @IsNotEmpty()
-  country!: string;
-
+  @IsString()
   @IsOptional()
-  @IsEnum(UserRole)
-  role?: UserRole; // Optional role field
-
-  @IsOptional()
-  @IsEnum(UserStatus)
-  status?: UserStatus; // Optional status field
-
-  @IsOptional()
-  addresses?: Address[]; // Optional addresses field
-
-  @IsOptional()
-  otp?: string; // Optional addresses field
-
-  @IsOptional()
-  otpExpires?: Date; // Optional addresses field
-
-
+  otp?: string; // OTP for verification
 }
-
