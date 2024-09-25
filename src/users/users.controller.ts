@@ -20,14 +20,11 @@ import { JwtAuthGuard } from 'auth/jwt/jwt-auth.guard';
 import { RolesGuard } from 'auth/jwt/roles.guard';
 import { Request } from 'express'; // Import the extended Request type
 import { isAdmin } from 'utils/auth.utils';
-// import { FirebaseService } from 'service/firebase.service';
-// import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard, RolesGuard) // Apply both guards globally to the controller
 export class UserController {
     constructor(private userService: UserService
-        // private firebaseService: FirebaseService
         ) 
         { }
 
@@ -44,10 +41,9 @@ export class UserController {
     }
 
     @Put('update/:id')
-    // @UseInterceptors(FileInterceptor('file')) // Expecting the file to be in the 'file' field
+
     async updateUser(
         @Param('id') id: string,
-        // @UploadedFile() file: Express.Multer.File,
         @Body() updateUserDto: UpdateUserDto,
         @Res() response: Response,
         @Req() request: Request, // Use the extended Request type
@@ -63,12 +59,6 @@ export class UserController {
             }
             updateUserDto = otherUpdates; // Remove status from updates
         }
-        // Check if a file was uploaded
-        // if (file) {
-        //     // Upload the file to Firebase and get the URL
-        //     const imageUrl = await this.firebaseService.uploadFile(file);
-        //     updateUserDto.profile = imageUrl; // Assign the image URL to the DTO
-        // }
         const updatedUser = await this.userService.updateUser(id, updateUserDto);
         if (!updatedUser) {
             throw new NotFoundException('User not found');
