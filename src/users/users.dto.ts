@@ -13,7 +13,7 @@ export enum UserStatus {
 
 export class Address {
     @IsNotEmpty()
-    street!: string;
+    address!: string;
 
     @IsNotEmpty()
     city!: string;
@@ -39,8 +39,11 @@ export class UpdateUserDto {
     @IsEmail()
     email?: string;
 
-    @IsMobilePhone()
-    mobile?: number;
+    @IsNotEmpty()
+    mobile?: string;
+
+    @IsNotEmpty()
+    country?: string;
 
     @IsOptional()
     @IsEnum(UserRole)

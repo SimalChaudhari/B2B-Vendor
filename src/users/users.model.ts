@@ -16,7 +16,7 @@ export class User {
   email: string;
 
   @Prop({ required: true, unique: true })
-  mobile: number; // Added mobile field
+  mobile: string; // Added mobile field
 
   @Prop({ enum: ['Active', 'Suspended'], default: 'Active' })
   status: 'Active' | 'Suspended'; // Added status field
@@ -27,6 +27,9 @@ export class User {
   @Prop({ default: null })
   profile: string; // Added mobile field
 
+  @Prop({ required: true })
+  country: string;
+
   @Prop()
   otp?: string;
 
@@ -35,7 +38,7 @@ export class User {
 
   @Prop({
     type: [{
-      street: String,
+      address: String,
       city: String,
       state: String,
       pinCode: String,
@@ -43,18 +46,19 @@ export class User {
     default: [],
   })
   addresses: {
-    street: string;
+    address: string;
     city: string;
     state: string;
     pinCode: string;
   }[];
 
-  constructor(email: string, mobile: number, firstName: string, lastName: string, profile: string,otp:string,otpExpires:Date) {
+  constructor(email: string, mobile: string, firstName: string, lastName: string, profile: string,country: string,otp:string,otpExpires:Date) {
     this.firstName = firstName;
     this.lastName = lastName;
     this.email = email;
     this.mobile = mobile;
     this.profile = profile;
+    this.country = country;
     this.status = 'Active'; // Default status
     this.role = 'Customer'; // Default role
     this.addresses = []; // Default to empty array

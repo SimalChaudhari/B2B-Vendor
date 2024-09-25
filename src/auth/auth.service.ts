@@ -1,3 +1,4 @@
+//auth.service.ts
 import { ConflictException, Injectable, NotFoundException, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
@@ -42,6 +43,7 @@ export class AuthService {
         role: authDto.role,
         status: authDto.status,
         profile: authDto.profile,
+        country: authDto.country,
         addresses: authDto.addresses,
       });
       const savedUser = await newUser.save();

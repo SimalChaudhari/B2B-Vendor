@@ -16,8 +16,11 @@ export class AuthDto {
   @IsEmail()
   email!: string;
 
-  @IsMobilePhone()
-  mobile!: number;
+  @IsNotEmpty()
+  mobile!: string;
+
+  @IsNotEmpty()
+  country!: string;
 
   @IsOptional()
   @IsEnum(UserRole)
