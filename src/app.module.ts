@@ -6,6 +6,10 @@ import { UserModule } from 'users/users.module';
 import { AddressesModule } from 'users/address/addresses.module';
 import { StatesModule } from 'users/address/state/states.module';
 import { CitiesModule } from 'users/address/city/cities.module';
+import { CategoryModule } from 'admin/products/categories/categories.module';
+import { SubcategoryModule } from 'admin/products/sub-categories/subcategories.module';
+import { ProductModule } from 'admin/products/products/products.module';
+import { OfferModule } from 'admin/products/offers/offers.module';
 
 
 @Module({
@@ -24,7 +28,11 @@ import { CitiesModule } from 'users/address/city/cities.module';
     UserModule,
     AddressesModule,
     StatesModule,
-    CitiesModule
+    CitiesModule,
+    CategoryModule,
+    SubcategoryModule,
+    ProductModule,
+    OfferModule
   ],
 })
 export class AppModule { }
