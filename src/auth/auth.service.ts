@@ -38,92 +38,121 @@ export class AuthService {
     // private readonly mailerService: MailerService, // If used
   ) { }
 
-  async register(authDto: AuthDto): Promise<{ message: string }> {
-    // Check if the email or mobile already exists
-    const existingUser = await this.userRepository.findOne({
-      where: [{ email: authDto.email }, { mobile: authDto.mobile }],
-    });
+  async register(authDto: AuthDto): Promise<{ message: string, user: User }> {
 
-    if (existingUser) {
-      throw new BadRequestException('Email or mobile number already exists');
+    try {
+      // Check if the email or mobile already exists
+      const existingUser = await this.userRepository.findOne({
+        where: [{ email: authDto.email }, { mobile: authDto.mobile }],
+      });
+
+      if (existingUser) {
+        throw new BadRequestException('Email or Mobile number already exists');
+      }
+      // Create new user instance
+      const newUser = this.userRepository.create({
+        ...authDto
+      });
+
+      await this.userRepository.save(newUser); // Save the new user
+
+      return {
+        message: 'User registered successfully',
+        user: newUser
+      };
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        throw new BadRequestException(err.message);
+      }
+      throw err;
     }
-    // Create new user instance
-    const newUser = this.userRepository.create({
-      ...authDto
-    });
-
-    await this.userRepository.save(newUser); // Save the new user
-
-    return { message: 'User registered successfully' };
   }
 
   // Send OTP for verification
   async verifyOtp(authDto: AuthDto): Promise<{ message: string }> {
-    if (!authDto.email && !authDto.mobile) {
-      throw new BadRequestException('Either email or mobile number must be provided.');
+    try {
+      if (!authDto.email && !authDto.mobile) {
+        throw new BadRequestException('Either email or mobile number must be provided.');
+      }
+
+      const isEmail = validateEmail(authDto.email);
+      const user = await this.userRepository.findOne({
+        where: isEmail ? { email: authDto.email } : { mobile: authDto.mobile },
+      });
+
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      const otp = generateOTP();
+      const otpExpires = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes expiration
+
+      // Hash OTP and save
+      user.otp = await bcrypt.hash(otp, 10);
+      user.otpExpires = otpExpires;
+      await this.userRepository.save(user); // Save the updated user
+
+      // Send OTP
+      isEmail ? await sendOtpEmail(user.email, otp) : await sendOtpSms(user.mobile, otp);
+
+      return { message: 'OTP sent successfully' };
+
+    } catch (error: any) {
+      if (error instanceof NotFoundException || error instanceof UnauthorizedException) {
+        throw error;
+      }
+      throw new BadRequestException('OTP failed. Please check your credentials and try again.', error.message);
     }
-
-    const isEmail = validateEmail(authDto.email);
-    const user = await this.userRepository.findOne({
-      where: isEmail ? { email: authDto.email } : { mobile: authDto.mobile },
-    });
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    const otp = generateOTP();
-    const otpExpires = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes expiration
-
-    // Hash OTP and save
-    user.otp = await bcrypt.hash(otp, 10);
-    user.otpExpires = otpExpires;
-    await this.userRepository.save(user); // Save the updated user
-
-    // Send OTP
-    isEmail ? await sendOtpEmail(user.email, otp) : await sendOtpSms(user.mobile, otp);
-
-    return { message: 'OTP sent successfully' };
-  }
+  };
 
   // Login user with OTP
   async login(authDto: AuthDto): Promise<{ access_token: string; user: Partial<User> }> {
-    if (!authDto.email && !authDto.mobile) {
-      throw new BadRequestException('Either email or mobile number must be provided.');
+
+    try {
+      if (!authDto.email && !authDto.mobile) {
+        throw new BadRequestException('Either email or mobile number must be provided.');
+      }
+
+      const isEmail = validateEmail(authDto.email);
+      const user = await this.userRepository.findOne({
+        where: isEmail ? { email: authDto.email } : { mobile: authDto.mobile },
+      });
+
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      // Check OTP validity
+      if (!user.otp || !user.otpExpires || user.otpExpires < new Date()) {
+        throw new UnauthorizedException('Invalid or expired OTP');
+      }
+
+      if (!authDto.otp) {
+        throw new UnauthorizedException('OTP must be provided.');
+      }
+
+      // Verify OTP
+      const isOtpValid = await bcrypt.compare(authDto.otp, user.otp);
+      if (!isOtpValid) {
+        throw new UnauthorizedException('Invalid OTP');
+      }
+
+      // Clear OTP after successful login
+      user.otp = null;
+      user.otpExpires = null;
+      await this.userRepository.save(user); // Save the updated user
+      const payload = { email: user.email, id: user.id, role: user.role }; // You can add other properties as needed
+      return {
+        user: user,
+        access_token: this.JwtService.sign(payload)
+      }
+    } catch (error: any) {
+      // Return a custom error response in case of any exception
+      if (error instanceof NotFoundException || error instanceof UnauthorizedException) {
+        throw error;
+      }
+      throw new BadRequestException('Login failed. Please check your credentials and try again.', error.message);
     }
-
-    const isEmail = validateEmail(authDto.email);
-    const user = await this.userRepository.findOne({
-      where: isEmail ? { email: authDto.email } : { mobile: authDto.mobile },
-    });
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    // Check OTP validity
-    if (!user.otp || !user.otpExpires || user.otpExpires < new Date()) {
-      throw new UnauthorizedException('Invalid or expired OTP');
-    }
-
-    if (!authDto.otp) {
-      throw new UnauthorizedException('OTP must be provided.');
-    }
-
-    // Verify OTP
-    const isOtpValid = await bcrypt.compare(authDto.otp, user.otp);
-    if (!isOtpValid) {
-      throw new UnauthorizedException('Invalid OTP');
-    }
-
-    // Clear OTP after successful login
-    user.otp = undefined;
-    user.otpExpires = undefined;
-    await this.userRepository.save(user); // Save the updated user
-    const payload = { email: user.email, id: user.id }; // You can add other properties as needed
-    return {
-      user: { id: user.id, email: user.email }, // Return user details
-      access_token: this.JwtService.sign(payload),
-    };
   }
+
 }

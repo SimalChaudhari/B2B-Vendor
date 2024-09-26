@@ -20,5 +20,9 @@ export class AuthDto {
 
   @IsString()
   @IsOptional()
+  profile?: string;
+
+  @IsString()
+  @IsOptional()
   otp?: string; // OTP for verification
 }

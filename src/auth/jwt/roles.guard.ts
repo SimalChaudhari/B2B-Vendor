@@ -14,7 +14,7 @@ export class RolesGuard implements CanActivate {
 
     const request = context.switchToHttp().getRequest();
     const token = request.headers['authorization']?.split(' ')[1]; // Extract the token
-
+ 
     if (!token) {
       throw new UnauthorizedException('Token not provided');
     }
@@ -25,7 +25,6 @@ export class RolesGuard implements CanActivate {
 
       // Check if the user's role is in the required roles
       const hasRole = roles.some((role) => decoded.role?.includes(role));
-
       if (!hasRole) {
         throw new ForbiddenException('You do not have the required role to access this resource');
       }

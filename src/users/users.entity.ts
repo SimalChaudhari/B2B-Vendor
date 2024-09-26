@@ -1,5 +1,5 @@
 // src/auth/auth.entity.ts
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 // Enum for user status
 export enum UserStatus {
@@ -16,7 +16,7 @@ export enum UserRole {
 
 @Entity('users')
 export class User {
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn('uuid') // Use 'uuid' to generate alphanumeric IDs
     id!: string; // User ID
 
     @Column()
@@ -32,10 +32,7 @@ export class User {
     mobile!: string; // User's mobile number (must be unique)
 
     @Column({ nullable: true })
-    otp?: string; // Optional One-Time Password for authentication
-
-    @Column({ nullable: true })
-    otpExpires?: Date; // Optional expiration date for the OTP
+    profile?: string; // User's mobile number (must be unique)
 
     @Column({
         type: 'enum', // Use enum type in the database
@@ -50,4 +47,19 @@ export class User {
         default: UserStatus.Active, // Default status is Active
     })
     status?: UserStatus; // User's status, must be one of the enum values
+
+    @Column({ nullable: true, type: 'varchar' }) // Ensure 'otp' is defined as varchar
+    otp?: string | null; // One-Time Password
+
+    @Column({ nullable: true, type: 'timestamp' }) 
+    otpExpires?: Date | null; // Optional expiration date for the OTP
+
+    @Column({ default: false })
+    isDeleted!: boolean; // Soft delete flag, default is false
+
+    @CreateDateColumn({ type: 'timestamp' })
+    createdAt!: Date; // Timestamp for when the user was created
+
+    @UpdateDateColumn({ type: 'timestamp' })
+    updatedAt!: Date; // Timestamp for when the user was last updated
 }

@@ -13,6 +13,7 @@ export enum UserStatus {
 
 
 export class UpdateUserDto {
+
     @IsNotEmpty()
     firstName?: string;
 
@@ -27,9 +28,6 @@ export class UpdateUserDto {
 
     @IsNotEmpty()
     mobile?: string;
-
-    @IsNotEmpty()
-    country?: string;
 
     @IsOptional()
     @IsEnum(UserRole)
