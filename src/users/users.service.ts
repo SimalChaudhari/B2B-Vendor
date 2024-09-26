@@ -1,9 +1,9 @@
+//users.service.ts
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateUserDto } from './users.dto';
 import { User } from './users.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -49,7 +49,10 @@ export class UserService {
         if (!user) {
             throw new NotFoundException('User not found');
         }
-        await this.userRepository.remove(user);
+
+        user.isDeleted = true;
+        await this.userRepository.save(user);
+        // await this.userRepository.remove(user);
         return { message: 'User deleted successfully' };
     }
 }

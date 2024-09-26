@@ -1,4 +1,4 @@
-// src/auth/auth.entity.ts
+//user.entity.ts
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 // Enum for user status

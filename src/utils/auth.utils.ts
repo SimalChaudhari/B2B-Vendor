@@ -28,3 +28,7 @@ export function isAdmin(userRole: UserRole): userRole is UserRole.Admin {
 export function isVendor(userRole: UserRole): userRole is UserRole.Vendor {
   return userRole === UserRole.Vendor;
 }
+
+export function isCustomer(userRole: UserRole): userRole is UserRole.Customer {
+  return userRole === UserRole.Customer;
+}
