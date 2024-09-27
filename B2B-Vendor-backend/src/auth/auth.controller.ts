@@ -17,7 +17,7 @@ export class AuthController {
     @UploadedFile() file?: Express.Multer.File // Optional profile image
   ) {
     const result = await this.authService.register(authDto, file);
-    return response.status(HttpStatus.CREATED).json({
+    return response.status(HttpStatus.OK).json({
       message: result.message,
       user: result.user,
     });

@@ -3,7 +3,7 @@ import { Injectable, BadRequestException, NotFoundException, UnauthorizedExcepti
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { User } from 'users/users.entity';
+import { User } from 'users/user/users.entity';
 import { AuthDto } from './auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as fs from 'fs';
@@ -69,8 +69,8 @@ export class AuthService {
         message: 'User registered successfully',
         user: newUser,
       };
+
     } catch (err: unknown) {
-      console.log(err,"$$$$$$$$$$$")
       if (err instanceof Error) {
         throw new BadRequestException(err.message);
       }
@@ -87,10 +87,12 @@ export class AuthService {
       }
 
       const isEmail = validateEmail(authDto.email);
-      const user = await this.userRepository.findOne({
-        where: isEmail ? { email: authDto.email } : { mobile: authDto.mobile },
-      });
+      const whereCondition = isEmail
+        ? { email: authDto.email, isDeleted: false }
+        : { mobile: authDto.mobile, isDeleted: false };
 
+      // Find the user based on the constructed where condition
+      const user = await this.userRepository.findOne({ where: whereCondition });
       if (!user) {
         throw new NotFoundException('User not found');
       }
@@ -125,9 +127,13 @@ export class AuthService {
       }
 
       const isEmail = validateEmail(authDto.email);
-      const user = await this.userRepository.findOne({
-        where: isEmail ? { email: authDto.email } : { mobile: authDto.mobile },
-      });
+      const whereCondition = isEmail
+        ? { email: authDto.email, isDeleted: false }
+        : { mobile: authDto.mobile, isDeleted: false };
+
+      // Find the user based on the constructed where condition
+      const user = await this.userRepository.findOne({ where: whereCondition });
+
 
       if (!user) {
         throw new NotFoundException('User not found');
@@ -165,5 +171,4 @@ export class AuthService {
       throw new BadRequestException('Login failed. Please check your credentials and try again.', error.message);
     }
   }
-
 }

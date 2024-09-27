@@ -12,7 +12,11 @@ export class AddressesService {
     ) { }
 
     async getAll(): Promise<Address[]> {
-        return this.addressesRepository.find();
+        const address = await this.addressesRepository.find();
+        if (address.length === 0) {
+            throw new NotFoundException('No data available');
+        }
+        return address
     }
 
     async create(createAddressDto: CreateAddressDto, userId: string): Promise<Address> {

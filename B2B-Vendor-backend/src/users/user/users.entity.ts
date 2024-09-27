@@ -62,4 +62,6 @@ export class User {
 
     @UpdateDateColumn({ type: 'timestamp' })
     updatedAt!: Date; // Timestamp for when the user was last updated
+    message: any;
+    data: any;
 }

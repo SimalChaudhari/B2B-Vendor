@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsOptional, IsInt, IsString } from 'class-validator';
 import { ManyToOne } from 'typeorm';
-import { City } from './city/city.entity';
-import { State } from './state/state.entity';
+import { City } from '../city/city.entity';
+import { State } from '../state/state.entity';
 
 export class CreateAddressDto {
     @IsString()

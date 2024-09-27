@@ -38,6 +38,7 @@ export class UserController {
             data: users,
         });
     }
+    
     @Patch('update/:id')
     @UseInterceptors(FileInterceptor('profile')) // Use 'image' as the field name for the uploaded file
     async updateUser(

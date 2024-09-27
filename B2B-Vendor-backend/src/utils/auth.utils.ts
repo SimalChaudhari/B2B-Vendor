@@ -1,5 +1,5 @@
 import * as crypto from 'crypto';
-import { UserRole } from 'users/users.dto';
+import { UserRole } from 'users/user/users.dto';
 // Utility function to validate if the input is an email or not
 export const validateEmail = (input: string): boolean => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
