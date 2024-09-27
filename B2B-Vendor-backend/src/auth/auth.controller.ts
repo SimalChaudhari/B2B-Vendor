@@ -1,17 +1,28 @@
 // src/auth/auth.controller.ts
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, UseInterceptors, UploadedFile, Res, HttpStatus } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto } from './auth.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
-  async register(@Body() authDto: AuthDto) {
-      return await this.authService.register(authDto);
+  @UseInterceptors(FileInterceptor('profile')) // Use 'profile' as the field name for the uploaded file
+  async register(
+    @Res() response: Response,  // Move the required parameter before the optional one
+    @Body() authDto: AuthDto, 
+    @UploadedFile() file?: Express.Multer.File // Optional profile image
+  ) {
+    const result = await this.authService.register(authDto, file);
+    return response.status(HttpStatus.CREATED).json({
+      message: result.message,
+      user: result.user,
+    });
   }
-
+  
 
   @Post('verify-otp')
   async verifyOtp(@Body() authDto: AuthDto) {

@@ -6,6 +6,8 @@ import * as bcrypt from 'bcrypt';
 import { User } from 'users/users.entity';
 import { AuthDto } from './auth.dto';
 import { JwtService } from '@nestjs/jwt';
+import * as fs from 'fs';
+import * as path from 'path';
 
 const generateOTP = (): string => {
   const otp = Math.floor(100000 + Math.random() * 900000).toString(); // Generate a 6-digit OTP
@@ -38,8 +40,7 @@ export class AuthService {
     // private readonly mailerService: MailerService, // If used
   ) { }
 
-  async register(authDto: AuthDto): Promise<{ message: string, user: User }> {
-
+  async register(authDto: AuthDto, file?: Express.Multer.File): Promise<{ message: string, user: User }> {
     try {
       // Check if the email or mobile already exists
       const existingUser = await this.userRepository.findOne({
@@ -49,22 +50,32 @@ export class AuthService {
       if (existingUser) {
         throw new BadRequestException('Email or Mobile number already exists');
       }
-      // Create new user instance
+
+      // Handle file upload if a file is provided
+      let profileImagePath: string | undefined = undefined;
+      if (file) {
+        const uploadPath = path.join(__dirname, '..', '..', 'src', 'uploads', file.originalname);
+        fs.writeFileSync(uploadPath, file.buffer); // Save the file synchronously
+        profileImagePath = uploadPath; // Assign the image path
+      }
+
+      // Create a new user instance
       const newUser = this.userRepository.create({
-        ...authDto
+        ...authDto,
+        ...(profileImagePath && { profile: profileImagePath }), // Conditionally add profile if the file is uploaded
       });
-
       await this.userRepository.save(newUser); // Save the new user
-
       return {
         message: 'User registered successfully',
-        user: newUser
+        user: newUser,
       };
     } catch (err: unknown) {
+      console.log(err,"$$$$$$$$$$$")
       if (err instanceof Error) {
         throw new BadRequestException(err.message);
       }
       throw err;
+
     }
   }
 

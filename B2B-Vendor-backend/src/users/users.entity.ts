@@ -31,9 +31,9 @@ export class User {
     @Column({ unique: true })
     mobile!: string; // User's mobile number (must be unique)
 
-    @Column({ nullable: true })
-    profile?: string; // User's mobile number (must be unique)
-
+    @Column({ type: 'varchar', length: 255, nullable: true })
+    profile?: string;
+    
     @Column({
         type: 'enum', // Use enum type in the database
         enum: UserRole, // Reference the UserRole enum
