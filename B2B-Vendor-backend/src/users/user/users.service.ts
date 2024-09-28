@@ -10,9 +10,6 @@ import * as path from 'path';
 
 @Injectable()
 export class UserService {
-    findById(sub: any) {
-        throw new Error('Method not implemented.');
-    }
     constructor(
         @InjectRepository(User)
         private userRepository: Repository<User>,

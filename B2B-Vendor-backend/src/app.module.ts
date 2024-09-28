@@ -10,6 +10,7 @@ import { SubcategoryModule } from 'admin/products/sub-categories/subcategories.m
 import { ProductModule } from 'admin/products/products/products.module';
 import { OfferModule } from 'admin/products/offers/offers.module';
 import { UserModule } from 'users/user/users.module';
+import { OrderModule } from 'admin/orders/order.module';
 
 
 @Module({
@@ -32,7 +33,8 @@ import { UserModule } from 'users/user/users.module';
     CategoryModule,
     SubcategoryModule,
     ProductModule,
-    OfferModule
+    OfferModule,
+    OrderModule
   ],
 })
 export class AppModule { }

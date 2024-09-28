@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsEnum, IsDecimal, IsDateString } from 'class-validator';
+import { IsNotEmpty, IsEnum, IsDecimal, IsDateString, IsOptional } from 'class-validator';
 import { DiscountType, OfferStatus } from './offer.entity';
 
 export class CreateOfferDto {
@@ -40,4 +40,7 @@ export class UpdateOfferDto {
 
     @IsEnum(OfferStatus)
     status?: OfferStatus;
+
+    @IsOptional()
+    productId?: string;
 }
