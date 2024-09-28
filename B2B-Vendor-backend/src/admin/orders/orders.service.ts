@@ -39,15 +39,18 @@ export class OrderService {
     }
 
     async update(id: string, updateOrderDto: UpdateOrderDto, userId: string): Promise<Order> {
+        // Check if the order exists
         const order = await this.findOne(id);
         if (!order) {
             throw new NotFoundException(`Order with ID ${id} not found.`);
         }
 
-        // Check if the user exists
-        const user = await this.userService.getById(userId); // Assuming you have a method to find a user by ID
-        if (!user) {
-            throw new NotFoundException(`User with ID ${userId} not found.`);
+        // Check if the new user ID exists if it has been updated
+        if (updateOrderDto.userId && updateOrderDto.userId !== order.userId) {
+            const userExists = await this.userService.getById(updateOrderDto.userId); // Assuming you have a method to find a user by ID
+            if (!userExists) {
+                throw new NotFoundException(`User with ID ${updateOrderDto.userId} not found.`);
+            }
         }
 
         // Update the order
