@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Product, ProductStatus } from './product.entity';
@@ -18,38 +18,33 @@ export class ProductService {
     ) { }
 
     async create(createProductDto: CreateProductDto): Promise<Product> {
-        let subcategory: Subcategory | null = null;
-        let category: Category | null = null;
-
-        // Check if subcategoryId is provided
-        if (createProductDto.subcategoryId) {
-            subcategory = await this.subcategoryRepository.findOne({
-                where: { id: createProductDto.subcategoryId },
-                relations: ['category']
-            });
-
-            if (!subcategory) {
-                throw new NotFoundException('Subcategory not found');
-            }
+        // Ensure that subcategoryId is provided
+        if (!createProductDto.subcategoryId) {
+            throw new BadRequestException('Subcategory ID is required');
         }
-
-        // Check if categoryId is provided and no subcategory found
-        if (!subcategory && createProductDto.categoryId) {
-            category = await this.categoryRepository.findOne({ where: { id: createProductDto.categoryId } });
-
-            if (!category) {
-                throw new NotFoundException('Category not found');
-            }
+    
+        // Fetch the subcategory and its associated category
+        const subcategory = await this.subcategoryRepository.findOne({
+            where: { id: createProductDto.subcategoryId },
+            relations: ['category']
+        });
+    
+        // Check if the subcategory exists
+        if (!subcategory) {
+            throw new NotFoundException('Subcategory not found');
         }
-
+    
+        // Create the product with the associated subcategory
         const product = this.productRepository.create({
             ...createProductDto,
             status: createProductDto.status || ProductStatus.Active,
-            ...(subcategory ? { subcategory } : category ? { category } : {}),
+            subcategory, // Associate the subcategory with the product
         });
-
+    
+        // Save the product in the repository
         return await this.productRepository.save(product);
     }
+    
 
     async update(id: string, updateProductDto: UpdateProductDto): Promise<Product> {
         const product = await this.productRepository.findOne({ where: { id }, relations: ['subcategory', 'subcategory.category'] });
@@ -58,8 +53,6 @@ export class ProductService {
         }
 
         let subcategory: Subcategory | null = null;
-        let category: Category | null = null;
-
         // Check if subcategoryId is provided
         if (updateProductDto.subcategoryId) {
             subcategory = await this.subcategoryRepository.findOne({
@@ -72,31 +65,23 @@ export class ProductService {
             }
         }
 
-        // Check if categoryId is provided and no subcategory found
-        if (!subcategory && updateProductDto.categoryId) {
-            category = await this.categoryRepository.findOne({ where: { id: updateProductDto.categoryId } });
-
-            if (!category) {
-                throw new NotFoundException('Category not found');
-            }
-        }
 
         // Update product fields
         Object.assign(product, {
             ...updateProductDto,
             status: updateProductDto.status || product.status,
-            ...(subcategory ? { subcategory } : category ? { category } : {}),
+            ...(subcategory ? { subcategory } : {}),
         });
 
         return await this.productRepository.save(product);
     }
 
     async findAll(): Promise<Product[]> {
-        return await this.productRepository.find({ relations: ['subcategory', 'subcategory.category', 'category'] });
+        return await this.productRepository.find({ relations: ['subcategory', 'subcategory.category'] });
     }
 
     async findOne(id: string): Promise<Product> {
-        const product = await this.productRepository.findOne({ where: { id }, relations: ['subcategory', 'subcategory.category', 'category'] });
+        const product = await this.productRepository.findOne({ where: { id }, relations: ['subcategory', 'subcategory.category'] });
         if (!product) {
             throw new NotFoundException('Product not found');
         }

@@ -19,7 +19,7 @@ export class CitiesService {
     async create(createCityDto: CreateCityDto): Promise<City> {
         const state = await this.statesRepository.findOneBy({ id: createCityDto.state_id });
         if (!state) {
-            throw new Error('State not found');
+            throw new NotFoundException(`State not found`);
         }
 
         const city = this.citiesRepository.create({ ...createCityDto, state });
@@ -44,7 +44,8 @@ export class CitiesService {
     async update(id: string, updateCityDto: CreateCityDto): Promise<City> {
         const city = await this.findOne(id);
         if (!city) {
-            throw new Error('City not found');
+
+            throw new NotFoundException('City not found');
         }
 
         await this.citiesRepository.update(id, updateCityDto);

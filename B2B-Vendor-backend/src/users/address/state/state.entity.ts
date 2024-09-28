@@ -7,6 +7,6 @@ export class State {
     @PrimaryGeneratedColumn('uuid') // Use 'uuid' to generate alphanumeric IDs
     id!: string; // Unique identifier for each address.
 
-    @Column({ unique: true })
+    @Column()
     state_name!: string;
 }

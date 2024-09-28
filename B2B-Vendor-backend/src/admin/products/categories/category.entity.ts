@@ -17,11 +17,7 @@ export class Category {
     @Column({ nullable: true })
     description?: string;
 
-    @Column({
-        type: 'enum',
-        enum: CategoryStatus,
-        default: CategoryStatus.Active,
-    })
+    @Column({type: 'enum',enum: CategoryStatus,default: CategoryStatus.Active})
     status!: CategoryStatus; // Status field
 
     @OneToMany(() => Subcategory, subcategory => subcategory.category)
@@ -29,7 +25,4 @@ export class Category {
 
     @CreateDateColumn({ type: 'timestamp' })
     createdAt!: Date;
-
-    @UpdateDateColumn({ type: 'timestamp' })
-    updatedAt!: Date;
 }

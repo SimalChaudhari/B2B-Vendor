@@ -17,11 +17,7 @@ export class Subcategory {
     @Column({ nullable: true })
     description?: string;
 
-    @Column({
-        type: 'enum',
-        enum: SubcategoryStatus,
-        default: SubcategoryStatus.Active,
-    })
+    @Column({ type: 'enum', enum: SubcategoryStatus,default: SubcategoryStatus.Active})
     status!: SubcategoryStatus;
 
     @ManyToOne(() => Category, category => category.subcategories) // Link to Category

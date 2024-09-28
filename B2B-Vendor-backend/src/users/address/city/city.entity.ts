@@ -8,7 +8,7 @@ export class City {
     @PrimaryGeneratedColumn('uuid') // Use 'uuid' to generate alphanumeric IDs
     id!: string; // Unique identifier for each address.
 
-    @Column({ unique: true })
+    @Column()
     city_name!: string;
 
     @ManyToOne(() => State, (state) => state.id)

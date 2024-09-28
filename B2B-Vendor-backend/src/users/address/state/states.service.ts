@@ -11,9 +11,16 @@ export class StatesService {
     constructor(
         @InjectRepository(State)
         private statesRepository: Repository<State>
-    ) {}
+    ) { }
 
     async create(createStateDto: CreateStateDto): Promise<State> {
+        const existingState = await this.statesRepository.findOne({
+            where: { state_name: createStateDto.state_name }, // Adjust this based on how you identify a state
+        });
+
+        if (existingState) {
+            throw new NotFoundException(`State '${createStateDto.state_name}' already exists.`);
+        }
         const state = this.statesRepository.create(createStateDto);
         return this.statesRepository.save(state);
     }

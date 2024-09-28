@@ -1,8 +1,4 @@
-import { IsNotEmpty, IsOptional, IsInt, IsString } from 'class-validator';
-import { ManyToOne } from 'typeorm';
-import { City } from '../city/city.entity';
-import { State } from '../state/state.entity';
-
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 export class CreateAddressDto {
     @IsString()
     @IsNotEmpty()
@@ -12,11 +8,13 @@ export class CreateAddressDto {
     @IsNotEmpty()
     street_address!: string;
 
-    @ManyToOne(() => City, (city) => city.city_name)
-    city!: City;
+    @IsString()
+    @IsNotEmpty()
+    state!: string;
 
-    @ManyToOne(() => State, (state) => state.state_name)
-    state!: State;
+    @IsString()
+    @IsNotEmpty()
+    city!: string;
 
     @IsString()
     @IsNotEmpty()
@@ -33,12 +31,12 @@ export class UpdateAddressDto {
     street_address?: string;
 
     @IsOptional()
-    @ManyToOne(() => City, (city) => city.city_name)
-    city?: City;
+    @IsString()
+    city?: string;
 
     @IsOptional()
-    @ManyToOne(() => State, (state) => state.state_name)
-    state?: State;
+    @IsString()
+    state?: string;
 
     @IsOptional()
     @IsString()

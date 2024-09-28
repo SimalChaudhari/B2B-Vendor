@@ -13,11 +13,11 @@ export class Address {
     @Column({ type: 'varchar', length: 255 })
     street_address!: string; // Street address.
 
-    @ManyToOne(() => City, { nullable: false })
-    city!: City; // Reference to the City entity.
+    @Column({ type: 'varchar', length: 255 })
+    city!: string; // Street address.
 
-    @ManyToOne(() => State, { nullable: false })
-    state!: State; // Reference to the State entity.
+    @Column({ type: 'varchar', length: 255 })
+    state!: string; // Street address.
 
     @Column({ type: 'varchar', length: 10 })
     zip_code!: string; // Zip or postal code.
@@ -27,7 +27,4 @@ export class Address {
 
     @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     created_at!: Date; // When the address was added.
-
-    @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
-    updated_at!: Date; // When the address information was last updated.
 }

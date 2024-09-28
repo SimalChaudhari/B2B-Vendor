@@ -26,4 +26,8 @@ export class UpdateSubcategoryDto {
     @IsEnum(SubcategoryStatus)
     @IsOptional()
     status?: SubcategoryStatus; // Status field
+
+    @IsOptional()
+    categoryId?: string;
+
 }

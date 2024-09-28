@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Category, CategoryStatus } from './category.entity';
@@ -10,16 +10,37 @@ export class CategoryService {
         @InjectRepository(Category)
         private categoryRepository: Repository<Category>,
     ) { }
+
     async create(createCategoryDto: CreateCategoryDto): Promise<Category> {
+        // Check for existing category (case-insensitive)
+        const existingCategory = await this.categoryRepository
+            .createQueryBuilder('category')
+            .where('LOWER(category.name) = LOWER(:name)', { name: createCategoryDto.name })
+            .getOne();
+
+        if (existingCategory) {
+            throw new ConflictException(`Category with name "${createCategoryDto.name}" already exists.`);
+        }
+        // Create and save the new category
         const category = this.categoryRepository.create({
-            ...createCategoryDto,
-            status: createCategoryDto.status || CategoryStatus.Active, // Default to Active
+            ...createCategoryDto
         });
         return await this.categoryRepository.save(category);
     }
 
     async update(id: string, updateCategoryDto: UpdateCategoryDto): Promise<Category> {
         const category = await this.findOne(id);
+
+        // Check for existing category with the same name (case-insensitive)
+        const existingCategory = await this.categoryRepository
+            .createQueryBuilder('category')
+            .where('LOWER(category.name) = LOWER(:name)', { name: updateCategoryDto.name })
+            .andWhere('category.id != :id', { id }) // Exclude the current category
+            .getOne();
+
+        if (existingCategory) {
+            throw new ConflictException(`Category with name "${updateCategoryDto.name}" already exists.`);
+        }
         Object.assign(category, updateCategoryDto);
         return await this.categoryRepository.save(category);
     }

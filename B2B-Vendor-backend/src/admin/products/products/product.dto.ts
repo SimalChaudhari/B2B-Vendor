@@ -21,9 +21,6 @@ export class CreateProductDto {
     @IsNotEmpty()
     subcategoryId!: string; // Subcategory ID
 
-    @IsOptional()
-    categoryId?: string; // Optional category ID
-
     @IsNotEmpty()
     stock_quantity!: number; // New field
 }
@@ -51,6 +48,4 @@ export class UpdateProductDto {
     @IsOptional()
     subcategoryId?: string; // Optional subcategory ID
 
-    @IsOptional()
-    categoryId?: string; // Optional category ID
 }

@@ -41,6 +41,7 @@ export class AddressesController {
             throw new UnauthorizedException('User is not authenticated');
         }
         const userId = request.user.id; // Get the user ID from the authenticated request
+        console.log("🚀 ~ AddressesController ~ userId:", userId)
         if (!userId) {
             throw new NotFoundException('User is not found');
         }

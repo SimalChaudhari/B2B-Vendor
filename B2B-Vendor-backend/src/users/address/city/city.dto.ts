@@ -8,6 +8,6 @@ export class CreateCityDto {
     city_name!: string;
 
     @IsNotEmpty()
-    @IsInt()
+    @IsString()
     state_id!: string; // Reference to State entity
 }

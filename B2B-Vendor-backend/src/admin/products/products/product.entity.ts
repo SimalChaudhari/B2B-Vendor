@@ -24,19 +24,11 @@ export class Product {
     @Column({ nullable: true })
     imageUrl?: string;
 
-    @Column({
-        type: 'enum',
-        enum: ProductStatus,
-        default: ProductStatus.Active,
-    })
+    @Column({ type: 'enum', enum: ProductStatus, default: ProductStatus.Active })
     status!: ProductStatus;
 
     @ManyToOne(() => Subcategory, subcategory => subcategory.products) // Link to Subcategory
     subcategory!: Subcategory;
-
-     @ManyToOne(() => Category, { nullable: true })
-    category?: Category; // Optional reference to category
-
 
     @Column({ default: 0 }) // Default to 0 if not specified
     stock_quantity!: number;
