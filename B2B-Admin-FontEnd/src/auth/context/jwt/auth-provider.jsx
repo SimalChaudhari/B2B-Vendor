@@ -9,8 +9,6 @@ import { AuthContext } from '../auth-context';
 import { setSession, isValidToken } from './utils';
 import { getCookie } from 'src/utils/cookie';
 
-// ----------------------------------------------------------------------
-
 export function AuthProvider({ children }) {
   const { state, setState } = useSetState({
     user: null,
