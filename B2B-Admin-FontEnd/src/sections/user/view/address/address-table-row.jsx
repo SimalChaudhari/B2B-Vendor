@@ -1,8 +1,7 @@
-import Box from '@mui/material/Box';
+
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
 import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
@@ -13,40 +12,25 @@ import IconButton from '@mui/material/IconButton';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
-import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { usePopover, CustomPopover } from 'src/components/custom-popover';
 
-import { UserEditForm } from './view/user-edit-form';
-import { UserViewDialog } from './view/user-view';
-import { useFetchUserData } from './components';
-import { useState } from 'react';
-import { AddressCreateForm } from './view/address/user-create-address-form';
+import { useFetchAddressData } from '../../components';
+import { AddressViewDialog } from './address-view';
+import { AddressEditForm } from './address-edit-form';
 
 // ----------------------------------------------------------------------
 
-export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
+export function AddressTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
 
   const confirm = useBoolean();
-  const { fetchData } = useFetchUserData(); // Destructure fetchData from the custom hoo
+  const { fetchData } = useFetchAddressData(); // Destructure fetchData from the custom hoo
 
   const popover = usePopover();
 
   const quickEdit = useBoolean();
   const quickView = useBoolean();
-  const quickAdd = useBoolean();
-
-
-  const [openDialog, setOpenDialog] = useState(false);
-
-  const handleOpenDialog = () => {
-    setOpenDialog(true);
-  };
-
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
-  };
 
   return (
     <>
@@ -57,34 +41,22 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
 
         <TableCell>
           <Stack spacing={2} direction="row" alignItems="center">
-            <Avatar alt={row.profile} src={row.avatarUrl} />
-
             <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
               <Link color="inherit" onClick={onEditRow} sx={{ cursor: 'pointer' }}>
-                {row.firstName} {row.lastName}
+                {row.street_address}
               </Link>
-              <Box component="span" sx={{ color: 'text.disabled' }}>
-                {row.email}
-              </Box>
             </Stack>
           </Stack>
         </TableCell>
 
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.mobile}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.city}</TableCell>
 
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.role}</TableCell>
-        <TableCell>
-          <Label
-            variant="soft"
-            color={
-              (row.status === 'Active' && 'success') ||
-              (row.status === 'Suspended' && 'error') ||
-              'default'
-            }
-          >
-            {row.status}
-          </Label>
-        </TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.state}</TableCell>
+        
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.zip_code}</TableCell>
+
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.country}</TableCell>
+       
 
         <TableCell>
           <Stack direction="row" alignItems="center">
@@ -105,11 +77,9 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
         </TableCell>
       </TableRow>
 
-      <UserEditForm open={quickEdit.value} onClose={quickEdit.onFalse} userData={row} />
-      <UserViewDialog open={quickView.value} onClose={quickView.onFalse} userView={row} />
-      <AddressCreateForm open={openDialog} onClose={handleCloseDialog} />
-
-
+      <AddressEditForm open={quickEdit.value} onClose={quickEdit.onFalse} addressData={row} />
+      <AddressViewDialog open={quickView.value} onClose={quickView.onFalse} addressView={row} />
+     
       <CustomPopover
         open={popover.open}
         anchorEl={popover.anchorEl}
@@ -135,17 +105,6 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
           >
             <Iconify icon="solar:eye-bold" /> {/* Example new icon for view */}
             View
-          </MenuItem>
-
-          <MenuItem
-            color={quickEdit.value ? 'inherit' : 'default'}
-            // onClick={quickAdd.onTrue}
-            onClick={handleOpenDialog} // Open the dialog on click
-
-          >
-            <Iconify icon="mdi:map-marker-outline" /> {/* Example alternative icon */}
-
-            Address
           </MenuItem>
         </MenuList>
       </CustomPopover>

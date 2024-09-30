@@ -9,6 +9,7 @@ import { AuthGuard } from 'src/auth/guard';
 const IndexPage = lazy(() => import('src/pages/dashboard'));
 const CompaniesPage = lazy(() => import('src/pages/companies'));
 const UsersPage = lazy(() => import('src/pages/users'));
+const AddressesPage = lazy(() => import('src/pages/users/address/index'));
 const CoursesPage = lazy(() => import('src/pages/courses'));
 const PlansPage = lazy(() => import('src/pages/plans'));
 
@@ -41,10 +42,10 @@ export const dashboardRoutes = [
     ],
   },
   {
-    path: 'companies',
+    path: 'addresses',
     element: CONFIG.auth.skip ? <>{layoutContent}</> : <AuthGuard>{layoutContent}</AuthGuard>,
     children: [
-      { element: <CompaniesPage />, index: true },
+      { element: <AddressesPage />, index: true },
     ],
   },
   {

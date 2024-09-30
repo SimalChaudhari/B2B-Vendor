@@ -30,11 +30,6 @@ export const UserCreateSchema = zod.object({
         .min(1, { message: 'Email is required!' })
         .email({ message: 'Email must be a valid email address!' }),
     mobile: schemaHelper.phoneNumber({ isValidPhoneNumber }),
-    address: zod.string().min(1, { message: 'Address is required!' }),
-    country: zod.string().min(1, { message: 'Country is required!' }),
-    state: zod.string().min(1, { message: 'State is required!' }),
-    city: zod.string().min(1, { message: 'City is required!' }),
-    zipCode: zod.string().min(1, { message: 'Zip Code is required!' }),
     status: zod.string().min(1, { message: 'Status is required!' }),
     profile: zod.instanceof(File).optional().nullable(), // Optional profile picture
 });
@@ -51,11 +46,6 @@ export function UserCreateForm({ open, onClose }) {
         lastName: '',
         email: '',
         mobile: '',
-        address: '',
-        country: 'India',
-        state: '',
-        city: '',
-        zipCode: '',
         status: USER_STATUS_OPTIONS[0]?.value, // Default to the first status option
         profile: null, // Initialize profile picture
     }), []);
@@ -74,13 +64,7 @@ export function UserCreateForm({ open, onClose }) {
     // Handle form submission
     const onSubmit = async (data) => {
         const formattedData = {
-            ...data,
-            addresses: [{
-                address: data.address,
-                city: data.city,
-                state: data.state,
-                pinCode: data.zipCode,
-            }],
+            ...data  
         };
         const response = await dispatch(createUser(formattedData));
         if (response) {
@@ -119,10 +103,6 @@ export function UserCreateForm({ open, onClose }) {
                         <Field.Text name="lastName" label="LastName" />
                         <Field.Text name="email" label="Email" />
                         <Field.Phone name="mobile" label="Mobile" />
-                        <Field.Text name="address" label="Address" />
-                        <Field.Text name="state" label="State" />
-                        <Field.Text name="city" label="City" />
-                        <Field.Text name="zipCode" label="Zip Code" />
                         <Field.Select name="status" label="Status">
                             {USER_STATUS_OPTIONS.map((status) => (
                                 <MenuItem key={status.value} value={status.value}>
@@ -130,7 +110,6 @@ export function UserCreateForm({ open, onClose }) {
                                 </MenuItem>
                             ))}
                         </Field.Select>
-                        <Field.CountrySelect fullWidth name="country" label="Country" placeholder="Choose a country" />
                     </Box>
                 </DialogContent>
 

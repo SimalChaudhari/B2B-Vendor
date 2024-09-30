@@ -1,13 +1,14 @@
 import { toast } from "sonner";
 import axiosInstance from "src/configs/axiosInstance";
-import { USER_LIST } from "../constants/actionTypes";
+import { ADDRESS_LIST } from "../constants/actionTypes";
 
-export const userList = () => async (dispatch) => {
+export const addressList = () => async (dispatch) => {
     try {
-        const response = await axiosInstance.get('/users');
+        const response = await axiosInstance.get('/addresses');
+        console.log("🚀 ~ addressList ~ response:", response.data)
         dispatch({
-            type: USER_LIST,
-            payload: response.data?.data, // Assuming response contains the customers data
+            type: ADDRESS_LIST,
+            payload: response.data, // Assuming response contains the customers data
         });
         return true;
     } catch (error) {
@@ -18,11 +19,11 @@ export const userList = () => async (dispatch) => {
     return false; // Return false for any errors
 };
 
-export const createUser = (userData) => async (dispatch) => {
+export const createAddress = (addressData) => async (dispatch) => {
     try {
-        const response = await axiosInstance.post('/auth/register', userData);
+        const response = await axiosInstance.post('/addresses/create', addressData);
         if (response && response.status >= 200 && response.status < 300) {
-            toast.success(response.data.message || 'User registered successfully!');
+            toast.success(response.data.message || 'Address created successfully!');
             return true;
         }
         return true;
@@ -34,13 +35,13 @@ export const createUser = (userData) => async (dispatch) => {
     return false; // Return false for any errors
 };
 
-export const editUser = (userId, userData) => async (dispatch) => {
+export const editAddress = (addressId, addressData) => async (dispatch) => {
     try {
-        const response = await axiosInstance.patch(`/users/update/${userId}`, userData);
+        const response = await axiosInstance.put(`/addresses/update/${addressId}`, addressData);
 
         // Check if the response is successful
         if (response && response.status >= 200 && response.status < 300) {
-            toast.success(response.data.message || 'User updated successfully!');
+            toast.success(response.data.message || 'Address updated successfully!');
             return true; // Indicate successful update
         }
     } catch (error) {
@@ -51,12 +52,12 @@ export const editUser = (userId, userData) => async (dispatch) => {
     return false; // Return false for any errors or unsuccessful attempts
 };
 
-export const deleteUser = (userId) => async (dispatch) => {
+export const deleteAddress = (addressId) => async (dispatch) => {
     try {
-        const response = await axiosInstance.delete(`/users/delete/${userId}`);
+        const response = await axiosInstance.delete(`/addresses/delete/${addressId}`);
         // Check if the response is successful
         if (response && response.status >= 200 && response.status < 300) {
-            toast.success(response.data.message || 'User deleted successfully!');
+            toast.success(response.data.message || 'Address deleted successfully!');
             return true; // Indicate successful deletion
         }
     } catch (error) {

@@ -15,6 +15,7 @@ import {
 // View Page Dialog for displaying user details
 export function UserViewDialog({ open, onClose, userView }) {
     if (!userView) return null;
+    
 
     return (
         <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
@@ -66,35 +67,7 @@ export function UserViewDialog({ open, onClose, userView }) {
                         </Stack>
                     </Grid>
 
-                    <Grid item xs={12} sm={6}>
-                        <Stack spacing={1}>
-                            <Typography variant="body2" color="text.secondary">
-                                Country:
-                            </Typography>
-                            <Typography variant="body1">{userView.country || 'Not provided'}</Typography>
-                        </Stack>
-                    </Grid>
-                </Grid>
 
-                <Divider sx={{ my: 3 }} />
-
-                {/* Address Information Section */}
-                <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
-                    Address Information
-                </Typography>
-
-                <Grid container spacing={2}>
-
-                    <Grid item xs={12} sm={6}>
-                        <Stack spacing={1}>
-                            <Typography variant="body2" color="text.secondary">
-                                Street/Address:
-                            </Typography>
-                            <Typography variant="body1">
-                                {/* userView?.addresses[0]?.address || 'Not provided'} */}
-                            </Typography>
-                        </Stack>
-                    </Grid>
                 </Grid>
 
                 <Divider sx={{ my: 3 }} /> {/* Divider after Address Information */}

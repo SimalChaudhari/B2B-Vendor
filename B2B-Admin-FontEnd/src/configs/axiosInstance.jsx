@@ -1,45 +1,33 @@
-import axios from 'axios';
-import { API_URL, TOKEN } from './env';
+// src/configs/axiosInstance.jsx
 
-// Create an axios instance
+import axios from 'axios';
+import { API_URL } from './env';
+
 const axiosInstance = axios.create({
   baseURL: API_URL, // Your API base URL
-  // timeout: 10000, // Set timeout if needed
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
-// Add a request interceptor to inject token and dynamic headers
+// Request interceptor
 axiosInstance.interceptors.request.use(
   (config) => {
-    // Retrieve the token from local storage
-
-    const token = TOKEN;
-
-    // If token exists, add Authorization header
+    const token = localStorage.getItem('token');
     if (token) {
+      // Use dot notation instead of bracket notation
       config.headers.Authorization = `Bearer ${token}`;
     }
-
-    // You can also add more custom headers here if needed
-    config.headers['Content-Type'] = 'application/json';
-
-    // Return the modified config
-    return config;
+    return config;  // Returning the config directly
   },
-  error => Promise.reject(error) // Simplified error handling
+  (error) => Promise.reject(error)
 );
 
-// // Optionally add a response interceptor to handle responses globally
+// Response interceptor (you can customize this if needed)
 axiosInstance.interceptors.response.use(
-  (response) => response, // Just return the response data for successful requests
-  (error) => {
-    // Handle errors globally (optional)
-    // Example: if the token is invalid or expired, redirect to login
-    if (error.response?.status === 401) {
-      // Redirect to login page or handle token expiration
-      console.log("Token expired, redirecting to login...");
-    }
-    return Promise.reject(error);
-  }
+  (response) => response, // Simply return the response
+  (error) => Promise.reject(error) // Handle response errors
 );
 
 export default axiosInstance;

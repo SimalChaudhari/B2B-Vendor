@@ -13,10 +13,7 @@ import { useRouter } from 'src/routes/hooks';
 import { RouterLink } from 'src/routes/components';
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useSetState } from 'src/hooks/use-set-state';
-import { varAlpha } from 'src/theme/styles';
 import { DashboardContent } from 'src/layouts/dashboard';
-import { Label } from 'src/components/label';
-import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 import { ConfirmDialog } from 'src/components/custom-dialog';
@@ -32,29 +29,26 @@ import {
   TableSelectedAction,
   TablePaginationCustom,
 } from 'src/components/table';
-
-import { UserTableRow } from '../user-table-row';
-import { UserTableToolbar } from '../user-table-toolbar';
-import { UserTableFiltersResult } from '../user-table-filters-result';
-import { useDispatch, useSelector } from 'react-redux';
-import { userList } from 'src/store/action/userActions';
+import { useSelector } from 'react-redux';
 import { Typography } from '@mui/material';
-import { UserCreateForm } from './user-create-form';
-import { getStatusOptions, TABLE_HEAD } from '../constants';
-import { applyFilter } from '../utils';
-import { useFetchUserData } from '../components';
+import { applyFilter } from '../../utils';
+import { useFetchAddressData } from '../../components';
+import { AddressCreateForm } from './user-create-address-form';
+import { TABLE_ADDRESS_HEAD } from '../../constants';
+import { AddressTableToolbar } from './address-table-toolbar';
+import { AddressTableFiltersResult } from './address-table-filters-result';
+import { AddressTableRow } from './address-table-row';
 
 // ----------------------------------------------------------------------
-export function UserListView() {
+export function AddressListView() {
   const table = useTable();
   const router = useRouter();
   const confirm = useBoolean();
 
-  const { fetchData, fetchDeleteData } = useFetchUserData(); // Destructure fetchData from the custom hook
+  const { fetchData, fetchDeleteData } = useFetchAddressData(); // Destructure fetchData from the custom hook
 
-  const _userList = useSelector((state) => state.user?.user || []);
-  const [tableData, setTableData] = useState(_userList);
-  const STATUS_OPTIONS = getStatusOptions(tableData);
+  const _addressList = useSelector((state) => state.address?.address || []);
+  const [tableData, setTableData] = useState(_addressList);
 
   const [openDialog, setOpenDialog] = useState(false);
   const handleOpenDialog = () => {
@@ -65,15 +59,15 @@ export function UserListView() {
   };
 
   // Update the initial state to include lastName, email, and mobile
-  const filters = useSetState({ firstName: '', lastName: '', email: '', mobile: '', status: 'all' });
+  const filters = useSetState({ street_address: '', city: '', state: '', zip_code: '', country: '' });
   //----------------------------------------------------------------------------------------------------
   useEffect(() => {
     fetchData(); // Call fetchData when the component mounts
   }, []);
 
   useEffect(() => {
-    setTableData(_userList);
-  }, [_userList]);
+    setTableData(_addressList);
+  }, [_addressList]);
   //----------------------------------------------------------------------------------------------------
 
   const dataFiltered = applyFilter({
@@ -83,7 +77,7 @@ export function UserListView() {
   });
 
   const dataInPage = rowInPage(dataFiltered, table.page, table.rowsPerPage);
-  const canReset = !!filters.state.searchTerm || filters.state.status !== 'all';
+  const canReset = !!filters.state.searchTerm 
   const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
 
   //----------------------------------------------------------------------------------------------------
@@ -110,13 +104,7 @@ export function UserListView() {
     [] // Add any dependencies here if necessary
   );
 
-  const handleFilterStatus = useCallback(
-    (event, newValue) => {
-      table.onResetPage();
-      filters.setState({ status: newValue });
-    },
-    [filters, table]
-  );
+
   //----------------------------------------------------------------------------------------------------
 
   return (
@@ -126,7 +114,7 @@ export function UserListView() {
           heading="List"
           links={[
             { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'Users', href: paths?.dashboard?.user?.root },
+            { name: 'Addresses', href: paths?.dashboard?.address?.root },
             { name: 'List' },
           ]}
           action={
@@ -137,47 +125,20 @@ export function UserListView() {
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
-              New user
+              New Address
             </Button>
           }
           sx={{ mb: { xs: 3, md: 5 } }}
         />
-        <UserCreateForm open={openDialog} onClose={handleCloseDialog} />
+        <AddressCreateForm open={openDialog} onClose={handleCloseDialog} />
 
         
 
         <Card>
-          <Tabs value={filters.state.status} onChange={handleFilterStatus}
-            sx={{
-              px: 2.5,
-              boxShadow: (theme) =>
-                `inset 0 -2px 0 0 ${varAlpha(theme.vars.palette.grey['500Channel'], 0.08)}`,
-            }}
-          >
-            {STATUS_OPTIONS.map((tab) => (
-              <Tab
-                key={tab.value}
-                iconPosition="end"
-                value={tab.value}
-                label={tab.label}
-                icon={
-                  <Label
-                    variant={tab.value === filters.state.status ? 'filled' : 'soft'}
-                    color={
-                      (tab.value === 'Active' && 'success') ||
-                      (tab.value === 'Suspended' && 'error') ||
-                      (tab.value === 'all' && 'default') || 'default'
-                    }
-                  >
-                    {tab.count} {/* Display the count for each status */}
-                  </Label>
-                }
-              />
-            ))}
-          </Tabs>
-          <UserTableToolbar filters={filters} onResetPage={table.onResetPage} />
+     
+          <AddressTableToolbar filters={filters} onResetPage={table.onResetPage} />
           {canReset && (
-            <UserTableFiltersResult
+            <AddressTableFiltersResult
               filters={filters}
               totalResults={dataFiltered.length}
               onResetPage={table.onResetPage}
@@ -210,7 +171,7 @@ export function UserListView() {
                 <TableHeadCustom
                   order={table.order}
                   orderBy={table.orderBy}
-                  headLabel={TABLE_HEAD}
+                  headLabel={TABLE_ADDRESS_HEAD}
                   rowCount={dataFiltered.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
@@ -227,7 +188,7 @@ export function UserListView() {
                     table.page * table.rowsPerPage,
                     table.page * table.rowsPerPage + table.rowsPerPage
                   ).map((row) => (
-                    <UserTableRow
+                    <AddressTableRow
                       key={row.id}
                       row={row}
                       selected={table.selected.includes(row.id)}
@@ -265,10 +226,10 @@ export function UserListView() {
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Delete users?"
+        title="Delete addresses?"
         content={
           <Box>
-            <Typography gutterBottom>Are you sure you want to delete the selected users?</Typography>
+            <Typography gutterBottom>Are you sure you want to delete the selected addresses?</Typography>
             <Typography variant="caption" sx={{ color: 'text.secondary' }}>
               This action cannot be undone.
             </Typography>

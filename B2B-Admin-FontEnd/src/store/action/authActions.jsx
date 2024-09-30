@@ -24,7 +24,7 @@ export const validateOtp = (contact, otp) => async (dispatch) => {
     try {
         const response = await axiosInstance.post('auth/login', { contact, otp });
         const token = response?.data?.access_token;
-        const encryptedToken = CryptoJS.AES.encrypt(token, secretKey).toString();
+        // const encryptedToken = CryptoJS.AES.encrypt(token, secretKey).toString();
         // const encryptedTokenName = CryptoJS.AES.encrypt('token', secretKey).toString();
         // const decryptedBytes = CryptoJS.AES.decrypt(encryptedTokenName, secretKey);
         // const decryptedToken = decryptedBytes.toString(CryptoJS.enc.Utf8);
@@ -47,6 +47,22 @@ export const validateOtp = (contact, otp) => async (dispatch) => {
     }
     return false;
 };
+
+export const logout = () => async (dispatch) => {
+    try {
+        // Clear local storage
+        localStorage.removeItem("userData");
+        localStorage.removeItem("token");
+        dispatch({ type: "LOGOUT" });
+        toast.success("Logged out successfully!");
+        return true;
+    } catch (error) {
+        console.error("Error logging out:", error);
+        return false;
+    }
+};
+
+
 
 
 

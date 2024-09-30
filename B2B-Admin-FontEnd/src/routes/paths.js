@@ -22,11 +22,11 @@ export const paths = {
     details: (id) => `/users/${id}`,
     edit: (id) => `/users/${id}/edit`,
   },
-  companies: {
-    root: `/companies`,
-    list: `/companies/list`,
-    details: (id) => `/companies/${id}`,
-    edit: (id) => `/companies/${id}/edit`,
+  addresses: {
+    root: `/addresses`,
+    list: `/addresses/list`,
+    details: (id) => `/addresses/${id}`,
+    edit: (id) => `/addresses/${id}/edit`,
   },
   courses: {
     root: `/courses`,

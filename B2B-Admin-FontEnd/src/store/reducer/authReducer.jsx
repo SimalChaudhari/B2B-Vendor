@@ -15,6 +15,13 @@ const userReducer = (state = initialState, { type, payload } = {}) => {
         authUser: payload.user, // Ensure consistency with user structure
       };
 
+    case "LOGOUT":
+      return {
+        isAuthenticated: false,
+        user: null,
+      };
+
+
     default:
       return state;
   }
