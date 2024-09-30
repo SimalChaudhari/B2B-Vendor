@@ -82,14 +82,17 @@ export class AuthService {
   // Send OTP for verification
   async verifyOtp(authDto: AuthDto): Promise<{ message: string }> {
     try {
-      if (!authDto.email && !authDto.mobile) {
+
+      const contact = authDto.contact;
+      if (!contact) {
         throw new BadRequestException('Either email or mobile number must be provided.');
       }
 
-      const isEmail = validateEmail(authDto.email);
+
+      const isEmail = validateEmail(contact);
       const whereCondition = isEmail
-        ? { email: authDto.email, isDeleted: false }
-        : { mobile: authDto.mobile, isDeleted: false };
+        ? { email: contact, isDeleted: false }
+        : { mobile: contact, isDeleted: false };
 
       // Find the user based on the constructed where condition
       const user = await this.userRepository.findOne({ where: whereCondition });
@@ -119,17 +122,18 @@ export class AuthService {
   };
 
   // Login user with OTP
-  async login(authDto: AuthDto): Promise<{ access_token: string; user: Partial<User> }> {
+  async login(authDto: AuthDto): Promise<{ message: string, access_token: string; user: Partial<User> }> {
 
     try {
-      if (!authDto.email && !authDto.mobile) {
+
+      const contact = authDto.contact;
+      if (!contact) {
         throw new BadRequestException('Either email or mobile number must be provided.');
       }
-
-      const isEmail = validateEmail(authDto.email);
+      const isEmail = validateEmail(contact);
       const whereCondition = isEmail
-        ? { email: authDto.email, isDeleted: false }
-        : { mobile: authDto.mobile, isDeleted: false };
+        ? { email: contact, isDeleted: false }
+        : { mobile: contact, isDeleted: false };
 
       // Find the user based on the constructed where condition
       const user = await this.userRepository.findOne({ where: whereCondition });
@@ -159,8 +163,13 @@ export class AuthService {
       user.otpExpires = null;
       await this.userRepository.save(user); // Save the updated user
       const payload = { email: user.email, id: user.id, role: user.role }; // You can add other properties as needed
+
+      // Exclude otp and otpExpires from the returned user
+      const { otp, otpExpires, isDeleted, ...userWithoutOtp } = user;
+
       return {
-        user: user,
+        message: 'User Logged in successfully',
+        user: userWithoutOtp,
         access_token: this.JwtService.sign(payload)
       }
     } catch (error: any) {

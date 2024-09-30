@@ -17,6 +17,7 @@ export class AuthDto {
   @IsMobilePhone()
   @IsNotEmpty()
   mobile!: string;
+  
 
   @IsString()
   @IsOptional()
@@ -25,4 +26,8 @@ export class AuthDto {
   @IsString()
   @IsOptional()
   otp?: string; // OTP for verification
+
+  @IsString()
+  @IsOptional()
+  contact?: string; // New field for either email or mobile
 }
