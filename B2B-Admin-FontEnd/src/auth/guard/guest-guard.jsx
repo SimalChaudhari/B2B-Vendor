@@ -7,15 +7,15 @@ import { CONFIG } from 'src/config-global';
 import { SplashScreen } from 'src/components/loading-screen';
 
 import { useAuthContext } from '../hooks';
+import { useSelector } from 'react-redux';
 
 // ----------------------------------------------------------------------
 
 export function GuestGuard({ children }) {
   const router = useRouter();
+  const { loading, authenticated } = useSelector((state) => state.auth);
 
   const searchParams = useSearchParams();
-
-  const { loading, authenticated } = useAuthContext();
 
   const [isChecking, setIsChecking] = useState(true);
 

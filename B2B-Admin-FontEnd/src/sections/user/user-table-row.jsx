@@ -61,21 +61,6 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
 
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.mobile}</TableCell>
 
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>
-          <Stack spacing={2} direction="row" alignItems="center">
-            <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
-              <Link color="inherit" onClick={onEditRow} sx={{ cursor: 'pointer' }}>
-                {row.addresses.map((address, index) => (
-                  <span key={index}>
-                    {address.address}, {address.city}, {address.state} {address.pinCode}
-                    {index < row.addresses.length - 1 && ', '} {/* Add a comma between addresses */}
-                  </span>
-                ))}
-              </Link>
-
-            </Stack>
-          </Stack>
-        </TableCell>
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.role}</TableCell>
         <TableCell>
           <Label

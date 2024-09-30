@@ -2,23 +2,17 @@ import { useState, useEffect, useCallback } from 'react';
 
 import { paths } from 'src/routes/paths';
 import { useRouter, usePathname, useSearchParams } from 'src/routes/hooks';
-
 import { CONFIG } from 'src/config-global';
-
 import { SplashScreen } from 'src/components/loading-screen';
-
-import { useAuthContext } from '../hooks';
-
-// ----------------------------------------------------------------------
+import { useSelector } from 'react-redux';
 
 export function AuthGuard({ children }) {
   const router = useRouter();
-
+  const { loading, authenticated } = useSelector((state) => state.auth);
+  
   const pathname = usePathname();
 
   const searchParams = useSearchParams();
-
-  const { authenticated, loading } = useAuthContext();
 
   const [isChecking, setIsChecking] = useState(true);
 

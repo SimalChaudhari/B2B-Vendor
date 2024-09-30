@@ -1,11 +1,12 @@
 import { toast } from "sonner";
 import axiosInstance from "src/configs/axiosInstance";
+import { USER_LIST } from "../constants/actionTypes";
 
 export const userList = () => async (dispatch) => {
     try {
         const response = await axiosInstance.get('/users');
         dispatch({
-            type: 'USER_LIST',
+            type: USER_LIST,
             payload: response.data?.data, // Assuming response contains the customers data
         });
         return true;

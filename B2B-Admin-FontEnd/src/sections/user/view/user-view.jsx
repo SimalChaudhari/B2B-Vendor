@@ -91,39 +91,7 @@ export function UserViewDialog({ open, onClose, userView }) {
                                 Street/Address:
                             </Typography>
                             <Typography variant="body1">
-                                {userView?.addresses[0]?.address || 'Not provided'}
-                            </Typography>
-                        </Stack>
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <Stack spacing={1}>
-                            <Typography variant="body2" color="text.secondary">
-                                State/Province:
-                            </Typography>
-                            <Typography variant="body1">
-                                {userView?.addresses[0]?.state || 'Not provided'}
-                            </Typography>
-                        </Stack>
-                    </Grid>
-
-                    <Grid item xs={12} sm={6}>
-                        <Stack spacing={1}>
-                            <Typography variant="body2" color="text.secondary">
-                                City:
-                            </Typography>
-                            <Typography variant="body1">
-                                {userView?.addresses[0]?.city || 'Not provided'}
-                            </Typography>
-                        </Stack>
-                    </Grid>
-
-                    <Grid item xs={12} sm={6}>
-                        <Stack spacing={1}>
-                            <Typography variant="body2" color="text.secondary">
-                                Zip Code:
-                            </Typography>
-                            <Typography variant="body1">
-                                {userView?.addresses[0]?.zipCode || 'Not provided'}
+                                {/* userView?.addresses[0]?.address || 'Not provided'} */}
                             </Typography>
                         </Stack>
                     </Grid>

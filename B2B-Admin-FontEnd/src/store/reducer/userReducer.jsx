@@ -1,3 +1,4 @@
+import { USER_LIST } from "../constants/actionTypes";
 
 const initialState = {
     user: [],
@@ -5,7 +6,7 @@ const initialState = {
 };
 const userReducer = (state = initialState, { type, payload } = {}) => {
     switch (type) {
-        case "USER_LIST":
+        case USER_LIST:
             return {
                 ...state,
                 user: payload,

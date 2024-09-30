@@ -1,18 +1,23 @@
+import { AUTH_DATA } from "../constants/actionTypes";
 
 const initialState = {
-  authUser: []
+  authenticated: !!localStorage.getItem("token"), // Check token presence
+  authUser: JSON.parse(localStorage.getItem("userData"))?.user || null, // Use user data consistently
+  loading: false
 };
-const userReducer = (state = initialState, { type, payload } = {}) => {
 
+const userReducer = (state = initialState, { type, payload } = {}) => {
   switch (type) {
-    case "AUTH_DATA":
+    case AUTH_DATA:
       return {
         ...state,
-        authUser: payload,
+        authenticated: true,
+        authUser: payload.user, // Ensure consistency with user structure
       };
 
     default:
       return state;
   }
 };
+
 export default userReducer;
