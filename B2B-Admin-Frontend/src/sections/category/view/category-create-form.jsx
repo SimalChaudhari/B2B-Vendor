@@ -1,5 +1,5 @@
 import { z as zod } from 'zod';
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { isValidPhoneNumber, parsePhoneNumber } from 'react-phone-number-input/input';
@@ -13,41 +13,37 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import { MenuItem, Typography } from '@mui/material';
-import { USER_STATUS_OPTIONS } from 'src/_mock'; // Ensure this is your mock data for user statuses
+import { CATEGORY_STATUS_OPTIONS } from 'src/_mock'; // Ensure this is your mock data for user statuses
 import { Form, Field, schemaHelper } from 'src/components/hook-form'; // Custom components for form handling
-
 import { useDispatch } from 'react-redux';
-import { useFetchAddressData } from '../../components';
-import { createAddress } from 'src/store/action/addressActions';
+import { useFetchCategoryData } from '../components';
+import { createCategory } from 'src/store/action/categoryActions';
 
 // ----------------------------------------------------------------------
 
-// Validation schema for user creation using Zod
-export const AddressCreateSchema = zod.object({
-    street_address: zod.string().min(1, { message: 'address Name is required!' }),
-    city: zod.string().min(1, { message: 'City Name is required!' }),
-    state: zod.string().min(1, { message: 'State Name is required!' }),
-    zip_code: zod.string().min(1, { message: 'Zip code Name is required!' }),
-    country: zod.string().min(1, { message: 'Country is required!' })
+// Validation schema for  Category creation using Zod
+export const CategoryCreateSchema = zod.object({
+    name: zod.string().min(1, { message:  'Name is required!' }),
+    description: zod.string().min(1, { message: 'Description is required!' }),
+    status: zod.string().min(1, { message: 'Status is required!' })
 });
 
 // ----------------------------------------------------------------------
-// User Create Form Component
-export function AddressCreateForm({ open, onClose }) {
+//  Category Create Form Component
+export function CategoryCreateForm({ open, onClose }) {
     const dispatch = useDispatch();
-    const { fetchData } = useFetchAddressData(); // Destructure fetchData from the custom hook
+    const { fetchData } = useFetchCategoryData(); // Destructure fetchData from the custom hook
 
     // Default form values
     const defaultValues = useMemo(() => ({
-        street_address: '',
-        city: '',
-        state: '',
-        zip_code: '',
-        country: '', // Default to the first status option
+        name: '',
+        description: '',
+        status: CATEGORY_STATUS_OPTIONS[0]?.value, // Default to the first status option
+
     }), []);
 
     const methods = useForm({
-        resolver: zodResolver(AddressCreateSchema),
+        resolver: zodResolver(CategoryCreateSchema),
         defaultValues,
     });
     //----------------------------------------------------------------------------------------------------
@@ -60,9 +56,9 @@ export function AddressCreateForm({ open, onClose }) {
     // Handle form submission
     const onSubmit = async (data) => {
         const formattedData = {
-            ...data
+            ...data  
         };
-        const response = await dispatch(createAddress(formattedData));
+        const response = await dispatch(createCategory(formattedData));
         if (response) {
             reset();
             onClose();
@@ -71,38 +67,32 @@ export function AddressCreateForm({ open, onClose }) {
     };
 
     return (
-
         <Dialog fullWidth maxWidth="md" open={open} onClose={onClose}>
             <Form methods={methods} onSubmit={handleSubmit(onSubmit)}>
-                <DialogTitle>Create New Address</DialogTitle>
+                <DialogTitle>Create New Category</DialogTitle>
 
                 <DialogContent>
                     <Alert variant="outlined" severity="info" sx={{ mb: 3 }}>
-                        Please fill in the details below to create a new Address.
+                        Please fill in the details below to create a new Category.
                     </Alert>
-
                     <Box display="grid" gridTemplateColumns={{ xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' }} gap={3}>
-                        <Field.Text name="street_address" label="Address" />
-                        <Field.Text name="city" label="City" />
-                        <Field.Text name="state" label="State" />
-                        <Field.Text name="zip_code" label="ZipCode" />
-
-                        <Field.CountrySelect
-                            fullWidth
-                            name="country"
-                            label="Country"
-                            placeholder="Choose a country"
-                        />
-
+                        <Field.Text name="name" label="name" />
+                        <Field.Text name="description" label="description" />
+                          <Field.Select name="status" label="Status">
+                            {CATEGORY_STATUS_OPTIONS.map((status) => (
+                                <MenuItem key={status.value} value={status.value}>
+                                    {status.label}
+                                </MenuItem>
+                            ))}
+                        </Field.Select>
                     </Box>
                 </DialogContent>
 
                 <DialogActions>
                     <Button variant="outlined" onClick={onClose}>Cancel</Button>
-                    <LoadingButton type="submit" variant="contained" loading={isSubmitting}>Create Address</LoadingButton>
+                    <LoadingButton type="submit" variant="contained" loading={isSubmitting}>Create Category</LoadingButton>
                 </DialogActions>
             </Form>
         </Dialog>
-
     );
 }

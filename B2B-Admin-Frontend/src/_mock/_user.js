@@ -7,6 +7,11 @@ export const USER_STATUS_OPTIONS = [
   { value: 'Suspended', label: 'Suspended' }
 ];
 
+export const CATEGORY_STATUS_OPTIONS = [
+  { value: 'Active', label: 'Active' },
+  { value: 'InActive', label: 'InActive' }
+];
+
 export const _userAbout = {
   id: _mock.id(1),
   role: _mock.role(1),

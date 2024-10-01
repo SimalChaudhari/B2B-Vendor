@@ -31,13 +31,14 @@ import {
 } from 'src/components/table';
 import { useSelector } from 'react-redux';
 import { Typography } from '@mui/material';
-import { applyFilterAddress } from '../../utils';
-import { useFetchAddressData } from '../../components';
+// import { applyFilterAddress } from '../../../utils';
+import { useFetchAddressData } from '../components';
 import { AddressCreateForm } from './user-create-address-form';
-import { TABLE_ADDRESS_HEAD } from '../../constants';
+import { TABLE_ADDRESS_HEAD } from '../constants';
 import { AddressTableToolbar } from './address-table-toolbar';
 import { AddressTableFiltersResult } from './address-table-filters-result';
 import { AddressTableRow } from './address-table-row';
+import { applyFilterAddress } from '../utils';
 
 // ----------------------------------------------------------------------
 export function AddressListView() {

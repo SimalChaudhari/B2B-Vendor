@@ -15,3 +15,10 @@ export const TABLE_HEAD = [
     { id: 'action', label: 'Actions' },
   ];
   
+  export const TABLE_CATEGORY_HEAD = [
+    { id: 'name', label: 'Name' },
+    { id: 'description', label: 'Description' },
+    { id: 'status', label: 'Status' },
+    { id: 'action', label: 'Actions' },
+  ];
+  
