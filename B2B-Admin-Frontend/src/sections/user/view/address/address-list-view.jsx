@@ -31,7 +31,7 @@ import {
 } from 'src/components/table';
 import { useSelector } from 'react-redux';
 import { Typography } from '@mui/material';
-import { applyFilter } from '../../utils';
+import { applyFilterAddress } from '../../utils';
 import { useFetchAddressData } from '../../components';
 import { AddressCreateForm } from './user-create-address-form';
 import { TABLE_ADDRESS_HEAD } from '../../constants';
@@ -70,7 +70,7 @@ export function AddressListView() {
   }, [_addressList]);
   //----------------------------------------------------------------------------------------------------
 
-  const dataFiltered = applyFilter({
+  const dataFiltered = applyFilterAddress({
     inputData: tableData,
     comparator: getComparator(table.order, table.orderBy),
     filters: filters.state,

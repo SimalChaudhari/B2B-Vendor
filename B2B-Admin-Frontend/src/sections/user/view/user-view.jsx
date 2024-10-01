@@ -11,14 +11,18 @@ import {
     Grid,
     Stack,
 } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import PhoneIcon from '@mui/icons-material/Phone';
+import EmailIcon from '@mui/icons-material/Email';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 // View Page Dialog for displaying user details
 export function UserViewDialog({ open, onClose, userView }) {
     if (!userView) return null;
-    
 
     return (
-        <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+        <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
             <DialogTitle>
                 <Typography variant="h6" component="div" sx={{ fontWeight: 'bold' }}>
                     User Details
@@ -28,7 +32,7 @@ export function UserViewDialog({ open, onClose, userView }) {
                     onClick={onClose}
                     sx={{ position: 'absolute', right: 8, top: 8 }}
                 >
-                    X
+                    <CloseIcon />
                 </IconButton>
             </DialogTitle>
 
@@ -41,7 +45,7 @@ export function UserViewDialog({ open, onClose, userView }) {
                         sx={{ width: { xs: 60, sm: 80 }, height: { xs: 60, sm: 80 }, mr: { xs: 2, sm: 3 }, mb: { xs: 2, sm: 0 } }}
                     />
                     <Box>
-                        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                        <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
                             {`${userView.firstName} ${userView.lastName}`}
                         </Typography>
                         <Typography variant="body1" color="text.secondary">
@@ -60,22 +64,36 @@ export function UserViewDialog({ open, onClose, userView }) {
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
                         <Stack spacing={1}>
-                            <Typography variant="body2" color="text.secondary">
+                            <Typography variant="body2" color="text.secondary" sx={{ display: 'flex', alignItems: 'center' }}>
+                                <PhoneIcon sx={{ mr: 1 }} />
                                 Mobile Number:
                             </Typography>
                             <Typography variant="body1">{userView.mobile || 'Not provided'}</Typography>
                         </Stack>
                     </Grid>
 
-
+                    <Grid item xs={12} sm={6}>
+                        <Stack spacing={1}>
+                            <Typography variant="body2" color="text.secondary" sx={{ display: 'flex', alignItems: 'center' }}>
+                                <EmailIcon sx={{ mr: 1 }} />
+                                Email:
+                            </Typography>
+                            <Typography variant="body1">{userView.email || 'Not provided'}</Typography>
+                        </Stack>
+                    </Grid>
                 </Grid>
 
-                <Divider sx={{ my: 3 }} /> {/* Divider after Address Information */}
+                <Divider sx={{ my: 3 }} />
 
                 {/* Status */}
                 <Box sx={{ mb: 3 }}>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body2" color="text.secondary" sx={{ display: 'flex', alignItems: 'center' }}>
                         Status:
+                        {userView.status === 'Active' ? (
+                            <CheckCircleIcon sx={{ color: 'green', ml: 1 }} />
+                        ) : (
+                            <CancelIcon sx={{ color: 'red', ml: 1 }} />
+                        )}
                     </Typography>
                     <Typography variant="body1">{userView.status}</Typography>
                 </Box>

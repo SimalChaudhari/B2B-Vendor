@@ -28,6 +28,25 @@ export const paths = {
     details: (id) => `/addresses/${id}`,
     edit: (id) => `/addresses/${id}/edit`,
   },
+  categories: {
+    root: `/categories`,
+    list: `/categories/list`,
+    details: (id) => `/categories/${id}`,
+    edit: (id) => `/categories/${id}/edit`,
+  },
+
+  subCategories: {
+    root: `/subCategories`,
+    list: `/subCategories/list`,
+    details: (id) => `/subCategories/${id}`,
+    edit: (id) => `/subCategories/${id}/edit`,
+  },
+  products: {
+    root: `/products`,
+    list: `/products/list`,
+    details: (id) => `/products/${id}`,
+    edit: (id) => `/products/${id}/edit`,
+  },
   courses: {
     root: `/courses`,
     list: `/courses/list`,
@@ -48,7 +67,7 @@ export const paths = {
       signUp: `${ROOTS.AUTH}/sign-up`,
     },
   },
-  
+
   // DASHBOARD
   dashboard: {
     root: ROOTS.DASHBOARD,

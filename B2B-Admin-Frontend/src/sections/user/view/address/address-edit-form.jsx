@@ -106,9 +106,13 @@ export function AddressEditForm({ open, onClose, addressData }) {
                         <Field.Text name="street_address" label="Address" />
                         <Field.Text name="city" label="City" />
                         <Field.Text name="state" label="State" />
-                        <Field.Text name="country" label="Country" />
                         <Field.Text name="zip_code" label="ZipCode" />
-
+                        <Field.CountrySelect
+                            fullWidth
+                            name="country"
+                            label="Country"
+                            placeholder="Choose a country"
+                        />
 
                     </Box>
                 </DialogContent>

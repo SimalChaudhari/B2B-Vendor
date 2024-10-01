@@ -10,6 +10,10 @@ const IndexPage = lazy(() => import('src/pages/dashboard'));
 const CompaniesPage = lazy(() => import('src/pages/companies'));
 const UsersPage = lazy(() => import('src/pages/users'));
 const AddressesPage = lazy(() => import('src/pages/users/address/index'));
+const CategoryPage = lazy(() => import('src/pages/categories'));
+const SubCategoryPage = lazy(() => import('src/pages/subCategories'));
+const ProductPage = lazy(() => import('src/pages/products'));
+
 const CoursesPage = lazy(() => import('src/pages/courses'));
 const PlansPage = lazy(() => import('src/pages/plans'));
 
@@ -48,6 +52,29 @@ export const dashboardRoutes = [
       { element: <AddressesPage />, index: true },
     ],
   },
+  {
+    path: 'categories',
+    element: CONFIG.auth.skip ? <>{layoutContent}</> : <AuthGuard>{layoutContent}</AuthGuard>,
+    children: [
+      { element: <CategoryPage />, index: true },
+    ],
+  },
+  {
+    path: 'subCategories',
+    element: CONFIG.auth.skip ? <>{layoutContent}</> : <AuthGuard>{layoutContent}</AuthGuard>,
+    children: [
+      { element: <SubCategoryPage />, index: true },
+    ],
+  },
+  {
+    path: 'products',
+    element: CONFIG.auth.skip ? <>{layoutContent}</> : <AuthGuard>{layoutContent}</AuthGuard>,
+    children: [
+      { element: <ProductPage />, index: true },
+    ],
+  },
+
+
   {
     path: 'courses',
     element: CONFIG.auth.skip ? <>{layoutContent}</> : <AuthGuard>{layoutContent}</AuthGuard>,

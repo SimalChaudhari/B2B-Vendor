@@ -44,6 +44,12 @@ import { getStatusOptions, TABLE_HEAD } from '../constants';
 import { applyFilter } from '../utils';
 import { useFetchUserData } from '../components';
 
+export const _roles = [
+  `Admin`,
+  `Customer`,
+  `Vendor`
+];
+
 // ----------------------------------------------------------------------
 export function UserListView() {
   const table = useTable();
@@ -54,18 +60,15 @@ export function UserListView() {
 
   const _userList = useSelector((state) => state.user?.user || []);
   const [tableData, setTableData] = useState(_userList);
+
   const STATUS_OPTIONS = getStatusOptions(tableData);
 
   const [openDialog, setOpenDialog] = useState(false);
-  const handleOpenDialog = () => {
-    setOpenDialog(true);
-  };
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
-  };
+  const handleOpenDialog = () => { setOpenDialog(true) };
+  const handleCloseDialog = () => { setOpenDialog(false) };
 
   // Update the initial state to include lastName, email, and mobile
-  const filters = useSetState({ firstName: '', lastName: '', email: '', mobile: '', status: 'all' });
+  const filters = useSetState({ firstName: '', lastName: '', role: [], email: '', mobile: '', status: 'all' });
   //----------------------------------------------------------------------------------------------------
   useEffect(() => {
     fetchData(); // Call fetchData when the component mounts
@@ -83,32 +86,18 @@ export function UserListView() {
   });
 
   const dataInPage = rowInPage(dataFiltered, table.page, table.rowsPerPage);
-  const canReset = !!filters.state.searchTerm || filters.state.status !== 'all';
+  const canReset = !!filters.state.searchTerm || filters.state.role.length > 0 || filters.state.status !== 'all';
   const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
 
   //----------------------------------------------------------------------------------------------------
 
-  const handleDeleteRows = useCallback((id) => {
-    fetchDeleteData(id)
-  },
-    []
-  );
+  const handleDeleteRows = useCallback((id) => { fetchDeleteData(id) }, []);
 
-  const handleDeleteRow = useCallback((id) => {
-    fetchDeleteData(id)
-  },
-    []
-  );
+  const handleDeleteRow = useCallback((id) => { fetchDeleteData(id) }, []);
 
-  const handleEditRow = useCallback(
-    (id) => id, // Directly return the id
-    [] // Add any dependencies here if necessary
-  );
+  const handleEditRow = useCallback((id) => id, []);
 
-  const handleViewRow = useCallback(
-    (id) => id, // Directly return the id
-    [] // Add any dependencies here if necessary
-  );
+  const handleViewRow = useCallback((id) => id,[] );
 
   const handleFilterStatus = useCallback(
     (event, newValue) => {
@@ -143,9 +132,6 @@ export function UserListView() {
           sx={{ mb: { xs: 3, md: 5 } }}
         />
         <UserCreateForm open={openDialog} onClose={handleCloseDialog} />
-
-        
-
         <Card>
           <Tabs value={filters.state.status} onChange={handleFilterStatus}
             sx={{
@@ -175,7 +161,7 @@ export function UserListView() {
               />
             ))}
           </Tabs>
-          <UserTableToolbar filters={filters} onResetPage={table.onResetPage} />
+          <UserTableToolbar filters={filters} onResetPage={table.onResetPage} options={{ roles: _roles }} />
           {canReset && (
             <UserTableFiltersResult
               filters={filters}

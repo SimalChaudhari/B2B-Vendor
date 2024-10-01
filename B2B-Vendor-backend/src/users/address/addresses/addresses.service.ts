@@ -13,9 +13,6 @@ export class AddressesService {
 
     async getAll(): Promise<Address[]> {
         const address = await this.addressesRepository.find();
-        if (address.length === 0) {
-            throw new NotFoundException('No data available');
-        }
         return address
     }
 

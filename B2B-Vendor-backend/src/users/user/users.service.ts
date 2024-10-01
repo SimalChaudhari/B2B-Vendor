@@ -17,9 +17,6 @@ export class UserService {
 
     async getAll(): Promise<User[]> {
         const users = await this.userRepository.find({ where: { isDeleted: false } });
-        if (users.length === 0) {
-            throw new NotFoundException('No data available');
-        }
         return users;
     }
 
