@@ -6,18 +6,24 @@ import { HelmetProvider } from 'react-helmet-async';
 import App from './app';
 import { CONFIG } from './config-global';
 
+
+import { Provider } from 'react-redux'
+import store from './Store/store'
+
 // ----------------------------------------------------------------------
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
   <StrictMode>
-    <HelmetProvider>
-      <BrowserRouter basename={CONFIG.site.basePath}>
-        <Suspense>
-          <App />
-        </Suspense>
-      </BrowserRouter>
-    </HelmetProvider>
+    <Provider store={store}> {/* Wrap your app with Redux Provider */}
+      <HelmetProvider>
+        <BrowserRouter basename={CONFIG.site.basePath}>
+          <Suspense>
+            <App />
+          </Suspense>
+        </BrowserRouter>
+      </HelmetProvider>
+    </Provider>
   </StrictMode>
 );

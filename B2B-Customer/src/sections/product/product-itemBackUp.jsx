@@ -10,27 +10,20 @@ import { RouterLink } from 'src/routes/components';
 
 import { fCurrency } from 'src/utils/format-number';
 
-// import { Label } from 'src/components/label';
+import { Label } from 'src/components/label';
 import { Image } from 'src/components/image';
-// import { Iconify } from 'src/components/iconify';
-// import { ColorPreview } from 'src/components/color-utils';
+import { Iconify } from 'src/components/iconify';
+import { ColorPreview } from 'src/components/color-utils';
 
 import { useCheckoutContext } from '../checkout/context';
 
 // ----------------------------------------------------------------------
 
 export function ProductItem({ product }) {
-  // console.log(product, " dddd");
   const checkout = useCheckoutContext();
-  // Set the available status based on your logic
-  
 
-  // const { id, name, coverUrl, price, colors, available, sizes, priceSale, newLabel, saleLabel } =
-  //   product;
-    const { id, name, description, price, imageUrl, status } =
-      product;
-      
-      const available = status === 2; // Set as true if status is 'active', false otherwise
+  const { id, name, coverUrl, price, colors, available, sizes, priceSale, newLabel, saleLabel } =
+    product;
 
   const linkTo = paths.product.details(id);
 
@@ -38,10 +31,11 @@ export function ProductItem({ product }) {
     const newProduct = {
       id,
       name,
+      coverUrl,
+      available,
       price,
-      description,
-      imageUrl,
-      status,
+      colors: [colors[0]],
+      size: sizes[0],
       quantity: 1,
     };
     try {
@@ -51,11 +45,33 @@ export function ProductItem({ product }) {
     }
   };
 
-  
-  
+  const renderLabels = (newLabel.enabled || saleLabel.enabled) && (
+    <Stack
+      direction="row"
+      alignItems="center"
+      spacing={1}
+      sx={{
+        position: 'absolute',
+        zIndex: 9,
+        top: 16,
+        right: 16,
+      }}
+    >
+      {newLabel.enabled && (
+        <Label variant="filled" color="info">
+          {newLabel.content}
+        </Label>
+      )}
+      {saleLabel.enabled && (
+        <Label variant="filled" color="error">
+          {saleLabel.content}
+        </Label>
+      )}
+    </Stack>
+  );
 
-    const renderImg = (
-      <Box sx={{ position: 'relative', p: 1 }}>
+  const renderImg = (
+    <Box sx={{ position: 'relative', p: 1 }}>
       {!!available && (
         <Fab
           color="warning"
@@ -68,22 +84,27 @@ export function ProductItem({ product }) {
             zIndex: 9,
             opacity: 0,
             position: 'absolute',
-            
+            transition: (theme) =>
+              theme.transitions.create('all', {
+                easing: theme.transitions.easing.easeInOut,
+                duration: theme.transitions.duration.shorter,
+              }),
           }}
-        />
-
+        >
+          <Iconify icon="solar:cart-plus-bold" width={24} />
+        </Fab>
       )}
 
-      <Tooltip title={!!available && 'Out of stock'} placement="bottom-end">
+      <Tooltip title={!available && 'Out of stock'} placement="bottom-end">
         <Image
           alt={name}
-          src={imageUrl}
+          src={coverUrl}
           ratio="1/1"
           sx={{ borderRadius: 1.5, ...(!available && { opacity: 0.48, filter: 'grayscale(1)' }) }}
         />
       </Tooltip>
     </Box>
-    );
+  );
 
   const renderContent = (
     <Stack spacing={2.5} sx={{ p: 3, pt: 2 }}>
@@ -92,9 +113,14 @@ export function ProductItem({ product }) {
       </Link>
 
       <Stack direction="row" alignItems="center" justifyContent="space-between">
+        <ColorPreview colors={colors} />
 
         <Stack direction="row" spacing={0.5} sx={{ typography: 'subtitle1' }}>
-          
+          {priceSale && (
+            <Box component="span" sx={{ color: 'text.disabled', textDecoration: 'line-through' }}>
+              {fCurrency(priceSale)}
+            </Box>
+          )}
 
           <Box component="span">{fCurrency(price)}</Box>
         </Stack>
@@ -104,7 +130,7 @@ export function ProductItem({ product }) {
 
   return (
     <Card sx={{ '&:hover .add-cart-btn': { opacity: 1 } }}>
-
+      {renderLabels}
 
       {renderImg}
 

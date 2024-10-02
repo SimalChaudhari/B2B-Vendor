@@ -4,12 +4,37 @@ import Pagination, { paginationClasses } from '@mui/material/Pagination';
 import { ProductItem } from './product-item';
 import { ProductItemSkeleton } from './product-skeleton';
 
+import { useDispatch, useSelector } from 'react-redux';
+import { productListData } from 'src/Store/action/productActions';
+import { useEffect } from 'react';
+import { toast } from 'sonner';
+
 // ----------------------------------------------------------------------
 
 export function ProductList({ products, loading, ...other }) {
+  console.log(products, " products 111");
+  const dispatch = useDispatch();
+  const productReducer = useSelector((state) => state?.products?.product);
+  console.log(productReducer, " productReducer 111");
+
+  // Fetch product data
+  useEffect(() => {
+    const fetchProductData = async () => {
+      try {
+        if (!productReducer?.product || productReducer.product.length === 0) {
+          await dispatch(productListData());
+        }
+      } catch (error) {
+        toast?.error('Failed to fetch products.');
+      }
+    };
+
+    fetchProductData();
+  }, [dispatch]);
+
   const renderLoading = <ProductItemSkeleton />;
 
-  const renderList = products.map((product) => <ProductItem key={product.id} product={product} />);
+  const renderList = productReducer.map((product) => <ProductItem key={product.id} product={product} />);
 
   return (
     <>
