@@ -6,6 +6,7 @@ import authReducer from './reducer/authReducer';
 import addressReducer from './reducer/addressReducer';
 import categoryReducer from './reducer/categoryReducer';
 import subcategoryReducer from './reducer/subcategoryReducer';
+import productReducer from './reducer/productReducer';
 
 // Combine your reducers
 const rootReducer = combineReducers({
@@ -13,7 +14,8 @@ const rootReducer = combineReducers({
   user: userReducer,
   address: addressReducer,
   category: categoryReducer,
-  subcategory : subcategoryReducer
+  subcategory: subcategoryReducer,
+  product: productReducer
 
 });
 

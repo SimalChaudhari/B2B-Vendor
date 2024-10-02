@@ -17,6 +17,11 @@ export const SUB_CATEGORY_STATUS_OPTIONS = [
   { value: 'Inactive', label: 'Inactive' }
 ];
 
+
+export const PRODUCT_STATUS_OPTIONS = [
+  { value: 'Active', label: 'Active' },
+  { value: 'Inactive', label: 'Inactive' }
+];
 export const _userAbout = {
   id: _mock.id(1),
   role: _mock.role(1),

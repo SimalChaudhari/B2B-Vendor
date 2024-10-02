@@ -18,4 +18,10 @@ export const getStatusOptions = (tableData) => [
     { value: 'Inactive', label: 'Inactive', count: tableData.filter((item) => item.status === 'Inactive').length },
   ];
   
+  export const getProductStatusOptions = (tableData) => [
+    { value: 'all', label: 'All', count: tableData.length },
+    { value: 'Active', label: 'Active', count: tableData.filter((item) => item.status === 'Active').length },
+    { value: 'Inactive', label: 'Inactive', count: tableData.filter((item) => item.status === 'Inactive').length },
+  ];
+  
   
