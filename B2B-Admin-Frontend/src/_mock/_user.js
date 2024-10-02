@@ -9,7 +9,12 @@ export const USER_STATUS_OPTIONS = [
 
 export const CATEGORY_STATUS_OPTIONS = [
   { value: 'Active', label: 'Active' },
-  { value: 'InActive', label: 'InActive' }
+  { value: 'Inactive', label: 'Inactive' }
+];
+
+export const SUB_CATEGORY_STATUS_OPTIONS = [
+  { value: 'Active', label: 'Active' },
+  { value: 'Inactive', label: 'Inactive' }
 ];
 
 export const _userAbout = {

@@ -75,7 +75,7 @@ export function AddressCreateForm({ open, onClose }) {
 
         <Dialog fullWidth maxWidth="md" open={open} onClose={onClose}>
             <Form methods={methods} onSubmit={handleSubmit(onSubmit)}>
-                <DialogTitle>Create New Address</DialogTitle>
+                <DialogTitle>Add Address</DialogTitle>
 
                 <DialogContent>
                     <Alert variant="outlined" severity="info" sx={{ mb: 3 }}>
@@ -100,7 +100,7 @@ export function AddressCreateForm({ open, onClose }) {
 
                 <DialogActions>
                     <Button variant="outlined" onClick={onClose}>Cancel</Button>
-                    <LoadingButton type="submit" variant="contained" loading={isSubmitting}>Create Address</LoadingButton>
+                    <LoadingButton type="submit" variant="contained" loading={isSubmitting}>Create</LoadingButton>
                 </DialogActions>
             </Form>
         </Dialog>

@@ -3,5 +3,9 @@ export const USER_LIST = "USER_LIST";
 
 export const ADDRESS_LIST = "ADDRESS_LIST";
 export const CATEGORY_LIST = "CATEGORY_LIST"
+export const SUB_CATEGORY_LIST = "SUB_CATEGORY_LIST"
+
+
+
 
 

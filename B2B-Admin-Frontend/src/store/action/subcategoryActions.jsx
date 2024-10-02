@@ -1,12 +1,12 @@
 import { toast } from "sonner";
 import axiosInstance from "src/configs/axiosInstance";
-import { CATEGORY_LIST } from "../constants/actionTypes";
+import { SUB_CATEGORY_LIST } from "../constants/actionTypes";
 
-export const categoryList = () => async (dispatch) => {
+export const subcategoryList = () => async (dispatch) => {
     try {
-        const response = await axiosInstance.get('/categories');
+        const response = await axiosInstance.get('/subcategories');
         dispatch({
-            type: CATEGORY_LIST,
+            type: SUB_CATEGORY_LIST,
             payload: response.data, // Assuming response contains the customers data
         });
         return true;
@@ -18,9 +18,9 @@ export const categoryList = () => async (dispatch) => {
     return false; // Return false for any errors
 };
 
-export const createCategory = (categoryData) => async (dispatch) => {
+export const createSubCategory = (subcategoryData) => async (dispatch) => {
     try {
-        const response = await axiosInstance.post('/categories/create', categoryData);
+        const response = await axiosInstance.post('/subcategories/create', subcategoryData);
         if (response && response.status >= 200 && response.status < 300) {
             toast.success(response.data.message || 'Category Created successfully!');
             return true;
@@ -34,9 +34,9 @@ export const createCategory = (categoryData) => async (dispatch) => {
     return false; // Return false for any errors
 };
 
-export const editCategory = (categoryId, categoryData) => async (dispatch) => {
+export const editSubCategory = (subcategoryId, subcategoryData) => async (dispatch) => {
     try {
-        const response = await axiosInstance.put(`/categories/update/${categoryId}`, categoryData);
+        const response = await axiosInstance.put(`/subcategories/update/${subcategoryId}`, subcategoryData);
 
         // Check if the response is successful
         if (response && response.status >= 200 && response.status < 300) {
@@ -51,9 +51,9 @@ export const editCategory = (categoryId, categoryData) => async (dispatch) => {
     return false; // Return false for any errors or unsuccessful attempts
 };
 
-export const deleteCategory = (categoryId) => async (dispatch) => {
+export const deleteSubCategory = (subcategoryId) => async (dispatch) => {
     try {
-        const response = await axiosInstance.delete(`/categories/delete/${categoryId}`);
+        const response = await axiosInstance.delete(`/subcategories/delete/${subcategoryId}`);
         // Check if the response is successful
         if (response && response.status >= 200 && response.status < 300) {
             toast.success(response.data.message || 'User deleted successfully!');

@@ -5,13 +5,15 @@ import userReducer from './reducer/userReducer';
 import authReducer from './reducer/authReducer';
 import addressReducer from './reducer/addressReducer';
 import categoryReducer from './reducer/categoryReducer';
+import subcategoryReducer from './reducer/subcategoryReducer';
 
 // Combine your reducers
 const rootReducer = combineReducers({
   auth: authReducer,
   user: userReducer,
   address: addressReducer,
-  category: categoryReducer
+  category: categoryReducer,
+  subcategory : subcategoryReducer
 
 });
 

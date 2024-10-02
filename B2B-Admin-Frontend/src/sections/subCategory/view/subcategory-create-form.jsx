@@ -1,5 +1,5 @@
 import { z as zod } from 'zod';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { isValidPhoneNumber, parsePhoneNumber } from 'react-phone-number-input/input';
@@ -13,45 +13,51 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import { MenuItem, Typography } from '@mui/material';
-import { USER_STATUS_OPTIONS } from 'src/_mock'; // Ensure this is your mock data for user statuses
+import { SUB_CATEGORY_STATUS_OPTIONS } from 'src/_mock'; // Ensure this is your mock data for user statuses
 import { Form, Field, schemaHelper } from 'src/components/hook-form'; // Custom components for form handling
-import { createUser } from 'src/store/action/userActions'; // Import the action to create a user
-import { useDispatch } from 'react-redux';
-import { useFetchUserData } from '../components';
+import { useDispatch, useSelector } from 'react-redux';
+import { useFetchSubCategoryData } from '../components/fetch-sub-category';
+import { createSubCategory } from 'src/store/action/subcategoryActions';
+import { useFetchCategoryData } from 'src/sections/category/components';
+import { categoryList } from 'src/store/action/categoryActions';
 
 // ----------------------------------------------------------------------
 
-// Validation schema for user creation using Zod
-export const UserCreateSchema = zod.object({
-    firstName: zod.string().min(1, { message: 'First Name is required!' }),
-    lastName: zod.string().min(1, { message: 'Last Name is required!' }),
-    email: zod
-        .string()
-        .min(1, { message: 'Email is required!' })
-        .email({ message: 'Email must be a valid email address!' }),
-    mobile: schemaHelper.phoneNumber({ isValidPhoneNumber }),
-    status: zod.string().min(1, { message: 'Status is required!' }),
-    profile: zod.instanceof(File).optional().nullable(), // Optional profile picture
+// Validation schema for  Category creation using Zod
+export const SubCategoryCreateSchema = zod.object({
+    name: zod.string().min(1, { message: 'Name is required!' }),
+    description: zod.string().min(1, { message: 'Description is required!' }),
+    categoryId: zod.string().min(1, { message: 'category is required!' }),
+    status: zod.string().min(1, { message: 'Status is required!' })
 });
 
 // ----------------------------------------------------------------------
-// User Create Form Component
-export function UserCreateForm({ open, onClose }) {
+//  Category Create Form Component
+export function SubCategoryCreateForm({ open, onClose }) {
     const dispatch = useDispatch();
-    const { fetchData } = useFetchUserData(); // Destructure fetchData from the custom hook
+    const { fetchData } = useFetchSubCategoryData(); // Destructure fetchData from the custom hook
+
+    const _categoryList = useSelector((state) => state.category?.category || []);
+  
+    useEffect(() => {
+        const fetchCategoryData = async () => {
+            await dispatch(categoryList());
+        };
+        fetchCategoryData()
+    }, []);
 
     // Default form values
     const defaultValues = useMemo(() => ({
-        firstName: '',
-        lastName: '',
-        email: '',
-        mobile: '',
-        status: USER_STATUS_OPTIONS[0]?.value, // Default to the first status option
-        profile: null, // Initialize profile picture
+        name: '',
+        description: '',
+        status: SUB_CATEGORY_STATUS_OPTIONS[0]?.value, // Default to the first status option
+        categoryId: '',
+
+
     }), []);
 
     const methods = useForm({
-        resolver: zodResolver(UserCreateSchema),
+        resolver: zodResolver(SubCategoryCreateSchema),
         defaultValues,
     });
     //----------------------------------------------------------------------------------------------------
@@ -64,9 +70,9 @@ export function UserCreateForm({ open, onClose }) {
     // Handle form submission
     const onSubmit = async (data) => {
         const formattedData = {
-            ...data  
+            ...data
         };
-        const response = await dispatch(createUser(formattedData));
+        const response = await dispatch(createSubCategory(formattedData));
         if (response) {
             reset();
             onClose();
@@ -77,40 +83,31 @@ export function UserCreateForm({ open, onClose }) {
     return (
         <Dialog fullWidth maxWidth="md" open={open} onClose={onClose}>
             <Form methods={methods} onSubmit={handleSubmit(onSubmit)}>
-                <DialogTitle>Add User</DialogTitle>
+                <DialogTitle>Add Sub-Category</DialogTitle>
 
                 <DialogContent>
                     <Alert variant="outlined" severity="info" sx={{ mb: 3 }}>
-                        Please fill in the details below to create a new user.
+                        Please fill in the details below to create a new Sub-Category.
                     </Alert>
-                    <Box
-                        sx={{
-                            mb: 5,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                        }}
-                    >
-                        <Field.UploadAvatar name="profile" maxSize={3145728} />
-                        <Typography variant="caption" sx={{ mt: 3, mx: 'auto', textAlign: 'center', color: 'text.disabled' }}>
-                            Allowed *.jpeg, *.jpg, *.png, *.gif
-                        </Typography>
-                    </Box>
-
                     <Box display="grid" gridTemplateColumns={{ xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' }} gap={3}>
-                        <Field.Text name="firstName" label="FirstName" />
-                        <Field.Text name="lastName" label="LastName" />
-                        <Field.Text name="email" label="Email" />
-                        <Field.Phone name="mobile" label="Mobile" />
+                        <Field.Text name="name" label="name" />
+                        <Field.Select name="categoryId" label="category">
+                            {_categoryList.map((cat) => (
+                                <MenuItem key={cat.value} value={cat.id}>
+                                    {cat.name}
+                                </MenuItem>
+                            ))}
+                        </Field.Select>
+
                         <Field.Select name="status" label="Status">
-                            {USER_STATUS_OPTIONS.map((status) => (
+                            {SUB_CATEGORY_STATUS_OPTIONS.map((status) => (
                                 <MenuItem key={status.value} value={status.value}>
                                     {status.label}
                                 </MenuItem>
                             ))}
                         </Field.Select>
                     </Box>
+                    <Field.TextArea name="description" helperText="description" sx={{ mt: 3 }} />
                 </DialogContent>
 
                 <DialogActions>

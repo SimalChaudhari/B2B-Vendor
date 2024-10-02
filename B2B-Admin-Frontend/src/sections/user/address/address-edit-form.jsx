@@ -92,12 +92,10 @@ export function AddressEditForm({ open, onClose, addressData }) {
         >
             <Form methods={methods} onSubmit={onSubmit}>
                 <DialogTitle>Edit Address</DialogTitle>
-
                 <DialogContent>
                     <Alert variant="outlined" severity="info" sx={{ mb: 3 }}>
                         Please fill in the details below to edit the Address.
                     </Alert>
-
                     <Box
                         rowGap={3}
                         columnGap={2}
@@ -124,7 +122,7 @@ export function AddressEditForm({ open, onClose, addressData }) {
                     </Button>
 
                     <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                        Update Address
+                        Update
                     </LoadingButton>
                 </DialogActions>
             </Form>

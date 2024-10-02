@@ -43,13 +43,8 @@ import { CategoryTableRow } from './table/category-table-row';
 import { CategoryTableToolbar } from './table/category-table-toolbar';
 import { CategoryTableFiltersResult } from './table/category-table-filters-result';
 import { CategoryCreateForm } from './category-create-form';
-import { TABLE_CATEGORY_HEAD ,getCategoryStatusOptions} from 'src/sections/user/constants';
+import { TABLE_CATEGORY_HEAD ,getCategoryStatusOptions} from 'src/components/constants';
 
-export const _roles = [
-  `Admin`,
-  `Customer`,
-  `Vendor`
-];
 
 // ----------------------------------------------------------------------
 export function CategoryListView() {

@@ -8,7 +8,14 @@ export const getStatusOptions = (tableData) => [
   export const getCategoryStatusOptions = (tableData) => [
     { value: 'all', label: 'All', count: tableData.length },
     { value: 'Active', label: 'Active', count: tableData.filter((item) => item.status === 'Active').length },
-    { value: 'Inactive', label: 'Inactive', count: tableData.filter((item) => item.status === 'Suspended').length },
+    { value: 'Inactive', label: 'Inactive', count: tableData.filter((item) => item.status === 'Inactive').length },
+  ];
+  
+
+  export const getSubCategoryStatusOptions = (tableData) => [
+    { value: 'all', label: 'All', count: tableData.length },
+    { value: 'Active', label: 'Active', count: tableData.filter((item) => item.status === 'Active').length },
+    { value: 'Inactive', label: 'Inactive', count: tableData.filter((item) => item.status === 'Inactive').length },
   ];
   
   

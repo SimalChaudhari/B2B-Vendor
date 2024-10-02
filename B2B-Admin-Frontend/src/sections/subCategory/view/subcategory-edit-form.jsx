@@ -13,41 +13,54 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 
-import { CATEGORY_STATUS_OPTIONS } from 'src/_mock'; // Ensure this is your mock data for user statuses
+import { SUB_CATEGORY_STATUS_OPTIONS } from 'src/_mock'; // Ensure this is your mock data for user statuses
 import { toast } from 'src/components/snackbar';
 import { Form, Field, schemaHelper } from 'src/components/hook-form';
 import { MenuItem, Typography } from '@mui/material';
-import { useDispatch } from 'react-redux'; // Import useDispatch
-
-import { editCategory } from 'src/store/action/categoryActions';
-import { useFetchCategoryData } from '../components';
+import { useDispatch, useSelector } from 'react-redux'; // Import useDispatch
+import { editSubCategory } from 'src/store/action/subcategoryActions';
+import { useFetchSubCategoryData } from '../components/fetch-sub-category';
+import { categoryList } from 'src/store/action/categoryActions';
 
 // ----------------------------------------------------------------------
 
-export const CategoryEditSchema = zod.object({
+export const SubCategoryEditSchema = zod.object({
     name: zod.string().min(1, { message: ' Name is required!' }),
     description: zod.string().min(1, { message: 'Description is required!' }),
     status: zod.string().min(1, { message: 'Status is required!' }),
+    category: zod.string().min(1, { message: 'categoryId is required!' }),
+
 });
 
 // ----------------------------------------------------------------------
 
-export function CategoryEditForm({ open, onClose, categoryData }) {
-    const dispatch = useDispatch(); // Initialize dispatch
-    const { fetchData } = useFetchCategoryData(); // Destructure fetchData from the custom hook
+export function SubCategoryEditForm({ open, onClose, subcategoryData }) {
+    const dispatch = useDispatch();
+    const { fetchData } = useFetchSubCategoryData();
 
+    const _categoryList = useSelector((state) => state.category?.category || []);
+
+    useEffect(() => {
+        const fetchCategoryData = async () => {
+            await dispatch(categoryList());
+        };
+        fetchCategoryData();
+    }, []);
+
+    // Set the default values, including categoryId instead of category name
     const defaultValues = useMemo(
         () => ({
-            name: categoryData?.name || '',
-            description: categoryData?.description || '',
-            status: categoryData?.status  // Default to the first status option
+            name: subcategoryData?.name || '',
+            description: subcategoryData?.description || '',
+            status: subcategoryData?.status || SUB_CATEGORY_STATUS_OPTIONS[0].value,
+            category: subcategoryData?.category?.id || '', // Use categoryId instead of name
         }),
-        [categoryData]
+        [subcategoryData]
     );
 
     const methods = useForm({
         mode: 'all',
-        resolver: zodResolver(CategoryEditSchema),
+        resolver: zodResolver(SubCategoryEditSchema),
         defaultValues,
     });
 
@@ -57,26 +70,30 @@ export function CategoryEditForm({ open, onClose, categoryData }) {
         formState: { isSubmitting },
     } = methods;
 
-    // Reset form values when userData changes
     useEffect(() => {
-        if (categoryData) {
-            reset(defaultValues); // Reset form with updated default values
+        if (subcategoryData) {
+            reset(defaultValues);
         }
-    }, [categoryData, reset, defaultValues]);
-
+    }, [subcategoryData, reset, defaultValues]);
 
     const onSubmit = handleSubmit(async (data) => {
+        // Construct the payload with categoryId
         const updatedData = {
-            ...data
+            name: data.name,
+            description: data.description,
+            status: data.status,
+            categoryId: data.category, // This is the categoryId, already selected from the form
         };
-        // Call the editUser action with user ID and updated data
-        const isSuccess = await dispatch(editCategory(categoryData.id, updatedData));
+
+        // Dispatch the action with the updated data
+        const isSuccess = await dispatch(editSubCategory(subcategoryData.id, updatedData));
+
         if (isSuccess) {
-            reset(); // Reset the form on successful update
-            onClose(); // Close the dialog
-            fetchData()
+            reset();
+            onClose();
+            fetchData();
         }
-    })
+    });
 
     return (
         <Dialog
@@ -87,11 +104,11 @@ export function CategoryEditForm({ open, onClose, categoryData }) {
             PaperProps={{ sx: { maxWidth: 720 } }}
         >
             <Form methods={methods} onSubmit={onSubmit}>
-                <DialogTitle>Edit Category</DialogTitle>
+                <DialogTitle>Edit Sub-Category</DialogTitle>
 
                 <DialogContent>
                     <Alert variant="outlined" severity="info" sx={{ mb: 3 }}>
-                        Please fill in the details below to edit the Category.
+                        Please fill in the details below to edit the Sub Category.
                     </Alert>
 
                     <Box
@@ -101,16 +118,24 @@ export function CategoryEditForm({ open, onClose, categoryData }) {
                         gridTemplateColumns={{ xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' }}
                     >
                         <Field.Text name="name" label="Name" />
+
+                        <Field.Select name="category" label="Category">
+                            {_categoryList.map((cat) => (
+                                <MenuItem key={cat.id} value={cat.id}>
+                                    {cat.name}
+                                </MenuItem>
+                            ))}
+                        </Field.Select>
+
                         <Field.Select name="status" label="Status">
-                            {CATEGORY_STATUS_OPTIONS.map((status) => (
+                            {SUB_CATEGORY_STATUS_OPTIONS.map((status) => (
                                 <MenuItem key={status.value} value={status.value}>
                                     {status.label}
                                 </MenuItem>
                             ))}
                         </Field.Select>
-
                     </Box>
-                    <Field.TextArea name="description" helperText="description" sx={{ mt: 3 }} />
+                    <Field.TextArea name="description" helperText="Description" sx={{ mt: 3 }} />
                 </DialogContent>
 
                 <DialogActions>
@@ -126,3 +151,4 @@ export function CategoryEditForm({ open, onClose, categoryData }) {
         </Dialog>
     );
 }
+

@@ -21,8 +21,9 @@ import { usePopover, CustomPopover } from 'src/components/custom-popover';
 import { useState } from 'react';
 import { CategoryEditForm } from '../category-edit-form';
 import { CategoryViewDialog } from '../category-list';
-import { useFetchCategoryData } from '../../components';
 import { CategoryCreateForm } from '../category-create-form';
+import { useFetchCategoryData } from '../../components';
+import { Typography } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -58,7 +59,10 @@ export function CategoryTableRow({ row, selected, onEditRow, onSelectRow, onDele
 
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.name}</TableCell>
 
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.description}</TableCell>
+        <TableCell
+          sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '400px' }}>{row.description}
+        </TableCell>
+
         <TableCell>
           <Label
             variant="soft"
@@ -121,17 +125,6 @@ export function CategoryTableRow({ row, selected, onEditRow, onSelectRow, onDele
           >
             <Iconify icon="solar:eye-bold" /> {/* Example new icon for view */}
             View
-          </MenuItem>
-
-          <MenuItem
-            color={quickEdit.value ? 'inherit' : 'default'}
-            // onClick={quickAdd.onTrue}
-            onClick={handleOpenDialog} // Open the dialog on click
-
-          >
-            <Iconify icon="mdi:map-marker-outline" /> {/* Example alternative icon */}
-
-            Category
           </MenuItem>
         </MenuList>
       </CustomPopover>

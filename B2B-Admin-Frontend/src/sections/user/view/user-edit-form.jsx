@@ -143,7 +143,7 @@ export function UserEditForm({ open, onClose, userData }) {
                     </Button>
 
                     <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                        Update User
+                        Update
                     </LoadingButton>
                 </DialogActions>
             </Form>

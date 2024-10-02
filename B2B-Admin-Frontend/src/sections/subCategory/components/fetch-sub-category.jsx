@@ -1,17 +1,17 @@
 import { useDispatch } from 'react-redux';
-import { categoryList, deleteCategory } from 'src/store/action/categoryActions';
+import { deleteSubCategory, subcategoryList } from 'src/store/action/subcategoryActions';
 
 
-export const useFetchCategoryData = () => {
+export const useFetchSubCategoryData = () => {
   const dispatch = useDispatch();
 
   const fetchData = async () => {
-    await dispatch(categoryList());
+    await dispatch(subcategoryList());
   };
 
   const fetchDeleteData = async (id) => {
     try {
-      const response = await dispatch(deleteCategory(id));
+      const response = await dispatch(deleteSubCategory(id));
       if (response) {
         fetchData(); // Refetch category data only on successful deletion
       } 

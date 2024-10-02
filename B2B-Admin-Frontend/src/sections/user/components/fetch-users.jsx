@@ -11,13 +11,20 @@ export const useFetchUserData = () => {
   };
 
   const fetchDeleteData = async (id) => {
-    await dispatch(deleteUser(id));
+
+    try {
+      const response = await dispatch(deleteUser(id));;
+      if (response) {
+        fetchData(); // Refetch category data only on successful deletion
+      }
+    } catch (error) {
+      console.error("Error deleting category:", error);
+    }
   };
+
 
   return { fetchData, fetchDeleteData };
 };
-
-
 
 export const useFetchAddressData = () => {
   const dispatch = useDispatch();
@@ -27,7 +34,14 @@ export const useFetchAddressData = () => {
   };
 
   const fetchDeleteData = async (id) => {
-    await dispatch(deleteAddress(id));
+    try {
+      const response = await dispatch(deleteAddress(id));
+      if (response) {
+        fetchData(); // Refetch category data only on successful deletion
+      }
+    } catch (error) {
+      console.error("Error deleting category:", error);
+    }
   };
 
   return { fetchData, fetchDeleteData };

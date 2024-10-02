@@ -16,14 +16,14 @@ import { MenuItem, Typography } from '@mui/material';
 import { CATEGORY_STATUS_OPTIONS } from 'src/_mock'; // Ensure this is your mock data for user statuses
 import { Form, Field, schemaHelper } from 'src/components/hook-form'; // Custom components for form handling
 import { useDispatch } from 'react-redux';
-import { useFetchCategoryData } from '../components';
 import { createCategory } from 'src/store/action/categoryActions';
+import { useFetchCategoryData } from '../components';
 
 // ----------------------------------------------------------------------
 
 // Validation schema for  Category creation using Zod
 export const CategoryCreateSchema = zod.object({
-    name: zod.string().min(1, { message:  'Name is required!' }),
+    name: zod.string().min(1, { message: 'Name is required!' }),
     description: zod.string().min(1, { message: 'Description is required!' }),
     status: zod.string().min(1, { message: 'Status is required!' })
 });
@@ -56,7 +56,7 @@ export function CategoryCreateForm({ open, onClose }) {
     // Handle form submission
     const onSubmit = async (data) => {
         const formattedData = {
-            ...data  
+            ...data
         };
         const response = await dispatch(createCategory(formattedData));
         if (response) {
@@ -69,7 +69,7 @@ export function CategoryCreateForm({ open, onClose }) {
     return (
         <Dialog fullWidth maxWidth="md" open={open} onClose={onClose}>
             <Form methods={methods} onSubmit={handleSubmit(onSubmit)}>
-                <DialogTitle>Create New Category</DialogTitle>
+                <DialogTitle>Add Category</DialogTitle>
 
                 <DialogContent>
                     <Alert variant="outlined" severity="info" sx={{ mb: 3 }}>
@@ -77,8 +77,7 @@ export function CategoryCreateForm({ open, onClose }) {
                     </Alert>
                     <Box display="grid" gridTemplateColumns={{ xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' }} gap={3}>
                         <Field.Text name="name" label="name" />
-                        <Field.Text name="description" label="description" />
-                          <Field.Select name="status" label="Status">
+                        <Field.Select name="status" label="Status">
                             {CATEGORY_STATUS_OPTIONS.map((status) => (
                                 <MenuItem key={status.value} value={status.value}>
                                     {status.label}
@@ -86,11 +85,12 @@ export function CategoryCreateForm({ open, onClose }) {
                             ))}
                         </Field.Select>
                     </Box>
+                    <Field.TextArea name="description" helperText="description" sx={{ mt: 3 }} />
                 </DialogContent>
 
                 <DialogActions>
                     <Button variant="outlined" onClick={onClose}>Cancel</Button>
-                    <LoadingButton type="submit" variant="contained" loading={isSubmitting}>Create Category</LoadingButton>
+                    <LoadingButton type="submit" variant="contained" loading={isSubmitting}>Create</LoadingButton>
                 </DialogActions>
             </Form>
         </Dialog>

@@ -40,7 +40,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { userList } from 'src/store/action/userActions';
 import { Typography } from '@mui/material';
 import { UserCreateForm } from './user-create-form';
-import { getStatusOptions, TABLE_HEAD } from '../constants';
+import { getStatusOptions, TABLE_HEAD } from '../../../components/constants';
 import { applyFilter } from '../utils';
 import { useFetchUserData } from '../components';
 
@@ -97,7 +97,7 @@ export function UserListView() {
 
   const handleEditRow = useCallback((id) => id, []);
 
-  const handleViewRow = useCallback((id) => id,[] );
+  const handleViewRow = useCallback((id) => id, []);
 
   const handleFilterStatus = useCallback(
     (event, newValue) => {
