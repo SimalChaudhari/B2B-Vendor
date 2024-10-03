@@ -39,7 +39,7 @@ import { UserTableFiltersResult } from '../user-table-filters-result';
 import { useDispatch, useSelector } from 'react-redux';
 import { userList } from 'src/store/action/userActions';
 import { Typography } from '@mui/material';
-import { UserCreateForm } from './user-create-form';
+import { UserForm } from './user-form'; // This will be the shared form for both add and edit
 import { getStatusOptions, TABLE_HEAD } from '../../../components/constants';
 import { applyFilter } from '../utils';
 import { useFetchUserData } from '../components';
@@ -55,20 +55,26 @@ export function UserListView() {
   const table = useTable();
   const router = useRouter();
   const confirm = useBoolean();
+  const dispatch = useDispatch();
 
   const { fetchData, fetchDeleteData } = useFetchUserData(); // Destructure fetchData from the custom hook
 
   const _userList = useSelector((state) => state.user?.user || []);
   const [tableData, setTableData] = useState(_userList);
+  const [selectedUser, setSelectedUser] = useState(null); // Store selected user for editing
 
   const STATUS_OPTIONS = getStatusOptions(tableData);
 
   const [openDialog, setOpenDialog] = useState(false);
-  const handleOpenDialog = () => { setOpenDialog(true) };
+  const handleOpenDialog = () => { 
+    setSelectedUser(null); // Clear selected user when adding a new one
+    setOpenDialog(true); 
+  };
   const handleCloseDialog = () => { setOpenDialog(false) };
 
   // Update the initial state to include lastName, email, and mobile
   const filters = useSetState({ firstName: '', lastName: '', role: [], email: '', mobile: '', status: 'all' });
+
   //----------------------------------------------------------------------------------------------------
   useEffect(() => {
     fetchData(); // Call fetchData when the component mounts
@@ -77,6 +83,7 @@ export function UserListView() {
   useEffect(() => {
     setTableData(_userList);
   }, [_userList]);
+
   //----------------------------------------------------------------------------------------------------
 
   const dataFiltered = applyFilter({
@@ -95,7 +102,11 @@ export function UserListView() {
 
   const handleDeleteRow = useCallback((id) => { fetchDeleteData(id) }, []);
 
-  const handleEditRow = useCallback((id) => id, []);
+  const handleEditRow = useCallback((id) => {
+    const user = _userList.find((u) => u.id === id);
+    setSelectedUser(user); // Set the selected user for editing
+    setOpenDialog(true); // Open the dialog for editing
+  }, [_userList]);
 
   const handleViewRow = useCallback((id) => id, []);
 
@@ -121,8 +132,7 @@ export function UserListView() {
           action={
             <Button
               component={RouterLink}
-              // href={paths?.dashboard?.user?.new}
-              onClick={handleOpenDialog} // Open the dialog on click
+              onClick={handleOpenDialog} // Open the dialog on click for creating a new user
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
@@ -131,7 +141,7 @@ export function UserListView() {
           }
           sx={{ mb: { xs: 3, md: 5 } }}
         />
-        <UserCreateForm open={openDialog} onClose={handleCloseDialog} />
+        <UserForm open={openDialog} onClose={handleCloseDialog} userData={selectedUser} /> {/* Use unified form */}
         <Card>
           <Tabs value={filters.state.status} onChange={handleFilterStatus}
             sx={{
@@ -161,7 +171,9 @@ export function UserListView() {
               />
             ))}
           </Tabs>
-          <UserTableToolbar filters={filters} onResetPage={table.onResetPage} options={{ roles: _roles }} />
+
+          <UserTableToolbar filters={filters} onResetPage={table.onResetPage} options={{ roles: _roles }}  tableData={tableData}/>
+          
           {canReset && (
             <UserTableFiltersResult
               filters={filters}
@@ -219,9 +231,8 @@ export function UserListView() {
                       selected={table.selected.includes(row.id)}
                       onSelectRow={() => table.onSelectRow(row.id)}
                       onDeleteRow={() => handleDeleteRow(row.id)}
-                      onEditRow={() => handleEditRow(row.id)}
+                      onEditRow={() => handleEditRow(row.id)} // Edit user action
                       onViewRow={() => handleViewRow(row.id)}
-
                     />
                   ))}
 
@@ -269,4 +280,3 @@ export function UserListView() {
     </>
   );
 }
-

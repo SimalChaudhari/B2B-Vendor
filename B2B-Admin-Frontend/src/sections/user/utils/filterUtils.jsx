@@ -1,9 +1,14 @@
 export function applyFilter({ inputData, comparator, filters }) {
-  const { searchTerm, status } = filters;
+  const { searchTerm, role, status } = filters;
 
   // Start by filtering based on status
-  let filteredData = inputData;
+  let filteredData = [...inputData];
 
+  // Apply role filter
+  if (role.length > 0) {
+    filteredData = filteredData.filter((user) => role.includes(user.role));
+  }
+  
   // Filter by status (only filter if the status is not 'all')
   if (status !== 'all') {
     filteredData = filteredData.filter((item) => item.status === status);

@@ -25,7 +25,7 @@ export function UserViewDialog({ open, onClose, userView }) {
         <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
             <DialogTitle>
                 <Typography variant="h6" component="div" sx={{ fontWeight: 'bold' }}>
-                    User Details
+                    User Profile
                 </Typography>
                 <IconButton
                     aria-label="close"
@@ -38,18 +38,36 @@ export function UserViewDialog({ open, onClose, userView }) {
 
             <DialogContent dividers>
                 {/* User Profile Section */}
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 4, flexWrap: 'wrap' }}>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        mb: 4,
+                        flexWrap: 'wrap',
+                        justifyContent: { xs: 'center', sm: 'flex-start' },
+                    }}
+                >
                     <Avatar
                         alt={userView.firstName}
                         src={userView.profileUrl || '/path-to-placeholder-image'}
-                        sx={{ width: { xs: 60, sm: 80 }, height: { xs: 60, sm: 80 }, mr: { xs: 2, sm: 3 }, mb: { xs: 2, sm: 0 } }}
+                        sx={{
+                            width: { xs: 80, sm: 100 },
+                            height: { xs: 80, sm: 100 },
+                            mr: { xs: 0, sm: 3 },
+                            mb: { xs: 2, sm: 0 },
+                            border: '3px solid',
+                            borderColor: 'primary.main',
+                        }}
                     />
-                    <Box>
+                    <Box sx={{ textAlign: { xs: 'center', sm: 'left' } }}>
                         <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
                             {`${userView.firstName} ${userView.lastName}`}
                         </Typography>
                         <Typography variant="body1" color="text.secondary">
                             {userView.email}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                            Role: {userView.role || 'Not specified'}
                         </Typography>
                     </Box>
                 </Box>
@@ -64,9 +82,13 @@ export function UserViewDialog({ open, onClose, userView }) {
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
                         <Stack spacing={1}>
-                            <Typography variant="body2" color="text.secondary" sx={{ display: 'flex', alignItems: 'center' }}>
+                            <Typography
+                                variant="body2"
+                                color="text.secondary"
+                                sx={{ display: 'flex', alignItems: 'center' }}
+                            >
                                 <PhoneIcon sx={{ mr: 1 }} />
-                                Mobile Number:
+                                Mobile:
                             </Typography>
                             <Typography variant="body1">{userView.mobile || 'Not provided'}</Typography>
                         </Stack>
@@ -74,7 +96,11 @@ export function UserViewDialog({ open, onClose, userView }) {
 
                     <Grid item xs={12} sm={6}>
                         <Stack spacing={1}>
-                            <Typography variant="body2" color="text.secondary" sx={{ display: 'flex', alignItems: 'center' }}>
+                            <Typography
+                                variant="body2"
+                                color="text.secondary"
+                                sx={{ display: 'flex', alignItems: 'center' }}
+                            >
                                 <EmailIcon sx={{ mr: 1 }} />
                                 Email:
                             </Typography>
@@ -85,7 +111,7 @@ export function UserViewDialog({ open, onClose, userView }) {
 
                 <Divider sx={{ my: 3 }} />
 
-                {/* Status */}
+                {/* Status Section */}
                 <Box sx={{ mb: 3 }}>
                     <Typography variant="body2" color="text.secondary" sx={{ display: 'flex', alignItems: 'center' }}>
                         Status:
@@ -95,7 +121,28 @@ export function UserViewDialog({ open, onClose, userView }) {
                             <CancelIcon sx={{ color: 'red', ml: 1 }} />
                         )}
                     </Typography>
-                    <Typography variant="body1">{userView.status}</Typography>
+                    <Typography
+                        variant="body1"
+                        sx={{
+                            color: userView.status === 'Active' ? 'success.main' : 'error.main',
+                            fontWeight: 'bold',
+                        }}
+                    >
+                        {userView.status}
+                    </Typography>
+                </Box>
+
+                <Divider sx={{ my: 3 }} />
+
+                {/* Additional Information (if needed) */}
+                <Box>
+                    <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
+                        Additional Information
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                        {/* Placeholder for additional information or fields */}
+                        Any other information about the user can be displayed here.
+                    </Typography>
                 </Box>
             </DialogContent>
         </Dialog>

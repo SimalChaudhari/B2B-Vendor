@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as fs from 'fs';
 import * as path from 'path';
+import { Address } from 'users/address/addresses/addresses.entity';
 
 
 @Injectable()
@@ -13,12 +14,16 @@ export class UserService {
     constructor(
         @InjectRepository(User)
         private userRepository: Repository<User>,
+        @InjectRepository(Address)
+        private addressRepository: Repository<Address>,
     ) { }
 
     async getAll(): Promise<User[]> {
-        const users = await this.userRepository.find({ where: { isDeleted: false } });
-        return users;
-    }
+        return await this.userRepository.find({
+          where: { isDeleted: false },
+          relations: ['addresses'], // Ensure addresses are loaded
+        });
+      }
 
     // Update the method to accept an optional file parameter
     async updateUser(id: string, updateUserDto: UpdateUserDto, file?: Express.Multer.File): Promise<User> {

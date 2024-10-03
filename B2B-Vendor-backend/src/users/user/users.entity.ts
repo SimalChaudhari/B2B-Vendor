@@ -1,13 +1,11 @@
-//user.entity.ts
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { Address } from 'users/address/addresses/addresses.entity';
 
-// Enum for user status
 export enum UserStatus {
     Active = 'Active',
     Suspended = 'Suspended',
 }
 
-// Enum for user role
 export enum UserRole {
     Admin = 'Admin',
     Customer = 'Customer',
@@ -16,52 +14,53 @@ export enum UserRole {
 
 @Entity('users')
 export class User {
-    @PrimaryGeneratedColumn('uuid') // Use 'uuid' to generate alphanumeric IDs
-    id!: string; // User ID
+    @PrimaryGeneratedColumn('uuid')
+    id!: string;
 
     @Column()
-    firstName!: string; // User's first name
+    firstName!: string;
 
     @Column()
-    lastName!: string; // User's last name
+    lastName!: string;
 
     @Column({ unique: true })
-    email!: string; // User's email address (must be unique)
+    email!: string;
 
     @Column({ unique: true })
-    mobile!: string; // User's mobile number (must be unique)
+    mobile!: string;
 
     @Column({ type: 'varchar', length: 255, nullable: true })
     profile?: string;
-    
-    @Column({
-        type: 'enum', // Use enum type in the database
-        enum: UserRole, // Reference the UserRole enum
-        default: UserRole.Customer, // Default role is Customer
-    })
-    role!: UserRole; // User's role, must be one of the enum values
 
     @Column({
-        type: 'enum', // Use enum type in the database
-        enum: UserStatus, // Reference the UserStatus enum
-        default: UserStatus.Active, // Default status is Active
+        type: 'enum',
+        enum: UserRole,
+        default: UserRole.Customer,
     })
-    status?: UserStatus; // User's status, must be one of the enum values
+    role!: UserRole;
 
-    @Column({ nullable: true, type: 'varchar' }) // Ensure 'otp' is defined as varchar
-    otp?: string | null; // One-Time Password
+    @Column({
+        type: 'enum',
+        enum: UserStatus,
+        default: UserStatus.Active,
+    })
+    status?: UserStatus;
 
-    @Column({ nullable: true, type: 'timestamp' }) 
-    otpExpires?: Date | null; // Optional expiration date for the OTP
+    @Column({ nullable: true, type: 'varchar' })
+    otp?: string | null;
+
+    @Column({ nullable: true, type: 'timestamp' })
+    otpExpires?: Date | null;
+
+    @OneToMany(() => Address, (address) => address.user, { cascade: true })
+    addresses!: Address[]; // A user can have multiple addresses
 
     @Column({ default: false })
-    isDeleted!: boolean; // Soft delete flag, default is false
+    isDeleted!: boolean;
 
     @CreateDateColumn({ type: 'timestamp' })
-    createdAt!: Date; // Timestamp for when the user was created
+    createdAt!: Date;
 
     @UpdateDateColumn({ type: 'timestamp' })
-    updatedAt!: Date; // Timestamp for when the user was last updated
-    message: any;
-    data: any;
+    updatedAt!: Date;
 }

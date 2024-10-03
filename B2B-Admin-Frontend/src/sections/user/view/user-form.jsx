@@ -12,18 +12,24 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-
-import { USER_STATUS_OPTIONS } from 'src/_mock'; // Ensure this is your mock data for user statuses
-import { toast } from 'src/components/snackbar';
-import { Form, Field, schemaHelper } from 'src/components/hook-form';
 import { MenuItem, Typography } from '@mui/material';
-import { useDispatch } from 'react-redux'; // Import useDispatch
-import { editUser } from 'src/store/action/userActions';
+import { USER_STATUS_OPTIONS } from 'src/_mock'; // Ensure this is your mock data for user statuses
+import { Form, Field, schemaHelper } from 'src/components/hook-form'; // Custom components for form handling
+import { createUser, editUser } from 'src/store/action/userActions'; // Import create and edit user actions
+import { useDispatch } from 'react-redux';
 import { useFetchUserData } from '../components';
 
 // ----------------------------------------------------------------------
 
-export const UserEditSchema = zod.object({
+// Define available roles
+const ROLE_OPTIONS = [
+    { value: 'Admin', label: 'Admin' },
+    { value: 'Customer', label: 'Customer' },
+    { value: 'Vendor', label: 'Vendor' },
+];
+
+// Validation schema for both adding and editing a user
+const UserSchema = zod.object({
     firstName: zod.string().min(1, { message: 'First Name is required!' }),
     lastName: zod.string().min(1, { message: 'Last Name is required!' }),
     email: zod
@@ -32,105 +38,102 @@ export const UserEditSchema = zod.object({
         .email({ message: 'Email must be a valid email address!' }),
     mobile: schemaHelper.phoneNumber({ isValidPhoneNumber }),
     status: zod.string().min(1, { message: 'Status is required!' }),
+    role: zod.string().min(1, { message: 'Role is required!' }), // Role is required
     profile: zod.instanceof(File).optional().nullable(), // Optional profile picture
 });
 
 // ----------------------------------------------------------------------
-
-export function UserEditForm({ open, onClose, userData }) {
-    const dispatch = useDispatch(); // Initialize dispatch
+// Unified User Form Component for Add and Edit
+export function UserForm({ open, onClose, userData }) {
+    const dispatch = useDispatch();
     const { fetchData } = useFetchUserData(); // Destructure fetchData from the custom hook
 
+    // Set default values based on whether userData is passed (for edit) or not (for create)
     const defaultValues = useMemo(
         () => ({
             firstName: userData?.firstName || '',
             lastName: userData?.lastName || '',
             email: userData?.email || '',
             mobile: userData?.mobile || '',
-            status: userData?.status || USER_STATUS_OPTIONS[0]?.value, // Default to the first status option
-            profile: null, // Initialize profile picture
+            status: userData?.status || USER_STATUS_OPTIONS[0]?.value, // Default to first status option
+            role: userData?.role || ROLE_OPTIONS[0]?.value, // Default to first role option
+            profile: null, // Initialize profile picture as null
         }),
         [userData]
     );
 
     const methods = useForm({
-        mode: 'all',
-        resolver: zodResolver(UserEditSchema),
+        resolver: zodResolver(UserSchema),
         defaultValues,
     });
 
-    const {
-        reset,
-        handleSubmit,
-        formState: { isSubmitting },
-    } = methods;
+    const { reset, handleSubmit, formState: { isSubmitting } } = methods;
 
-    // Reset form values when userData changes
+    // Reset form values when userData changes (for edit)
     useEffect(() => {
         if (userData) {
-            reset(defaultValues); // Reset form with updated default values
+            reset(defaultValues); // Reset form with updated values when editing
         }
     }, [userData, reset, defaultValues]);
 
-
+    // Handle form submission for both add and edit
     const onSubmit = handleSubmit(async (data) => {
-        const updatedData = {
+        const formattedData = {
             ...data,
-            profile: data.profile || userData.profile, // Use existing profile if not updated
+            profile: data.profile || userData?.profile, // Use existing profile if not updated
         };
-        // Call the editUser action with user ID and updated data
-        const isSuccess = await dispatch(editUser(userData.id, updatedData));
-        if (isSuccess) {
-            reset(); // Reset the form on successful update
-            onClose(); // Close the dialog
-            fetchData()
+
+        // If userData exists, it's an edit operation, otherwise it's an add operation
+        if (userData) {
+            const isSuccess = await dispatch(editUser(userData.id, formattedData));
+            if (isSuccess) {
+                reset();
+                onClose();
+                fetchData();
+            }
+        } else {
+            const response = await dispatch(createUser(formattedData));
+            if (response) {
+                reset();
+                onClose();
+                fetchData();
+            }
         }
-    })
+    });
 
     return (
-        <Dialog
-            fullWidth
-            maxWidth={false}
-            open={open}
-            onClose={onClose}
-            PaperProps={{ sx: { maxWidth: 720 } }}
-        >
+        <Dialog fullWidth maxWidth="md" open={open} onClose={onClose}>
             <Form methods={methods} onSubmit={onSubmit}>
-                <DialogTitle>Edit User</DialogTitle>
+                <DialogTitle>{userData ? 'Edit User' : 'Add User'}</DialogTitle>
 
                 <DialogContent>
                     <Alert variant="outlined" severity="info" sx={{ mb: 3 }}>
-                        Please fill in the details below to edit the user.
+                        {userData ? 'Edit the details below to update the user.' : 'Please fill in the details below to create a new user.'}
                     </Alert>
-                    <Box
-                        sx={{
-                            mb: 5,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                        }}
-                    >
+
+                    <Box sx={{ mb: 5, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                         <Field.UploadAvatar name="profile" maxSize={3145728} />
                         <Typography variant="caption" sx={{ mt: 3, mx: 'auto', textAlign: 'center', color: 'text.disabled' }}>
                             Allowed *.jpeg, *.jpg, *.png, *.gif
                         </Typography>
                     </Box>
 
-                    <Box
-                        rowGap={3}
-                        columnGap={2}
-                        display="grid"
-                        gridTemplateColumns={{ xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' }}
-                    >
-                        <Field.Text name="firstName" label="FirstName" />
-                        <Field.Text name="lastName" label="LastName" />
+                    <Box display="grid" gridTemplateColumns={{ xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' }} gap={3}>
+                        <Field.Text name="firstName" label="First Name" />
+                        <Field.Text name="lastName" label="Last Name" />
                         <Field.Text name="email" label="Email" />
                         <Field.Phone name="mobile" label="Mobile" />
                         <Field.Select name="status" label="Status">
                             {USER_STATUS_OPTIONS.map((status) => (
                                 <MenuItem key={status.value} value={status.value}>
                                     {status.label}
+                                </MenuItem>
+                            ))}
+                        </Field.Select>
+                        <Field.Select name="role" label="Role">
+                            {ROLE_OPTIONS.map((role) => (
+                                <MenuItem key={role.value} value={role.value}>
+                                    {role.label}
                                 </MenuItem>
                             ))}
                         </Field.Select>
@@ -141,9 +144,8 @@ export function UserEditForm({ open, onClose, userData }) {
                     <Button variant="outlined" onClick={onClose}>
                         Cancel
                     </Button>
-
                     <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                        Update
+                        {userData ? 'Update' : 'Create'}
                     </LoadingButton>
                 </DialogActions>
             </Form>
