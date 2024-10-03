@@ -54,9 +54,9 @@ export function SubCategoryTableRow({ row, selected, onEditRow, onSelectRow, onD
                 <TableCell padding="checkbox">
                     <Checkbox id={row.id} checked={selected} onClick={onSelectRow} />
                 </TableCell>
+                <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.name}</TableCell>
 
                 <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.category.name}</TableCell>
-                <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.name}</TableCell>
                 <TableCell
                     sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '400px' }}>{row.description}
                 </TableCell>

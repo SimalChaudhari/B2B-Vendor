@@ -1,5 +1,5 @@
 import { z as zod } from 'zod';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { isValidPhoneNumber, parsePhoneNumber } from 'react-phone-number-input/input';
@@ -15,21 +15,24 @@ import DialogContent from '@mui/material/DialogContent';
 import { MenuItem, Typography } from '@mui/material';
 import { PRODUCT_STATUS_OPTIONS } from 'src/_mock'; // Ensure this is your mock data for user statuses
 import { Form, Field, schemaHelper } from 'src/components/hook-form'; // Custom components for form handling
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useFetchProductData } from '../components/fetch-product';
 import { createProduct } from 'src/store/action/productActions';
+import { subcategoryList } from 'src/store/action/subcategoryActions';
 
 // ----------------------------------------------------------------------
 
 // Validation schema for user creation using Zod
+// Validation schema for product creation using Zod
 export const ProductCreateSchema = zod.object({
     name: zod.string().min(1, { message: 'Name is required!' }),
     description: zod.string().min(1, { message: 'Description is required!' }),
-    price: zod.string().min(1, { message: 'Price is required!' }),
-    imageUrl: zod.string().min(1, { message: 'ImageUrl is required!' }),
-    stock_quantity: zod.string().min(1, { message: 'Stock Quantity is required!' }),
-    status: zod.string().min(1, { message: 'Status is required!' })
+    price: zod.number().positive({ message: 'Price must be a positive number!' }),
+    stock_quantity: zod.number().int().positive({ message: 'Stock Quantity must be a positive integer!' }),
+    status: zod.string().min(1, { message: 'Status is required!' }),
+    subcategoryId: zod.string().min(1, { message: 'Subcategory is required!' })
 });
+
 
 // ----------------------------------------------------------------------
 // User Create Form Component
@@ -37,15 +40,27 @@ export function ProductCreateForm({ open, onClose }) {
     const dispatch = useDispatch();
     const { fetchData } = useFetchProductData(); // Destructure fetchData from the custom hook
 
+    const _subCategoryList = useSelector((state) => state.subcategory?.subcategory || []);
+
+    useEffect(() => {
+        const fetchSubCategoryData = async () => {
+            await dispatch(subcategoryList());
+        };
+        fetchSubCategoryData()
+    }, []);
+
+
     // Default form values
     const defaultValues = useMemo(() => ({
         name: '',
         description: '',
-        price: '',
         imageUrl: '',
-        stock_quantity: '',
-        status: PRODUCT_STATUS_OPTIONS[0]?.value, // Default to the first status option
+        price: 0, // Initialize as 0 or some default number
+        stock_quantity: 0, // Initialize as 0 or some default integer
+        subcategoryId: '',
+        status: PRODUCT_STATUS_OPTIONS[0]?.value,
     }), []);
+
 
     const methods = useForm({
         resolver: zodResolver(ProductCreateSchema),
@@ -89,7 +104,7 @@ export function ProductCreateForm({ open, onClose }) {
                             justifyContent: 'center',
                         }}
                     >
-                        <Field.UploadAvatar name="profile" maxSize={3145728} />
+                        <Field.UploadAvatar name="imageUrl" maxSize={3145728} />
                         <Typography variant="caption" sx={{ mt: 3, mx: 'auto', textAlign: 'center', color: 'text.disabled' }}>
                             Allowed *.jpeg, *.jpg, *.png, *.gif
                         </Typography>
@@ -97,9 +112,16 @@ export function ProductCreateForm({ open, onClose }) {
 
                     <Box display="grid" gridTemplateColumns={{ xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' }} gap={3}>
                         <Field.Text name="name" label="Name" />
+                        <Field.Select name="subcategoryId" label="subcategory">
+                            {_subCategoryList.map((sub) => (
+                                <MenuItem key={sub.value} value={sub.id}>
+                                    {sub.name}
+                                </MenuItem>
+                            ))}
+                        </Field.Select>
                         <Field.Text name="description" label="Description" />
-                        <Field.Text name="price" label="Price" />
-                        <Field.Text name="stock_quantity" label="Stock Quantity" />
+                        <Field.Text name="price" label="Price" type="number" />
+                        <Field.Text name="stock_quantity" label="Stock Quantity" type="number" />
                         <Field.Select name="status" label="Status">
                             {PRODUCT_STATUS_OPTIONS.map((prod) => (
                                 <MenuItem key={prod.value} value={prod.value}>

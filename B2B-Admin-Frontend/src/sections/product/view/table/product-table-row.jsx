@@ -63,7 +63,7 @@ export function ProductTableRow({ row, selected, onEditRow, onSelectRow, onDelet
                         </Stack>
                     </Stack>
                 </TableCell>
-                <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.subcategoryId}</TableCell>
+                <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.subcategory?.name}</TableCell>
                 <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.description}</TableCell>
                 <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.price}</TableCell>
                 <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.stock_quantity}</TableCell>

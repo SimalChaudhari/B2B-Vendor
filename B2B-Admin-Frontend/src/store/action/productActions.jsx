@@ -20,7 +20,7 @@ export const productList = () => async (dispatch) => {
 
 export const createProduct = (productData) => async (dispatch) => {
     try {
-        const response = await axiosInstance.post('/auth/register', productData);
+        const response = await axiosInstance.post('/products/create', productData);
         if (response && response.status >= 200 && response.status < 300) {
             toast.success(response.data.message || 'User registered successfully!');
             return true;

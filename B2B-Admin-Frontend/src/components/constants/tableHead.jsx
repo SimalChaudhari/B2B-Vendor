@@ -16,7 +16,7 @@ export const TABLE_ADDRESS_HEAD = [
 ];
 
 export const TABLE_CATEGORY_HEAD = [
-  { id: 'name', label: 'Name' },
+  { id: 'name', label: 'Category' },
   { id: 'description', label: 'Description' },
   { id: 'status', label: 'Status' },
   { id: 'action', label: 'Actions' },
@@ -24,15 +24,15 @@ export const TABLE_CATEGORY_HEAD = [
 
 
 export const TABLE_SUB_CATEGORY_HEAD = [
+  { id: 'name', label: 'SubCategory' },
   { id: 'categoryName', label: 'Category' },
-  { id: 'name', label: 'Name' },
   { id: 'description', label: 'Description' },
   { id: 'status', label: 'Status' },
   { id: 'action', label: 'Actions' },
 ];
 
 export const TABLE_PRODUCT_HEAD = [
-  { id: 'name', label: 'Name' },
+  { id: 'name', label: 'Product' },
   { id: 'subcategoryName', label: 'SubCategory' },
   { id: 'description', label: 'Description' },
   { id: 'price', label: 'Price' },

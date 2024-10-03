@@ -17,9 +17,10 @@ import { PRODUCT_STATUS_OPTIONS } from 'src/_mock'; // Ensure this is your mock 
 import { toast } from 'src/components/snackbar';
 import { Form, Field, schemaHelper } from 'src/components/hook-form';
 import { MenuItem, Typography } from '@mui/material';
-import { useDispatch } from 'react-redux'; // Import useDispatch
+import { useDispatch, useSelector } from 'react-redux'; // Import useDispatch
 import { useFetchProductData } from '../components/fetch-product';
 import { editProduct } from 'src/store/action/productActions';
+import { subcategoryList } from 'src/store/action/subcategoryActions';
 
 // ----------------------------------------------------------------------
 
@@ -27,24 +28,38 @@ export const ProductEditSchema = zod.object({
     name: zod.string().min(1, { message: 'Name is required!' }),
     description: zod.string().min(1, { message: 'Description is required!' }),
     price: zod.string().min(1, { message: 'Price is required!' }),
-    imageUrl: zod.string().min(1, { message: 'ImageUrl is required!' }),
-    stock_quantity: zod.string().min(1, { message: 'Stock Quantity is required!' }),
-    status: zod.string().min(1, { message: 'Status is required!' })
+    // imageUrl: zod.string().min(1, { message: 'ImageUrl is required!' }),
+    stock_quantity: zod.number().int().positive({ message: 'Stock Quantity must be a positive integer!' }),
+    status: zod.string().min(1, { message: 'Status is required!' }),
+    subcategory: zod.string().min(1, { message: 'sub category is required!' })
+
 });
 
 // ----------------------------------------------------------------------
 
 export function ProductEditForm({ open, onClose, productData }) {
+
     const dispatch = useDispatch(); // Initialize dispatch
     const { fetchData } = useFetchProductData(); // Destructure fetchData from the custom hook
 
+    const _subCategoryList = useSelector((state) => state.subcategory?.subcategory || []);
+
+    useEffect(() => {
+        const fetchSubCategoryData = async () => {
+            await dispatch(subcategoryList());
+        };
+        fetchSubCategoryData()
+    }, []);
+
+
     const defaultValues = useMemo(
         () => ({
-            name: '',
-            description: '',
-            price: '',
+            name: productData?.name || '',
+            description: productData?.description || '',
+            price: productData?.price || '',
             imageUrl: '',
-            stock_quantity: '',
+            stock_quantity: productData?.stock_quantity || '',
+            subcategory: productData?.subcategory?.id || '', // Use categoryId instead of name
             status: productData?.status || PRODUCT_STATUS_OPTIONS[0]?.value, // Default to the first status option
         }),
         [productData]
@@ -72,7 +87,12 @@ export function ProductEditForm({ open, onClose, productData }) {
 
     const onSubmit = handleSubmit(async (data) => {
         const updatedData = {
-            ...data,
+            name: data.name,
+            description: data.description,
+            price: data?.price,
+            stock_quantity: data?.stock_quantity,
+            status: data.status,
+            subcategoryId: data.subcategory, // This is the categoryId, already selected from the form
             imageUrl: data.imageUrl || productData.imageUrl, // Use existing profile if not updated
         };
         // Call the editUser action with user ID and updated data
@@ -108,7 +128,7 @@ export function ProductEditForm({ open, onClose, productData }) {
                             justifyContent: 'center',
                         }}
                     >
-                        <Field.UploadAvatar name="profile" maxSize={3145728} />
+                        <Field.UploadAvatar name="imageUrl" maxSize={3145728} />
                         <Typography variant="caption" sx={{ mt: 3, mx: 'auto', textAlign: 'center', color: 'text.disabled' }}>
                             Allowed *.jpeg, *.jpg, *.png, *.gif
                         </Typography>
@@ -121,9 +141,16 @@ export function ProductEditForm({ open, onClose, productData }) {
                         gridTemplateColumns={{ xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' }}
                     >
                         <Field.Text name="name" label="Name" />
+                        <Field.Select name="subcategory" label="Subcategory">
+                            {_subCategoryList.map((cat) => (
+                                <MenuItem key={cat.id} value={cat.id}>
+                                    {cat.name}
+                                </MenuItem>
+                            ))}
+                        </Field.Select>
                         <Field.Text name="description" label="Description" />
                         <Field.Text name="price" label="Price" />
-                        <Field.Text name="stock_quantity" label="Stock Quantity" />
+                        <Field.Text name="stock_quantity" label="Stock Quantity" type="number" />
                         <Field.Select name="status" label="Status">
                             {PRODUCT_STATUS_OPTIONS.map((prod) => (
                                 <MenuItem key={prod.value} value={prod.value}>
