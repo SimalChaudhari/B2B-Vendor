@@ -61,7 +61,14 @@ export const paths = {
     list: `/couriers/list`,
     details: (id) => `/couriers/${id}`,
   },
-  settings: '/settings',
+  settings: {
+    root: `/settings`,
+    faq: `/settings/faq`,
+    contact_us: `/settings/contact-us`,
+    privacy_policy: `/settings/privacy-policy`,
+    terms_conditions: `/settings/terms-conditions`,
+    general_settings: `/settings/general-settings`,
+  },
   // AUTH
   auth: {
     jwt: {

@@ -42,7 +42,18 @@ export const navData = [
       { title: 'Offer Management', path: paths.offerManagement.root, icon: ICONS.offers }, // New Offer Management
       { title: 'Return Management', path: paths.returnManagement.root, icon: ICONS.returns }, // New Return Management
       { title: 'Courier Management', path: paths.courierManagement.root, icon: ICONS.couriers }, // New Courier Management
-      { title: 'Settings', path: paths.settings, icon: ICONS.settings },
+      {
+        title: 'Settings',
+        path: paths.settings.root,
+        icon: ICONS.settings,
+        children: [
+          { title: 'Faq', path: paths.settings.faq },
+          { title: 'Contact us', path: paths.settings.contact_us },
+          { title: 'Privacy Policy', path: paths.settings.privacy_policy },
+          { title: 'Terms Conditions', path: paths.settings.terms_conditions },
+          { title: 'General Setting', path: paths.settings.general_settings },
+        ],
+      },
     ],
   },
 ];
