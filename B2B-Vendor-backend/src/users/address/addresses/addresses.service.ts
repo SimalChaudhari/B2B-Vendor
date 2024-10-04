@@ -3,12 +3,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateAddressDto, UpdateAddressDto } from './addresses.dto';
 import { Address } from './addresses.entity';
+import { User } from 'users/user/users.entity';
 
 @Injectable()
 export class AddressesService {
     constructor(
         @InjectRepository(Address)
         private addressesRepository: Repository<Address>,
+
+        @InjectRepository(User)
+        private userRepository: Repository<User>,
     ) { }
 
     async getAll(): Promise<Address[]> {
@@ -17,9 +21,19 @@ export class AddressesService {
     }
 
     async create(createAddressDto: CreateAddressDto, userId: string): Promise<Address> {
+        // Fetch the user entity by userId
+        const user = await this.userRepository.findOne({ where: { id: userId } });
+
+        if (!user) {
+            throw new Error('User not found');
+        }
+
         // Create a new address instance
         const address = this.addressesRepository.create(createAddressDto);
-        address.user_id = userId;  // Assuming user_id is the correct property name on the Address entity
+
+        // Assign the fetched user entity to the user field
+        address.user = user;
+
         return this.addressesRepository.save(address);
     }
 

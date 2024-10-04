@@ -26,4 +26,5 @@ export class Address {
 
     @ManyToOne(() => User, (user) => user.addresses)
     user!: User; // TypeORM will automatically create a `userId` foreign key.
+    // user_id: string;
 }
