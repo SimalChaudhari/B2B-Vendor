@@ -111,7 +111,7 @@ export function SubCategoryListView() {
           heading="List"
           links={[
             { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'SubCategory', href: paths?.dashboard?.subcategory?.root },
+            { name: 'Sub Categories', href: paths?.dashboard?.subcategory?.root },
             { name: 'List' },
           ]}
           action={
@@ -122,7 +122,7 @@ export function SubCategoryListView() {
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
-              New Sub-Category
+              New Sub Category
             </Button>
           }
           sx={{ mb: { xs: 3, md: 5 } }}

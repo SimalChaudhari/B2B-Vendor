@@ -9,14 +9,12 @@ import Tooltip from '@mui/material/Tooltip';
 import TableBody from '@mui/material/TableBody';
 import IconButton from '@mui/material/IconButton';
 import { paths } from 'src/routes/paths';
-import { useRouter } from 'src/routes/hooks';
 import { RouterLink } from 'src/routes/components';
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useSetState } from 'src/hooks/use-set-state';
 import { varAlpha } from 'src/theme/styles';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { Label } from 'src/components/label';
-import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 import { ConfirmDialog } from 'src/components/custom-dialog';
@@ -33,48 +31,53 @@ import {
   TablePaginationCustom,
 } from 'src/components/table';
 
-
 import { useDispatch, useSelector } from 'react-redux';
 import { Typography } from '@mui/material';
-// import { getStatusOptions, TABLE_CATEGORY_HEAD } from './../../user/constants/tableHead';
 import { applyFilter } from '../utils';
 import { useFetchCategoryData } from '../components';
 import { CategoryTableRow } from './table/category-table-row';
 import { CategoryTableToolbar } from './table/category-table-toolbar';
 import { CategoryTableFiltersResult } from './table/category-table-filters-result';
-import { CategoryCreateForm } from './category-create-form';
-import { TABLE_CATEGORY_HEAD ,getCategoryStatusOptions} from 'src/components/constants';
+import { CategoryForm} from './category-form';
+import { TABLE_CATEGORY_HEAD, getCategoryStatusOptions } from 'src/components/constants';
 
-
-// ----------------------------------------------------------------------
 export function CategoryListView() {
   const table = useTable();
-  const router = useRouter();
   const confirm = useBoolean();
+  const dispatch = useDispatch();
 
-  const { fetchData, fetchDeleteData } = useFetchCategoryData(); // Destructure fetchData from the custom hook
-
+  // Fetching category data from Redux
+  const { fetchData, fetchDeleteData } = useFetchCategoryData();
   const _categoryList = useSelector((state) => state.category?.category || []);
+
+  // Local state for managing table data and selected category
   const [tableData, setTableData] = useState(_categoryList);
+  const [selectedCategory, setSelectedCategory] = useState(null); // For handling category edit
 
   const STATUS_OPTIONS = getCategoryStatusOptions(tableData);
 
+  // State for handling dialog open/close
   const [openDialog, setOpenDialog] = useState(false);
-  const handleOpenDialog = () => { setOpenDialog(true) };
-  const handleCloseDialog = () => { setOpenDialog(false) };
+  const handleOpenDialog = () => setOpenDialog(true);
+  const handleCloseDialog = () => {
+    setSelectedCategory(null); // Reset selected category on dialog close
+    setOpenDialog(false);
+  };
 
-  // Update the initial state to include lastName, email, and mobile
+  // Filters state
   const filters = useSetState({ name: '', description: '', status: 'all' });
-  //----------------------------------------------------------------------------------------------------
+
+  // Fetch categories on mount
   useEffect(() => {
-    fetchData(); // Call fetchData when the component mounts
+    fetchData();
   }, []);
 
+  // Update table data when category list changes
   useEffect(() => {
     setTableData(_categoryList);
   }, [_categoryList]);
-  //----------------------------------------------------------------------------------------------------
 
+  // Filtered data and pagination logic
   const dataFiltered = applyFilter({
     inputData: tableData,
     comparator: getComparator(table.order, table.orderBy),
@@ -82,19 +85,22 @@ export function CategoryListView() {
   });
 
   const dataInPage = rowInPage(dataFiltered, table.page, table.rowsPerPage);
-  const canReset = !!filters.state.searchTerm  || filters.state.status !== 'all';
+  const canReset = !!filters.state.name || !!filters.state.description || filters.state.status !== 'all';
   const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
 
-  //----------------------------------------------------------------------------------------------------
+  // Handle category edit
+  const handleEditRow = useCallback((category) => {
+    setSelectedCategory(category); // Set the selected category for editing
+    setOpenDialog(true); // Open the dialog for editing
+  }, []);
 
-  const handleDeleteRows = useCallback((id) => { fetchDeleteData(id) }, []);
+  // Handle delete of selected rows
+  const handleDeleteRows = useCallback((id) => fetchDeleteData(id), []);
 
-  const handleDeleteRow = useCallback((id) => { fetchDeleteData(id) }, []);
+  // Delete a single row
+  const handleDeleteRow = useCallback((id) => fetchDeleteData(id), []);
 
-  const handleEditRow = useCallback((id) => id, []);
-
-  const handleViewRow = useCallback((id) => id,[] );
-
+  // Handle status filter
   const handleFilterStatus = useCallback(
     (event, newValue) => {
       table.onResetPage();
@@ -102,23 +108,21 @@ export function CategoryListView() {
     },
     [filters, table]
   );
-  //----------------------------------------------------------------------------------------------------
 
   return (
     <>
       <DashboardContent maxWidth="2xl">
         <CustomBreadcrumbs
-          heading="List"
+          heading="Categories"
           links={[
             { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'Category', href: paths?.dashboard?.user?.root },
+            { name: 'Categories', href: paths?.dashboard?.categories?.root },
             { name: 'List' },
           ]}
           action={
             <Button
               component={RouterLink}
-              // href={paths?.dashboard?.user?.new}
-              onClick={handleOpenDialog} // Open the dialog on click
+              onClick={handleOpenDialog}
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
@@ -127,9 +131,13 @@ export function CategoryListView() {
           }
           sx={{ mb: { xs: 3, md: 5 } }}
         />
-        <CategoryCreateForm open={openDialog} onClose={handleCloseDialog} />
+
+        <CategoryForm open={openDialog} onClose={handleCloseDialog} categoryData={selectedCategory} />
+
         <Card>
-          <Tabs value={filters.state.status} onChange={handleFilterStatus}
+          <Tabs
+            value={filters.state.status}
+            onChange={handleFilterStatus}
             sx={{
               px: 2.5,
               boxShadow: (theme) =>
@@ -157,7 +165,9 @@ export function CategoryListView() {
               />
             ))}
           </Tabs>
-          <CategoryTableToolbar filters={filters} onResetPage={table.onResetPage}  />
+
+          <CategoryTableToolbar filters={filters} onResetPage={table.onResetPage} />
+
           {canReset && (
             <CategoryTableFiltersResult
               filters={filters}
@@ -173,10 +183,7 @@ export function CategoryListView() {
               numSelected={table.selected.length}
               rowCount={dataFiltered.length}
               onSelectAllRows={(checked) =>
-                table.onSelectAllRows(
-                  checked,
-                  dataFiltered.map((row) => row.id)
-                )
+                table.onSelectAllRows(checked, dataFiltered.map((row) => row.id))
               }
               action={
                 <Tooltip title="Delete">
@@ -197,10 +204,7 @@ export function CategoryListView() {
                   numSelected={table.selected.length}
                   onSort={table.onSort}
                   onSelectAllRows={(checked) =>
-                    table.onSelectAllRows(
-                      checked,
-                      dataFiltered.map((row) => row.id)
-                    )
+                    table.onSelectAllRows(checked, dataFiltered.map((row) => row.id))
                   }
                 />
 
@@ -215,9 +219,7 @@ export function CategoryListView() {
                       selected={table.selected.includes(row.id)}
                       onSelectRow={() => table.onSelectRow(row.id)}
                       onDeleteRow={() => handleDeleteRow(row.id)}
-                      onEditRow={() => handleEditRow(row.id)}
-                      onViewRow={() => handleViewRow(row.id)}
-
+                      onEditRow={() => handleEditRow(row)}
                     />
                   ))}
 
@@ -239,7 +241,7 @@ export function CategoryListView() {
             rowsPerPage={table.rowsPerPage}
             onPageChange={table.onChangePage}
             onChangeDense={table.onChangeDense}
-            onRowsPerPageChange={table.onChangeRowsPerPage}
+            onRowsPerPageChange={table.onRowsPerPageChange}
           />
         </Card>
       </DashboardContent>
@@ -250,7 +252,7 @@ export function CategoryListView() {
         title="Delete Category?"
         content={
           <Box>
-            <Typography gutterBottom>Are you sure you want to delete the selected Category?</Typography>
+            <Typography gutterBottom>Are you sure you want to delete the selected category?</Typography>
             <Typography variant="caption" sx={{ color: 'text.secondary' }}>
               This action cannot be undone.
             </Typography>
@@ -265,4 +267,3 @@ export function CategoryListView() {
     </>
   );
 }
-

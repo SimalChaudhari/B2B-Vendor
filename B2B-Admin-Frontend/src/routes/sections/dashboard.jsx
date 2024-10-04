@@ -9,7 +9,6 @@ import { AuthGuard } from 'src/auth/guard';
 const IndexPage = lazy(() => import('src/pages/dashboard'));
 const CompaniesPage = lazy(() => import('src/pages/companies'));
 const UsersPage = lazy(() => import('src/pages/users'));
-const AddressesPage = lazy(() => import('src/pages/users/address/index'));
 const CategoryPage = lazy(() => import('src/pages/categories'));
 const SubCategoryPage = lazy(() => import('src/pages/subCategories'));
 const ProductPage = lazy(() => import('src/pages/products'));
@@ -43,13 +42,6 @@ export const dashboardRoutes = [
     element: CONFIG.auth.skip ? <>{layoutContent}</> : <AuthGuard>{layoutContent}</AuthGuard>,
     children: [
       { element: <UsersPage />, index: true },
-    ],
-  },
-  {
-    path: 'addresses',
-    element: CONFIG.auth.skip ? <>{layoutContent}</> : <AuthGuard>{layoutContent}</AuthGuard>,
-    children: [
-      { element: <AddressesPage />, index: true },
     ],
   },
   {

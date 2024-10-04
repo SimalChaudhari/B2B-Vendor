@@ -35,7 +35,7 @@ export const createAddress = (addressData) => async (dispatch) => {
     return false; // Return false for any errors
 };
 
-export const editAddress = (addressId, addressData) => async (dispatch) => {
+export const updateAddress = (addressId, addressData) => async (dispatch) => {
     try {
         const response = await axiosInstance.put(`/addresses/update/${addressId}`, addressData);
 

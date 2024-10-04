@@ -40,15 +40,10 @@ export class AddressesController {
         if (!request.user) {
             throw new UnauthorizedException('User is not authenticated');
         }
-        console.log(request)
-        const userId = request.user.id
 
-        if (!userId) {
-            throw new NotFoundException('User is not found');
-        }
         try {
             // Assuming create method takes the createAddressDto and userId as arguments
-            const address = await this.addressesService.create(createAddressDto, userId);
+            const address = await this.addressesService.create(createAddressDto, createAddressDto.userId);
             return response.status(HttpStatus.CREATED).json(address);
         } catch (err: unknown) {
             if (err instanceof Error) {

@@ -22,12 +22,6 @@ export const paths = {
     details: (id) => `/users/${id}`,
     edit: (id) => `/users/${id}/edit`,
   },
-  addresses: {
-    root: `/addresses`,
-    list: `/addresses/list`,
-    details: (id) => `/addresses/${id}`,
-    edit: (id) => `/addresses/${id}/edit`,
-  },
   categories: {
     root: `/categories`,
     list: `/categories/list`,
@@ -47,17 +41,25 @@ export const paths = {
     details: (id) => `/products/${id}`,
     edit: (id) => `/products/${id}/edit`,
   },
-  courses: {
-    root: `/courses`,
-    list: `/courses/list`,
-    details: (id) => `/courses/${id}`,
-    edit: (id) => `/courses/${id}/edit`,
+  orders: {
+    root: `/orders`,
+    list: `/orders/list`,
+    details: (id) => `/orders/${id}`,
   },
-  plans: {
-    root: `/plans`,
-    list: `/plans/list`,
-    details: (id) => `/plans/${id}`,
-    edit: (id) => `/plans/${id}/edit`,
+  offerManagement: {
+    root: `/offers`,
+    list: `/offers/list`,
+    details: (id) => `/offers/${id}`,
+  },
+  returnManagement: {
+    root: `/returns`,
+    list: `/returns/list`,
+    details: (id) => `/returns/${id}`,
+  },
+  courierManagement: {
+    root: `/couriers`,
+    list: `/couriers/list`,
+    details: (id) => `/couriers/${id}`,
   },
   settings: '/settings',
   // AUTH

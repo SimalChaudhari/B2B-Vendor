@@ -10,44 +10,30 @@ import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
 import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
-
 import { useBoolean } from 'src/hooks/use-boolean';
-
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { usePopover, CustomPopover } from 'src/components/custom-popover';
-
 import { useState } from 'react';
-import { CategoryEditForm } from '../category-edit-form';
 import { CategoryViewDialog } from '../category-list';
-import { CategoryCreateForm } from '../category-create-form';
 import { useFetchCategoryData } from '../../components';
-import { Typography } from '@mui/material';
+import { CategoryForm } from '../category-form';
 
 // ----------------------------------------------------------------------
 
 export function CategoryTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
+  const confirm = useBoolean(); // Manage delete confirmation state
+  const { fetchData } = useFetchCategoryData(); // Fetch category data
+  const popover = usePopover(); // For handling more actions popover
+  const quickEdit = useBoolean(); // Boolean state for quick edit
+  const quickView = useBoolean(); // Boolean state for viewing category details
 
-  const confirm = useBoolean();
-  const { fetchData } = useFetchCategoryData(); // Destructure fetchData from the custom hoo
-
-  const popover = usePopover();
-
-  const quickEdit = useBoolean();
-  const quickView = useBoolean();
-  const quickAdd = useBoolean();
-
-
+  // Open and close dialogs for creating categories
   const [openDialog, setOpenDialog] = useState(false);
-
-  const handleOpenDialog = () => {
-    setOpenDialog(true);
-  };
-
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
-  };
+  
+  const handleOpenDialog = () => setOpenDialog(true);
+  const handleCloseDialog = () => setOpenDialog(false);
 
   return (
     <>
@@ -56,11 +42,10 @@ export function CategoryTableRow({ row, selected, onEditRow, onSelectRow, onDele
           <Checkbox id={row.id} checked={selected} onClick={onSelectRow} />
         </TableCell>
 
-
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.name}</TableCell>
 
-        <TableCell
-          sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '400px' }}>{row.description}
+        <TableCell sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '400px' }}>
+          {row.description}
         </TableCell>
 
         <TableCell>
@@ -79,10 +64,7 @@ export function CategoryTableRow({ row, selected, onEditRow, onSelectRow, onDele
         <TableCell>
           <Stack direction="row" alignItems="center">
             <Tooltip title="Quick Edit" placement="top" arrow>
-              <IconButton
-                color={quickEdit.value ? 'inherit' : 'default'}
-                onClick={quickEdit.onTrue}
-              >
+              <IconButton color={quickEdit.value ? 'inherit' : 'default'} onClick={quickEdit.onTrue}>
                 <Iconify icon="solar:pen-bold" />
               </IconButton>
             </Tooltip>
@@ -90,23 +72,23 @@ export function CategoryTableRow({ row, selected, onEditRow, onSelectRow, onDele
             <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
               <Iconify icon="eva:more-vertical-fill" />
             </IconButton>
-
           </Stack>
         </TableCell>
       </TableRow>
 
-      <CategoryEditForm open={quickEdit.value} onClose={quickEdit.onFalse} categoryData={row} />
+      {/* Category Edit Form */}
+      <CategoryForm open={quickEdit.value} onClose={quickEdit.onFalse} categoryData={row} />
+
+      {/* Category View Dialog */}
       <CategoryViewDialog open={quickView.value} onClose={quickView.onFalse} categoryView={row} />
-      <CategoryCreateForm open={openDialog} onClose={handleCloseDialog} />
 
+      {/* Category Create Form */}
+      <CategoryForm open={openDialog} onClose={handleCloseDialog} />
 
-      <CustomPopover
-        open={popover.open}
-        anchorEl={popover.anchorEl}
-        onClose={popover.onClose}
-        slotProps={{ arrow: { placement: 'right-top' } }}
-      >
+      {/* Popover for More Actions */}
+      <CustomPopover open={popover.open} anchorEl={popover.anchorEl} onClose={popover.onClose}>
         <MenuList>
+          {/* Delete Action */}
           <MenuItem
             onClick={() => {
               confirm.onTrue();
@@ -118,28 +100,33 @@ export function CategoryTableRow({ row, selected, onEditRow, onSelectRow, onDele
             Delete
           </MenuItem>
 
+          {/* View Action */}
           <MenuItem
             color={quickEdit.value ? 'inherit' : 'default'}
             onClick={quickView.onTrue}
             sx={{ color: 'green' }}
           >
-            <Iconify icon="solar:eye-bold" /> {/* Example new icon for view */}
+            <Iconify icon="solar:eye-bold" />
             View
           </MenuItem>
         </MenuList>
       </CustomPopover>
 
+      {/* Confirm Delete Dialog */}
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Delete"
-        content="Are you sure want to delete?"
+        title="Delete Category"
+        content="Are you sure you want to delete this category?"
         action={
-          <Button variant="contained" color="error" onClick={() => {
-            onDeleteRow();  // Perform the delete action
-            fetchData()
-            confirm.onFalse();  // Close the dialog after deletion
-          }}
+          <Button
+            variant="contained"
+            color="error"
+            onClick={() => {
+              onDeleteRow();  // Perform delete action
+              fetchData();  // Fetch updated data
+              confirm.onFalse();  // Close confirmation dialog after deletion
+            }}
           >
             Delete
           </Button>

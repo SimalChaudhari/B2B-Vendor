@@ -25,29 +25,59 @@ import { Iconify } from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { usePopover, CustomPopover } from 'src/components/custom-popover';
 import { useState } from 'react';
-
+import { useDispatch } from 'react-redux';
 import { UserForm } from './view/user-form';  // Use the unified form for add/edit
 import { UserViewDialog } from './view/user-view';
 import { useFetchUserData } from './components';
-import { AddressCreateForm } from './address/user-create-address-form';
+import { deleteAddress } from 'src/store/action/addressActions';
+import { AddressForm } from './address/address-form';
 
 export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
+  const dispatch = useDispatch();
   const confirm = useBoolean();
   const { fetchData } = useFetchUserData(); // Destructure fetchData from the custom hook
   const popover = usePopover();
   const quickEdit = useBoolean(); // Boolean state for quick edit (opens UserForm)
   const quickView = useBoolean(); // Boolean state for quick view (opens UserViewDialog)
-  const [openDialog, setOpenDialog] = useState(false); // Boolean for address dialog
   const [openDetails, setOpenDetails] = useState(false); // State to track details expansion
 
-  // Open and close dialogs
-  const handleOpenDialog = () => setOpenDialog(true);
-  const handleCloseDialog = () => setOpenDialog(false);
+  const [selectedAddress, setSelectedAddress] = useState(null);
+  const [openAddressForm, setOpenAddressForm] = useState(false);
+  const [userId, setUserId] = useState(null);
 
-  const handleToggleDetails = () => setOpenDetails(!openDetails); // Toggle the detailed view
+  // Boolean to control address delete confirmation
+  const addressDeleteConfirm = useBoolean();
+  const [addressToDelete, setAddressToDelete] = useState(null);
+
+  // Open and close the address form (for both add and edit)
+  const handleOpenAddressForm = (user_Id, address = null) => {
+    setSelectedAddress(address); // Set the selected address (null for new address)
+    setUserId(user_Id); // Track which user this address belongs to
+    setOpenAddressForm(true);
+  };
+
+  // Trigger delete confirmation for address
+  const handleConfirmDeleteAddress = (addressId) => {
+    setAddressToDelete(addressId); // Store the address to delete
+    addressDeleteConfirm.onTrue(); // Open confirmation dialog
+  };
+
+  // Delete address action after confirmation
+  const handleDeleteAddress = async () => {
+    if (addressToDelete) {
+      await dispatch(deleteAddress(addressToDelete));
+      fetchData(); // Optionally refetch the user data after deletion
+      addressDeleteConfirm.onFalse(); // Close confirmation dialog
+      setAddressToDelete(null); // Reset address to delete
+    }
+  };
+
+  // Toggle the expanded view for addresses
+  const handleToggleDetails = () => setOpenDetails(!openDetails);
 
   return (
     <>
+      {/* Main user row */}
       <TableRow hover selected={selected} aria-checked={selected} tabIndex={-1}>
         <TableCell padding="checkbox">
           <Checkbox id={row.id} checked={selected} onClick={onSelectRow} />
@@ -56,7 +86,6 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
         <TableCell>
           <Stack spacing={2} direction="row" alignItems="center">
             <Avatar alt={row.profile} src={row.avatarUrl} />
-
             <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
               <Link color="inherit" onClick={quickEdit.onTrue} sx={{ cursor: 'pointer' }}>
                 {row.firstName} {row.lastName}
@@ -69,8 +98,8 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
         </TableCell>
 
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.mobile}</TableCell>
-
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.role}</TableCell>
+
         <TableCell>
           <Label
             variant="soft"
@@ -100,14 +129,24 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
         </TableCell>
       </TableRow>
 
-      {/* Expanded Details Row */}
+      {/* Expanded row to show address details */}
       <TableRow>
         <TableCell colSpan={6} style={{ paddingBottom: 0, paddingTop: 0 }}>
           <Collapse in={openDetails} timeout="auto" unmountOnExit>
             <Box margin={2}>
-              <Typography variant="h6" gutterBottom component="div">
-                Addresses
-              </Typography>
+              <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                <Typography variant="h6" gutterBottom component="div">
+                  Addresses
+                </Typography>
+                <Button
+                  size="small"
+                  variant="contained"
+                  onClick={() => handleOpenAddressForm(row.id)} // Open form for new address
+                >
+                  Add Address
+                </Button>
+              </Box>
+
               {/* Render addresses in table format */}
               {row.addresses && row.addresses.length > 0 ? (
                 <TableContainer component={Paper}>
@@ -119,7 +158,7 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
                         <TableCell>State</TableCell>
                         <TableCell>Zip Code</TableCell>
                         <TableCell>Country</TableCell>
-                        <TableCell>Created At</TableCell>
+                        <TableCell>Actions</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
@@ -130,7 +169,23 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
                           <TableCell>{address.state}</TableCell>
                           <TableCell>{address.zip_code}</TableCell>
                           <TableCell>{address.country}</TableCell>
-                          <TableCell>{new Date(address.created_at).toLocaleDateString()}</TableCell>
+                          <TableCell>
+                            <Button
+                              size="small"
+                              variant="outlined"
+                              onClick={() => handleOpenAddressForm(row.id, address)} // Open form for update
+                            >
+                              Edit
+                            </Button>
+                            <Button
+                              size="small"
+                              variant="outlined"
+                              color="error"
+                              onClick={() => handleConfirmDeleteAddress(address.id)} // Ask for confirmation before delete
+                            >
+                              Delete
+                            </Button>
+                          </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -149,9 +204,6 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
 
       {/* UserViewDialog for Viewing */}
       <UserViewDialog open={quickView.value} onClose={quickView.onFalse} userView={row} />
-
-      {/* Address Form Dialog */}
-      <AddressCreateForm open={openDialog} onClose={handleCloseDialog} />
 
       {/* Custom Popover for Additional Actions */}
       <CustomPopover open={popover.open} anchorEl={popover.anchorEl} onClose={popover.onClose} slotProps={{ arrow: { placement: 'right-top' } }}>
@@ -174,14 +226,6 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
           >
             <Iconify icon="solar:eye-bold" />
             View
-          </MenuItem>
-
-          <MenuItem
-            color={quickEdit.value ? 'inherit' : 'default'}
-            onClick={handleOpenDialog} // Open the address dialog
-          >
-            <Iconify icon="mdi:map-marker-outline" />
-            Address
           </MenuItem>
         </MenuList>
       </CustomPopover>
@@ -206,6 +250,26 @@ export function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRo
           </Button>
         }
       />
+
+      {/* Confirm Dialog for Delete Address */}
+      <ConfirmDialog
+        open={addressDeleteConfirm.value}
+        onClose={addressDeleteConfirm.onFalse}
+        title="Delete Address"
+        content="Are you sure you want to delete this address?"
+        action={
+          <Button
+            variant="contained"
+            color="error"
+            onClick={handleDeleteAddress} // Perform the address delete action
+          >
+            Delete
+          </Button>
+        }
+      />
+
+      {/* Address Form for Create/Update */}
+      <AddressForm open={openAddressForm} onClose={() => setOpenAddressForm(false)} userId={userId} addressData={selectedAddress} />
     </>
   );
 }
