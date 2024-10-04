@@ -43,3 +43,56 @@ export class Logo {
     @UpdateDateColumn()
     updatedAt!: Date;
 }
+
+
+@Entity('privacy_policies')
+export class PrivacyPolicy {
+    @PrimaryGeneratedColumn('uuid')
+    id!: string;
+
+    @Column('text')
+    content!: string; // The content of the privacy policy
+
+    @CreateDateColumn()
+    createdAt!: Date;
+
+    @UpdateDateColumn()
+    updatedAt!: Date;
+}
+
+
+@Entity('terms_conditions')
+export class TermsConditions {
+    @PrimaryGeneratedColumn('uuid')
+    id!: string;
+
+    @Column('text')
+    content!: string; // The content of the terms and conditions
+
+    @CreateDateColumn()
+    createdAt!: Date;
+
+    @UpdateDateColumn()
+    updatedAt!: Date;
+}
+
+@Entity('contact_us')
+export class ContactUs {
+    @PrimaryGeneratedColumn('uuid')
+    id!: string;
+
+    @Column()
+    name!: string; // Sender's name
+
+    @Column()
+    email!: string; // Sender's email address
+
+    @Column('text')
+    message!: string; // The message sent by the user
+
+    @CreateDateColumn()
+    createdAt!: Date;
+
+    @UpdateDateColumn()
+    updatedAt!: Date;
+}

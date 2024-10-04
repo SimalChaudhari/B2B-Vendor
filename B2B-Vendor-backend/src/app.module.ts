@@ -3,8 +3,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module'; // Adjust the path as necessary
 import { AddressesModule } from 'users/address/addresses/addresses.module';
-import { StatesModule } from 'users/address/state/states.module';
-import { CitiesModule } from 'users/address/city/cities.module';
 import { CategoryModule } from 'admin/products/categories/categories.module';
 import { SubcategoryModule } from 'admin/products/sub-categories/subcategories.module';
 import { ProductModule } from 'admin/products/products/products.module';
@@ -29,8 +27,6 @@ import { SettingModule } from 'settings/setting.module';
     AuthModule,
     UserModule,
     AddressesModule,
-    StatesModule,
-    CitiesModule,
     CategoryModule,
     SubcategoryModule,
     ProductModule,
