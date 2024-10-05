@@ -1,8 +1,8 @@
-// product.entity.ts
+// Item.entity.ts
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('products')
-export class ProductEntity {
+@Entity('Items')
+export class ItemEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string; // Change to string to match UUID format
 

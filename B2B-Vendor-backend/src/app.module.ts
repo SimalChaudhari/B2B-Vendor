@@ -10,7 +10,7 @@ import { OfferModule } from 'admin/products/offers/offers.module';
 import { UserModule } from 'users/user/users.module';
 import { OrderModule } from 'admin/orders/order.module';
 import { SettingModule } from 'settings/setting.module';
-import { ProductModule1 } from 'fetch-products/product.module';
+import { ItemModule } from 'fetch-products/item.module';
 
 
 @Module({
@@ -27,14 +27,14 @@ import { ProductModule1 } from 'fetch-products/product.module';
     }),
     AuthModule,
     UserModule,
-    // AddressesModule,
-    // CategoryModule,
-    // SubcategoryModule,
-    // ProductModule,
-    ProductModule1,
-    // OfferModule,
-    // OrderModule,
-    // SettingModule
+    AddressesModule,
+    CategoryModule,
+    SubcategoryModule,
+    ProductModule,
+    ItemModule,
+    OfferModule,
+    OrderModule,
+    SettingModule
   ],
 })
 export class AppModule { }
