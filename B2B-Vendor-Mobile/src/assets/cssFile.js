@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     heroContainer: {
         flex: 1,
         backgroundColor: colors.background,
-        paddingTop: 20,
+        // paddingTop: 20,
         backgroundColor: colors.white,
     },
     heroLogo: {
