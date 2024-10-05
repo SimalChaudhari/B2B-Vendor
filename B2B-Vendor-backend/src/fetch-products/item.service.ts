@@ -1,5 +1,5 @@
 // product.service.ts
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import axios from 'axios';
@@ -42,7 +42,7 @@ export class ItemService {
       });
 
       const items = await this.parseXmlToItems(response.data);
-      const existingItems = await this. itemRepository.find();
+      const existingItems = await this.itemRepository.find();
 
       // Create a map of existing  items for quick lookup
       const existingItemMap = new Map(existingItems.map(item => [item.alias, item]));
@@ -74,31 +74,35 @@ export class ItemService {
 
     return stockItems.map((item: any) => {
       const itemDto = new ItemDto();
-      itemDto.itemName = item.ITEMNAME[0] || "Default Name";
-      itemDto.alias = item.ALIAS?.[0];
-      itemDto.partNo = item.PARTNO?.[0];
-      itemDto.description = item.DESCRIPTION?.[0];
-      itemDto.remarks = item.REMARKS?.[0];
-      itemDto.group = item?.GROUP[0];
-      itemDto.category = item.CATEGORY[0];
-      itemDto.baseUnit = item?.BASEUNIT[0];
-      itemDto.alternateUnit = item.ALTERNATEUNIT?.[0];
-      itemDto.isBatchWiseOn = item?.ISBATCHWISEON[0];
-      itemDto.hasMfgDate = item.HASMFGDATE?.[0];
-      itemDto.hasExpiryDate = item.HASEXPIRYDATE?.[0];
-      itemDto.costPriceDate = item.COSTPRICEDATE?.[0];
-      itemDto.costPrice = item.COSTPRICE?.[0];
-      itemDto.sellingPriceDate = item.SELLINGPRICEDATE?.[0];
-      itemDto.sellingPrice = item.SELLINGPRICE?.[0];
-      itemDto.gstApplicable = item.GSTAPPLICABLE?.[0];
-      itemDto.gstApplicableDate = item.GSTAPPLICABLEDATE?.[0];
-      itemDto.gstRate = item.GSTRATE?.[0];
-      itemDto.mrpDate = item.MRPDATE?.[0];
-      itemDto.mrpRate = item.MRPRATE?.[0];
+      itemDto.itemName = this.cleanString(item.ITEMNAME[0] || "Default Name");
+      itemDto.alias = this.cleanString(item.ALIAS?.[0]);
+      itemDto.partNo = this.cleanString(item.PARTNO?.[0]);
+      itemDto.description = this.cleanString(item.DESCRIPTION?.[0]);
+      itemDto.remarks = this.cleanString(item.REMARKS?.[0]);
+      itemDto.group = this.cleanString(item?.GROUP[0]);
+      itemDto.category = this.cleanString(item.CATEGORY[0]);
+      itemDto.baseUnit = this.cleanString(item?.BASEUNIT[0]);
+      itemDto.alternateUnit = this.cleanString(item.ALTERNATEUNIT?.[0]);
+      itemDto.isBatchWiseOn = this.cleanString(item?.ISBATCHWISEON[0]);
+      itemDto.hasMfgDate = this.cleanString(item.HASMFGDATE?.[0]);
+      itemDto.hasExpiryDate = this.cleanString(item.HASEXPIRYDATE?.[0]);
+      itemDto.costPriceDate = this.cleanString(item.COSTPRICEDATE?.[0]);
+      itemDto.costPrice = this.cleanString(item.COSTPRICE?.[0]);
+      itemDto.sellingPriceDate = this.cleanString(item.SELLINGPRICEDATE?.[0]);
+      itemDto.sellingPrice = this.cleanString(item.SELLINGPRICE?.[0]);
+      itemDto.gstApplicable = this.cleanString(item.GSTAPPLICABLE?.[0]);
+      itemDto.gstApplicableDate = this.cleanString(item.GSTAPPLICABLEDATE?.[0]);
+      itemDto.gstRate = this.cleanString(item.GSTRATE?.[0]);
+      itemDto.mrpDate = this.cleanString(item.MRPDATE?.[0]);
+      itemDto.mrpRate = this.cleanString(item.MRPRATE?.[0]);
 
       // Convert DTO to Entity
       return this.itemRepository.create(itemDto);
     });
+  }
+
+  private cleanString(value: string | undefined): string {
+    return value?.replace(/\x04/g, '').trim() || '';
   }
 
   // Function to check if the existing product has changes
@@ -125,4 +129,15 @@ export class ItemService {
       existingProduct.mrpRate !== newItem.mrpRate
     );
   }
+
+  async findAll(): Promise<ItemEntity[]> {
+    try {
+      return await this.itemRepository.find();
+
+    } catch (error: any) {
+      throw new InternalServerErrorException('Error retrieving FAQs', error.message);
+    }
+  }
+
+
 }
