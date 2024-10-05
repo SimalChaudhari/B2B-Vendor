@@ -54,31 +54,29 @@ export function ProductTableRow({ row, selected, onEditRow, onSelectRow, onDelet
 
                 <TableCell>
                     <Stack spacing={2} direction="row" alignItems="center">
-                        <Avatar alt={row.imageUrl} src={row.name} />
-
+                        <Avatar alt={row?.imageUrl} src={row?.name} />
                         <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
                             <Link color="inherit" onClick={onEditRow} sx={{ cursor: 'pointer' }}>
-                                {row.name}
+                                {row.itemName || 'not available'}
                             </Link>
                         </Stack>
                     </Stack>
                 </TableCell>
-                <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.subcategory?.name}</TableCell>
-                <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.description}</TableCell>
-                <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.price}</TableCell>
-                <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.stock_quantity}</TableCell>
 
-                <TableCell>
-                    <Label
-                        variant="soft"
-                        color={
-                            (row.status === 'Active' && 'success') ||
-                            (row.status === 'Suspended' && 'error') ||
-                            'default'
-                        }
-                    >
-                        {row.status}
-                    </Label>
+                <TableCell sx={{ whiteSpace: 'nowrap' }}>
+                    {row.group || 'not available'}
+                </TableCell>
+                <TableCell sx={{ whiteSpace: 'nowrap' }}>
+                    {row.category || 'not available'}
+                </TableCell>
+                <TableCell sx={{ whiteSpace: 'nowrap' }}>
+                    {row.costPrice || 'not available'}
+                </TableCell>
+                <TableCell sx={{ whiteSpace: 'nowrap' }}>
+                    {row.sellingPrice || 'not available'}
+                </TableCell>
+                <TableCell sx={{ whiteSpace: 'nowrap' }}>
+                    {row.mrpRate || 'not available'}
                 </TableCell>
 
                 <TableCell>
@@ -95,10 +93,10 @@ export function ProductTableRow({ row, selected, onEditRow, onSelectRow, onDelet
                         <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
                             <Iconify icon="eva:more-vertical-fill" />
                         </IconButton>
-
                     </Stack>
                 </TableCell>
             </TableRow>
+
 
             <ProductEditForm open={quickEdit.value} onClose={quickEdit.onFalse} productData={row} />
             <ProductViewDialog open={quickView.value} onClose={quickView.onFalse} productView={row} />

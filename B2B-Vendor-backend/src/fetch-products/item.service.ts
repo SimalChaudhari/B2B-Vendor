@@ -95,7 +95,6 @@ export class ItemService {
       itemDto.gstRate = this.cleanString(item.GSTRATE?.[0]);
       itemDto.mrpDate = this.cleanString(item.MRPDATE?.[0]);
       itemDto.mrpRate = this.cleanString(item.MRPRATE?.[0]);
-
       // Convert DTO to Entity
       return this.itemRepository.create(itemDto);
     });
