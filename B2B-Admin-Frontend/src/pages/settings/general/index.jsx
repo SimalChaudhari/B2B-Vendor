@@ -1,9 +1,10 @@
-import { FAQsListView } from "src/sections/setting/FAQ/view";
+
 import { Helmet } from 'react-helmet-async';
 import { CONFIG } from 'src/config-global';
+import { GeneralListView } from 'src/sections/setting/General-settings/view';
 
 
-const metadata = { title: `FAQ - ${CONFIG.site.name}` };
+const metadata = { title: `General - ${CONFIG.site.name}` };
 
 export default function Page() {
     return (
@@ -11,7 +12,8 @@ export default function Page() {
             <Helmet>
                 <title> {metadata.title}</title>
             </Helmet>
-            <FAQsListView />
+
+            <GeneralListView />
         </>
     );
 }

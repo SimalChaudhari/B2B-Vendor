@@ -10,11 +10,12 @@ import { OfferModule } from 'admin/products/offers/offers.module';
 import { UserModule } from 'users/user/users.module';
 import { OrderModule } from 'admin/orders/order.module';
 import { SettingModule } from 'settings/setting.module';
+import { ProductModule1 } from 'fetch-products/product.module';
 
 
 @Module({
   imports: [
-  TypeOrmModule.forRoot({
+    TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DATABASE_HOST,
       port: 5432,
@@ -26,13 +27,14 @@ import { SettingModule } from 'settings/setting.module';
     }),
     AuthModule,
     UserModule,
-    AddressesModule,
-    CategoryModule,
-    SubcategoryModule,
-    ProductModule,
-    OfferModule,
-    OrderModule,
-    SettingModule
+    // AddressesModule,
+    // CategoryModule,
+    // SubcategoryModule,
+    // ProductModule,
+    ProductModule1,
+    // OfferModule,
+    // OrderModule,
+    // SettingModule
   ],
 })
 export class AppModule { }

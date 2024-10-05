@@ -12,9 +12,11 @@ const UsersPage = lazy(() => import('src/pages/users'));
 const CategoryPage = lazy(() => import('src/pages/categories'));
 const SubCategoryPage = lazy(() => import('src/pages/subCategories'));
 const ProductPage = lazy(() => import('src/pages/products'));
-
-const CoursesPage = lazy(() => import('src/pages/courses'));
-const PlansPage = lazy(() => import('src/pages/plans'));
+const FAQPage = lazy(() => import('src/pages/settings/FAQ'));
+const ContactPage = lazy(() => import('src/pages/settings/Contact-us'));
+const PrivacyPage = lazy(() => import('src/pages/settings/privacy-policy'));
+const TermsPage = lazy(() => import('src/pages/settings/terms-conditions'));
+const GeneralPage = lazy(() => import('src/pages/settings/general'));
 
 // Error
 const Page500 = lazy(() => import('src/pages/error/500'));
@@ -66,21 +68,21 @@ export const dashboardRoutes = [
     ],
   },
 
+  {
+    path: 'settings',
+    element: CONFIG.auth.skip ? <>{layoutContent}</> : <AuthGuard>{layoutContent}</AuthGuard>,
+    children: [
+      { element: <FAQPage/>, index: true },
+      { path: 'faq', element: <FAQPage /> },
+      { path: 'contact-us', element: <ContactPage /> },
+      { path: 'privacy-policy', element: <PrivacyPage /> },
+      { path: 'terms-conditions', element: <TermsPage /> },
+      { path: 'general-settings', element: <GeneralPage /> },
 
-  {
-    path: 'courses',
-    element: CONFIG.auth.skip ? <>{layoutContent}</> : <AuthGuard>{layoutContent}</AuthGuard>,
-    children: [
-      { element: <CoursesPage />, index: true },
+
     ],
   },
-  {
-    path: 'plans',
-    element: CONFIG.auth.skip ? <>{layoutContent}</> : <AuthGuard>{layoutContent}</AuthGuard>,
-    children: [
-      { element: <PlansPage />, index: true },
-    ],
-  },
+
   { path: '500', element: <Page500 /> },
   { path: '404', element: <Page404 /> },
   { path: '403', element: <Page403 /> },
