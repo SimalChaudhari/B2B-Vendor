@@ -3,15 +3,28 @@ import React, { useState } from 'react';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import axios from "axios";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from '../../assets/cssFile';
 
 const RegisterScreen = ({ navigation }) => {
-  // Add state for name, email, and password
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState(""); // State for confirm password
 
   const handleRegister = () => {
+    // Validation for required fields
+    if (!name || !email || !password || !confirmPassword) {
+      Alert.alert("Input Error", "All fields are required.");
+      return; // Exit the function if any field is empty
+    }
+
+    // Check if passwords match
+    if (password !== confirmPassword) {
+      Alert.alert("Input Error", "Passwords and Confirm Password do not match.");
+      return; // Exit the function if passwords do not match
+    }
+
     const user = {
       name: name,
       email: email,
@@ -21,23 +34,25 @@ const RegisterScreen = ({ navigation }) => {
     // Send a POST request to the backend API to register the user
     axios
       .post("http://192.168.1.112:8181/register", user)
-      .then((response) => {
+      .then(async (response) => {
         console.log(response);
-        Alert.alert(
-          "Registration successful",
-          "You have been registered successfully"
-        );
+        const token = response.data.token; // Assuming the token is returned
+        const userData = response.data.user; // Assuming the user data is returned
+
+        // Store token and user data in AsyncStorage
+        await AsyncStorage.setItem("authToken", token);
+        await AsyncStorage.setItem("userData", JSON.stringify(userData)); // Store user data
+
+        Alert.alert("Registration successful", "You have been registered successfully");
         // Reset the form fields
         setName("");
         setEmail("");
         setPassword("");
+        setConfirmPassword(""); // Reset confirm password field
       })
       .catch((error) => {
         console.error(error);
-        Alert.alert(
-          "Registration Error",
-          "An error occurred while registering"
-        );
+        Alert.alert("Registration Error", "An error occurred while registering");
         console.log("Registration failed", error);
       });
   };
@@ -90,6 +105,8 @@ const RegisterScreen = ({ navigation }) => {
           style={styles.input}
           placeholder="Confirm Password"
           secureTextEntry={true}
+          value={confirmPassword} // Bind confirm password state
+          onChangeText={setConfirmPassword} // Update confirm password state
         />
       </View>
 

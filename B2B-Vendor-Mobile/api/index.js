@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
+const bcrypt = require('bcrypt');
 
 const app = express();
 const port = 8181;
@@ -135,25 +136,35 @@ app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    //check if the user exists
+    console.log('Received request body:', req.body);
+    
+    // Check if the user exists
     const user = await User.findOne({ email });
+    
+    // console.log('Found user:', user); // Log the found user
+
     if (!user) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    //check if the password is correct
+    // Check if the password is correct
+    console.log('Comparing password:', password, 'with stored password:', user.password);
     if (user.password !== password) {
       return res.status(401).json({ message: "Invalid password" });
     }
 
-    //generate a token
+    // Generate a token
     const token = jwt.sign({ userId: user._id }, secretKey);
-
-    res.status(200).json({ token });
+    console.log('====================================');
+    console.log(token);
+    console.log('====================================');
+    res.status(200).json({ token, user });
   } catch (error) {
+    console.error('Error during login:', error);
     res.status(500).json({ message: "Login Failed" });
   }
 });
+
 
 //endpoint to store a new address to the backend
 app.post("/addresses", async (req, res) => {
