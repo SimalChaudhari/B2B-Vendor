@@ -46,6 +46,16 @@ import { ProductTableRow } from './table/product-table-row';
 import { ProductTableToolbar } from './table/product-table-toolbar';
 import { useFetchProductData } from '../components/fetch-product';
 
+const options = {
+    category: ['Electronics', 'Clothing', 'Books'],
+    subcategories: {
+        Electronics: ['Phones', 'Laptops', 'Cameras'],
+        Clothing: ['Men', 'Women', 'Kids'],
+        Books: ['Fiction', 'Non-Fiction', 'Comics'],
+    }
+};
+
+
 
 // ----------------------------------------------------------------------
 export function ProductListView() {
@@ -158,7 +168,7 @@ export function ProductListView() {
                             />
                         ))}
                     </Tabs>
-                    <ProductTableToolbar filters={filters} onResetPage={table.onResetPage} />
+                    <ProductTableToolbar options={options} filters={filters} onResetPage={table.onResetPage} />
                     {canReset && (
                         <ProductTableFiltersResult
                             filters={filters}
@@ -187,50 +197,51 @@ export function ProductListView() {
                                 </Tooltip>
                             }
                         />
-
-                        <Scrollbar>
-                            <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 960 }}>
-                                <TableHeadCustom
-                                    order={table.order}
-                                    orderBy={table.orderBy}
-                                    headLabel={TABLE_PRODUCT_HEAD}
-                                    rowCount={dataFiltered.length}
-                                    numSelected={table.selected.length}
-                                    onSort={table.onSort}
-                                    onSelectAllRows={(checked) =>
-                                        table.onSelectAllRows(
-                                            checked,
-                                            dataFiltered.map((row) => row.id)
-                                        )
-                                    }
-                                />
-
-                                <TableBody>
-                                    {dataFiltered.slice(
-                                        table.page * table.rowsPerPage,
-                                        table.page * table.rowsPerPage + table.rowsPerPage
-                                    ).map((row) => (
-                                        <ProductTableRow
-                                            key={row.id}
-                                            row={row}
-                                            selected={table.selected.includes(row.id)}
-                                            onSelectRow={() => table.onSelectRow(row.id)}
-                                            onDeleteRow={() => handleDeleteRow(row.id)}
-                                            onEditRow={() => handleEditRow(row.id)}
-                                            onViewRow={() => handleViewRow(row.id)}
-
-                                        />
-                                    ))}
-
-                                    <TableEmptyRows
-                                        height={table.dense ? 56 : 56 + 20}
-                                        emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
+                        <Box sx={{ position: 'relative', maxHeight: '450px', overflowY: 'auto' }}>
+                            <Scrollbar>
+                                <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 960 }}>
+                                    <TableHeadCustom
+                                        order={table.order}
+                                        orderBy={table.orderBy}
+                                        headLabel={TABLE_PRODUCT_HEAD}
+                                        rowCount={dataFiltered.length}
+                                        numSelected={table.selected.length}
+                                        onSort={table.onSort}
+                                        onSelectAllRows={(checked) =>
+                                            table.onSelectAllRows(
+                                                checked,
+                                                dataFiltered.map((row) => row.id)
+                                            )
+                                        }
                                     />
 
-                                    <TableNoData notFound={notFound} />
-                                </TableBody>
-                            </Table>
-                        </Scrollbar>
+                                    <TableBody>
+                                        {dataFiltered.slice(
+                                            table.page * table.rowsPerPage,
+                                            table.page * table.rowsPerPage + table.rowsPerPage
+                                        ).map((row) => (
+                                            <ProductTableRow
+                                                key={row.id}
+                                                row={row}
+                                                selected={table.selected.includes(row.id)}
+                                                onSelectRow={() => table.onSelectRow(row.id)}
+                                                onDeleteRow={() => handleDeleteRow(row.id)}
+                                                onEditRow={() => handleEditRow(row.id)}
+                                                onViewRow={() => handleViewRow(row.id)}
+
+                                            />
+                                        ))}
+
+                                        <TableEmptyRows
+                                            height={table.dense ? 56 : 56 + 20}
+                                            emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
+                                        />
+
+                                        <TableNoData notFound={notFound} />
+                                    </TableBody>
+                                </Table>
+                            </Scrollbar>
+                        </Box>
                     </Box>
 
                     <TablePaginationCustom

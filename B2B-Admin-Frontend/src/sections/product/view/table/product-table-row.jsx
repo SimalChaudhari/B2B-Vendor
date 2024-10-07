@@ -20,6 +20,7 @@ import { ProductViewDialog } from '../product-view';
 import { useState } from 'react';
 import { ProductEditForm } from '../product-edit-form';
 import { useFetchProductData } from '../../components/fetch-product';
+import { ListItemText } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -53,8 +54,8 @@ export function ProductTableRow({ row, selected, onEditRow, onSelectRow, onDelet
                 </TableCell>
 
                 <TableCell>
-                    <Stack spacing={2} direction="row" alignItems="center">
-                        <Avatar alt={row?.imageUrl} src={row?.name} />
+                <Stack direction="row" alignItems="center" >
+                        <Avatar    variant="rounded" alt={row?.imageUrl} src={row?.name} sx={{ width: 60, height: 60, mr: 2 }} />
                         <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
                             <Link color="inherit" onClick={onEditRow} sx={{ cursor: 'pointer' }}>
                                 {row.itemName || 'not available'}
