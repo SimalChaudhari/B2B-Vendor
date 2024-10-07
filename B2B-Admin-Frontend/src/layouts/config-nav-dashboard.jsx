@@ -7,8 +7,6 @@ const icon = (name) => <SvgColor src={`${CONFIG.site.basePath}/assets/icons/navb
 const ICONS = {
   dashboard: icon('ic-dashboard'),
   users: icon('ic-user'),
-  categories: icon('ic-blog'),
-  subCategories: icon('ic-menu-item'),
   products: icon('ic-product'),
   orders: icon('ic-order'),
   offers: icon('ic-menu-item'), // Add Offer Management icon
@@ -35,8 +33,6 @@ export const navData = [
     subheader: 'Management',
     items: [
       { title: 'Users', path: paths.users.root, icon: ICONS.users },
-      { title: 'Categories', path: paths.categories.root, icon: ICONS.categories },
-      { title: 'Sub Categories', path: paths.subCategories.root, icon: ICONS.subCategories },
       { title: 'Products', path: paths.products.root, icon: ICONS.products },
       { title: 'Orders', path: paths.orders.root, icon: ICONS.orders },
       { title: 'Offer Management', path: paths.offerManagement.root, icon: ICONS.offers }, // New Offer Management

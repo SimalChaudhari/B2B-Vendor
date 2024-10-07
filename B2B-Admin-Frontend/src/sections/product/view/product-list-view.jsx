@@ -123,7 +123,7 @@ export function ProductListView() {
                             variant="contained"
                             startIcon={<Iconify icon="mingcute:add-line" />}
                         >
-                            New product
+                            Sync product
                         </Button>
                     }
                     sx={{ mb: { xs: 3, md: 5 } }}

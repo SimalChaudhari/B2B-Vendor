@@ -7,10 +7,7 @@ import { AuthGuard } from 'src/auth/guard';
 
 // Overview
 const IndexPage = lazy(() => import('src/pages/dashboard'));
-const CompaniesPage = lazy(() => import('src/pages/companies'));
 const UsersPage = lazy(() => import('src/pages/users'));
-const CategoryPage = lazy(() => import('src/pages/categories'));
-const SubCategoryPage = lazy(() => import('src/pages/subCategories'));
 const ProductPage = lazy(() => import('src/pages/products'));
 const FAQPage = lazy(() => import('src/pages/settings/faq'));
 const ContactPage = lazy(() => import('src/pages/settings/contact-us'));
@@ -44,20 +41,6 @@ export const dashboardRoutes = [
     element: CONFIG.auth.skip ? <>{layoutContent}</> : <AuthGuard>{layoutContent}</AuthGuard>,
     children: [
       { element: <UsersPage />, index: true },
-    ],
-  },
-  {
-    path: 'categories',
-    element: CONFIG.auth.skip ? <>{layoutContent}</> : <AuthGuard>{layoutContent}</AuthGuard>,
-    children: [
-      { element: <CategoryPage />, index: true },
-    ],
-  },
-  {
-    path: 'subCategories',
-    element: CONFIG.auth.skip ? <>{layoutContent}</> : <AuthGuard>{layoutContent}</AuthGuard>,
-    children: [
-      { element: <SubCategoryPage />, index: true },
     ],
   },
   {
