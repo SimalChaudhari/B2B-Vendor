@@ -72,10 +72,10 @@ const StackNavigator = () => {
     return (
         <NavigationContainer>
             <Stack.Navigator>
+            <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
             <Stack.Screen name="Main" component={BottomTabs} options={{ headerShown: false }} />
             <Stack.Screen name="Info" component={ProductInfoScreen} options={{ headerShown: false }} />
             <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-            <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
             <Stack.Screen name="AddAdress" component={AddressScreen} options={{ headerShown: false }} />
             </Stack.Navigator>
         </NavigationContainer>

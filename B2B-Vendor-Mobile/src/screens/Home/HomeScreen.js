@@ -1,4 +1,4 @@
-import { Text, View, FlatList, Image, TouchableOpacity, ScrollView, Pressable, TextInput } from 'react-native';
+import { Text, View, FlatList, Image, TouchableOpacity, ScrollView, Pressable, TextInput, Alert } from 'react-native';
 // import React from 'react';
 import React, { useState, useEffect, useCallback } from "react";
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -12,6 +12,7 @@ import ProductItem from '../../components/ProductItem';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from 'react-redux';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
 // import { SliderBox } from 'react-native-image-slider-box';
 
 const HomeScreen = () => {
@@ -220,6 +221,17 @@ const HomeScreen = () => {
   // console.log(products);
   // console.log('====================================');
 
+  // Function to clear AsyncStorage
+  // const clearAsyncStorage = async () => {
+  //   try {
+  //     await AsyncStorage.clear(); // Clear all keys and values
+  //     Alert.alert("Success", "AsyncStorage cleared successfully."); // Success message
+  //     console.log("AsyncStorage cleared successfully.");
+  //   } catch (error) {
+  //     console.error("Failed to clear AsyncStorage:", error);
+  //   }
+  // };
+
   return (
     <>
       <SafeAreaView style={styles.heroContainer}>
@@ -232,6 +244,14 @@ const HomeScreen = () => {
             <MaterialIcons name="mic-none" size={24} color="black" />
           </View>
 
+          {/* <Pressable
+            onPress={clearAsyncStorage} // Clear AsyncStorage when pressed
+            style={{ marginTop: 15 }}
+          >
+            <Text style={{ textAlign: "center", color: "red", fontSize: 16 }}>
+              Clear AsyncStorage
+            </Text>
+          </Pressable>  */}
           {/* Category */}
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.heroTopNavBar}>
             {list.map((item) => (
@@ -432,7 +452,7 @@ const HomeScreen = () => {
 
         </ScrollView>
       </SafeAreaView>
-      
+
     </>
   );
 };
