@@ -9,7 +9,11 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import ProductInfoScreen from '../src/screens/products/ProductInfoScreen';
 import CartScreen from '../src/screens/products/CartScreen';
-import AddressScreen from '../src/screens/auth/AddAddressScreen';
+import AddressScreen from '../src/screens/auth/AddressScreen';
+import AddAddressScreen from '../src/screens/auth/AddAddressScreen';
+import ConfirmationScreen from '../src/screens/auth/ConfirmationScreen';
+import OrderScreen from '../src/screens/products/OrderScreen';
+import ProfileScreen from '../src/screens/auth/ProfileScreen';
 
 const StackNavigator = () => {
     const Stack = createNativeStackNavigator();
@@ -37,7 +41,7 @@ const StackNavigator = () => {
                 {/* Profile */}
                 <Tab.Screen
                     name="Profile" // Corrected from "nam" to "name"
-                    component={HomeScreen}
+                    component={ProfileScreen}
                     options={{
                         tabBarLabel: "Profile", // Corrected from "tabBarLable" to "tabBarLabel"
                         tabBarLabelStyle: { color: "#008E97" },
@@ -72,11 +76,14 @@ const StackNavigator = () => {
     return (
         <NavigationContainer>
             <Stack.Navigator>
-            <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
             <Stack.Screen name="Main" component={BottomTabs} options={{ headerShown: false }} />
-            <Stack.Screen name="Info" component={ProductInfoScreen} options={{ headerShown: false }} />
-            <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
             <Stack.Screen name="AddAdress" component={AddressScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="Info" component={ProductInfoScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="AddAddressScreen" component={AddAddressScreen} options={{ headerShown: false }}  />
+            <Stack.Screen name="Confirm" component={ConfirmationScreen} options={{ headerShown: false }}  />
+            <Stack.Screen name="Order" component={OrderScreen} options={{ headerShown: false }}  />
             </Stack.Navigator>
         </NavigationContainer>
     )

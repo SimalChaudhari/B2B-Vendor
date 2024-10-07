@@ -4,8 +4,13 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from '../../assets/cssFile';
+import { setUser } from '../../../redux/authReducer';
+import { useDispatch } from 'react-redux';
+
 
 const LoginScreen = ({ navigation }) => {
+  const dispatch = useDispatch();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -27,22 +32,39 @@ const LoginScreen = ({ navigation }) => {
   // Handle login
   const handleLogin = () => {
     const user = {
-      email: email,
-      password: password,
+        email: email,
+        password: password,
     };
 
+    console.log('Attempting to login with:', user); // Log the user object
+
     axios
-      .post("http://localhost:8000/login", user) // Update with your API URL
-      .then((response) => {
-        const token = response.data.token;
-        AsyncStorage.setItem("authToken", token);
-        navigation.replace("Main");
-      })
-      .catch((error) => {
-        Alert.alert("Login Error", "Invalid Email or Password"); // Show error message
-        console.log(error);
-      });
-  };
+        .post("http://192.168.1.112:8181/login", user)
+        .then(async (response) => {
+            console.log('Response data:', response.data); // Log the response data
+
+            const token = response.data.token;
+            const userData = response.data.user; // Assuming the user data is returned
+            const userId = userData._id; // Assuming the user data is returned
+
+            // Check if token and user data are valid
+            if (token && userData) {
+                await AsyncStorage.setItem("authToken", token);
+                await AsyncStorage.setItem("userData", JSON.stringify(userData));
+                await AsyncStorage.setItem("userId", userData._id);
+                dispatch(setUser(userData));
+                navigation.replace("Main");
+            } else {
+                throw new Error('Invalid response data'); // Handle invalid response
+            }
+        })
+        .catch((error) => {
+            console.error("Login error:", error?.response ? error?.response?.data : error?.message);
+            Alert.alert("Login Error", "Invalid Email or Password.............");
+        });
+};
+
+  
 
   return (
     <View style={styles.container}>

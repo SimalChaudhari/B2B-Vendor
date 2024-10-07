@@ -217,9 +217,6 @@ const HomeScreen = () => {
 
 
   const cart = useSelector((state) => state.cart.cart);
-  // console.log('====================================');
-  // console.log(products);
-  // console.log('====================================');
 
   // Function to clear AsyncStorage
   // const clearAsyncStorage = async () => {
@@ -244,14 +241,16 @@ const HomeScreen = () => {
             <MaterialIcons name="mic-none" size={24} color="black" />
           </View>
 
-          {/* <Pressable
-            onPress={clearAsyncStorage} // Clear AsyncStorage when pressed
-            style={{ marginTop: 15 }}
-          >
-            <Text style={{ textAlign: "center", color: "red", fontSize: 16 }}>
-              Clear AsyncStorage
-            </Text>
-          </Pressable>  */}
+          {/*
+            <Pressable
+           onPress={clearAsyncStorage} // Clear AsyncStorage when pressed
+           style={{ marginTop: 15 }}
+         >
+           <Text style={{ textAlign: "center", color: "red", fontSize: 16 }}>
+             Clear AsyncStorage
+           </Text>
+         </Pressable>  
+          */}
           {/* Category */}
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.heroTopNavBar}>
             {list.map((item) => (
