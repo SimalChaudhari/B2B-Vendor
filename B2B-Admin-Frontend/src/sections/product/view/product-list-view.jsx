@@ -131,7 +131,7 @@ export function ProductListView() {
                             // href={paths?.dashboard?.user?.new}
                             onClick={handleOpenDialog} // Open the dialog on click
                             variant="contained"
-                            startIcon={<Iconify icon="mingcute:add-line" />}
+                            startIcon={<Iconify icon="eva:sync-fill" />} // Changed icon
                         >
                             Sync product
                         </Button>
@@ -197,51 +197,51 @@ export function ProductListView() {
                                 </Tooltip>
                             }
                         />
-                        <Box sx={{ position: 'relative', maxHeight: '450px', overflowY: 'auto' }}>
-                            <Scrollbar>
-                                <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 960 }}>
-                                    <TableHeadCustom
-                                        order={table.order}
-                                        orderBy={table.orderBy}
-                                        headLabel={TABLE_PRODUCT_HEAD}
-                                        rowCount={dataFiltered.length}
-                                        numSelected={table.selected.length}
-                                        onSort={table.onSort}
-                                        onSelectAllRows={(checked) =>
-                                            table.onSelectAllRows(
-                                                checked,
-                                                dataFiltered.map((row) => row.id)
-                                            )
-                                        }
+
+                        <Scrollbar>
+                            <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 960 }}>
+                                <TableHeadCustom
+                                    order={table.order}
+                                    orderBy={table.orderBy}
+                                    headLabel={TABLE_PRODUCT_HEAD}
+                                    rowCount={dataFiltered.length}
+                                    numSelected={table.selected.length}
+                                    onSort={table.onSort}
+                                    onSelectAllRows={(checked) =>
+                                        table.onSelectAllRows(
+                                            checked,
+                                            dataFiltered.map((row) => row.id)
+                                        )
+                                    }
+                                />
+
+                                <TableBody>
+                                    {dataFiltered.slice(
+                                        table.page * table.rowsPerPage,
+                                        table.page * table.rowsPerPage + table.rowsPerPage
+                                    ).map((row) => (
+                                        <ProductTableRow
+                                            key={row.id}
+                                            row={row}
+                                            selected={table.selected.includes(row.id)}
+                                            onSelectRow={() => table.onSelectRow(row.id)}
+                                            onDeleteRow={() => handleDeleteRow(row.id)}
+                                            onEditRow={() => handleEditRow(row.id)}
+                                            onViewRow={() => handleViewRow(row.id)}
+
+                                        />
+                                    ))}
+
+                                    <TableEmptyRows
+                                        height={table.dense ? 56 : 56 + 20}
+                                        emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
                                     />
 
-                                    <TableBody>
-                                        {dataFiltered.slice(
-                                            table.page * table.rowsPerPage,
-                                            table.page * table.rowsPerPage + table.rowsPerPage
-                                        ).map((row) => (
-                                            <ProductTableRow
-                                                key={row.id}
-                                                row={row}
-                                                selected={table.selected.includes(row.id)}
-                                                onSelectRow={() => table.onSelectRow(row.id)}
-                                                onDeleteRow={() => handleDeleteRow(row.id)}
-                                                onEditRow={() => handleEditRow(row.id)}
-                                                onViewRow={() => handleViewRow(row.id)}
+                                    <TableNoData notFound={notFound} />
+                                </TableBody>
+                            </Table>
+                        </Scrollbar>
 
-                                            />
-                                        ))}
-
-                                        <TableEmptyRows
-                                            height={table.dense ? 56 : 56 + 20}
-                                            emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
-                                        />
-
-                                        <TableNoData notFound={notFound} />
-                                    </TableBody>
-                                </Table>
-                            </Scrollbar>
-                        </Box>
                     </Box>
 
                     <TablePaginationCustom

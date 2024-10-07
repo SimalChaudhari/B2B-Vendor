@@ -4,6 +4,7 @@ import { CONFIG } from 'src/config-global';
 import { DashboardLayout } from 'src/layouts/dashboard';
 import { LoadingScreen } from 'src/components/loading-screen';
 import { AuthGuard } from 'src/auth/guard';
+import { ProductEditView, ProductView } from 'src/sections/product/view';
 
 // Overview
 const IndexPage = lazy(() => import('src/pages/dashboard'));
@@ -48,6 +49,9 @@ export const dashboardRoutes = [
     element: CONFIG.auth.skip ? <>{layoutContent}</> : <AuthGuard>{layoutContent}</AuthGuard>,
     children: [
       { element: <ProductPage />, index: true },
+      { path: 'edit/:id', element: <ProductEditView /> },
+      { path: 'view/:id', element: <ProductView /> },
+
     ],
   },
 
@@ -55,7 +59,7 @@ export const dashboardRoutes = [
     path: 'settings',
     element: CONFIG.auth.skip ? <>{layoutContent}</> : <AuthGuard>{layoutContent}</AuthGuard>,
     children: [
-      { element: <FAQPage/>, index: true },
+      { element: <FAQPage />, index: true },
       { path: 'faq', element: <FAQPage /> },
       { path: 'contact-us', element: <ContactPage /> },
       { path: 'privacy-policy', element: <PrivacyPage /> },

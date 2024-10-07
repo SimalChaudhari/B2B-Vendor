@@ -26,7 +26,11 @@ export const paths = {
     root: `/products`,
     list: `/products/list`,
     details: (id) => `/products/${id}`,
-    edit: (id) => `/products/${id}/edit`,
+    // edit: (id) => `/products/${id}/edit`,
+    edit:  (id) => `/edit/${id}`,
+    view:  (id) => `/view/${id}`,
+
+
   },
   orders: {
     root: `/orders`,
