@@ -7,113 +7,94 @@ import styles from '../../assets/cssFile';
 import { setUser } from '../../../redux/authReducer';
 import { useDispatch } from 'react-redux';
 
-
 const LoginScreen = ({ navigation }) => {
-  const dispatch = useDispatch();
+    const dispatch = useDispatch();
+    const [email, setEmail] = useState('');
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+    // Check login status when component mounts
+    useEffect(() => {
+        const checkLoginStatus = async () => {
+            try {
+                const token = await AsyncStorage.getItem("authToken");
+                if (token) {
+                    navigation.replace("Main");
+                }
+            } catch (err) {
+                console.log("Error checking login status:", err);
+            }
+        };
+        checkLoginStatus();
+    }, [navigation]);
 
-  // Check login status when component mounts
-  useEffect(() => {
-    const checkLoginStatus = async () => {
-      try {
-        const token = await AsyncStorage.getItem("authToken");
-        if (token) {
-          navigation.replace("Main");
+    // Handle login
+    const handleLogin = async () => {
+        if (!email) {
+            Alert.alert("Input Error", "Email is required.");
+            return; // Exit if the email is empty
         }
-      } catch (err) {
-        console.log("Error checking login status:", err);
-      }
-    };
-    checkLoginStatus();
-  }, [navigation]);
+        const userData = { email };
 
-  // Handle login
-  const handleLogin = () => {
-    const user = {
-        email: email,
-        password: password,
-    };
+        console.log('Attempting to login with:', userData); // Log the user object
 
-    console.log('Attempting to login with:', user); // Log the user object
-
-    axios
-        .post("http://192.168.1.112:8181/login", user)
-        .then(async (response) => {
+        try {
+            const response = await axios.post("http://192.168.1.112:8181/login", userData);
             console.log('Response data:', response.data); // Log the response data
 
-            const token = response.data.token;
-            const userData = response.data.user; // Assuming the user data is returned
-            const userId = userData._id; // Assuming the user data is returned
+            const { token, user } = response.data; // Correctly destructure response
 
             // Check if token and user data are valid
-            if (token && userData) {
-                await AsyncStorage.setItem("authToken", token);
-                await AsyncStorage.setItem("userData", JSON.stringify(userData));
-                await AsyncStorage.setItem("userId", userData._id);
-                dispatch(setUser(userData));
-                navigation.replace("Main");
+            if (token && user) {
+                // Instead of storing data directly in AsyncStorage,
+                // navigate to the OTP verification page
+                navigation.navigate("OTPVerification", {
+                    userId: user._id, // Pass user ID for OTP verification
+                    email: email, // Pass email for reference
+                });
             } else {
                 throw new Error('Invalid response data'); // Handle invalid response
             }
-        })
-        .catch((error) => {
+        } catch (error) {
             console.error("Login error:", error?.response ? error?.response?.data : error?.message);
-            Alert.alert("Login Error", "Invalid Email or Password.............");
-        });
+            Alert.alert("Login Error", "Invalid Email or Phone Number.");
+        }
+    };
+
+    return (
+        <View style={styles.container}>
+            <Text style={styles.logo}>Your Logo</Text>
+
+            {/* Email Input */}
+            <View style={styles.inputContainer}>
+                <FontAwesome5 name="user-alt" size={24} color="black" style={styles.inputIcon} />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Email or Phone Number"
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    value={email}
+                    onChangeText={setEmail} // Update email state
+                />
+            </View>
+
+            {/* Login Button */}
+            <TouchableOpacity style={styles.button} onPress={handleLogin}>
+                <Text style={styles.buttonText}>Login</Text>
+            </TouchableOpacity>
+
+            {/* Forgot Password Link */}
+            <TouchableOpacity>
+                <Text style={styles.link}>Forgot Password?</Text>
+            </TouchableOpacity>
+
+            {/* Sign Up Section */}
+            <View style={styles.signUpContainer}>
+                <Text style={styles.signUpText}>New here?</Text>
+                <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+                    <Text style={styles.link}>Create an account</Text>
+                </TouchableOpacity>
+            </View>
+        </View>
+    );
 };
-
-  
-
-  return (
-    <View style={styles.container}>
-      <Text style={styles.logo}>Your Logo</Text>
-
-      {/* Email or Phone Number Input */}
-      <View style={styles.inputContainer}>
-        <FontAwesome5 name="user-alt" size={24} color="black" style={styles.inputIcon} />
-        <TextInput
-          style={styles.input}
-          placeholder="Email or Phone Number"
-          keyboardType="email-address"
-          autoCapitalize="none"
-          value={email}
-          onChangeText={setEmail} // Update email state
-        />
-      </View>
-
-      {/* Password Input */}
-      <View style={styles.inputContainer}>
-        <FontAwesome5 name="lock" size={24} color="black" style={styles.inputIcon} />
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          secureTextEntry={true}
-          value={password}
-          onChangeText={setPassword} // Update password state
-        />
-      </View>
-
-      {/* Login Button */}
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Login</Text>
-      </TouchableOpacity>
-
-      {/* Forgot Password Link */}
-      <TouchableOpacity>
-        <Text style={styles.link}>Forgot Password?</Text>
-      </TouchableOpacity>
-
-      {/* Sign Up Section */}
-      <View style={styles.signUpContainer}>
-        <Text style={styles.signUpText}>New here?</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-          <Text style={styles.link}>Create an account</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
-}
 
 export default LoginScreen;

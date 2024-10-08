@@ -9,11 +9,14 @@ import React, { useEffect, useState, useCallback } from "react";
 import { MaterialIcons, Entypo } from "@expo/vector-icons";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import axios from "axios";
+import { UserContext, UserType } from "../../../UserContext";
 
 const AddressScreen = () => {
+    
+  const { userId, setUserId } = UserContext(UserType);
     const navigation = useNavigation();
     const [addresses, setAddresses] = useState([]);
-    const userId = "67036f6ac07b2748247e6331"; // Static userId
+    // const userId = "67036f6ac07b2748247e6331"; // Static userId
 
     useEffect(() => {
         fetchAddresses();

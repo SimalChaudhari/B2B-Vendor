@@ -61,11 +61,36 @@ const sendVerificationEmail = async (email, verificationToken) => {
   }
 };
 // Register a new user
-// ... existing imports and setup ...
 
+// Function to send OTP email
+const sendOTPEmail = async (email, otp) => {
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "dev4.webbuildinfotech@gmail.com",
+      pass: "xwtm beup jcvs czdw", // Use an app password for better security
+    },
+  });
+
+  const mailOptions = {
+    from: "dev4.webbuildinfotech@gmail.com",
+    to: email,
+    subject: "Your OTP Code",
+    text: `Your OTP code is: ${otp}. It is valid for 10 minutes.`,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log("OTP email sent successfully");
+  } catch (error) {
+    console.error("Error sending OTP email:", error);
+  }
+};
+
+// Register a new user
 app.post("/register", async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email } = req.body;
 
     // Check if the email is already registered
     const existingUser = await User.findOne({ email });
@@ -75,30 +100,62 @@ app.post("/register", async (req, res) => {
     }
 
     // Create a new user
-    const newUser = new User({ name, email, password });
+    const newUser = new User({ name, email });
 
-    // Generate and store the verification token
-    newUser.verificationToken = crypto.randomBytes(20).toString("hex");
+    // Generate a random OTP and expiration time
+    const otp = Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit OTP
+    newUser.otp = otp;
+    newUser.otpExpiresAt = Date.now() + 10 * 60 * 1000; // OTP valid for 10 minutes
 
     // Save the user to the database
     await newUser.save();
 
-    // Debugging statement to verify data
-    console.log("New User Registered:", newUser);
-
-    // Send verification email to the user
-    // Use your preferred email service or library to send the email
-    sendVerificationEmail(newUser.email, newUser.verificationToken);
+    // Send OTP email to the user
+    await sendOTPEmail(newUser.email, otp); // Use the function to send OTP
 
     res.status(201).json({
       message:
-        "Registration successful. Please check your email for verification.",
+        "Registration successful. Please check your email for OTP verification.",
     });
   } catch (error) {
     console.log("Error during registration:", error); // Debugging statement
     res.status(500).json({ message: "Registration failed" });
   }
 });
+
+// Endpoint to verify OTP
+app.post("/verify-otp", async (req, res) => {
+  const { email, otp } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user.otp !== otp) {
+      return res.status(400).json({ message: "Invalid OTP" });
+    }
+
+    if (Date.now() > user.otpExpiresAt) {
+      return res.status(400).json({ message: "OTP has expired" });
+    }
+
+    user.verified = true; // Mark user as verified
+    user.otp = undefined; // Clear OTP
+    user.otpExpiresAt = undefined; // Clear OTP expiration
+    await user.save();
+    const user_id = user._id;
+    const token = jwt.sign({ userId: user._id }, secretKey);
+    res.status(200).json({ token, user, user_id });
+  } catch (error) {
+    console.error("Error during OTP verification:", error);
+    res.status(500).json({ message: "Verification failed" });
+  }
+});
+
+
 
 //endpoint to verify the email
 app.get("/verify/:token", async (req, res) => {
@@ -131,36 +188,38 @@ const generateSecretKey = () => {
 
 const secretKey = generateSecretKey();
 
-//endpoint to login the user!
+
+
+// Endpoint to login the user
+// Endpoint to login the user
 app.post("/login", async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email } = req.body; // Remove password from request
+    console.log(email);
 
-    console.log('Received request body:', req.body);
-    
-    // Check if the user exists
     const user = await User.findOne({ email });
-    
-    // console.log('Found user:', user); // Log the found user
 
     if (!user) {
-      return res.status(401).json({ message: "Invalid email or password" });
+      return res.status(401).json({ message: "Invalid email" });
     }
 
-    // Check if the password is correct
-    console.log('Comparing password:', password, 'with stored password:', user.password);
-    if (user.password !== password) {
-      return res.status(401).json({ message: "Invalid password" });
-    }
+    // No password comparison needed since it's removed
+    // if (!user.verified) {
+    //   return res.status(401).json({ message: "Please verify your email first" });
+    // }
+    // Generate a random OTP and expiration time
+    const otp = Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit OTP
+    user.otp = otp;
+    user.otpExpiresAt = Date.now() + 10 * 60 * 1000; // OTP valid for 10 minutes
 
-    // Generate a token
+    // Save the user with the new OTP
+    await user.save();
+    await sendOTPEmail(user.email, otp);
+
     const token = jwt.sign({ userId: user._id }, secretKey);
-    console.log('====================================');
-    console.log(token);
-    console.log('====================================');
     res.status(200).json({ token, user });
   } catch (error) {
-    console.error('Error during login:', error);
+    console.error("Error during login:", error);
     res.status(500).json({ message: "Login Failed" });
   }
 });
@@ -170,6 +229,7 @@ app.post("/login", async (req, res) => {
 app.post("/addresses", async (req, res) => {
   try {
     const { userId, address } = req.body;
+console.log(userId);
 
     //find the user by the Userid
     const user = await User.findById(userId);
@@ -260,18 +320,65 @@ app.get("/profile/:userId", async (req, res) => {
   }
 });
 
-app.get("/orders/:userId",async(req,res) => {
-  try{
+app.get("/orders/:userId", async (req, res) => {
+  try {
     const userId = req.params.userId;
 
-    const orders = await Order.find({user:userId}).populate("user");
+    const orders = await Order.find({ user: userId }).populate("user");
 
-    if(!orders || orders.length === 0){
-      return res.status(404).json({message:"No orders found for this user"})
+    if (!orders || orders.length === 0) {
+      return res.status(404).json({ message: "No orders found for this user" })
     }
 
     res.status(200).json({ orders });
-  } catch(error){
-    res.status(500).json({ message: "Error"});
+  } catch (error) {
+    res.status(500).json({ message: "Error" });
   }
 })
+
+
+// Endpoint to resend OTP
+app.post("/resend-otp", async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Generate a new OTP and expiration time
+    const otp = Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit OTP
+    user.otp = otp;
+    user.otpExpiresAt = Date.now() + 10 * 60 * 1000; // OTP valid for 10 minutes
+    await user.save();
+
+    await sendOTPEmail(user.email, otp);
+    res.status(200).json({ message: "OTP has been resent." });
+  } catch (error) {
+    console.error("Error resending OTP:", error);
+    res.status(500).json({ message: "Failed to resend OTP." });
+  }
+});
+
+// Endpoint to logout the user and set verified to false
+app.post("/logout", async (req, res) => {
+  const { userId } = req.body; // Expecting the user ID from the request body
+
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.verified = false; // Set verified to false
+    await user.save();
+
+    res.status(200).json({ message: "Logged out successfully, user marked as unverified" });
+  } catch (error) {
+    console.error("Error during logout:", error);
+    res.status(500).json({ message: "Logout failed" });
+  }
+});

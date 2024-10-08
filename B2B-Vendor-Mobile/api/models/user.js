@@ -10,15 +10,17 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
-  password: {
-    type: String,
-    required: true,
-  },
   verified: {
     type: Boolean,
     default: false,
   },
   verificationToken: String,
+  otp: {
+    type: String, // You can use String or Number depending on how you're generating the OTP
+  },
+  otpExpiresAt: {
+    type: Date, // Optional: to store OTP expiration time
+  },
   addresses: [
     {
       name: String,
@@ -43,6 +45,6 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-const User = mongoose.model("User",userSchema);
+const User = mongoose.model("User", userSchema);
 
-module.exports = User
+module.exports = User;

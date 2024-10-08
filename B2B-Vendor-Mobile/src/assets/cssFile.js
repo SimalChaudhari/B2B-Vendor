@@ -43,6 +43,12 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         flex: 1,
     },
+    input1: {
+        height: 100,
+        paddingHorizontal: 10,
+        flex: 1,
+        fontSize: 25,
+    },
     button: {
         backgroundColor: colors.buttonColor,
         padding: 15,

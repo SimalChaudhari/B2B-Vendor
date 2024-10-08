@@ -14,6 +14,7 @@ import AddAddressScreen from '../src/screens/auth/AddAddressScreen';
 import ConfirmationScreen from '../src/screens/auth/ConfirmationScreen';
 import OrderScreen from '../src/screens/products/OrderScreen';
 import ProfileScreen from '../src/screens/auth/ProfileScreen';
+import OTPVerification from '../src/screens/auth/OTPVerification';
 
 const StackNavigator = () => {
     const Stack = createNativeStackNavigator();
@@ -80,6 +81,7 @@ const StackNavigator = () => {
             <Stack.Screen name="AddAdress" component={AddressScreen} options={{ headerShown: false }} />
             <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
             <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="OTPVerification" component={OTPVerification} options={{ headerShown: false }} />
             <Stack.Screen name="Info" component={ProductInfoScreen} options={{ headerShown: false }} />
             <Stack.Screen name="AddAddressScreen" component={AddAddressScreen} options={{ headerShown: false }}  />
             <Stack.Screen name="Confirm" component={ConfirmationScreen} options={{ headerShown: false }}  />
