@@ -55,8 +55,6 @@ const options = {
     }
 };
 
-
-
 // ----------------------------------------------------------------------
 export function ProductListView() {
     const table = useTable();
@@ -138,7 +136,7 @@ export function ProductListView() {
                     }
                     sx={{ mb: { xs: 3, md: 5 } }}
                 />
-                <ProductCreateForm open={openDialog} onClose={handleCloseDialog} />
+                <ProductCreateForm open={openDialog} onClose={handleCloseDialog}/>
                 <Card>
                     <Tabs value={filters.state.status} onChange={handleFilterStatus}
                         sx={{
