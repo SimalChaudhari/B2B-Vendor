@@ -11,18 +11,16 @@ import { useNavigation } from "@react-navigation/native";
 import { Ionicons, AntDesign } from "@expo/vector-icons";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useSelector } from 'react-redux'; // Import useSelector if using Redux
+import { useSelector } from 'react-redux';
 
 const ProfileScreen = () => {
   const [userId, setUserId] = useState(null);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState(); // Initialize user state
+  const [user, setUser] = useState();
   const navigation = useNavigation();
 
-  // Replace with your reducer selector
-  const authData = useSelector((state) => state.auth); // Get auth data from your Redux store
-  // console.log("Reducer Auth Data:", authData); // Log the reducer data
+  const authData = useSelector((state) => state.auth);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -47,36 +45,34 @@ const ProfileScreen = () => {
     });
   }, [navigation]);
 
+  const checkUserLogin = async () => {
+    const token = await AsyncStorage.getItem("authToken");
+    const userData = await AsyncStorage.getItem("userData");
+    const storedUserId = await AsyncStorage.getItem("userId");
+
+    if (token && storedUserId) {
+      setUserId(storedUserId);
+      await fetchUserProfile(storedUserId);
+      await fetchOrders(storedUserId);
+    } else {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const checkUserLogin = async () => {
-      const token = await AsyncStorage.getItem("authToken");
-      const userData = await AsyncStorage.getItem("userData");
-      const storedUserId = await AsyncStorage.getItem("userId");
+    checkUserLogin(); // Initial check on component mount
 
-      // Log the values retrieved from AsyncStorage
-      // console.log("Auth Token:", token);
-      // console.log("userData:", userData);
-      // console.log("Stored User ID:", storedUserId); // Log stored user ID
+    const unsubscribe = navigation.addListener('focus', () => {
+      checkUserLogin(); // Re-check user login status when the screen is focused
+    });
 
-      if (token && storedUserId) { // Check both token and storedUserId
-        setUserId(storedUserId);
-        // console.log("User is logged in with User ID:", storedUserId); // Log message when user is logged in
-        await fetchUserProfile(storedUserId);
-        await fetchOrders(storedUserId);
-      } else {
-        setLoading(false); // Set loading to false if not logged in
-        // console.log("User is not logged in");
-      }
-    };
-
-    checkUserLogin();
-  }, []);
+    return unsubscribe; // Cleanup the listener on unmount
+  }, [navigation]);
 
   const fetchUserProfile = async (userId) => {
     try {
       const response = await axios.get(`http://192.168.1.112:8181/profile/${userId}`);
       const { user } = response.data;
-      console.log("Fetched User Profile:", user); // Log fetched user profile
       setUser(user);
     } catch (error) {
       console.log("Error fetching user profile:", error);
@@ -87,22 +83,32 @@ const ProfileScreen = () => {
     try {
       const response = await axios.get(`http://192.168.1.112:8181/orders/${userId}`);
       const orders = response.data.orders;
-      console.log("Fetched Orders:", orders); // Log fetched orders
       setOrders(orders);
     } catch (error) {
       console.log("Error fetching orders:", error);
     } finally {
-      setLoading(false); // Set loading to false after fetching orders
+      setLoading(false);
     }
   };
 
   const logout = async () => {
-    await AsyncStorage.removeItem("authToken");
-    await AsyncStorage.removeItem("userId"); // Clear userId as well
-    console.log("Auth token cleared and user logged out");
-    setUserId(null);
-    setUser(null);
-    setOrders([]);
+    try {
+      const userId = await AsyncStorage.getItem("userId");
+
+      if (userId) {
+        await axios.post('http://192.168.1.112:8181/logout', { userId });
+      }
+
+      await AsyncStorage.removeItem("authToken");
+      await AsyncStorage.removeItem("userData");
+      await AsyncStorage.removeItem("userId");
+
+      setUserId(null);
+      setUser(null);
+      setOrders([]);
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
   return (
@@ -111,51 +117,66 @@ const ProfileScreen = () => {
         {loading ? (
           <Text style={styles.loadingText}>Loading...</Text>
         ) : user ? (
-          <>
-            <Text style={styles.welcomeText}>Welcome, {user?.name}</Text>
+          user.verified ? (
+            <>
+              <Text style={styles.welcomeText}>Welcome, {user?.name}</Text>
 
-            <View style={styles.buttonContainer}>
-              <Pressable style={styles.button}>
-                <Text style={styles.buttonText}>Your Orders</Text>
-              </Pressable>
+              <View style={styles.buttonContainer}>
+                <Pressable style={styles.button}>
+                  <Text style={styles.buttonText}>Your Orders</Text>
+                </Pressable>
 
-              <Pressable style={styles.button}>
-                <Text style={styles.buttonText}>Your Account</Text>
-              </Pressable>
+                <Pressable style={styles.button}>
+                  <Text style={styles.buttonText}>Your Account</Text>
+                </Pressable>
+              </View>
+
+              <View style={styles.buttonContainer}>
+                <Pressable style={styles.button}>
+                  <Text style={styles.buttonText}>Buy Again</Text>
+                </Pressable>
+
+                <Pressable onPress={logout} style={styles.button}>
+                  <Text style={styles.buttonText}>Logout</Text>
+                </Pressable>
+              </View>
+
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                {orders.length > 0 ? (
+                  orders.map((order) => (
+                    <Pressable
+                      style={styles.orderCard}
+                      key={order._id}
+                    >
+                      {order.products.slice(0, 1)?.map((product) => (
+                        <View style={{ marginVertical: 10 }} key={product._id}>
+                          <Image
+                            source={{ uri: product.image }}
+                            style={styles.productImage}
+                          />
+                        </View>
+                      ))}
+                    </Pressable>
+                  ))
+                ) : (
+                  <Text style={styles.noOrdersText}>No orders found</Text>
+                )}
+              </ScrollView>
+            </>
+          ) : (
+            <View style={styles.loginContainer}>
+              <Text style={styles.noOrdersText}>Your account is not verified.</Text>
+              <View style={styles.buttonContainer}>
+                <Pressable onPress={() => navigation.navigate("Login")} style={styles.button}>
+                  <Text style={styles.buttonText}>Login</Text>
+                </Pressable>
+
+                <Pressable onPress={() => navigation.navigate("Register")} style={styles.button}>
+                  <Text style={styles.buttonText}>Register</Text>
+                </Pressable>
+              </View>
             </View>
-
-            <View style={styles.buttonContainer}>
-              <Pressable style={styles.button}>
-                <Text style={styles.buttonText}>Buy Again</Text>
-              </Pressable>
-
-              <Pressable onPress={logout} style={styles.button}>
-                <Text style={styles.buttonText}>Logout</Text>
-              </Pressable>
-            </View>
-
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              {orders.length > 0 ? (
-                orders.map((order) => (
-                  <Pressable
-                    style={styles.orderCard}
-                    key={order._id}
-                  >
-                    {order.products.slice(0, 1)?.map((product) => (
-                      <View style={{ marginVertical: 10 }} key={product._id}>
-                        <Image
-                          source={{ uri: product.image }}
-                          style={styles.productImage}
-                        />
-                      </View>
-                    ))}
-                  </Pressable>
-                ))
-              ) : (
-                <Text style={styles.noOrdersText}>No orders found</Text>
-              )}
-            </ScrollView>
-          </>
+          )
         ) : (
           <View style={styles.loginContainer}>
             <Text style={styles.noOrdersText}>You are not logged in</Text>

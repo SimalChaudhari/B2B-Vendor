@@ -9,8 +9,11 @@ import {
 import React, { useEffect, useState, useCallback } from "react";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import axios from "axios";
+import { UserContext, UserType } from "../../../UserContext";
 
 const AddAddressScreen = () => {
+  
+  const { userId, setUserId } = UserContext(UserType);
   const navigation = useNavigation();
   const [addresses, setAddresses] = useState([]);
   const [newAddress, setNewAddress] = useState({
@@ -23,7 +26,7 @@ const AddAddressScreen = () => {
     country: '',
     postalCode: '',
   });
-  const userId = "67036f6ac07b2748247e6331"; // Static userId
+  // const userId = "67036f6ac07b2748247e6331"; // Static userId
 
   useEffect(() => {
     fetchAddresses();

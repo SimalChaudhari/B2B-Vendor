@@ -9,26 +9,17 @@ import styles from '../../assets/cssFile';
 const RegisterScreen = ({ navigation }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState(""); // State for confirm password
 
   const handleRegister = () => {
     // Validation for required fields
-    if (!name || !email || !password || !confirmPassword) {
+    if (!name || !email) {
       Alert.alert("Input Error", "All fields are required.");
       return; // Exit the function if any field is empty
-    }
-
-    // Check if passwords match
-    if (password !== confirmPassword) {
-      Alert.alert("Input Error", "Passwords and Confirm Password do not match.");
-      return; // Exit the function if passwords do not match
     }
 
     const user = {
       name: name,
       email: email,
-      password: password,
     };
 
     // Send a POST request to the backend API to register the user
@@ -36,19 +27,21 @@ const RegisterScreen = ({ navigation }) => {
       .post("http://192.168.1.112:8181/register", user)
       .then(async (response) => {
         console.log(response);
-        const token = response.data.token; // Assuming the token is returned
-        const userData = response.data.user; // Assuming the user data is returned
+        // const token = response.data.token; // Uncomment if your API returns a token
+        // const userData = response.data.user; // Uncomment if your API returns user data
 
-        // Store token and user data in AsyncStorage
-        await AsyncStorage.setItem("authToken", token);
-        await AsyncStorage.setItem("userData", JSON.stringify(userData)); // Store user data
+        // Store token and user data in AsyncStorage if needed
+        // await AsyncStorage.setItem("authToken", token);
+        // await AsyncStorage.setItem("userData", JSON.stringify(userData)); // Uncomment if storing user data
 
         Alert.alert("Registration successful", "You have been registered successfully");
+
+        // Navigate to OTPVerification, passing the email
+        navigation.navigate('OTPVerification', { email: user.email }); // Pass email to OTPVerification
+
         // Reset the form fields
         setName("");
-        setEmail("");
-        setPassword("");
-        setConfirmPassword(""); // Reset confirm password field
+        setEmail(""); // Reset email field
       })
       .catch((error) => {
         console.error(error);
@@ -83,30 +76,6 @@ const RegisterScreen = ({ navigation }) => {
           autoCapitalize="none"
           value={email}
           onChangeText={setEmail} // Update the email state
-        />
-      </View>
-
-      {/* Password Input */}
-      <View style={styles.inputContainer}>
-        <FontAwesome5 name="lock" size={24} color="black" style={styles.inputIcon} />
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          secureTextEntry={true}
-          value={password}
-          onChangeText={setPassword} // Update the password state
-        />
-      </View>
-
-      {/* Confirm Password Input */}
-      <View style={styles.inputContainer}>
-        <FontAwesome5 name="lock" size={24} color="black" style={styles.inputIcon} />
-        <TextInput
-          style={styles.input}
-          placeholder="Confirm Password"
-          secureTextEntry={true}
-          value={confirmPassword} // Bind confirm password state
-          onChangeText={setConfirmPassword} // Update confirm password state
         />
       </View>
 

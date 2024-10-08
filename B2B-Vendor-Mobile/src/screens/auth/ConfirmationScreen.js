@@ -7,25 +7,59 @@ import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { cleanCart } from "../../../redux/CartReducer";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import jwt_decode from "jwt-decode"
+import { UserType } from "../../../UserContext";
 // import RazorpayCheckout from "react-native-razorpay";
 
 const ConfirmationScreen = () => {
 
-    // Inside your ProfileScreen component
-useEffect(() => {
-    const checkUserLogin = async () => {
-      const token = await AsyncStorage.getItem("authToken");
-      if (token) {
-        const storedUserId = await AsyncStorage.getItem("userId"); // Assuming userId is stored in AsyncStorage
-        // setUserId(storedUserId);
-        console.log("User is logged in"); // Log message when user is logged in
+    const {userId,setUserId} = useContext(UserType)
+    useEffect(() => {
+      const fetchUser = async() => {
+          const token = await AsyncStorage.getItem("authToken");
+          const decodedToken = jwt_decode(token);
+          const userId = decodedToken.userId;
+          setUserId(userId)
       }
-      setLoading(false); // Set loading to false after checking login status
-    };
   
-    checkUserLogin();
-  }, []);
+      fetchUser();
+    },[]);
+    console.log(userId)
+
+    // const [userId, setUserId] = useState(null);
   
+    useEffect(() => {
+      const getUserId = async () => {
+        try {
+          const storedUserId = await AsyncStorage.getItem("userId"); // Assuming userId is stored in AsyncStorage
+          setUserId(storedUserId);
+          console.log("User is logged in"); // Log message when user is logged in
+        } catch (error) {
+          console.error("Error fetching userId:", error); // Log any error that occurs
+        } finally {
+          setLoading(false); // Set loading to false after checking login status
+        }
+      };
+  
+      getUserId(); // Call the function to execute it
+    }, []); // Empty dependency array to run it once on mount
+  
+    // Inside your ProfileScreen component
+    // useEffect(() => {
+    //     const checkUserLogin = async () => {
+    //         const token = await AsyncStorage.getItem("authToken");
+    //         if (token) {
+    //             const storedUserId = await AsyncStorage.getItem("userId"); // Assuming userId is stored in AsyncStorage
+    //             setUserId(storedUserId);
+    //             console.log("User is logged in"); // Log message when user is logged in
+    //         }
+    //         setLoading(false); // Set loading to false after checking login status
+    //     };
+
+    //     checkUserLogin();
+    // }, []);
+
     const steps = [
         { title: "Address", content: "Address Form" },
         { title: "Delivery", content: "Delivery Options" },
@@ -35,9 +69,8 @@ useEffect(() => {
     const navigation = useNavigation();
     const [currentStep, setCurrentStep] = useState(0);
     const [addresses, setAddresses] = useState([]);
-    // const { userId, setUserId } = useContext("67036f6ac07b2748247e6331");
-    const userId = "67036f6ac07b2748247e6331"; // Static userId
-    
+console.log("gggggggggggggg",userId);
+
     const cart = useSelector((state) => state.cart.cart);
     const total = cart
         ?.map((item) => item.price * item.quantity)
@@ -190,7 +223,15 @@ useEffect(() => {
                     <Text style={{ fontSize: 16, fontWeight: "bold" }}>
                         Select Delivery Address
                     </Text>
-
+                    <View style={styles.container}>
+                        <Pressable
+                            onPress={() => navigation.navigate("AddAddressScreen")} // Update the route name here
+                            style={styles.addAddressButton}
+                        >
+                            <Text>Add a new Address</Text>
+                            <MaterialIcons name="keyboard-arrow-right" size={24} color="black" />
+                        </Pressable>
+                    </View>
                     <Pressable>
                         {addresses?.map((item, index) => (
                             <Pressable
@@ -593,4 +634,25 @@ useEffect(() => {
 
 export default ConfirmationScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+    
+    // container: {
+    //     padding: 10,
+    // },
+    headerText: {
+        fontSize: 20,
+        fontWeight: "bold",
+    },
+    addAddressButton: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        marginTop: 10,
+        borderColor: "#D0D0D0",
+        borderWidth: 1,
+        borderLeftWidth: 0,
+        borderRightWidth: 0,
+        paddingVertical: 7,
+        // paddingHorizontal: 5,
+    },
+});
