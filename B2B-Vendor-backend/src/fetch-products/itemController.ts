@@ -1,4 +1,4 @@
-import { Controller, HttpStatus, Post, Get, Res } from '@nestjs/common';
+import { Controller, HttpStatus, Post, Get, Res, Param } from '@nestjs/common';
 import { Response } from 'express'; // Import Response from express
 import { ItemService } from './item.service';
 
@@ -19,6 +19,19 @@ export class ItemController {
       length: items.length,
       data: items,
     });
+  }
+
+  @Get('get/:id') // Get item by ID
+  async getById(@Param('id') id: string, @Res() response: Response) {
+      const item = await this.itemService.findById(id); // Implement findById in your service
+      if (!item) {
+          return response.status(HttpStatus.NOT_FOUND).json({
+              message: 'Item not found',
+          });
+      }
+      return response.status(HttpStatus.OK).json({
+          data: item,
+      });
   }
 
 }

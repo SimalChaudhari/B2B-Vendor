@@ -138,5 +138,10 @@ export class ItemService {
     }
   }
 
+  async findById(id: string): Promise<ItemEntity | null> {
+    return this.itemRepository.findOne({ where: { id } }); // Adjust according to your data access layer
+  }
+
+
 
 }

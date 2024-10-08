@@ -14,8 +14,14 @@ export function applyFilter({ inputData, comparator, filters }) {
     const lowerSearchTerm = searchTerm.toLowerCase();
 
     filteredData = filteredData.filter((item) =>
-      item.name.toLowerCase().includes(lowerSearchTerm)
-    );
+      item.itemName.toLowerCase().includes(lowerSearchTerm) ||
+      item.group.toLowerCase().includes(lowerSearchTerm) ||
+      item.category.toLowerCase().includes(lowerSearchTerm) ||
+      item.costPrice.toString().includes(lowerSearchTerm) ||
+      item.sellingPrice.toString().includes(lowerSearchTerm) ||
+      item.mrpRate.toString().includes(lowerSearchTerm) 
+
+    )
   }
 
   // Sort the filtered data using the comparator

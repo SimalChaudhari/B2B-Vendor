@@ -23,37 +23,63 @@ const PRODUCT_CATEGORY_GROUP_OPTIONS = [
         classify: ['Furniture', 'Appliances', 'Decor'],
     },
 ];
+export const applicable = [
+    { value: 'applicable', label: 'Applicable' },
+    { value: 'not applicable', label: 'Not Applicable' },
+];
+
 
 const NewProductSchema = zod.object({
-    name: zod.string().min(1, 'Name is required!'),
-    description: zod.string().min(1, 'Description is required!'),
-    images: zod.array(zod.string()).min(1, 'At least one image is required!'),
-    code: zod.string().min(1, 'Product code is required!'),
-    sku: zod.string().min(1, 'Product SKU is required!'),
-    quantity: zod.number().min(1, 'Quantity is required!'),
+    alias: zod.string().optional(),
+    alternateUnit: zod.string().optional(),
+    baseUnit: zod.string().min(1, 'Base Unit is required!'),
     category: zod.string().min(1, 'Category is required!'),
-    colors: zod.array(zod.string()).min(1, 'Choose at least one color!'),
-    sizes: zod.array(zod.string()).min(1, 'Choose at least one size!'),
-    price: zod.number().min(1, 'Price is required!'),
-    priceSale: zod.number().optional(),
-    tax: zod.number().optional(),
+    costPrice: zod.number().min(1, 'Cost Price is required!'),
+    costPriceDate: zod.string().min(1, 'Cost Price Date is required!'),
+    description: zod.string().optional(),
+    group: zod.string().optional(),
+    gstApplicable: zod.string().min(1, 'GST Applicable is required!'),
+    gstApplicableDate: zod.string().min(1, 'GST Applicable Date is required!'),
+    gstRate: zod.number().optional(),
+    hasExpiryDate: zod.string().min(1, 'Has Expiry Date is required!'),
+    hasMfgDate: zod.string().min(1, 'Has Manufacturing Date is required!'),
+    id: zod.string().optional(),
+    isBatchWiseOn: zod.string().min(1, 'Is Batch Wise On is required!'),
+    itemName: zod.string().min(1, 'Item Name is required!'),
+    mrpDate: zod.string().min(1, 'MRP Date is required!'),
+    mrpRate: zod.number().optional(),
+    partNo: zod.string().optional(),
+    remarks: zod.string().optional(),
+    sellingPrice: zod.number().min(1, 'Selling Price is required!'),
+    sellingPriceDate: zod.string().min(1, 'Selling Price Date is required!'),
 });
 
 export default function ProductNewEditForm({ currentProduct }) {
     const [includeTaxes, setIncludeTaxes] = useState(false);
 
     const defaultValues = useMemo(() => ({
-        name: currentProduct?.name || '',
-        description: currentProduct?.description || '',
-        code: currentProduct?.code || '',
-        sku: currentProduct?.sku || '',
-        quantity: currentProduct?.quantity || 0,
+        alias: currentProduct?.alias || '',
+        alternateUnit: currentProduct?.alternateUnit || 'Not Applicable',
+        baseUnit: currentProduct?.baseUnit || 'Nos',
         category: currentProduct?.category || '',
-        colors: currentProduct?.colors || [],
-        sizes: currentProduct?.sizes || [],
-        images: currentProduct?.images || [],
-        price: currentProduct?.price || 0,
-        priceSale: currentProduct?.priceSale || '',
+        costPrice: currentProduct?.costPrice || 0,
+        costPriceDate: currentProduct?.costPriceDate || '',
+        description: currentProduct?.description || '',
+        group: currentProduct?.group || 'Primary',
+        gstApplicable: currentProduct?.gstApplicable || 'Applicable',
+        gstApplicableDate: currentProduct?.gstApplicableDate || '',
+        gstRate: currentProduct?.gstRate || 0,
+        hasExpiryDate: currentProduct?.hasExpiryDate || 'Yes',
+        hasMfgDate: currentProduct?.hasMfgDate || 'No',
+        id: currentProduct?.id || '',
+        isBatchWiseOn: currentProduct?.isBatchWiseOn || 'Yes',
+        itemName: currentProduct?.itemName || '',
+        mrpDate: currentProduct?.mrpDate || '',
+        mrpRate: currentProduct?.mrpRate || 0,
+        partNo: currentProduct?.partNo || '',
+        remarks: currentProduct?.remarks || '',
+        sellingPrice: currentProduct?.sellingPrice || 0,
+        sellingPriceDate: currentProduct?.sellingPriceDate || '',
     }), [currentProduct]);
 
     const methods = useForm({
@@ -91,11 +117,13 @@ export default function ProductNewEditForm({ currentProduct }) {
             <Stack spacing={3}>
 
                 <Card>
-                    <CardHeader title="Product Details" subheader="Enter basic product information" />
+                    <CardHeader title="Product Details" sx={{ py: 2 }} />
                     <Divider />
                     <Stack spacing={2} sx={{ p: 3 }}>
-                        <Field.Text name="name" label="Product Name" />
-                        <Field.Text name="description" label="Description" multiline rows={4} />
+                        <Field.Text name="itemName" label="Product Name" />
+                        <Field.Text name="description" label="Description" multiline rows={5} />
+                        <Field.Text name="remark" label="Remark" multiline rows={3} />
+
                         <Typography variant="subtitle2">Images</Typography>
                         <Field.Upload
                             name="images"
@@ -109,19 +137,33 @@ export default function ProductNewEditForm({ currentProduct }) {
                 </Card>
 
                 <Card>
-                    <CardHeader title="Product Properties" subheader="Enter product attributes" />
+                    <CardHeader title="Product Properties" Fsx={{ py: 2 }} />
                     <Divider />
                     <Box sx={{ p: 3 }}>
                         <Grid container spacing={2}>
+
                             <Grid item xs={12} sm={6}>
-                                <Field.Text name="code" label="Product Code" />
+                                <Field.Text name="alias" label="Alias" />
                             </Grid>
                             <Grid item xs={12} sm={6}>
-                                <Field.Text name="sku" label="Product SKU" />
+                                <Field.Text name="partNo" label="Part No" />
                             </Grid>
+
+
                             <Grid item xs={12} sm={6}>
-                                <Field.Text name="quantity" label="Quantity" type="number" />
+                                <Field.Select native name="category" label="Group" InputLabelProps={{ shrink: true }}>
+                                    {PRODUCT_CATEGORY_GROUP_OPTIONS.map((category) => (
+                                        <optgroup key={category.group} label={category.group}>
+                                            {category.classify.map((classify) => (
+                                                <option key={classify} value={classify}>
+                                                    {classify}
+                                                </option>
+                                            ))}
+                                        </optgroup>
+                                    ))}
+                                </Field.Select>
                             </Grid>
+
                             <Grid item xs={12} sm={6}>
                                 <Field.Select native name="category" label="Category" InputLabelProps={{ shrink: true }}>
                                     {PRODUCT_CATEGORY_GROUP_OPTIONS.map((category) => (
@@ -140,33 +182,100 @@ export default function ProductNewEditForm({ currentProduct }) {
                 </Card>
 
                 <Card>
-                    <CardHeader title="Pricing" subheader="Enter price details" />
+                    <CardHeader title="Pricing" />
                     <Divider />
                     <Stack spacing={2} sx={{ p: 3 }}>
-                        <Field.Text
-                            name="price"
-                            label="Regular Price"
-                            type="number"
-                            InputProps={{
-                                startAdornment: <InputAdornment position="start">$</InputAdornment>,
-                            }}
-                        />
-                        <Field.Text
-                            name="priceSale"
-                            label="Sale Price"
-                            type="number"
-                            InputProps={{
-                                startAdornment: <InputAdornment position="start">$</InputAdornment>,
-                            }}
-                        />
+                        <Grid container spacing={2}>
+                            <Grid item xs={12} sm={6}>
+                                <Field.Text
+                                    name="costPrice"
+                                    label="Cost Price"
+                                    type="number"
+                                    InputProps={{
+                                        startAdornment: <InputAdornment position="start">₹</InputAdornment>,
+                                    }}
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <Field.DatePicker
+                                    name="costPriceDate"
+                                    label="Cost Price Date"
+                                    type="date"
+                                    InputProps={{
+                                        startAdornment: <InputAdornment position="start">₹</InputAdornment>,
+                                    }}
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <Field.Text
+                                    name="sellingPrice"
+                                    label="Selling Price"
+                                    type="number"
+                                    InputProps={{
+                                        startAdornment: <InputAdornment position="start">₹</InputAdornment>,
+                                    }}
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <Field.DatePicker
+                                    name="sellingPriceDate"
+                                    label="Selling Price Date"
+                                    type="date"
+                                    InputProps={{
+                                        startAdornment: <InputAdornment position="start">₹</InputAdornment>,
+                                    }}
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <Field.Select native name="gstApplicable" label="GST Applicable" InputLabelProps={{ shrink: true }}>
+                                    {applicable.map((apply) => (
+                                        <option key={apply.value}>
+                                            {apply.label}
+                                        </option>
+                                    ))}
+                                </Field.Select>
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <Field.DatePicker
+                                    name="gstApplicableDate"
+                                    label="GST Applicable Date"
+                                    type="date"
+                                    InputProps={{
+                                        startAdornment: <InputAdornment position="start">₹</InputAdornment>,
+                                    }}
+                                />
+                            </Grid>
+
+                            <Grid item xs={12} sm={6}>
+
+                                <Field.Text
+                                    name="mrpRate"
+                                    label="mrp Rate"
+                                    type="number"
+                                    InputProps={{
+                                        startAdornment: <InputAdornment position="start">₹</InputAdornment>,
+                                    }}
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <Field.DatePicker
+                                    name="mrpDate"
+                                    label="MRP Date"
+                                    type="date"
+                                    InputProps={{
+                                        startAdornment: <InputAdornment position="start">₹</InputAdornment>,
+                                    }}
+                                />
+                            </Grid>
+                        </Grid>
                         <FormControlLabel
                             control={<Switch checked={includeTaxes} onChange={handleIncludeTaxes} />}
                             label="Include Taxes"
                         />
                         {!includeTaxes && (
                             <Field.Text
-                                name="tax"
-                                label="Tax (%)"
+                                name="gstRate"
+                                label="GST Rate (%)"
                                 type="number"
                                 InputProps={{
                                     startAdornment: <InputAdornment position="start">%</InputAdornment>,

@@ -33,47 +33,52 @@ import {
     TablePaginationCustom,
 } from 'src/components/table';
 
-
 import { ProductTableFiltersResult } from './table/product-table-filters-result';
 import { useDispatch, useSelector } from 'react-redux';
-import { productList } from 'src/store/action/productActions';
+import { productList, syncProduct } from 'src/store/action/productActions';
 import { Typography } from '@mui/material';
 import { getProductStatusOptions, TABLE_PRODUCT_HEAD } from '../../../components/constants';
 import { applyFilter } from '../utils';
-// import { useFetchProductData } from '../components';
-import { ProductCreateForm } from './product-create-form';
 import { ProductTableRow } from './table/product-table-row';
 import { ProductTableToolbar } from './table/product-table-toolbar';
 import { useFetchProductData } from '../components/fetch-product';
 
-const options = {
-    category: ['Electronics', 'Clothing', 'Books'],
-    subcategories: {
-        Electronics: ['Phones', 'Laptops', 'Cameras'],
-        Clothing: ['Men', 'Women', 'Kids'],
-        Books: ['Fiction', 'Non-Fiction', 'Comics'],
-    }
-};
+// const options = {
+//     category: ['Electronics', 'Clothing', 'Books'],
+//     subcategories: {
+//         Electronics: ['Phones', 'Laptops', 'Cameras'],
+//         Clothing: ['Men', 'Women', 'Kids'],
+//         Books: ['Fiction', 'Non-Fiction', 'Comics'],
+//     }
+// };
+// console.log("🚀 ~ options:", options)
 
 // ----------------------------------------------------------------------
 export function ProductListView() {
     const table = useTable();
     const router = useRouter();
     const confirm = useBoolean();
+    const [loading, setLoading] = useState(false);
 
     const { fetchData, fetchDeleteData } = useFetchProductData(); // Destructure fetchData from the custom hook
 
+    const dispatch = useDispatch();
+ 
     const _productList = useSelector((state) => state.product?.product || []);
+
+    const options = _productList.map(opt => ({
+        category: opt.category,
+        group: opt.group,
+    }));
+
     const [tableData, setTableData] = useState(_productList);
 
     const STATUS_OPTIONS = getProductStatusOptions(tableData);
 
     const [openDialog, setOpenDialog] = useState(false);
-    const handleOpenDialog = () => { setOpenDialog(true) };
-    const handleCloseDialog = () => { setOpenDialog(false) };
 
     // Update the initial state to include lastName, email, and mobile
-    const filters = useSetState({ name: '', description: '', price: '', imageUrl: '', stock_quantity: '', status: 'all' });
+    const filters = useSetState({ name: '', group: '', category: '', price: '', imageUrl: '', stock_quantity: '', status: 'all' });
     //----------------------------------------------------------------------------------------------------
     useEffect(() => {
         fetchData(); // Call fetchData when the component mounts
@@ -111,6 +116,19 @@ export function ProductListView() {
         },
         [filters, table]
     );
+
+    const handleSyncAPI = async () => {
+        setLoading(true); // Set loading to true
+        try {
+            await dispatch(syncProduct());
+            fetchData(); // Fetch data after syncing
+        } catch (error) {
+            console.error('Error syncing product:', error);
+        } finally {
+            setLoading(false); // Set loading to false after the API call completes
+        }
+    };
+
     //----------------------------------------------------------------------------------------------------
 
     return (
@@ -125,18 +143,18 @@ export function ProductListView() {
                     ]}
                     action={
                         <Button
-                            component={RouterLink}
                             // href={paths?.dashboard?.user?.new}
-                            onClick={handleOpenDialog} // Open the dialog on click
+                            onClick={handleSyncAPI} // Open the dialog on click
                             variant="contained"
                             startIcon={<Iconify icon="eva:sync-fill" />} // Changed icon
+                            disabled={loading} // Disable button while loading
                         >
-                            Sync product
+                          {loading ? 'Syncing...' : 'Sync product'}
                         </Button>
                     }
                     sx={{ mb: { xs: 3, md: 5 } }}
                 />
-                <ProductCreateForm open={openDialog} onClose={handleCloseDialog}/>
+
                 <Card>
                     <Tabs value={filters.state.status} onChange={handleFilterStatus}
                         sx={{

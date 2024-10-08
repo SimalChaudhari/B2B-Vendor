@@ -1,7 +1,8 @@
-import { PRODUCT_LIST } from "../constants/actionTypes";
+import { PRODUCT_GET_BY_LIST, PRODUCT_LIST } from "../constants/actionTypes";
 
 const initialState = {
     product: [],
+    getByProduct: ''
 
 };
 const productReducer = (state = initialState, { type, payload } = {}) => {
@@ -10,6 +11,11 @@ const productReducer = (state = initialState, { type, payload } = {}) => {
             return {
                 ...state,
                 product: payload,
+            };
+        case PRODUCT_GET_BY_LIST:
+            return {
+                ...state,
+                getByProduct: payload,
             };
         default:
             return state;

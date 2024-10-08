@@ -3,25 +3,25 @@ import { paths } from 'src/routes/paths';
 import { DashboardContent, PageContentLayout } from 'src/layouts/dashboard';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 import ProductNewEditForm from './product-new-edit-form';
+import { useParams } from 'react-router';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { itemGetByList } from 'src/store/action/productActions';
 
 // Dummy product data
-const product = {
-    id: 1,
-    name: 'Sample Product',
-    price: 49.99,
-    description: 'This is a top-rated sample product for demonstration purposes.',
-    category: 'Electronics',
-    stock: 20,
-    rating: 4.5,
-    reviews: [
-        { user: 'John Doe', comment: 'Great product!', rating: 5 },
-        { user: 'Jane Smith', comment: 'Good value for money.', rating: 4 },
-    ],
-    images: ['/path/to/image1.jpg', '/path/to/image2.jpg'],
-};
-
 // ----------------------------------------------------------------------
 export function ProductEditView() {
+    const dispatch = useDispatch();
+    const { id } = useParams(); // Get the product ID from URL
+    const product = useSelector((state) => state.product.getByProduct); // Access the product from the Redux store
+
+    useEffect(() => {
+        // Fetch the product data when the component mounts
+        if (id) {
+            dispatch(itemGetByList(id));
+        }
+    }, [id, dispatch]);
+
     return (
         <DashboardContent maxWidth='2xl'>
             <CustomBreadcrumbs

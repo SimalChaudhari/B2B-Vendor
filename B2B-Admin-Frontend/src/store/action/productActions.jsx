@@ -1,6 +1,6 @@
 import { toast } from "sonner";
 import axiosInstance from "src/configs/axiosInstance";
-import { PRODUCT_LIST } from "../constants/actionTypes";
+import { PRODUCT_GET_BY_LIST, PRODUCT_LIST } from "../constants/actionTypes";
 
 export const itemList = () => async (dispatch) => {
     try {
@@ -17,6 +17,37 @@ export const itemList = () => async (dispatch) => {
     }
     return false; // Return false for any errors
 };
+
+export const itemGetByList = (id) => async (dispatch) => {
+    try {
+        const response = await axiosInstance.get(`/items/get/${id}`);
+        dispatch({
+            type: PRODUCT_GET_BY_LIST,
+            payload: response.data?.data, // Assuming response contains the customers data
+        });
+        return true;
+    } catch (error) {
+        // Check if error response exists and handle error message
+        const errorMessage = error?.response?.data?.message || 'An unexpected error occurred. Please try again.';
+        toast.error(errorMessage);
+    }
+    return false; // Return false for any errors
+};
+
+
+
+export const syncProduct = () => async (dispatch) => {
+    try {
+        await axiosInstance.post('/items/fetch');
+        return true;
+    } catch (error) {
+        // Check if error response exists and handle error message
+        const errorMessage = error?.response?.data?.message || 'An unexpected error occurred. Please try again.';
+        toast.error(errorMessage);
+    }
+    return false; // Return false for any errors
+};
+
 
 export const productList = () => async (dispatch) => {
     try {
