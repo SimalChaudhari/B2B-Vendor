@@ -45,8 +45,24 @@ export function FAQTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow
                     <Checkbox id={row.id} checked={selected} onClick={onSelectRow} />
                 </TableCell>
 
-                <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.question || 'not available'}</TableCell>
-                <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.answer || 'not available'}</TableCell>
+                <TableCell sx={{
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    maxWidth: '200px', // Set a width that fits your layout
+                }}>
+                    {row.question || 'not available'}
+                </TableCell>
+                <TableCell
+                    sx={{
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        maxWidth: '200px', // Set a width that fits your layout
+                    }}
+                    dangerouslySetInnerHTML={{ __html: row.answer || 'not available' }} // Render HTML content
+                />
+
 
                 <TableCell>
                     <Label

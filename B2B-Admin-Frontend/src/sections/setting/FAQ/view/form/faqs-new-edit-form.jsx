@@ -72,19 +72,23 @@ export default function FAQNewEditForm({ currentFAQ }) {
                     <CardHeader title="FAQ Details" sx={{ py: 2 }} />
                     <Divider />
                     <Stack spacing={2} sx={{ p: 3 }}>
-                        <Field.Text name="question" label="Question" />
-                        <Field.Text name="answer" label="Answer" multiline rows={5} />
+                    {/* Question Field */}
+                    <Typography variant="subtiQuestiontle2">Question</Typography>
+                    <Field.Text name="question" label="Question" />
+                    {/* Answer Field */}
+                    <Typography variant="subtitle2">Answer</Typography>
+                    <Field.Editor name="answer" sx={{ maxHeight: 480 }} />
+                    {/* Status Select Field */}
+                    <Typography variant="subtitle2">Status</Typography>
+                    <Field.Select name="status" label="Status">
 
-
-                        <Field.Select name="status" label="Status">
-                            {FAQ_STATUS_OPTIONS.map((status) => (
-                                <MenuItem key={status.value} value={status.value}>
-                                    {status.label}
-                                </MenuItem>
-                            ))}
-                        </Field.Select>
-
-                    </Stack>
+                        {FAQ_STATUS_OPTIONS.map((status) => (
+                            <MenuItem key={status.value} value={status.value}>
+                                {status.label}
+                            </MenuItem>
+                        ))}
+                    </Field.Select>
+                </Stack>
                 </Card>
 
                 <Stack direction="row" justifyContent="flex-end" spacing={2}>

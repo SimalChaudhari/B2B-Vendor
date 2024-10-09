@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as zod from 'zod';
 import {
     Card, CardHeader, Divider, Stack, MenuItem,
+    Typography,
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { Field, Form } from 'src/components/hook-form';
@@ -66,11 +67,15 @@ export default function FAQCreateForm() {
                     <Divider />
                     <Stack spacing={2} sx={{ p: 3 }}>
                         {/* Question Field */}
+                        <Typography variant="subtiQuestiontle2">Question</Typography>
                         <Field.Text name="question" label="Question" />
                         {/* Answer Field */}
-                        <Field.Text name="answer" label="Answer" multiline rows={5} />
+                        <Typography variant="subtitle2">Answer</Typography>
+                        <Field.Editor name="answer" sx={{ maxHeight: 480 }} />
                         {/* Status Select Field */}
+                        <Typography variant="subtitle2">Status</Typography>
                         <Field.Select name="status" label="Status">
+
                             {FAQ_STATUS_OPTIONS.map((status) => (
                                 <MenuItem key={status.value} value={status.value}>
                                     {status.label}
