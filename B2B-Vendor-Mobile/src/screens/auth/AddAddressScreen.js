@@ -9,24 +9,32 @@ import {
 import React, { useEffect, useState, useCallback } from "react";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import axios from "axios";
-import { UserContext, UserType } from "../../../UserContext";
+import { useDispatch, useSelector } from "react-redux";
+import { updateUserAddresses } from "../../../redux/authReducer"; // Adjust the import path as necessary
+import Entypo from "react-native-vector-icons/Entypo";
+import Toast from "react-native-toast-message";
+import styles from "../../assets/cssFile";
 
 const AddAddressScreen = () => {
-  
-  const { userId, setUserId } = UserContext(UserType);
+  const user = useSelector((state) => state.auth.user);
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+
+  const userId = user?._id;
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   const [addresses, setAddresses] = useState([]);
   const [newAddress, setNewAddress] = useState({
-    name: '',
-    houseNo: '',
-    landmark: '',
-    street: '',
-    mobileNo: '',
-    city: '',
-    country: '',
-    postalCode: '',
+    name: "",
+    houseNo: "",
+    landmark: "",
+    street: "",
+    mobileNo: "",
+    city: "",
+    country: "",
+    postalCode: "",
   });
-  // const userId = "67036f6ac07b2748247e6331"; // Static userId
+  const [loading, setLoading] = useState(false); // Add loading state
+  const [clickCount, setClickCount] = useState(0); // Counter for button clicks
 
   useEffect(() => {
     fetchAddresses();
@@ -34,18 +42,13 @@ const AddAddressScreen = () => {
 
   const fetchAddresses = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:8000/addresses/${userId}`
-      );
-      const { addresses } = response.data;
-
-      setAddresses(addresses);
+      const response = await axios.get(`http://192.168.1.112:8181/addresses/${userId}`);
+      setAddresses(response.data.addresses);
     } catch (error) {
-      console.log("error", error);
+      console.error("Error fetching addresses: ", error);
     }
   };
 
-  // Refresh the addresses when the component comes to focus
   useFocusEffect(
     useCallback(() => {
       fetchAddresses();
@@ -53,214 +56,166 @@ const AddAddressScreen = () => {
   );
 
   const handleAddAddress = async () => {
-  // Check if any field is empty
-  const isEmptyField = Object.values(newAddress).some(field => field.trim() === '');
+    // setClickCount((prevCount) => prevCount + 1); // Increment the click count
+    // console.log(`Button clicked: ${clickCount + 1} times`); // Log the count
 
-  if (isEmptyField) {
-    alert('Please fill in all fields'); // Alert for empty fields
-    return; // Prevent submission if any field is empty
-  }
+    // Check if any field is empty
+    const isEmptyField = Object.values(newAddress).some(field => field.trim() === '');
 
-  try {
-    const response = await axios.post("http://192.168.1.112:8181/addresses", {
-      userId,
-      address: newAddress,
-    });
-    console.log(response.data.message);
-    fetchAddresses(); // Refresh the addresses after adding a new one
-    setNewAddress({
-      name: '',
-      houseNo: '',
-      landmark: '',
-      street: '',
-      mobileNo: '',
-      city: '',
-      country: '',
-      postalCode: '',
-    }); // Clear the form
-  } catch (error) {
-    if (error.response) {
-      // Server responded with a status other than 200
-      console.log("Error adding address:", error.response.data);
-    } else if (error.request) {
-      // Request was made but no response was received
-      console.log("No response received:", error.request);
-    } else {
-      // Something else happened
-      console.log("Error setting up request:", error.message);
+    if (isEmptyField) {
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Please fill in all fields', // Toast for empty fields
+      });
+      return; // Prevent submission if any field is empty
     }
-  }
-};
 
-  
+    setLoading(true); // Set loading to true when starting the add address process
+
+    try {
+      const response = await axios.post("http://192.168.1.112:8181/addresses", {
+        userId,
+        address: newAddress,
+      });
+      console.log(response.data.message);
+
+      const addressesResponse = await axios.get(`http://192.168.1.112:8181/addresses/${userId}`);
+      const updatedAddresses = addressesResponse.data.addresses;
+
+      // Dispatch the updated addresses to the authReducer
+      dispatch(updateUserAddresses(updatedAddresses)); // Use the new action
+
+      fetchAddresses(); // Refresh the addresses after adding a new one
+      setNewAddress({
+        name: '',
+        houseNo: '',
+        landmark: '',
+        street: '',
+        mobileNo: '',
+        city: '',
+        country: '',
+        postalCode: '',
+      }); // Clear the form
+
+      // Show success message
+      Toast.show({
+        type: 'success',
+        text1: 'Success',
+        text2: 'Address added successfully!',
+      });
+
+      // Navigate back after a delay to allow the toast to show
+      setTimeout(() => {
+        navigation.navigate('Confirm');
+      }, 1000); // Delay for 1 second (optional)
+
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setLoading(false); // Reset loading state
+    }
+  };
+
+  const handleError = (error) => {
+    if (error.response) {
+      console.log("Error adding address:", error.response.data);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: `Failed to add address: ${error.response.data.message || 'Please try again.'}`,
+      });
+    } else if (error.request) {
+      console.log("No response received:", error.request);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'No response from the server. Please check your network connection and try again.',
+      });
+    } else {
+      console.log("Error setting up request:", error.message);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: `Unexpected error: ${error.message}`,
+      });
+    }
+  };
 
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={{ marginTop: 50 }}>
       <View style={{ padding: 10 }}>
-        <Text style={{ fontSize: 20, fontWeight: "bold" }}>Add Your Addresses</Text>
+        <Text style={styles.heading}>Add Your Address</Text>
 
         {/* Add Address Form */}
-        <View style={{ marginVertical: 20 }}>
+        <View style={styles.form}>
           <TextInput
             placeholder="Name"
             value={newAddress.name}
             onChangeText={(text) => setNewAddress({ ...newAddress, name: text })}
-            style={styles.input}
+            style={styles.AddAddressinput}
           />
           <TextInput
             placeholder="House No"
             value={newAddress.houseNo}
             onChangeText={(text) => setNewAddress({ ...newAddress, houseNo: text })}
-            style={styles.input}
+            style={styles.AddAddressinput}
           />
           <TextInput
             placeholder="Landmark"
             value={newAddress.landmark}
             onChangeText={(text) => setNewAddress({ ...newAddress, landmark: text })}
-            style={styles.input}
+            style={styles.AddAddressinput}
           />
           <TextInput
             placeholder="Street"
             value={newAddress.street}
             onChangeText={(text) => setNewAddress({ ...newAddress, street: text })}
-            style={styles.input}
+            style={styles.AddAddressinput}
           />
           <TextInput
             placeholder="Mobile No"
             value={newAddress.mobileNo}
             onChangeText={(text) => setNewAddress({ ...newAddress, mobileNo: text })}
-            style={styles.input}
+            style={styles.AddAddressinput}
+            keyboardType="phone-pad"
           />
           <TextInput
             placeholder="City"
             value={newAddress.city}
             onChangeText={(text) => setNewAddress({ ...newAddress, city: text })}
-            style={styles.input}
+            style={styles.AddAddressinput}
           />
           <TextInput
             placeholder="Country"
             value={newAddress.country}
             onChangeText={(text) => setNewAddress({ ...newAddress, country: text })}
-            style={styles.input}
+            style={styles.AddAddressinput}
           />
           <TextInput
             placeholder="Postal Code"
             value={newAddress.postalCode}
             onChangeText={(text) => setNewAddress({ ...newAddress, postalCode: text })}
-            style={styles.input}
+            style={styles.AddAddressinput}
+            keyboardType="numeric"
           />
-          <Pressable onPress={handleAddAddress} style={styles.addButton}>
-            <Text style={{ color: 'white' }}>Add Address</Text>
+          <Pressable onPress={handleAddAddress} style={styles.addButton} disabled={loading}>
+            <Text style={styles.addButtonText}>{loading ? 'Adding...' : 'Add Address'}</Text>
           </Pressable>
         </View>
 
-        <Pressable>
-          {addresses?.map((item, index) => (
-            <Pressable
-              key={index}
-              style={{
-                borderWidth: 1,
-                borderColor: "#D0D0D0",
-                padding: 10,
-                flexDirection: "column",
-                gap: 5,
-                marginVertical: 10,
-              }}
-            >
-              <View
-                style={{ flexDirection: "row", alignItems: "center", gap: 3 }}
-              >
-                <Text style={{ fontSize: 15, fontWeight: "bold" }}>
-                  {item?.name}
-                </Text>
-                <Entypo name="location-pin" size={24} color="red" />
-              </View>
+        {/* Displaying Existing Addresses */}
+        {/* ... Add existing addresses display logic here ... */}
 
-              <Text style={{ fontSize: 15, color: "#181818" }}>
-                {item?.houseNo}, {item?.landmark}
-              </Text>
-
-              <Text style={{ fontSize: 15, color: "#181818" }}>
-                {item?.street}
-              </Text>
-
-              <Text style={{ fontSize: 15, color: "#181818" }}>
-                {item?.city}, {item?.country}
-              </Text>
-
-              <Text style={{ fontSize: 15, color: "#181818" }}>
-                Phone No: {item?.mobileNo}
-              </Text>
-              <Text style={{ fontSize: 15, color: "#181818" }}>
-                Pin Code: {item?.postalCode}
-              </Text>
-
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 10,
-                  marginTop: 7,
-                }}
-              >
-                <Pressable style={styles.editButton}>
-                  <Text>Edit</Text>
-                </Pressable>
-
-                <Pressable style={styles.removeButton}>
-                  <Text>Remove</Text>
-                </Pressable>
-
-                <Pressable style={styles.defaultButton}>
-                  <Text>Set as Default</Text>
-                </Pressable>
-              </View>
-            </Pressable>
-          ))}
-        </Pressable>
+        {/* Add Login Button */}
+        {!isAuthenticated && (
+          <Pressable onPress={() => navigation.navigate('Login')} style={styles.loginButton}>
+            <Text style={styles.loginButtonText}>Login to Add Address</Text>
+          </Pressable>
+        )}
       </View>
     </ScrollView>
   );
 };
 
 export default AddAddressScreen;
-
-const styles = StyleSheet.create({
-  input: {
-    borderWidth: 1,
-    borderColor: '#D0D0D0',
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10,
-  },
-  addButton: {
-    backgroundColor: '#007BFF',
-    padding: 10,
-    borderRadius: 5,
-    alignItems: 'center',
-  },
-  editButton: {
-    backgroundColor: "#F5F5F5",
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 5,
-    borderWidth: 0.9,
-    borderColor: "#D0D0D0",
-  },
-  removeButton: {
-    backgroundColor: "#F5F5F5",
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 5,
-    borderWidth: 0.9,
-    borderColor: "#D0D0D0",
-  },
-  defaultButton: {
-    backgroundColor: "#F5F5F5",
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 5,
-    borderWidth: 0.9,
-    borderColor: "#D0D0D0",
-  },
-});

@@ -1,4 +1,4 @@
-import { Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
+import { Text, TextInput, TouchableOpacity, View, Alert, ActivityIndicator } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import axios from 'axios';
@@ -6,10 +6,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from '../../assets/cssFile';
 import { setUser } from '../../../redux/authReducer';
 import { useDispatch } from 'react-redux';
+import Toast from 'react-native-toast-message';
 
 const LoginScreen = ({ navigation }) => {
     const dispatch = useDispatch();
     const [email, setEmail] = useState('');
+    const [loading, setLoading] = useState(false); // State for loading
+    const [isEmailInvalid, setIsEmailInvalid] = useState(false); // State
 
     // Check login status when component mounts
     useEffect(() => {
@@ -26,15 +29,40 @@ const LoginScreen = ({ navigation }) => {
         checkLoginStatus();
     }, [navigation]);
 
+    // Validate email format
+    const validateEmail = (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Simple email regex
+        return emailRegex.test(email);
+    };
+
     // Handle login
     const handleLogin = async () => {
+        // Clear previous errors
+        setIsEmailInvalid(false); // Reset email validation state
+
         if (!email) {
-            Alert.alert("Input Error", "Email is required.");
+            // Alert.alert("Input Error", "Email is required.");
+            Toast.show({
+                type: 'error',
+                text1: 'Input Error',
+                text2: 'Email is required.',
+            });
             return; // Exit if the email is empty
         }
-        const userData = { email };
 
+        if (!validateEmail(email)) {
+            Toast.show({
+                type: 'error',
+                text1: 'Input Error',
+                text2: 'Invalid email format.',
+            });
+            setIsEmailInvalid(true); // Set email validation state if format is invalid
+            return; // Exit if the email format is invalid
+        }
+
+        const userData = { email };
         console.log('Attempting to login with:', userData); // Log the user object
+        setLoading(true); // Set loading to true
 
         try {
             const response = await axios.post("http://192.168.1.112:8181/login", userData);
@@ -55,7 +83,15 @@ const LoginScreen = ({ navigation }) => {
             }
         } catch (error) {
             console.error("Login error:", error?.response ? error?.response?.data : error?.message);
-            Alert.alert("Login Error", "Invalid Email or Phone Number.");
+            // Alert.alert("Login Error", "Invalid Email or Phone Number.");
+            setIsEmailInvalid(true); // Set email validation state if format is invalid
+            Toast.show({
+                type: 'error',
+                text1: 'Login Error',
+                text2: 'Invalid Email or Phone Number.',
+            });
+        } finally {
+            setLoading(false); // Reset loading state after API call
         }
     };
 
@@ -64,7 +100,10 @@ const LoginScreen = ({ navigation }) => {
             <Text style={styles.logo}>Your Logo</Text>
 
             {/* Email Input */}
-            <View style={styles.inputContainer}>
+            <View 
+            // style={styles.inputContainer}
+            style={[styles.inputContainer, isEmailInvalid ? { borderColor: 'red', borderWidth: 1 } : {}]} // Conditional border style
+            >
                 <FontAwesome5 name="user-alt" size={24} color="black" style={styles.inputIcon} />
                 <TextInput
                     style={styles.input}
@@ -72,19 +111,25 @@ const LoginScreen = ({ navigation }) => {
                     keyboardType="email-address"
                     autoCapitalize="none"
                     value={email}
-                    onChangeText={setEmail} // Update email state
+                    onChangeText={(text) => {
+                        setEmail(text); // Update email state
+                        if (validateEmail(text)) {
+                            setIsEmailInvalid(false); // Reset invalid state if valid
+                        }
+                    }} // Update email state and validate
+                    // onChangeText={setEmail} // Update email state
                 />
             </View>
 
             {/* Login Button */}
-            <TouchableOpacity style={styles.button} onPress={handleLogin}>
-                <Text style={styles.buttonText}>Login</Text>
+            <TouchableOpacity style={[styles.button, loading && { opacity: 0.6 }]} onPress={handleLogin} disabled={loading}>
+                {loading ? (
+                    <ActivityIndicator size="small" color="#FFFFFF" />
+                ) : (
+                    <Text style={styles.buttonText}>Login</Text>
+                )}
             </TouchableOpacity>
 
-            {/* Forgot Password Link */}
-            <TouchableOpacity>
-                <Text style={styles.link}>Forgot Password?</Text>
-            </TouchableOpacity>
 
             {/* Sign Up Section */}
             <View style={styles.signUpContainer}>

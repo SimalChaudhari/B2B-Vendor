@@ -18,6 +18,11 @@ app.listen(port, () => {
   console.log("Server is running on port 8181");
 });
 
+// // Import routes
+// const authRoutes = require("./routes/authRoutes");
+
+// app.use("/auth", authRoutes);
+
 mongoose
   .connect("mongodb+srv://dev2webbuildinfotech:8V5ZcQyh31aIEx2g@test-ui.qrqbiss.mongodb.net/b2bbackend", {
     // useNewUrlParser: true,
@@ -229,7 +234,7 @@ app.post("/login", async (req, res) => {
 app.post("/addresses", async (req, res) => {
   try {
     const { userId, address } = req.body;
-console.log(userId);
+    console.log(userId,address);
 
     //find the user by the Userid
     const user = await User.findById(userId);
@@ -361,6 +366,43 @@ app.post("/resend-otp", async (req, res) => {
     res.status(500).json({ message: "Failed to resend OTP." });
   }
 });
+
+// Endpoint to delete an address
+app.delete("/addresses/:userId/:addressId", async (req, res) => {
+  console.log('====================================');
+  console.log("req.params lllllllllll", req.params);
+  console.log('====================================');
+  try {
+    const { userId, addressId } = req.params;
+
+    // Find the user by userId
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Find the index of the address to be deleted
+    const addressIndex = user.addresses.findIndex(
+      (address) => address._id.toString() === addressId
+    );
+
+    if (addressIndex === -1) {
+      return res.status(404).json({ message: "Address not found" });
+    }
+
+    // Remove the address from the user's addresses array
+    user.addresses.splice(addressIndex, 1);
+
+    // Save the updated user in the backend
+    await user.save();
+
+    res.status(200).json({ message: "Address deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting address:", error);
+    res.status(500).json({ message: "Error deleting address" });
+  }
+});
+
 
 // Endpoint to logout the user and set verified to false
 app.post("/logout", async (req, res) => {

@@ -1,11 +1,11 @@
 import { StyleSheet, Text, View, ScrollView, Pressable, Alert } from "react-native";
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 // import { UserType } from "../UserContext";
-import { Entypo } from "@expo/vector-icons";
+import { AntDesign, Entypo } from "@expo/vector-icons";
 import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { cleanCart } from "../../../redux/CartReducer";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import jwt_decode from "jwt-decode"
@@ -14,52 +14,12 @@ import { UserType } from "../../../UserContext";
 
 const ConfirmationScreen = () => {
 
-    const {userId,setUserId} = useContext(UserType)
-    useEffect(() => {
-      const fetchUser = async() => {
-          const token = await AsyncStorage.getItem("authToken");
-          const decodedToken = jwt_decode(token);
-          const userId = decodedToken.userId;
-          setUserId(userId)
-      }
-  
-      fetchUser();
-    },[]);
-    console.log(userId)
+    // Access user data from authReducer
 
-    // const [userId, setUserId] = useState(null);
-  
-    useEffect(() => {
-      const getUserId = async () => {
-        try {
-          const storedUserId = await AsyncStorage.getItem("userId"); // Assuming userId is stored in AsyncStorage
-          setUserId(storedUserId);
-          console.log("User is logged in"); // Log message when user is logged in
-        } catch (error) {
-          console.error("Error fetching userId:", error); // Log any error that occurs
-        } finally {
-          setLoading(false); // Set loading to false after checking login status
-        }
-      };
-  
-      getUserId(); // Call the function to execute it
-    }, []); // Empty dependency array to run it once on mount
-  
-    // Inside your ProfileScreen component
-    // useEffect(() => {
-    //     const checkUserLogin = async () => {
-    //         const token = await AsyncStorage.getItem("authToken");
-    //         if (token) {
-    //             const storedUserId = await AsyncStorage.getItem("userId"); // Assuming userId is stored in AsyncStorage
-    //             setUserId(storedUserId);
-    //             console.log("User is logged in"); // Log message when user is logged in
-    //         }
-    //         setLoading(false); // Set loading to false after checking login status
-    //     };
-
-    //     checkUserLogin();
-    // }, []);
-
+    const user = useSelector((state) => state.auth.user);
+    // const {userId,setUserId} = useContext(UserType)
+    // const {userId,setUserId} = useContext(UserType)
+    const userId = user._id
     const steps = [
         { title: "Address", content: "Address Form" },
         { title: "Delivery", content: "Delivery Options" },
@@ -69,31 +29,35 @@ const ConfirmationScreen = () => {
     const navigation = useNavigation();
     const [currentStep, setCurrentStep] = useState(0);
     const [addresses, setAddresses] = useState([]);
-console.log("gggggggggggggg",userId);
-
     const cart = useSelector((state) => state.cart.cart);
     const total = cart
         ?.map((item) => item.price * item.quantity)
         .reduce((curr, prev) => curr + prev, 0);
+
     useEffect(() => {
         fetchAddresses();
     }, []);
+
     const fetchAddresses = async () => {
         try {
-            const response = await axios.get(
-                `http://192.168.1.112:8181/addresses/${userId}`
-            );
-            const { addresses } = response.data;
-
-            setAddresses(addresses);
+          const response = await axios.get(`http://192.168.1.112:8181/addresses/${userId}`);
+          setAddresses(response.data.addresses);
         } catch (error) {
-            console.log("error", error);
+          console.error("Error fetching addresses: 555555555555555555555555555555555555555", error);
         }
-    };
+      };
+      
+  useFocusEffect(
+    useCallback(() => {
+      fetchAddresses();
+    }, [])
+  );
+    
     const dispatch = useDispatch();
     const [selectedAddress, setSelectedAdress] = useState("");
     const [option, setOption] = useState(false);
     const [selectedOption, setSelectedOption] = useState("");
+
     const handlePlaceOrder = async () => {
         try {
             const orderData = {
@@ -119,6 +83,7 @@ console.log("gggggggggggggg",userId);
             console.log("errror", error);
         }
     };
+
     const pay = async () => {
         try {
             const options = {
@@ -162,6 +127,51 @@ console.log("gggggggggggggg",userId);
             console.log("error", error);
         }
     };
+
+    const handleRemoveAddress = async (addressId) => {
+        try {
+            const response = await axios.delete(`http://192.168.1.112:8181/addresses/${user._id}/${addressId}`);
+            if (response.status === 200) {
+                const updatedAddresses = addresses.filter((addr) => addr._id !== addressId);
+                setAddresses(updatedAddresses);
+                Alert.alert("Success", "Address deleted successfully.");
+            }
+        } catch (error) {
+            // Log full error details for debugging
+            console.error("Error deleting address:", error.response ? error.response.data : error.message);
+
+            // Provide more user-friendly feedback based on the error
+            if (error.response && error.response.status === 404) {
+                Alert.alert("Error", "Address not found. It may have already been removed.");
+            } else if (error.response && error.response.status === 500) {
+                Alert.alert("Error", "Server error. Please try again later.");
+            } else {
+                Alert.alert("Error", "Failed to delete address. Please try again.");
+            }
+        }
+    };
+
+
+    const confirmRemoveAddress = (addressId) => {
+        Alert.alert(
+            "Confirm Deletion",
+            "Are you sure you want to remove this address?",
+            [
+                {
+                    text: "Cancel",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel",
+                },
+                {
+                    text: "OK",
+                    onPress: () => handleRemoveAddress(addressId),
+                },
+            ],
+            { cancelable: false }
+        );
+    };
+
+
     return (
         <ScrollView style={{ marginTop: 55 }}>
             <View style={{ flex: 1, paddingHorizontal: 20, paddingTop: 40 }}>
@@ -229,7 +239,7 @@ console.log("gggggggggggggg",userId);
                             style={styles.addAddressButton}
                         >
                             <Text>Add a new Address</Text>
-                            <MaterialIcons name="keyboard-arrow-right" size={24} color="black" />
+                            <AntDesign name="pluscircleo" size={24} color="black" />
                         </Pressable>
                     </View>
                     <Pressable>
@@ -299,28 +309,36 @@ console.log("gggggggggggggg",userId);
                                             marginTop: 7,
                                         }}
                                     >
-                                        <Pressable
-                                            style={{
-                                                backgroundColor: "#F5F5F5",
-                                                paddingHorizontal: 10,
-                                                paddingVertical: 6,
-                                                borderRadius: 5,
-                                                borderWidth: 0.9,
-                                                borderColor: "#D0D0D0",
-                                            }}
-                                        >
-                                            <Text>Edit</Text>
-                                        </Pressable>
+                                        {/*
+                                            <Pressable
+                                                style={{
+                                                    backgroundColor: "#F5F5F5",
+                                                    paddingHorizontal: 10,
+                                                    paddingVertical: 6,
+                                                    borderRadius: 5,
+                                                    borderWidth: 0.9,
+                                                    borderColor: "#D0D0D0",
+                                                }}
+                                            >
+                                                <Text>Edit</Text>
+                                            </Pressable>
+                                            <Pressable
+                                                style={{
+                                                    backgroundColor: "#F5F5F5",
+                                                    paddingHorizontal: 10,
+                                                    paddingVertical: 6,
+                                                    borderRadius: 5,
+                                                    borderWidth: 0.9,
+                                                    borderColor: "#D0D0D0",
+                                                }}
+                                            >
+                                                <Text>Remove</Text>
+                                            </Pressable>
+                                        */}
 
                                         <Pressable
-                                            style={{
-                                                backgroundColor: "#F5F5F5",
-                                                paddingHorizontal: 10,
-                                                paddingVertical: 6,
-                                                borderRadius: 5,
-                                                borderWidth: 0.9,
-                                                borderColor: "#D0D0D0",
-                                            }}
+                                            style={styles.actionButton}
+                                            onPress={() => confirmRemoveAddress(item._id)}
                                         >
                                             <Text>Remove</Text>
                                         </Pressable>
@@ -635,7 +653,7 @@ console.log("gggggggggggggg",userId);
 export default ConfirmationScreen;
 
 const styles = StyleSheet.create({
-    
+
     // container: {
     //     padding: 10,
     // },

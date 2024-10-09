@@ -14,6 +14,7 @@ import {
   import { useNavigation, useRoute } from "@react-navigation/native";
   import { MaterialCommunityIcons } from "@expo/vector-icons";
   import { useDispatch, useSelector } from "react-redux";
+  import Toast from 'react-native-toast-message';  
 import { addToCart } from "../../../redux/CartReducer";
   
   const ProductInfoScreen = () => {
@@ -27,9 +28,22 @@ import { addToCart } from "../../../redux/CartReducer";
     const addItemToCart = (item) => {
       setAddedToCart(true);
       dispatch(addToCart(item));
-      // setTimeout(() => {
-      //   setAddedToCart(false);
-      // }, 60000);
+
+      
+     // Show a toast notification
+     Toast.show({
+      text1: `Product added to cart!`,
+      position: 'bottom',
+      type: 'success', // Can be 'success', 'error', 'info', or 'normal'
+      visibilityTime: 3000,
+      autoHide: true,
+      topOffset: 30,
+      bottomOffset: 40,
+    });
+    
+      setTimeout(() => {
+        setAddedToCart(false);
+      }, 60000);
     };
   
     const cart = useSelector((state) => state.cart.cart);
@@ -101,7 +115,12 @@ import { addToCart } from "../../../redux/CartReducer";
   
         <Pressable
           onPress={() => addItemToCart(route?.params?.item)}
-          style={styles.addToCartButton}
+          style={[
+            styles.addToCartButton,
+            { backgroundColor: addedToCart ? "#00dd00" : "#FFC72C" } // Dynamic background color
+          ]}
+
+          // style={styles.addToCartButton}
         >
           {addedToCart ? (
             <Text>Added to Cart</Text>
@@ -110,7 +129,7 @@ import { addToCart } from "../../../redux/CartReducer";
           )}
         </Pressable>
   
-        <Pressable style={styles.buyNowButton}>
+        <Pressable style={styles.buyNowButton} onPress={() => navigation.navigate("Cart")}>
           <Text>Buy Now</Text>
         </Pressable>
       </ScrollView>
@@ -231,7 +250,7 @@ import { addToCart } from "../../../redux/CartReducer";
       fontWeight: "500",
     },
     addToCartButton: {
-      backgroundColor: "#FFC72C",
+      // backgroundColor: "#FFC72C",
       padding: 10,
       borderRadius: 20,
       justifyContent: "center",

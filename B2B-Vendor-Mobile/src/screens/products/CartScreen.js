@@ -19,8 +19,14 @@ import {
 import { useNavigation } from "@react-navigation/native";
 
 const CartScreen = () => {
+
+  // Access user data from authReducer
+
+  const user = useSelector((state) => state.auth.user);
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  
   const cart = useSelector((state) => state.cart.cart);
-  console.log(cart);
+  // console.log(cart);
   const total = cart
     ?.map((item) => item.price * item.quantity)
     .reduce((curr, prev) => curr + prev, 0);
@@ -34,6 +40,18 @@ const CartScreen = () => {
   const deleteItem = (item) => {
     dispatch(removeFromCart(item));
   };
+
+
+
+  const handleProceedToBuy = () => {
+    if (isAuthenticated) {
+      navigation.navigate("Confirm");
+    } else {
+      navigation.navigate("Login"); // Navigate to Login page if not authenticated
+    }
+  };
+
+
   const navigation = useNavigation();
   return (
     <ScrollView style={{ marginTop: 55, flex: 1, backgroundColor: "white" }}>
@@ -77,7 +95,8 @@ const CartScreen = () => {
 
 
       <Pressable
-        onPress={() => navigation.navigate("Confirm")}
+      onPress={handleProceedToBuy} // Updated onPress handler
+        // onPress={() => navigation.navigate("Confirm")}
         style={{
           backgroundColor: cart.length > 0 ? "#FFC72C" : "#D3D3D3", // Change color if disabled
           padding: 10,

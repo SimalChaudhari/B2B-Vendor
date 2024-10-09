@@ -12,10 +12,13 @@ import ProductItem from '../../components/ProductItem';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from 'react-redux';
+import Feather from '@expo/vector-icons/Feather';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 // import { SliderBox } from 'react-native-image-slider-box';
 
 const HomeScreen = () => {
+
+  const user = useSelector((state) => state.auth.user);
 
   const list = [
     {
@@ -232,13 +235,41 @@ const HomeScreen = () => {
   return (
     <>
       <SafeAreaView style={styles.heroContainer}>
-        <ScrollView>
-          <View style={styles.heroTopView}>
-            <Pressable style={styles.heroPressable}>
-              <Fontisto name="search" size={16} color="black" style={styles.heroSearchIcon} />
-              <TextInput placeholder='Search...' />
-            </Pressable>
-            <MaterialIcons name="mic-none" size={24} color="black" />
+        <ScrollView >
+
+          {/*
+            <View style={styles.heroTopView}>
+              <Pressable style={styles.heroPressable}>
+                <Fontisto name="search" size={16} color="black" style={styles.heroSearchIcon} />
+                <TextInput placeholder='Search...' />
+              </Pressable>
+              <MaterialIcons name="mic-none" size={24} color="black" />
+            </View>
+          */}
+          <ScrollView >
+            <Text style={styles.heroTopShop}>Shop</Text>
+            <View style={styles.heroTopSearch}>
+              <Pressable style={styles.heroPressable}>
+                <Feather name="search" size={24} color="#ccc" />
+                <TextInput
+                  placeholder='Search...'
+                  style={styles.searchInput}
+                  placeholderTextColor="#aaa" // Adjust placeholder color
+                />
+              </Pressable>
+            </View>
+
+            <View style={styles.heroFilter}>
+              <Pressable style={styles.filterButton}>
+                <Text style={styles.filterText}>Filters</Text>
+              </Pressable>
+              <Pressable style={styles.sortButton}>
+                <Text style={styles.sortText}>Sort by: Featured</Text>
+              </Pressable>
+            </View>
+          </ScrollView>
+
+          <View>
           </View>
 
           {/*
@@ -252,38 +283,42 @@ const HomeScreen = () => {
          </Pressable>  
           */}
           {/* Category */}
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.heroTopNavBar}>
-            {list.map((item) => (
-              <Pressable
-                key={item.id}
-                style={{ margin: 10, justifyContent: "center", alignItems: "center" }}
-              >
-                <Image
-                  style={{ width: 50, height: 50, resizeMode: "contain" }}
-                  source={{ uri: item.image }}
-                />
-                <Text style={{ textAlign: "center", fontSize: 12, fontWeight: "500", marginTop: 5 }}>
-                  {item.name}
-                </Text>
-              </Pressable>
-            ))}
-          </ScrollView>
+          {/*
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.heroTopNavBar}>
+              {list.map((item) => (
+                <Pressable
+                  key={item.id}
+                  style={{ margin: 10, justifyContent: "center", alignItems: "center" }}
+                >
+                  <Image
+                    style={{ width: 50, height: 50, resizeMode: "contain" }}
+                    source={{ uri: item.image }}
+                  />
+                  <Text style={{ textAlign: "center", fontSize: 12, fontWeight: "500", marginTop: 5 }}>
+                    {item.name}
+                  </Text>
+                </Pressable>
+              ))}
+            </ScrollView>
+             */}
 
           {/* Image Slider */}
-          <View>
-            <Swiper
-              style={{ height: 250 }}
-              autoplay
-              autoplayTimeout={3}
-              showsButtons={true}
-            >
-              {images.map((image, index) => (
-                <View key={index}>
-                  <Image source={{ uri: image }} style={{ width: '100%', height: 200 }} />
-                </View>
-              ))}
-            </Swiper>
-          </View>
+          {/*
+            <View>
+              <Swiper
+                style={{ height: 250 }}
+                autoplay
+                autoplayTimeout={3}
+                showsButtons={true}
+              >
+                {images.map((image, index) => (
+                  <View key={index}>
+                    <Image source={{ uri: image }} style={{ width: '100%', height: 200 }} />
+                  </View>
+                ))}
+              </Swiper>
+            </View>
+          */}
 
           {/* Trending Deals */}
           <Text style={{ padding: 10, fontSize: 18, fontWeight: "bold" }}>

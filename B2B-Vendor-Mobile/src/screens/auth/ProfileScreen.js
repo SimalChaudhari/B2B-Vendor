@@ -11,13 +11,16 @@ import { useNavigation } from "@react-navigation/native";
 import { Ionicons, AntDesign } from "@expo/vector-icons";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout as logoutAction } from '../../../redux/authReducer'; // Adjust the import path as necessary
+
 
 const ProfileScreen = () => {
   const [userId, setUserId] = useState(null);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState();
+  const dispatch = useDispatch();
   const navigation = useNavigation();
 
   const authData = useSelector((state) => state.auth);
@@ -102,6 +105,9 @@ const ProfileScreen = () => {
       await AsyncStorage.removeItem("authToken");
       await AsyncStorage.removeItem("userData");
       await AsyncStorage.removeItem("userId");
+
+      // Dispatch logout action
+      dispatch(logoutAction());
 
       setUserId(null);
       setUser(null);

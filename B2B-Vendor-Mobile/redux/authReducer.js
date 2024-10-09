@@ -20,11 +20,16 @@ export const AuthSlice = createSlice({
         state.user = { ...state.user, ...action.payload }; // Update user information
       }
     },
+    updateUserAddresses: (state, action) => {
+      if (state.user) {
+        state.user.addresses = action.payload; // Update addresses
+      }
+    },
   },
 });
 
 // Export actions for use in components
-export const { setUser, logout, updateUser } = AuthSlice.actions;
+export const { setUser, logout, updateUser, updateUserAddresses } = AuthSlice.actions;
 
 // Export the reducer to be used in the store
 export default AuthSlice.reducer;

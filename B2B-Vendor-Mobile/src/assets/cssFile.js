@@ -119,9 +119,76 @@ const styles = StyleSheet.create({
         color: colors.logoColor, // Amazon-like blue color
     },
     heroTopView: { backgroundColor: colors.bgBlue, padding: 10, flexDirection: 'row', alignItems: "center" },
-    heroPressable: {
-        flexDirection: "row", alignItems: "center", marginHorizontal: 7, gap: 10, backgroundColor: colors.white, borderRadius: 3, height: 30, flex: 1,
+    // heroTopSearch: { backgroundColor: colors.white, paddingY: 10, flexDirection: 'row', alignItems: "center", border:black },
+    // heroPressable: {
+    //     flexDirection: "row", alignItems: "center", marginHorizontal: 7, gap: 10, backgroundColor: colors.white, borderRadius: 3, height: 30, flex: 1,
+    // },
+
+
+    heroTopShop: {
+        marginTop: 50,
+        fontSize: 30,
+        fontWeight: 'bold', // Adjusted to 'bold' for proper weight
+        textAlign: 'left', // Align text to the left
+        marginHorizontal: 20,
     },
+    heroTopSearch: {
+        backgroundColor: '#fff', // White background
+        paddingVertical: 8,
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderColor: '#ccc',
+        borderWidth: 1,
+        borderRadius: 5,
+        marginTop: 10,
+        marginHorizontal: 20,
+    },
+    heroPressable: {
+        flex: 1,
+        flexDirection: 'row',
+        paddingHorizontal: 10,
+        alignItems: 'center',
+        gap: 10,
+    },
+    searchInput: {
+        flex: 1,
+        paddingVertical: 8,
+        fontSize: 16,
+        color: '#333', // Text color
+    },
+
+    heroFilter: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end', // Align items to the right
+        alignItems: 'center', // Center vertically
+        paddingHorizontal: 10,
+        gap: 10,
+    },
+
+
+    filterButton: {
+        paddingHorizontal: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    sortButton: {
+        paddingHorizontal: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    filterText: {
+        fontSize: 18,
+        color: '#000', // Adjust color for filters
+        fontWeight: 'bold',
+    },
+    sortText: {
+        fontSize: 18,
+        color: '#000', // Adjust color for sort options
+        fontWeight: 'bold',
+    },
+
+
+
     heroSearchIcon: { paddingLeft: 10 },
     heroTopNavBar: { backgroundColor: colors.white },
     icon: {
@@ -177,7 +244,88 @@ const styles = StyleSheet.create({
 
     heroTreanding: {
         flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between", paddingHorizontal: 10, backgroundColor: colors.white,
-    }
+    },
+
+    ResendButtonText: {
+        color: colors.logoColor,
+        alignItems: 'center',
+    },
+
+
+    // Add Addresses Screen StyleSheet
+
+    heading: {
+        fontSize: 20,
+        fontWeight: "bold",
+    },
+    form: {
+        marginVertical: 20,
+    },
+    AddAddressinput: {
+        borderWidth: 1,
+        borderColor: "#D0D0D0",
+        borderRadius: 5,
+        padding: 10,
+        marginBottom: 10,
+    },
+    addButton: {
+        backgroundColor: "#007BFF",
+        padding: 10,
+        borderRadius: 5,
+        alignItems: "center",
+    },
+    addButtonText: {
+        color: "white",
+        fontSize: 16,
+        fontWeight: "bold",
+    },
+    addressCard: {
+        borderWidth: 1,
+        borderColor: "#D0D0D0",
+        padding: 10,
+        marginVertical: 10,
+    },
+    addressHeader: {
+        flexDirection: "row",
+        alignItems: "center",
+    },
+    addressName: {
+        fontSize: 15,
+        fontWeight: "bold",
+    },
+    actionButtons: {
+        flexDirection: "row",
+        gap: 10,
+        marginTop: 7,
+    },
+    editButton: {
+        backgroundColor: "#F5F5F5",
+        paddingHorizontal: 10,
+        paddingVertical: 6,
+        borderRadius: 5,
+        borderWidth: 0.9,
+        borderColor: "#D0D0D0",
+    },
+    removeButton: {
+        backgroundColor: "#F5F5F5",
+        paddingHorizontal: 10,
+        paddingVertical: 6,
+        borderRadius: 5,
+        borderWidth: 0.9,
+        borderColor: "#D0D0D0",
+    },
+    loginButton: {
+        backgroundColor: "#28A745",
+        padding: 10,
+        borderRadius: 5,
+        alignItems: "center",
+        marginTop: 20,
+    },
+    loginButtonText: {
+        color: "white",
+        fontSize: 16,
+        fontWeight: "bold",
+    },
 });
 
 export default styles;
