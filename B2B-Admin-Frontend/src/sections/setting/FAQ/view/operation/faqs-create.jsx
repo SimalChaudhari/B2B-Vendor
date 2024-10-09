@@ -11,11 +11,11 @@ export function FAQCreateView() {
     return (
         <DashboardContent maxWidth='2xl'>
             <CustomBreadcrumbs
-                heading="List"
+                heading="Create"
                 links={[
                     { name: 'Dashboard', href: paths.dashboard.root },
                     { name: 'FAQs', href: paths?.dashboard?.faq?.root },
-                    { name: 'List' },
+                    { name: 'Create' },
                 ]}
                 sx={{ mb: { xs: 3, md: 5 } }}
             />

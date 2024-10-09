@@ -25,11 +25,11 @@ export function FAQEditView() {
     return (
         <DashboardContent maxWidth='2xl'>
             <CustomBreadcrumbs
-                heading="List"
+                heading="Edit"
                 links={[
                     { name: 'Dashboard', href: paths.dashboard.root },
                     { name: 'FAQs', href: paths?.dashboard?.faq?.root },
-                    { name: 'List' },
+                    { name: 'Edit' },
                 ]}
                 sx={{ mb: { xs: 3, md: 5 } }}
             />
