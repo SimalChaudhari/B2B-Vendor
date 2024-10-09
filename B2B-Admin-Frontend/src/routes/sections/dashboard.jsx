@@ -5,6 +5,7 @@ import { DashboardLayout } from 'src/layouts/dashboard';
 import { LoadingScreen } from 'src/components/loading-screen';
 import { AuthGuard } from 'src/auth/guard';
 import { ProductEditView, ProductView } from 'src/sections/product/view';
+import { FAQCreateView, FAQEditView, FAQView } from 'src/sections/setting/FAQ/view';
 
 // Overview
 const IndexPage = lazy(() => import('src/pages/dashboard'));
@@ -61,6 +62,9 @@ export const dashboardRoutes = [
     children: [
       { element: <FAQPage />, index: true },
       { path: 'faq', element: <FAQPage /> },
+      { path: 'faq/create', element: <FAQCreateView /> },
+      { path: 'faq/edit/:id', element: <FAQEditView /> },
+      { path: 'faq/view/:id', element: <FAQView /> },
       { path: 'contact-us', element: <ContactPage /> },
       { path: 'privacy-policy', element: <PrivacyPage /> },
       { path: 'terms-conditions', element: <TermsPage /> },

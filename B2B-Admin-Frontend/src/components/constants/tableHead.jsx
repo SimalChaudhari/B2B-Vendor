@@ -40,3 +40,12 @@ export const TABLE_PRODUCT_HEAD = [
   { id: 'mrpRate', label: 'MRP Rate' },
   { id: 'action', label: 'Actions' },
 ];
+
+
+
+export const TABLE_FAQ_HEAD = [
+  { id: 'question', label: 'Question' },
+  { id: 'answer', label: 'Answer' },
+  { id: 'status', label: 'Status' },
+  { id: 'action', label: 'Actions' },
+];

@@ -7,6 +7,7 @@ import addressReducer from './reducer/addressReducer';
 import categoryReducer from './reducer/categoryReducer';
 import subcategoryReducer from './reducer/subcategoryReducer';
 import productReducer from './reducer/productReducer';
+import settingReducer from './reducer/settingReducer';
 
 // Combine your reducers
 const rootReducer = combineReducers({
@@ -15,7 +16,9 @@ const rootReducer = combineReducers({
   address: addressReducer,
   category: categoryReducer,
   subcategory: subcategoryReducer,
-  product: productReducer
+  product: productReducer,
+  setting: settingReducer
+
 
 });
 

@@ -16,7 +16,10 @@ export const SUB_CATEGORY_STATUS_OPTIONS = [
   { value: 'Active', label: 'Active' },
   { value: 'Inactive', label: 'Inactive' }
 ];
-
+export const FAQ_STATUS_OPTIONS = [
+  { value: 'Active', label: 'Active' },
+  { value: 'Inactive', label: 'Inactive' }
+];
 
 export const PRODUCT_STATUS_OPTIONS = [
   { value: 'Active', label: 'Active' },

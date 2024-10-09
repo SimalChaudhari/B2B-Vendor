@@ -21,6 +21,7 @@ import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
+
 import {
     useTable,
     emptyRows,
@@ -38,20 +39,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { productList, syncProduct } from 'src/store/action/productActions';
 import { Typography } from '@mui/material';
 import { getProductStatusOptions, TABLE_PRODUCT_HEAD } from '../../../components/constants';
+
 import { applyFilter } from '../utils';
 import { ProductTableRow } from './table/product-table-row';
 import { ProductTableToolbar } from './table/product-table-toolbar';
 import { useFetchProductData } from '../components/fetch-product';
-
-// const options = {
-//     category: ['Electronics', 'Clothing', 'Books'],
-//     subcategories: {
-//         Electronics: ['Phones', 'Laptops', 'Cameras'],
-//         Clothing: ['Men', 'Women', 'Kids'],
-//         Books: ['Fiction', 'Non-Fiction', 'Comics'],
-//     }
-// };
-// console.log("🚀 ~ options:", options)
 
 // ----------------------------------------------------------------------
 export function ProductListView() {
@@ -63,7 +55,7 @@ export function ProductListView() {
     const { fetchData, fetchDeleteData } = useFetchProductData(); // Destructure fetchData from the custom hook
 
     const dispatch = useDispatch();
- 
+
     const _productList = useSelector((state) => state.product?.product || []);
 
     const options = _productList.map(opt => ({
@@ -149,7 +141,7 @@ export function ProductListView() {
                             startIcon={<Iconify icon="eva:sync-fill" />} // Changed icon
                             disabled={loading} // Disable button while loading
                         >
-                          {loading ? 'Syncing...' : 'Sync product'}
+                            {loading ? 'Syncing...' : 'Sync product'}
                         </Button>
                     }
                     sx={{ mb: { xs: 3, md: 5 } }}
@@ -213,7 +205,6 @@ export function ProductListView() {
                                 </Tooltip>
                             }
                         />
-
                         <Scrollbar>
                             <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 960 }}>
                                 <TableHeadCustom

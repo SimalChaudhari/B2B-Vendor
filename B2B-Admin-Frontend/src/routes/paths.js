@@ -55,6 +55,9 @@ export const paths = {
   settings: {
     root: `/settings`,
     faq: `/settings/faq`,
+    create:`/create`,
+    edit:  (id) => `/edit/${id}`,
+    view:  (id) => `/view/${id}`,
     contact_us: `/settings/contact-us`,
     privacy_policy: `/settings/privacy-policy`,
     terms_conditions: `/settings/terms-conditions`,
