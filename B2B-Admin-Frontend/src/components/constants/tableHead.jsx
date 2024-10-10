@@ -49,3 +49,11 @@ export const TABLE_FAQ_HEAD = [
   { id: 'status', label: 'Status' },
   { id: 'action', label: 'Actions' },
 ];
+
+
+export const TABLE_CONTACT_HEAD = [
+  { id: 'name', label: 'Name' },
+  { id: 'email', label: 'Email' },
+  { id: 'message', label: 'Message' },
+  { id: 'action', label: 'Actions' },
+];

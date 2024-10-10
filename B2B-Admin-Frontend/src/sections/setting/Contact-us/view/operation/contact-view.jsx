@@ -9,33 +9,23 @@ import { DashboardContent, PageContentLayout } from 'src/layouts/dashboard';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router';
-import { FAQGetByList } from 'src/store/action/settingActions';
+import { contactGetByList } from 'src/store/action/settingActions';
 import DOMPurify from 'dompurify';
 // Format Date (Dummy for UI purposes)
 const fDate = (date) => new Date(date).toLocaleDateString();
 
-// Function to apply color based on status
-const getStatusColor = (status) => {
-    switch (status) {
-        case 'Active':
-            return 'success.main';
-        case 'Inactive':
-            return 'warning.main';
-        default:
-            return 'info.main';
-    }
-};
 
-export function FAQView() {
+export function ContactView() {
 
     const dispatch = useDispatch();
     const { id } = useParams(); // Get the product ID from URL
-    const faq = useSelector((state) => state.setting.getByFAQ); // Access the product from the Redux store
+    const contact = useSelector((state) => state.setting.getByContact); // Access the product from the Redux store
+
 
     useEffect(() => {
-        // Fetch the FAQ data when the component mounts
+        // Fetch the product data when the component mounts
         if (id) {
-            dispatch(FAQGetByList(id));
+            dispatch(contactGetByList(id));
         }
     }, [id, dispatch]);
 
@@ -43,26 +33,25 @@ export function FAQView() {
         <Card sx={{ p: 3, gap: 3, display: 'flex', flexDirection: 'column', boxShadow: 3 }}>
             {[
                 {
-                    label: 'Question',
-                    value: faq?.question,
-                    icon: <Iconify icon="mdi:question-mark-circle" />,
+                    label: 'Name',
+                    value: contact?.name,
+                    icon: <Iconify icon="mdi:account-circle" />, // Name icon
                 },
                 {
-                    label: 'Answer',
-                    value: faq.answer ? (
+                    label: 'Email',
+                    value: contact.email,
+                    icon: <Iconify icon="mdi:email-outline" />, // Email icon
+                },
+                {
+                    label: 'Message',
+                    value: contact.message ? (
                         <span
                             // eslint-disable-next-line react/no-danger
-                            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(faq.answer) }} />
+                            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(contact.message) }} />
                     ) : 'not available',
-                    icon: <Iconify icon="mdi:message-reply-text-outline" />,
-                }
-                ,
-                {
-                    label: 'Status',
-                    value: faq?.status,
-                    icon: <Iconify icon="mdi:alert-circle-outline" />,
-                    color: getStatusColor(faq?.status), // Apply status color
+                    icon: <Iconify icon="mdi:message-text-outline" />, // Message icon
                 },
+
             ].map((item) => (
                 <Stack key={item.label} spacing={1.5} direction="row" alignItems="flex-start">
                     <span style={{ marginRight: 8 }}> {/* Space between icon and label */}
@@ -88,12 +77,12 @@ export function FAQView() {
             {[
                 {
                     label: 'Date posted',
-                    value: fDate(faq?.created_at),
+                    value: fDate(contact?.createdAt),
                     icon: <Iconify icon="mdi:calendar-check-outline" />,
                 },
                 {
                     label: 'Updated date',
-                    value: fDate(faq?.updated_at),
+                    value: fDate(contact?.updatedAt),
                     icon: <Iconify icon="mdi:calendar-edit-outline" />,
                 },
             ].map((item) => (
@@ -120,7 +109,7 @@ export function FAQView() {
                 heading="List"
                 links={[
                     { name: 'Dashboard', href: paths.dashboard.root },
-                    { name: 'FAQs', href: paths?.dashboard?.faq?.root },
+                    { name: 'contacts', href: paths?.dashboard?.contact?.root },
                     { name: 'List' },
                 ]}
                 sx={{ mb: { xs: 3, md: 5 } }}

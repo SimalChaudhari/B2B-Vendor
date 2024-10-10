@@ -8,6 +8,9 @@ export const PRODUCT_GET_BY_LIST = "PRODUCT_GET_BY_LIST"
 export const SYNC_PRODUCT_LIST = "SYNC_PRODUCT_LIST"
 export const FAQ_LIST = "FAQ_LIST"
 export const FAQ_GET_BY_LIST = "FAQ_GET_BY_LIST"
+export const CONTACT_LIST = "CONTACT_LIST"
+export const CONTACT_GET_BY_LIST = "CONTACT_GET_BY_LIST"
+
 
 
 

@@ -6,6 +6,7 @@ import { LoadingScreen } from 'src/components/loading-screen';
 import { AuthGuard } from 'src/auth/guard';
 import { ProductEditView, ProductView } from 'src/sections/product/view';
 import { FAQCreateView, FAQEditView, FAQView } from 'src/sections/setting/FAQ/view';
+import { ContactCreateView, ContactEditView, ContactView } from 'src/sections/setting/Contact-us/view';
 
 // Overview
 const IndexPage = lazy(() => import('src/pages/dashboard'));
@@ -61,11 +62,18 @@ export const dashboardRoutes = [
     element: CONFIG.auth.skip ? <>{layoutContent}</> : <AuthGuard>{layoutContent}</AuthGuard>,
     children: [
       { element: <FAQPage />, index: true },
+  
       { path: 'faq', element: <FAQPage /> },
       { path: 'faq/create', element: <FAQCreateView /> },
       { path: 'faq/edit/:id', element: <FAQEditView /> },
       { path: 'faq/view/:id', element: <FAQView /> },
+
       { path: 'contact-us', element: <ContactPage /> },
+      { path: 'contact-us/create', element: <ContactCreateView /> },
+      { path: 'contact-us/edit/:id', element: <ContactEditView /> },
+      { path: 'contact-us/view/:id', element: <ContactView /> },
+
+
       { path: 'privacy-policy', element: <PrivacyPage /> },
       { path: 'terms-conditions', element: <TermsPage /> },
       { path: 'general-settings', element: <GeneralPage /> },

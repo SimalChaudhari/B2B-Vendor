@@ -68,6 +68,7 @@
     "axios": "^1.7.2",
     "crypto-js": "^4.2.0",
     "dayjs": "^1.11.11",
+    "dompurify": "^3.1.7",
     "embla-carousel": "^8.1.5",
     "embla-carousel-auto-height": "^8.1.5",
     "embla-carousel-auto-scroll": "^8.1.5",
