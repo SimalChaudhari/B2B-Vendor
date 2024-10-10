@@ -1,6 +1,6 @@
 import { toast } from "sonner";
 import axiosInstance from "src/configs/axiosInstance";
-import { CONTACT_GET_BY_LIST, CONTACT_LIST, FAQ_GET_BY_LIST, FAQ_LIST } from "../constants/actionTypes";
+import {CONTACT_GET_BY_LIST, CONTACT_LIST, FAQ_GET_BY_LIST, FAQ_LIST, TERM_GET_BY_LIST, TERM_LIST } from "../constants/actionTypes";
 
 // FAQ Settings
 export const FAQList = () => async (dispatch) => {
@@ -158,6 +158,90 @@ export const deleteContact = (contactId) => async (dispatch) => {
         // Check if the response is successful
         if (response && response.status >= 200 && response.status < 300) {
             toast.success(response.data.message || 'contact deleted successfully!');
+            return true; // Indicate successful deletion
+        }
+    } catch (error) {
+        // Handle errors appropriately
+        const errorMessage = error?.response?.data?.message || 'An unexpected error occurred. Please try again.';
+        toast.error(errorMessage);
+    }
+    return false; // Return false for any errors or unsuccessful attempts
+};
+
+//  Term & Conditions
+
+export const termList = () => async (dispatch) => {
+    try {
+        const response = await axiosInstance.get('/terms-conditions');
+         dispatch({
+            type:TERM_LIST,
+            payload: response.data, // Assuming response contains the customers data
+        });
+        return true;
+    } catch (error) {
+        // Check if error response exists and handle error message
+        const errorMessage = error?.response?.data?.message || 'An unexpected error occurred. Please try again.';
+        toast.error(errorMessage);
+    }
+    return false; // Return false for any errors
+};
+
+export const termGetByList = (id) => async (dispatch) => {
+    try {
+        const response = await axiosInstance.get(`/terms-conditions/get/${id}`);
+
+        dispatch({
+            type:TERM_GET_BY_LIST,
+            payload: response.data, // Assuming response contains the customers data
+        });
+        return true;
+    } catch (error) {
+        // Check if error response exists and handle error message
+        const errorMessage = error?.response?.data?.message || 'An unexpected error occurred. Please try again.';
+        toast.error(errorMessage);
+    }
+    return false; // Return false for any errors
+};
+
+export const createTerm = (termData) => async (dispatch) => {
+    try {
+        const response = await axiosInstance.post('/terms-conditions/create',termData);
+        if (response && response.status >= 200 && response.status < 300) {
+            toast.success(response.data.message || 'terms-conditions created successfully!');
+            return true;
+        }
+        return true;
+    } catch (error) {
+        // Check if error response exists and handle error message
+        const errorMessage = error?.response?.data?.message || 'An unexpected error occurred. Please try again.';
+        toast.error(errorMessage);
+    }
+    return false; // Return false for any errors
+};
+
+export const editTerm  = (termId,termData) => async (dispatch) => {
+    try {
+        const response = await axiosInstance.put(`/terms-conditions/update/${termId}`,termData);
+
+        // Check if the response is successful
+        if (response && response.status >= 200 && response.status < 300) {
+            toast.success(response.data.message || 'terms-conditions updated successfully!');
+            return true; // Indicate successful update
+        }
+    } catch (error) {
+        // Handle errors appropriately
+        const errorMessage = error?.response?.data?.message || 'An unexpected error occurred. Please try again.';
+        toast.error(errorMessage);
+    }
+    return false; // Return false for any errors or unsuccessful attempts
+};
+
+export const deleteTerm = (termId) => async (dispatch) => {
+    try {
+        const response = await axiosInstance.delete(`/terms-conditions/delete/${termId}`);
+        // Check if the response is successful
+        if (response && response.status >= 200 && response.status < 300) {
+            toast.success(response.data.message || 'terms-conditions deleted successfully!');
             return true; // Indicate successful deletion
         }
     } catch (error) {

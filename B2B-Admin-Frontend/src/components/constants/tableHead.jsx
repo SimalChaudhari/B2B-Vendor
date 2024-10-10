@@ -57,3 +57,8 @@ export const TABLE_CONTACT_HEAD = [
   { id: 'message', label: 'Message' },
   { id: 'action', label: 'Actions' },
 ];
+
+export const TABLE_TERM_HEAD = [
+  { id: 'content', label: 'Term & Conditions' },
+  { id: 'action', label: 'Actions' },
+];

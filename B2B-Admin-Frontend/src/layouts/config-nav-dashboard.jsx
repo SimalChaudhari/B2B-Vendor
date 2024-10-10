@@ -45,7 +45,7 @@ export const navData = [
         children: [
           { title: 'Faq', path: paths.settings.faq },
           { title: 'Contact us', path: paths.settings.contact_us },
-          { title: 'Privacy Policy', path: paths.settings.privacy_policy },
+          // { title: 'Privacy Policy', path: paths.settings.privacy_policy },
           { title: 'Terms Conditions', path: paths.settings.terms_conditions },
           { title: 'General Setting', path: paths.settings.general_settings },
         ],

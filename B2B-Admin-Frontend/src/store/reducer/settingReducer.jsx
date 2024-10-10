@@ -1,10 +1,12 @@
-import { FAQ_LIST, FAQ_GET_BY_LIST, CONTACT_GET_BY_LIST, CONTACT_LIST } from "../constants/actionTypes";
+import { FAQ_LIST, FAQ_GET_BY_LIST, CONTACT_GET_BY_LIST, CONTACT_LIST, TERM_LIST, TERM_GET_BY_LIST } from "../constants/actionTypes";
 
 const initialState = {
     faq: [],
     contact: [],
+    termCondition: [],
     getByFAQ: '',
-    getByContact: ''
+    getByContact: '',
+    getByTermCondition: ''
 
 };
 const settingReducer = (state = initialState, { type, payload } = {}) => {
@@ -29,6 +31,17 @@ const settingReducer = (state = initialState, { type, payload } = {}) => {
             return {
                 ...state,
                 getByContact: payload,
+            };
+
+        case TERM_LIST:
+            return {
+                ...state,
+                termCondition: payload,
+            };
+        case TERM_GET_BY_LIST:
+            return {
+                ...state,
+                getByTermCondition: payload,
             };
         default:
             return state;

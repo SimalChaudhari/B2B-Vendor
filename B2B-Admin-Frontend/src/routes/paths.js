@@ -64,8 +64,12 @@ export const paths = {
     editContact:  (id) => `/edit/${id}`,
     viewContact:  (id) => `/view/${id}`,
 
-    privacy_policy: `/settings/privacy-policy`,
+    // privacy_policy: `/settings/privacy-policy`,
     terms_conditions: `/settings/terms-conditions`,
+    createTerm:`/create`,
+    editTerm:  (id) => `/edit/${id}`,
+    viewTerm:  (id) => `/view/${id}`,
+
     general_settings: `/settings/general-settings`,
   },
   // AUTH

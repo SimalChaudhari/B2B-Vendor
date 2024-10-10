@@ -11,6 +11,11 @@ export const FAQ_GET_BY_LIST = "FAQ_GET_BY_LIST"
 export const CONTACT_LIST = "CONTACT_LIST"
 export const CONTACT_GET_BY_LIST = "CONTACT_GET_BY_LIST"
 
+export const TERM_GET_BY_LIST = "TERM_GET_BY_LIST"
+export const TERM_LIST = "TERM_LIST"
+
+
+
 
 
 
