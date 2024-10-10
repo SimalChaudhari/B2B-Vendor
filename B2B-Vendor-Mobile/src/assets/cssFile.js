@@ -11,6 +11,7 @@ const colors = {
     lightGray: '#EAEAEA',
     darkGray: '#333',
     bgBlue: '#00CED1',
+    purple: '#7F00FF',
 };
 
 const styles = StyleSheet.create({
@@ -158,23 +159,31 @@ const styles = StyleSheet.create({
     },
 
     heroFilter: {
+        marginTop: 20,
+        marginBottom: 20,
+        marginRight: 10,
         flexDirection: 'row',
         justifyContent: 'flex-end', // Align items to the right
+        // justifyContent: 'center', // Align items to the right
         alignItems: 'center', // Center vertically
-        paddingHorizontal: 10,
+        // paddingHorizontal: 10,
         gap: 10,
     },
 
 
     filterButton: {
+        flexDirection: 'row',
         paddingHorizontal: 10,
         alignItems: 'center',
         justifyContent: 'center',
+        gap: 10,
     },
     sortButton: {
+        flexDirection: 'row',
         paddingHorizontal: 10,
         alignItems: 'center',
         justifyContent: 'center',
+        gap: 10,
     },
     filterText: {
         fontSize: 18,
@@ -185,6 +194,12 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: '#000', // Adjust color for sort options
         fontWeight: 'bold',
+    },
+    sortByText: {
+
+        fontSize: 18,
+        color: '#000', // Adjust color for sort options
+        fontWeight: 'medium',
     },
 
 
@@ -243,7 +258,7 @@ const styles = StyleSheet.create({
     },
 
     heroTreanding: {
-        flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between", paddingHorizontal: 10, backgroundColor: colors.white,
+        flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between", paddingHorizontal: 10, backgroundColor: colors.background,
     },
 
     ResendButtonText: {
@@ -251,8 +266,75 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
 
+    heroTopImage: {
+        width: '90%',
+        height: 175,
+        // resizeMode: "contain",
+        marginLeft: 8,
+        marginTop: 8,
 
+        borderWidth: 5,
+        // borderColor: "#fff",
+        borderRadius: 12,
+        padding: 10,
+
+    },
+
+    heroProductView: {
+        backgroundColor: '#fff',
+        // height:280,
+    },
     // Add Addresses Screen StyleSheet
+    heroProductBottom: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        justifyContent: "space-between",
+        paddingHorizontal: 10,
+        marginBottom: 10, marginTop: 10,
+        // justifyContent: 'center',
+        alignItems: 'center',
+    },
+    heroProductTitle: {
+        marginLeft: 14,
+        marginTop: 8,
+    },
+
+    heroProductColor: {
+        height: 12,
+        width: 12,
+        borderRadius: 7, // This will create a circle
+    },
+
+    paginationControls: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginVertical: 20,
+    },
+    pageNumber: {
+        width: 30,
+        height: 30,
+        borderRadius: 15,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginHorizontal: 5,
+        // backgroundColor: '#f0f0f0', // Light background for page numbers
+    },
+    activePage: {
+        backgroundColor: '#333', // Dark background for active page
+    },
+    activePageText: {
+      color: "#fff", // Set text color for active page number
+    },
+    pageText: {
+        fontSize: 16,
+        color: '#333', // Text color for page numbers
+    },
+    paginationArrow: {
+        fontSize: 20,
+        marginHorizontal: 10,
+        color: '#333', // Color for arrows
+    },
 
     heading: {
         fontSize: 20,
@@ -326,6 +408,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "bold",
     },
+
 });
 
 export default styles;

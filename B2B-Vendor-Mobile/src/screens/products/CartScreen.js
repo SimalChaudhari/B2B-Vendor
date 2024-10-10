@@ -263,6 +263,7 @@ const CartScreen = () => {
                 marginBottom: 15,
               }}
             >
+
               <Pressable
                 style={{
                   backgroundColor: "white",
@@ -288,6 +289,7 @@ const CartScreen = () => {
               >
                 <Text>See More Like this</Text>
               </Pressable>
+              
             </Pressable>
           </View>
         ))}

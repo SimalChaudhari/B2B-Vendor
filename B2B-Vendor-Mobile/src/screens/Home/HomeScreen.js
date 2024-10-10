@@ -1,13 +1,15 @@
-import { Text, View, FlatList, Image, TouchableOpacity, ScrollView, Pressable, TextInput, Alert } from 'react-native';
+import { Text, View, FlatList, Image, TouchableOpacity, ScrollView, Pressable, TextInput, Alert, Button } from 'react-native';
 // import React from 'react';
 import React, { useState, useEffect, useCallback } from "react";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Fontisto from '@expo/vector-icons/Fontisto';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import AntDesign from '@expo/vector-icons/AntDesign';
 import styles from '../../assets/cssFile';
 import Swiper from 'react-native-swiper';
 import productsData from '../../assets/Data/products.json';
+import dealsData from '../../assets/Data/deals.json';
 import ProductItem from '../../components/ProductItem';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useNavigation } from "@react-navigation/native";
@@ -16,9 +18,49 @@ import Feather from '@expo/vector-icons/Feather';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 // import { SliderBox } from 'react-native-image-slider-box';
 
+const ITEMS_PER_PAGE = 4; // Number of items to display per page
+
 const HomeScreen = () => {
 
   const user = useSelector((state) => state.auth.user);
+
+  const deals = dealsData.products;
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.ceil(deals.length / ITEMS_PER_PAGE);
+
+  const currentItems = deals.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const renderPageNumbers = () => {
+    const pageNumbers = [];
+    for (let i = 1; i <= totalPages; i++) {
+      pageNumbers.push(
+        <TouchableOpacity
+          key={i}
+          onPress={() => setCurrentPage(i)}
+          style={[
+            styles.pageNumber,
+            currentPage === i && styles.activePage,
+          ]}
+        >
+          <Text style={[styles.pageText, currentPage === i && styles.activePageText]}>{i}</Text>
+        </TouchableOpacity>
+      );
+    }
+    return pageNumbers;
+  };
 
   const list = [
     {
@@ -63,71 +105,6 @@ const HomeScreen = () => {
     "https://images-eu.ssl-images-amazon.com/images/G/31/img23/Books/BB/JULY/1242x550_Header-BB-Jul23.jpg",
   ];
 
-  const deals = [
-    {
-      id: "20",
-      title: "OnePlus Nord CE 3 Lite 5G (Pastel Lime, 8GB RAM, 128GB Storage)",
-      oldPrice: 25000,
-      price: 19000,
-      image:
-        "https://images-eu.ssl-images-amazon.com/images/G/31/wireless_products/ssserene/weblab_wf/xcm_banners_2022_in_bau_wireless_dec_580x800_once3l_v2_580x800_in-en.jpg",
-      carouselImages: [
-        "https://m.media-amazon.com/images/I/61QRgOgBx0L._SX679_.jpg",
-        "https://m.media-amazon.com/images/I/61uaJPLIdML._SX679_.jpg",
-        "https://m.media-amazon.com/images/I/510YZx4v3wL._SX679_.jpg",
-        "https://m.media-amazon.com/images/I/61J6s1tkwpL._SX679_.jpg",
-      ],
-      color: "Stellar Green",
-      size: "6 GB RAM 128GB Storage",
-    },
-    {
-      id: "30",
-      title:
-        "Samsung Galaxy S20 FE 5G (Cloud Navy, 8GB RAM, 128GB Storage) with No Cost EMI & Additional Exchange Offers",
-      oldPrice: 74000,
-      price: 26000,
-      image:
-        "https://images-eu.ssl-images-amazon.com/images/G/31/img23/Wireless/Samsung/SamsungBAU/S20FE/GW/June23/BAU-27thJune/xcm_banners_2022_in_bau_wireless_dec_s20fe-rv51_580x800_in-en.jpg",
-      carouselImages: [
-        "https://m.media-amazon.com/images/I/81vDZyJQ-4L._SY879_.jpg",
-        "https://m.media-amazon.com/images/I/61vN1isnThL._SX679_.jpg",
-        "https://m.media-amazon.com/images/I/71yzyH-ohgL._SX679_.jpg",
-        "https://m.media-amazon.com/images/I/61vN1isnThL._SX679_.jpg",
-      ],
-      color: "Cloud Navy",
-      size: "8 GB RAM 128GB Storage",
-    },
-    {
-      id: "40",
-      title:
-        "Samsung Galaxy M14 5G (ICY Silver, 4GB, 128GB Storage) | 50MP Triple Cam | 6000 mAh Battery | 5nm Octa-Core Processor | Android 13 | Without Charger",
-      oldPrice: 16000,
-      price: 14000,
-      image:
-        "https://images-eu.ssl-images-amazon.com/images/G/31/img23/Wireless/Samsung/CatPage/Tiles/June/xcm_banners_m14_5g_rv1_580x800_in-en.jpg",
-      carouselImages: [
-        "https://m.media-amazon.com/images/I/817WWpaFo1L._SX679_.jpg",
-        "https://m.media-amazon.com/images/I/81KkF-GngHL._SX679_.jpg",
-        "https://m.media-amazon.com/images/I/61IrdBaOhbL._SX679_.jpg",
-      ],
-      color: "Icy Silver",
-      size: "6 GB RAM 64GB Storage",
-    },
-    {
-      id: "50",
-      title:
-        "realme narzo N55 (Prime Blue, 4GB+64GB) 33W Segment Fastest Charging | Super High-res 64MP Primary AI Camera",
-      oldPrice: 12999,
-      price: 10999,
-      image:
-        "https://images-eu.ssl-images-amazon.com/images/G/31/tiyesum/N55/June/xcm_banners_2022_in_bau_wireless_dec_580x800_v1-n55-marchv2-mayv3-v4_580x800_in-en.jpg",
-      carouselImages: [
-        "https://m.media-amazon.com/images/I/41Iyj5moShL._SX300_SY300_QL70_FMwebp_.jpg",
-        "https://m.media-amazon.com/images/I/61og60CnGlL._SX679_.jpg",
-        "https://m.media-amazon.com/images/I/61twx1OjYdL._SX679_.jpg",
-      ],
-    },
-  ];
 
   const offers = [
     {
@@ -262,9 +239,12 @@ const HomeScreen = () => {
             <View style={styles.heroFilter}>
               <Pressable style={styles.filterButton}>
                 <Text style={styles.filterText}>Filters</Text>
+                <Ionicons name="filter-sharp" size={24} color="black" />
               </Pressable>
               <Pressable style={styles.sortButton}>
-                <Text style={styles.sortText}>Sort by: Featured</Text>
+                <Text style={styles.sortByText}>Sort by:</Text>
+                <Text style={styles.sortText}> Featured</Text>
+                <Feather name="chevron-down" size={24} color="black" />
               </Pressable>
             </View>
           </ScrollView>
@@ -321,52 +301,76 @@ const HomeScreen = () => {
           */}
 
           {/* Trending Deals */}
-          <Text style={{ padding: 10, fontSize: 18, fontWeight: "bold" }}>
-            Trending Deals of the Week
-          </Text>
+          {/*
+            <Text style={{ padding: 10, fontSize: 18, fontWeight: "bold" }}>
+              Trending Deals of the Week
+            </Text>
+             */}
 
-          <View style={styles.heroTreanding}>
-            {deals.map((item) => (
-              <Pressable
-                key={item.id}
-                onPress={() =>
-                  navigation.navigate("Info", {
-                    id: item.id,
-                    title: item.title,
-                    price: item.price,
-                    carouselImages: item.carouselImages,
-                    color: item.color,
-                    size: item.size,
-                    oldPrice: item.oldPrice,
-                    item: item,
-                  })
-                }
-                style={{
-                  marginVertical: 10,
-                  width: '48%',  // Adjust width to fit items in a row
-                  // backgroundColor: "#f9f9f9", // Optional: background for better visibility
-                  borderRadius: 10,
-                  overflow: "hidden",
-                }}
-              >
-                <Image
-                  style={{ width: '100%', height: 220, resizeMode: "contain" }}
-                  source={{ uri: item.image }}
-                />
-                {/* 
-                
-                <View style={{ padding: 10 }}>
-                  <Text style={{ fontSize: 12, fontWeight: "bold" }}>{item.title}</Text>
-                  <Text style={{ fontSize: 12, textDecorationLine: "line-through" }}>
-                    ₹{item.oldPrice}
-                  </Text>
-                  <Text style={{ fontSize: 14, fontWeight: "bold" }}>₹{item.price}</Text>
-                </View>
-                */}
-              </Pressable>
-            ))}
+          <View>
+            {/* Display current items here (the deals) */}
+            <View style={styles.heroTreanding}>
+              {currentItems.map((item) => (
+                <Pressable
+                  key={item.id}
+                  onPress={() =>
+                    navigation.navigate("Info", {
+                      id: item.id,
+                      title: item.title,
+                      price: item.price,
+                      carouselImages: item.carouselImages,
+                      color: item.colors,
+                      oldPrice: item.oldPrice,
+                      item: item,
+                    })
+                  }
+                  style={{
+                    marginVertical: 10,
+                    width: '47%',
+                    borderRadius: 10,
+                    overflow: "hidden",
+                  }}
+                >
+                  <View style={styles.heroProductView}>
+                    <Image
+                      style={styles.heroTopImage}
+                      source={{ uri: item.coverUrl }}
+                    />
+                    <Text style={styles.heroProductTitle} numberOfLines={1}>
+                      {item.name}
+                    </Text>
+                    <View style={styles.heroProductBottom}>
+                      {/* Render color circles */}
+                      <View style={styles.heroProductBottom}>
+                        {item.colors.slice(0, 3).map((color, index) => (
+                          <View key={index} style={[styles.heroProductColor, { backgroundColor: color }]} />
+                        ))}
+                        {item.colors.length > 3 && (
+                          <Text style={{ marginLeft: 5 }}>+{item.colors.length - 3}</Text>
+                        )}
+                      </View>
+                      <Text style={{ marginLeft: 10 }}>₹{item.price}</Text>
+                    </View>
+                  </View>
+                </Pressable>
+              ))}
+            </View>
+
+            {/* Pagination Controls */}
+            <View style={styles.paginationControls}>
+              <TouchableOpacity onPress={goToPreviousPage} disabled={currentPage === 1}>
+                <Text style={styles.paginationArrow}><AntDesign name="left" size={18} color="black" /></Text>
+              </TouchableOpacity>
+
+              {renderPageNumbers()}
+
+              <TouchableOpacity onPress={goToNextPage} disabled={currentPage === totalPages}>
+                <Text style={styles.paginationArrow}><AntDesign name="right" size={18} color="black" /></Text>
+              </TouchableOpacity>
+            </View>
           </View>
 
+          {/*
           <Text
             style={{
               height: 1,
@@ -480,7 +484,7 @@ const HomeScreen = () => {
             })}
           </View>
 
-
+          */}
 
 
 
