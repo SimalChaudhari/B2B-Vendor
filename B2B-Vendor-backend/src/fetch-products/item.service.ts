@@ -6,6 +6,8 @@ import axios from 'axios';
 import { parseStringPromise } from 'xml2js'; // Library for parsing XML to JSON
 import { ItemEntity } from './item.entity';
 import { ItemDto } from './item.dto';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { storage } from '../firebase/firebase.config'; // Import Firebase storage
 
 const data = `
 <ENVELOPE>
@@ -74,30 +76,29 @@ export class ItemService {
 
     return stockItems.map((item: any) => {
       const itemDto = new ItemDto();
-      itemDto.itemName = this.cleanString(item.ITEMNAME[0] || "Default Name");
+
+      itemDto.itemName = this.cleanString(item.ITEMNAME?.[0]);
       itemDto.alias = this.cleanString(item.ALIAS?.[0]);
       itemDto.partNo = this.cleanString(item.PARTNO?.[0]);
       itemDto.description = this.cleanString(item.DESCRIPTION?.[0]);
-      itemDto.remarks = this.cleanString(item.REMARKS?.[0]);
-      itemDto.group = this.cleanString(item?.GROUP[0]);
-      itemDto.category = this.cleanString(item.CATEGORY[0]);
-      itemDto.baseUnit = this.cleanString(item?.BASEUNIT[0]);
+      itemDto.group = this.cleanString(item.GROUP?.[0]);
+      itemDto.subGroup1 = this.cleanString(item.SUBGROUP1?.[0]);
+      itemDto.subGroup2 = this.cleanString(item.SUBGROUP2?.[0]);
+      itemDto.baseUnit = this.cleanString(item.BASEUNIT?.[0]);
       itemDto.alternateUnit = this.cleanString(item.ALTERNATEUNIT?.[0]);
-      itemDto.isBatchWiseOn = this.cleanString(item?.ISBATCHWISEON[0]);
-      itemDto.hasMfgDate = this.cleanString(item.HASMFGDATE?.[0]);
-      itemDto.hasExpiryDate = this.cleanString(item.HASEXPIRYDATE?.[0]);
-      itemDto.costPriceDate = this.cleanString(item.COSTPRICEDATE?.[0]);
-      itemDto.costPrice = this.cleanString(item.COSTPRICE?.[0]);
-      itemDto.sellingPriceDate = this.cleanString(item.SELLINGPRICEDATE?.[0]);
-      itemDto.sellingPrice = this.cleanString(item.SELLINGPRICE?.[0]);
+      itemDto.conversion = this.cleanString(item.CONVERSION?.[0]);
+      itemDto.denominator = parseInt(item.DENOMINATOR?.[0], 10) || 1;
+      itemDto.sellingPriceDate = new Date(item.SELLINGPRICEDATE?.[0]);
+      itemDto.sellingPrice = parseFloat(item.SELLINGPRICE?.[0]) || 0;
       itemDto.gstApplicable = this.cleanString(item.GSTAPPLICABLE?.[0]);
-      itemDto.gstApplicableDate = this.cleanString(item.GSTAPPLICABLEDATE?.[0]);
-      itemDto.gstRate = this.cleanString(item.GSTRATE?.[0]);
-      itemDto.mrpDate = this.cleanString(item.MRPDATE?.[0]);
-      itemDto.mrpRate = this.cleanString(item.MRPRATE?.[0]);
+      itemDto.gstApplicableDate = new Date(item.GSTAPPLICABLEDATE?.[0]);
+      itemDto.taxability = this.cleanString(item.TAXABILITY?.[0]);
+      itemDto.gstRate = parseFloat(item.GSTRATE?.[0]) || 0;
+
       // Convert DTO to Entity
       return this.itemRepository.create(itemDto);
     });
+
   }
 
   private cleanString(value: string | undefined): string {
@@ -108,24 +109,21 @@ export class ItemService {
   private hasChanges(existingProduct: ItemEntity, newItem: ItemEntity): boolean {
     return (
       existingProduct.itemName !== newItem.itemName ||
+      existingProduct.partNo !== newItem.partNo ||
       existingProduct.description !== newItem.description ||
-      existingProduct.remarks !== newItem.remarks ||
       existingProduct.group !== newItem.group ||
-      existingProduct.category !== newItem.category ||
+      existingProduct.subGroup1 !== newItem.subGroup1 ||
+      existingProduct.subGroup2 !== newItem.subGroup2 ||
       existingProduct.baseUnit !== newItem.baseUnit ||
       existingProduct.alternateUnit !== newItem.alternateUnit ||
-      existingProduct.isBatchWiseOn !== newItem.isBatchWiseOn ||
-      existingProduct.hasMfgDate !== newItem.hasMfgDate ||
-      existingProduct.hasExpiryDate !== newItem.hasExpiryDate ||
-      existingProduct.costPriceDate !== newItem.costPriceDate ||
-      existingProduct.costPrice !== newItem.costPrice ||
-      existingProduct.sellingPriceDate !== newItem.sellingPriceDate ||
+      existingProduct.conversion !== newItem.conversion ||
+      existingProduct.denominator !== newItem.denominator ||
+      existingProduct.sellingPriceDate.getTime() !== newItem.sellingPriceDate.getTime() || // For dates, compare using getTime()
       existingProduct.sellingPrice !== newItem.sellingPrice ||
       existingProduct.gstApplicable !== newItem.gstApplicable ||
-      existingProduct.gstApplicableDate !== newItem.gstApplicableDate ||
-      existingProduct.gstRate !== newItem.gstRate ||
-      existingProduct.mrpDate !== newItem.mrpDate ||
-      existingProduct.mrpRate !== newItem.mrpRate
+      existingProduct.gstApplicableDate.getTime() !== newItem.gstApplicableDate.getTime() ||
+      existingProduct.taxability !== newItem.taxability ||
+      existingProduct.gstRate !== newItem.gstRate
     );
   }
 
@@ -141,7 +139,31 @@ export class ItemService {
   async findById(id: string): Promise<ItemEntity | null> {
     return this.itemRepository.findOne({ where: { id } }); // Adjust according to your data access layer
   }
+  async updateProductImagesAndFiles(
+    id: string,
+    productImages: Express.Multer.File[], // Multiple product images
+    dimensionalFiles: Express.Multer.File[], // Multiple dimensional files (pdf/images)
+  ): Promise<any> {
+    const item = await this.itemRepository.findOne({ where: { id } });
+    if (!item) {
+      throw new Error('Item not found');
+    }
+    const productImageUrls = await this.uploadFilesToFirebase(productImages, 'product-images');
+    const dimensionalFileUrls = await this.uploadFilesToFirebase(dimensionalFiles, 'dimensional-files');
+    item.productImages = productImageUrls; // Assuming you have productImageUrls column in ItemEntity
+    item.dimensionalFiles = dimensionalFileUrls; // Assuming you have dimensionalFileUrls column in ItemEntity
 
+    await this.itemRepository.save(item);
+    return { message: 'Item updated successfully with images and files' };
+  }
 
+  private async uploadFilesToFirebase(files: Express.Multer.File[], folder: string): Promise<string[]> {
+    const uploadPromises = files.map(async (file) => {
+      const fileRef = ref(storage, `${folder}/${file.originalname}`);
+      const snapshot = await uploadBytes(fileRef, file.buffer);
+      return getDownloadURL(snapshot.ref); // Return the file's download URL
+    });
 
+    return Promise.all(uploadPromises); // Return an array of URLs after uploading
+  }
 }

@@ -82,9 +82,11 @@ export const createProduct = (productData) => async (dispatch) => {
 };
 
 export const editProduct = (productId, productData) => async (dispatch) => {
+    console.log("🚀 ~ editProduct ~ productData:", productData)
     try {
-        const response = await axiosInstance.patch(`/products/update/${productId}`, productData);
+        const response = await axiosInstance.post(`/items/update-files/${productId}`, productData);
 
+        console.log("🚀 ~ editProduct ~ response:", response)
         // Check if the response is successful
         if (response && response.status >= 200 && response.status < 300) {
             toast.success(response.data.message || 'Product updated successfully!');
