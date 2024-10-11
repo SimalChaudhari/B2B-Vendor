@@ -1,13 +1,14 @@
-import { IsNotEmpty, IsOptional, IsString, IsNumber } from 'class-validator';
+// item.dto.js
+import { IsNotEmpty, IsOptional, IsString, IsNumber, IsDateString, IsArray } from 'class-validator';
 
 export class ItemDto {
-    @IsOptional()
+    @IsNotEmpty()
     @IsString()
-    itemName?: string;
+    itemName!: string;
 
     @IsOptional()
     @IsString()
-    alias?: string;
+    alias!: string;
 
     @IsOptional()
     @IsString()
@@ -17,73 +18,65 @@ export class ItemDto {
     @IsString()
     description?: string;
 
-    @IsOptional()
-    @IsString()
-    remarks?: string;
-
-    @IsOptional()
+    @IsNotEmpty()
     @IsString()
     group?: string;
 
-    @IsOptional()
+    @IsNotEmpty()
     @IsString()
-    category?: string;
+    subGroup1!: string;
 
-    @IsOptional()
+    @IsNotEmpty()
+    @IsString()
+    subGroup2!: string;
+
+    @IsNotEmpty()
     @IsString()
     baseUnit?: string;
 
-    @IsOptional()
+    @IsNotEmpty()
     @IsString()
     alternateUnit?: string;
 
     @IsOptional()
     @IsString()
-    isBatchWiseOn?: string;
+    conversion?: string;
+
+    @IsNotEmpty()
+    @IsNumber()
+    denominator?: number;
+
+    @IsNotEmpty()
+    @IsDateString()
+    sellingPriceDate?: Date;
+
+    @IsNotEmpty()
+    @IsNumber()
+    sellingPrice?: number;
+
+    @IsNotEmpty()
+    @IsString()
+    gstApplicable?: string;
+
+    @IsNotEmpty()
+    @IsDateString()
+    gstApplicableDate?: Date;
+
+    @IsNotEmpty()
+    @IsString()
+    taxability?: string;
+
+    @IsNotEmpty()
+    @IsNumber()
+    gstRate?: number;
 
     @IsOptional()
-    @IsString()
-    hasMfgDate?: string;
+    @IsArray()
+    @IsString({ each: true })
+    productImages?: string[];  // Array of image URLs
 
     @IsOptional()
-    @IsString()
-    hasExpiryDate?: string;
-
-    @IsOptional()
-    @IsString()
-    costPriceDate?: string;
-
-    @IsOptional()
-    @IsString()
-    costPrice?: string; // Changed from number to string
-
-    @IsOptional()
-    @IsString()
-    sellingPriceDate?: string;
-
-    @IsOptional()
-    @IsString()
-    sellingPrice?: string; // Changed from number to string
-
-    @IsOptional()
-    @IsString()
-    gstApplicable!: string;
-
-    @IsOptional()
-    @IsString()
-    gstApplicableDate?: string;
-
-    @IsOptional()
-    @IsString()
-    gstRate?: string; // Changed from number to string
-
-    @IsOptional()
-    @IsString()
-    mrpDate?: string;
-
-    @IsOptional()
-    @IsString()
-    mrpRate?: string; // Changed from number to string
-
-    // Add any additional fields here with appropriate validations
+    @IsArray()
+    @IsString({ each: true })
+    dimensionalFiles?: string[]; // Array of file URLs (pdf/images)
 }

@@ -47,7 +47,7 @@ export function ProductTableRow({ row, selected, onEditRow, onSelectRow, onDelet
 
                 <TableCell>
                     <Stack direction="row" alignItems="center">
-                        <Avatar variant="rounded" alt={imageURL} src={imageURL} sx={{ width: 60, height: 60, mr: 2 }} />
+                        <Avatar variant="rounded" alt={row.productImages} src={row.productImages} sx={{ width: 60, height: 60, mr: 2 }} />
                         <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
                             <Link component={RouterLink} to={`/edit/${row.id}`} color="inherit" sx={{ cursor: 'pointer' }}>
                                 {row.itemName}

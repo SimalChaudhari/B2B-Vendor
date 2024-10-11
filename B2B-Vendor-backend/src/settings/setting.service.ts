@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ContactUs, Faq, Logo, PrivacyPolicy, TermsConditions } from './setting.entity';
 import { CreateContactDto, CreateFaqDto, CreateLogoDto, CreatePrivacyPolicyDto, CreateTermsConditionsDto, UpdateFaqDto, UpdateLogoDto } from './setting.dto';
-import { bucket } from '../firebase/firebase.config'; // Import the bucket configuration
+// import { bucket } from '../firebase/firebase.config'; // Import the bucket configuration
 import * as admin from 'firebase-admin';
 
 @Injectable()
@@ -82,52 +82,52 @@ export class LogoService {
         private logoRepository: Repository<Logo>
     ) { }
 
-    async create(createLogoDto: { logoImage: string }): Promise<{ message: string; data: Logo }> {
-        try {
-            const { logoImage } = createLogoDto;
-            if (!logoImage) {
-                throw new Error('Logo image is required.');
-            }
-            // Convert base64 string to buffer
-            const buffer = Buffer.from(logoImage, 'base64');
-            // Upload the image to Firebase Storage
-            const blob = bucket.file(`logos/${Date.now()}.png`); // Use Date.now() for a unique file name
-            await blob.save(buffer, {
-                metadata: { contentType: 'image/png' }, // Adjust the content type as needed
-            });
-            // Get the public URL for the uploaded image
-            const publicUrl = `${process.env.STORAGE_URL}/${bucket.name}/${blob.name}`;
-            // Create the logo entry in the database
-            const logo = this.logoRepository.create({ logoImage: publicUrl });
-            const savedLogo = await this.logoRepository.save(logo);
-            return { message: 'Logo created successfully', data: savedLogo };
-        } catch (error: any) {
-            throw new InternalServerErrorException('Error creating logo', error.message);
-        }
-    }
+    // async create(createLogoDto: { logoImage: string }): Promise<{ message: string; data: Logo }> {
+    //     try {
+    //         const { logoImage } = createLogoDto;
+    //         if (!logoImage) {
+    //             throw new Error('Logo image is required.');
+    //         }
+    //         // Convert base64 string to buffer
+    //         const buffer = Buffer.from(logoImage, 'base64');
+    //         // Upload the image to Firebase Storage
+    //         const blob = bucket.file(`logos/${Date.now()}.png`); // Use Date.now() for a unique file name
+    //         await blob.save(buffer, {
+    //             metadata: { contentType: 'image/png' }, // Adjust the content type as needed
+    //         });
+    //         // Get the public URL for the uploaded image
+    //         const publicUrl = `${process.env.STORAGE_URL}/${bucket.name}/${blob.name}`;
+    //         // Create the logo entry in the database
+    //         const logo = this.logoRepository.create({ logoImage: publicUrl });
+    //         const savedLogo = await this.logoRepository.save(logo);
+    //         return { message: 'Logo created successfully', data: savedLogo };
+    //     } catch (error: any) {
+    //         throw new InternalServerErrorException('Error creating logo', error.message);
+    //     }
+    // }
 
-    async update(id: string, updateLogoDto: UpdateLogoDto): Promise<{ message: string; data: Logo }> {
-        try {
-            const logo = await this.findOne(id); // Fetch the existing logo
-            let logoImage = logo.logoImage;
-            const fileName = logoImage.split('/').pop();
-            if (updateLogoDto.logoImage) {
-                const blob = bucket.file(`logos/${fileName}`); // Use the same file name to overwrite
-                const buffer = Buffer.from(updateLogoDto.logoImage, 'base64'); // Convert base64 string to buffer
-                await blob.save(buffer, {
-                    metadata: { contentType: 'image/png' },
-                });
-            }
-            const updatedLogo = this.logoRepository.merge(logo, { logoImage });
-            const result = await this.logoRepository.save(updatedLogo);
-            return { message: 'Logo updated successfully', data: result };
-        } catch (error: any) {
-            if (error instanceof NotFoundException) {
-                throw error; // Re-throw not found error
-            }
-            throw new InternalServerErrorException('Error updating logo', error.message);
-        }
-    }
+    // async update(id: string, updateLogoDto: UpdateLogoDto): Promise<{ message: string; data: Logo }> {
+    //     try {
+    //         const logo = await this.findOne(id); // Fetch the existing logo
+    //         let logoImage = logo.logoImage;
+    //         const fileName = logoImage.split('/').pop();
+    //         if (updateLogoDto.logoImage) {
+    //             const blob = bucket.file(`logos/${fileName}`); // Use the same file name to overwrite
+    //             const buffer = Buffer.from(updateLogoDto.logoImage, 'base64'); // Convert base64 string to buffer
+    //             await blob.save(buffer, {
+    //                 metadata: { contentType: 'image/png' },
+    //             });
+    //         }
+    //         const updatedLogo = this.logoRepository.merge(logo, { logoImage });
+    //         const result = await this.logoRepository.save(updatedLogo);
+    //         return { message: 'Logo updated successfully', data: result };
+    //     } catch (error: any) {
+    //         if (error instanceof NotFoundException) {
+    //             throw error; // Re-throw not found error
+    //         }
+    //         throw new InternalServerErrorException('Error updating logo', error.message);
+    //     }
+    // }
     async findAll(): Promise<Logo[]> {
         try {
             return await this.logoRepository.find();

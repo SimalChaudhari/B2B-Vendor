@@ -60,45 +60,45 @@ export class FaqController {
 }
 
 // LOGO Controller
-@Controller('logos')
-export class LogoController {
-    constructor(private readonly logoService: LogoService) { }
+// @Controller('logos')
+// export class LogoController {
+//     constructor(private readonly logoService: LogoService) { }
 
-    @Post('create')
-    @UseInterceptors(FileInterceptor('logoImage')) // 'logoImage' should match the FormData field name
-    async create(@UploadedFile() logoImage: Express.Multer.File) {
-        return this.logoService.create({ logoImage: logoImage.buffer.toString('base64') }); // Convert buffer to base64
-    }
+//     @Post('create')
+//     @UseInterceptors(FileInterceptor('logoImage')) // 'logoImage' should match the FormData field name
+//     async create(@UploadedFile() logoImage: Express.Multer.File) {
+//         return this.logoService.create({ logoImage: logoImage.buffer.toString('base64') }); // Convert buffer to base64
+//     }
 
-    @Put('update/:id')
-    @UseInterceptors(FileInterceptor('logoImage')) // 'logoImage' should match the FormData field name
-    async update(
-        @Param('id') id: string,
-        @UploadedFile() logoImage: Express.Multer.File,
-        @Body() updateLogoDto: CreateLogoDto): Promise<{ message: string; data: Logo }> {
-        if (logoImage) {
-            updateLogoDto.logoImage = logoImage.buffer.toString('base64');
-        }
-        return this.logoService.update(id, updateLogoDto);
-    }
+//     @Put('update/:id')
+//     @UseInterceptors(FileInterceptor('logoImage')) // 'logoImage' should match the FormData field name
+//     async update(
+//         @Param('id') id: string,
+//         @UploadedFile() logoImage: Express.Multer.File,
+//         @Body() updateLogoDto: CreateLogoDto): Promise<{ message: string; data: Logo }> {
+//         if (logoImage) {
+//             updateLogoDto.logoImage = logoImage.buffer.toString('base64');
+//         }
+//         return this.logoService.update(id, updateLogoDto);
+//     }
 
-    @Get()
-    async findAll(): Promise<Logo[]> {
-        return this.logoService.findAll();
-    }
+//     @Get()
+//     async findAll(): Promise<Logo[]> {
+//         return this.logoService.findAll();
+//     }
 
-    @Get(':id')
-    async findOne(@Param('id') id: string): Promise<Logo> {
-        return this.logoService.findOne(id);
-    }
+//     @Get(':id')
+//     async findOne(@Param('id') id: string): Promise<Logo> {
+//         return this.logoService.findOne(id);
+//     }
 
-    @Delete('delete/:id')
-    async remove(@Param('id') id: string, @Res() response: Response) {
-        const result = await this.logoService.remove(id);
-        return response.status(HttpStatus.OK).json(result);
+//     @Delete('delete/:id')
+//     async remove(@Param('id') id: string, @Res() response: Response) {
+//         const result = await this.logoService.remove(id);
+//         return response.status(HttpStatus.OK).json(result);
 
-    }
-}
+//     }
+// }
 
 // Privacy Policy
 

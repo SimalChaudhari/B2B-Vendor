@@ -43,7 +43,7 @@ export const navData = [
         path: paths.settings.root,
         icon: ICONS.settings,
         children: [
-          { title: 'Faq', path: paths.settings.faq },
+          { title: 'FAQ', path: paths.settings.faq },
           { title: 'Contact us', path: paths.settings.contact_us },
           // { title: 'Privacy Policy', path: paths.settings.privacy_policy },
           { title: 'Terms Conditions', path: paths.settings.terms_conditions },

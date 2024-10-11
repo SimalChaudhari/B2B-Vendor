@@ -34,23 +34,26 @@ const NewProductSchema = zod.object({
     alternateUnit: zod.string().optional(),
     baseUnit: zod.string().min(1, 'Base Unit is required!'),
     category: zod.string().min(1, 'Category is required!'),
-    costPrice: zod.number().min(1, 'Cost Price is required!'),
+    costPrice: zod.string().min(1, 'Cost Price is required!'),
+    productImages: zod.any().refine((files) => files && files.length > 0, {
+        message: 'Images are required!',
+    }),
     costPriceDate: zod.string().min(1, 'Cost Price Date is required!'),
     description: zod.string().optional(),
     group: zod.string().optional(),
     gstApplicable: zod.string().min(1, 'GST Applicable is required!'),
     gstApplicableDate: zod.string().min(1, 'GST Applicable Date is required!'),
-    gstRate: zod.number().optional(),
+    gstRate: zod.string().optional(),
     hasExpiryDate: zod.string().min(1, 'Has Expiry Date is required!'),
     hasMfgDate: zod.string().min(1, 'Has Manufacturing Date is required!'),
     id: zod.string().optional(),
     isBatchWiseOn: zod.string().min(1, 'Is Batch Wise On is required!'),
     itemName: zod.string().min(1, 'Item Name is required!'),
     mrpDate: zod.string().min(1, 'MRP Date is required!'),
-    mrpRate: zod.number().optional(),
+    mrpRate: zod.string().optional(),
     partNo: zod.string().optional(),
     remarks: zod.string().optional(),
-    sellingPrice: zod.number().min(1, 'Selling Price is required!'),
+    sellingPrice: zod.string().min(1, 'Selling Price is required!'),
     sellingPriceDate: zod.string().min(1, 'Selling Price Date is required!'),
 });
 
@@ -79,6 +82,7 @@ export default function ProductNewEditForm({ currentProduct }) {
         partNo: currentProduct?.partNo || '',
         remarks: currentProduct?.remarks || '',
         sellingPrice: currentProduct?.sellingPrice || 0,
+        productImages: currentProduct?.productImages || '',
         sellingPriceDate: currentProduct?.sellingPriceDate || '',
     }), [currentProduct]);
 
@@ -101,11 +105,11 @@ export default function ProductNewEditForm({ currentProduct }) {
     });
 
     const handleRemoveFile = useCallback((file) => {
-        setValue('images', values.images.filter((img) => img !== file));
-    }, [setValue, values.images]);
+        setValue('productImages', values.productImages.filter((img) => img !== file));
+    }, [setValue, values.productImages]);
 
     const handleRemoveAllFiles = useCallback(() => {
-        setValue('images', []);
+        setValue('productImages', []);
     }, [setValue]);
 
     const handleIncludeTaxes = useCallback((event) => {
@@ -120,19 +124,24 @@ export default function ProductNewEditForm({ currentProduct }) {
                     <CardHeader title="Product Details" sx={{ py: 2 }} />
                     <Divider />
                     <Stack spacing={2} sx={{ p: 3 }}>
+                        <Typography variant="subtitle2">Product Images</Typography>
+
+                        <Field.Upload
+                            multiple
+                            thumbnail
+                            name="productImages"
+                            maxSize={3145728}
+                            onRemove={handleRemoveFile}
+                            onRemoveAll={handleRemoveAllFiles}
+                            onUpload={() => console.info('ON UPLOAD')}
+                        />
+
+
                         <Field.Text name="itemName" label="Product Name" />
                         <Field.Text name="description" label="Description" multiline rows={5} />
                         <Field.Text name="remark" label="Remark" multiline rows={3} />
 
-                        <Typography variant="subtitle2">Images</Typography>
-                        <Field.Upload
-                            name="images"
-                            multiple
-                            thumbnail
-                            maxSize={3145728}
-                            onRemove={handleRemoveFile}
-                            onRemoveAll={handleRemoveAllFiles}
-                        />
+
                     </Stack>
                 </Card>
 
@@ -290,7 +299,7 @@ export default function ProductNewEditForm({ currentProduct }) {
                         Submit
                     </LoadingButton>
                 </Stack>
-            </Stack>
-        </Form>
+            </Stack >
+        </Form >
     );
 }

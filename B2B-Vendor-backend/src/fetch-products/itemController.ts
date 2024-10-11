@@ -1,10 +1,11 @@
-import { Controller, HttpStatus, Post, Get, Res, Param } from '@nestjs/common';
+import { Controller, HttpStatus, Post, Get, Res, Param, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { Response } from 'express'; // Import Response from express
 import { ItemService } from './item.service';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 
 @Controller('items')
 export class ItemController {
-  constructor(private readonly itemService: ItemService) {}
+  constructor(private readonly itemService: ItemService) { }
 
   @Post('/fetch')
   async fetchItems() {
@@ -23,15 +24,38 @@ export class ItemController {
 
   @Get('get/:id') // Get item by ID
   async getById(@Param('id') id: string, @Res() response: Response) {
-      const item = await this.itemService.findById(id); // Implement findById in your service
-      if (!item) {
-          return response.status(HttpStatus.NOT_FOUND).json({
-              message: 'Item not found',
-          });
-      }
-      return response.status(HttpStatus.OK).json({
-          data: item,
+    const item = await this.itemService.findById(id); // Implement findById in your service
+    if (!item) {
+      return response.status(HttpStatus.NOT_FOUND).json({
+        message: 'Item not found',
       });
+    }
+    return response.status(HttpStatus.OK).json({
+      data: item,
+    });
+  }
+
+  @Post('update-files/:id')
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'productImages', maxCount: 5 }, // Limit to 5 images
+      { name: 'dimensionalFiles', maxCount: 5 }, // Limit to 5 files (images or PDFs)
+    ]),
+  )
+
+  async updateProductImagesAndFiles(
+    @Param('id') id: string,
+    @UploadedFiles() files: { productImages?: Express.Multer.File[], dimensionalFiles?: Express.Multer.File[] },
+    @Res() response: Response,
+  ) {
+    const productImages = files.productImages || [];
+    const dimensionalFiles = files.dimensionalFiles || [];
+
+    await this.itemService.updateProductImagesAndFiles(id, productImages, dimensionalFiles);
+
+    return response.status(HttpStatus.OK).json({
+      message: 'Images and files updated successfully',
+    });
   }
 
 }
