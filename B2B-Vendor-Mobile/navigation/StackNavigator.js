@@ -16,6 +16,7 @@ import OrderScreen from '../src/screens/products/OrderScreen';
 import ProfileScreen from '../src/screens/auth/ProfileScreen';
 import OTPVerification from '../src/screens/auth/OTPVerification';
 
+
 const StackNavigator = () => {
     const Stack = createNativeStackNavigator();
     const Tab = createBottomTabNavigator();
@@ -40,17 +41,22 @@ const StackNavigator = () => {
                 />
 
                 {/* Profile */}
+                
                 <Tab.Screen
+                    // name="Profile" // Corrected from "nam" to "name"
                     name="Profile" // Corrected from "nam" to "name"
                     component={ProfileScreen}
                     options={{
-                        tabBarLabel: "Profile", // Corrected from "tabBarLable" to "tabBarLabel"
+                        tabBarLabel: "Shop", // Corrected from "tabBarLable" to "tabBarLabel"
                         tabBarLabelStyle: { color: "#008E97" },
                         headerShown: false,
                         tabBarIcon: ({ focused }) => focused ? (
-                            <Ionicons name="person" size={24} color="black" /> // Use a different icon for Profile
+                            // <Ionicons name="person" size={24} color="black" /> // Use a different icon for Profile
+                            <Ionicons name="storefront-sharp" size={24} color="black" />
+                            
                         ) : (
-                            <Ionicons name="person-outline" size={24} color="black" />
+                            // <Ionicons name="person-outline" size={24} color="black" />
+                            <Ionicons name="storefront-outline" size={24} color="black" />
                         )
                     }}
                 />
