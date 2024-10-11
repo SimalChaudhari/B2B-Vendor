@@ -13,7 +13,7 @@ export class ItemController {
     return { message: 'Items fetched and stored successfully' };
   }
 
-  @Get() // This should be decorated with @Get
+  @Get() // Get all items
   async findAll(@Res() response: Response) {
     const items = await this.itemService.findAll();
     return response.status(HttpStatus.OK).json({
@@ -24,7 +24,7 @@ export class ItemController {
 
   @Get('get/:id') // Get item by ID
   async getById(@Param('id') id: string, @Res() response: Response) {
-    const item = await this.itemService.findById(id); // Implement findById in your service
+    const item = await this.itemService.findById(id);
     if (!item) {
       return response.status(HttpStatus.NOT_FOUND).json({
         message: 'Item not found',
@@ -34,28 +34,4 @@ export class ItemController {
       data: item,
     });
   }
-
-  @Post('update-files/:id')
-  @UseInterceptors(
-    FileFieldsInterceptor([
-      { name: 'productImages', maxCount: 5 }, // Limit to 5 images
-      { name: 'dimensionalFiles', maxCount: 5 }, // Limit to 5 files (images or PDFs)
-    ]),
-  )
-
-  async updateProductImagesAndFiles(
-    @Param('id') id: string,
-    @UploadedFiles() files: { productImages?: Express.Multer.File[], dimensionalFiles?: Express.Multer.File[] },
-    @Res() response: Response,
-  ) {
-    const productImages = files.productImages || [];
-    const dimensionalFiles = files.dimensionalFiles || [];
-
-    await this.itemService.updateProductImagesAndFiles(id, productImages, dimensionalFiles);
-
-    return response.status(HttpStatus.OK).json({
-      message: 'Images and files updated successfully',
-    });
-  }
-
 }

@@ -16,19 +16,19 @@ import { usePopover, CustomPopover } from 'src/components/custom-popover';
 export function ProductTableToolbar({ options, filters, onResetPage }) {
     const popover = usePopover();
     const [availableSubcategories, setAvailableSubcategories] = useState([]);
-    const [selectedCategories, setSelectedCategories] = useState(filters.state.category || []);
+    const [selectedCategories, setSelectedCategories] = useState(filters.state.group || []);
 
     // Remove duplicates (case-insensitive) from categories
     const uniqueCategories = Array.from(
-        new Set(options.map(option => option.category.toLowerCase()))
-    ).map(category =>
-        options.find(option => option.category.toLowerCase() === category).category
+        new Set(options.map(option => option.group.toLowerCase()))
+    ).map(group =>
+        options.find(option => option.group.toLowerCase() === group).group
     );
 
     // Update available subcategories when selected categories change
     useEffect(() => {
         const subcategories = options
-            .filter(option => selectedCategories.includes(option.category))
+            .filter(option => selectedCategories.includes(option.group))
             .map(option => option.group);
 
         // Remove duplicates (case-insensitive)

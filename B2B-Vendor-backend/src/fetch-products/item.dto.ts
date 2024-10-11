@@ -70,13 +70,4 @@ export class ItemDto {
     @IsNumber()
     gstRate?: number;
 
-    @IsOptional()
-    @IsArray()
-    @IsString({ each: true })
-    productImages?: string[];  // Array of image URLs
-
-    @IsOptional()
-    @IsArray()
-    @IsString({ each: true })
-    dimensionalFiles?: string[]; // Array of file URLs (pdf/images)
 }

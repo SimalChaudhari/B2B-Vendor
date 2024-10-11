@@ -1,5 +1,6 @@
 // Item.entity.ts
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { File } from 'files/file.entity';
+import { Entity, Column, PrimaryGeneratedColumn,OneToMany } from 'typeorm';
 
 @Entity('Items')
 export class ItemEntity {
@@ -57,9 +58,6 @@ export class ItemEntity {
   @Column({ type: 'decimal', nullable: true })
   gstRate!: number;
 
-  @Column('simple-array', { nullable: true })
-  productImages?: string[];  // Store multiple image URLs in a simple array
-
-  @Column('simple-array', { nullable: true })
-  dimensionalFiles?: string[];  // Store multiple file URLs in a simple array
+  @OneToMany(() => File, file => file.item)
+  files!: File[]; // relation to files
 }

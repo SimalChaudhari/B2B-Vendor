@@ -34,10 +34,12 @@ export const TABLE_SUB_CATEGORY_HEAD = [
 export const TABLE_PRODUCT_HEAD = [
   { id: 'item', label: 'Item Name' },
   { id: 'group', label: 'Group' },
-  { id: 'category', label: 'Category' },
-  { id: 'costPrice', label: 'Cost Price' },
+  { id: 'subGroup1', label: 'SubGroup1' },
+  { id: 'subGroup2', label: 'SubGroup2' },
+  { id: 'description', label: 'Description' },
   { id: 'sellingPrice', label: 'Selling Price' },
-  { id: 'mrpRate', label: 'MRP Rate' },
+  { id: 'sellingPriceDate', label: 'Selling Price Date' },
+  { id: 'gstRate', label: 'GST Rate' },
   { id: 'action', label: 'Actions' },
 ];
 

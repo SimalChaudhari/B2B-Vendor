@@ -6,9 +6,6 @@ import { API_URL } from './env';
 const axiosInstance = axios.create({
   baseURL: API_URL, // Your API base URL
   timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
 });
 
 // Request interceptor
@@ -16,10 +13,20 @@ axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
     if (token) {
-      // Use dot notation instead of bracket notation
+      // Use dot notation to set Authorization header
       config.headers.Authorization = `Bearer ${token}`;
     }
-    return config;  // Returning the config directly
+    
+    // Set Content-Type dynamically based on the request data
+    if (config.data instanceof FormData) {
+      // If the request data is FormData, set Content-Type to multipart/form-data
+      config.headers['Content-Type'] = 'multipart/form-data';
+    } else {
+      // Otherwise, set Content-Type to application/json
+      config.headers['Content-Type'] = 'application/json';
+    }
+    
+    return config; // Return the config directly
   },
   (error) => Promise.reject(error)
 );

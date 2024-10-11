@@ -22,6 +22,7 @@ import { Link as RouterLink } from 'react-router-dom'; // Import Link from react
 const imageURL = "https://t3.ftcdn.net/jpg/06/12/00/18/360_F_612001823_TkzT0xmIgagoDCyQ0yuJYEGu8j6VNVYT.jpg"
 
 export function ProductTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
+   
     const confirm = useBoolean();
     const { fetchData } = useFetchProductData();
 
@@ -47,23 +48,32 @@ export function ProductTableRow({ row, selected, onEditRow, onSelectRow, onDelet
 
                 <TableCell>
                     <Stack direction="row" alignItems="center">
-                        <Avatar variant="rounded" alt={row.productImages} src={row.productImages} sx={{ width: 60, height: 60, mr: 2 }} />
+                        <Avatar
+                            variant="rounded"
+                            alt={row.productImages ? row.productImages.join(', ') : 'No image available'}
+                            src={row.files && row.files.length > 0
+                                ? row.files[0].productImage.split(',')[0].trim() // Get the first image link and trim whitespace
+                                : undefined}
+                            sx={{ width: 60, height: 60, mr: 2 }}
+                        />
                         <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
                             <Link component={RouterLink} to={`/edit/${row.id}`} color="inherit" sx={{ cursor: 'pointer' }}>
                                 {row.itemName}
                             </Link>
                             <Box component="span" sx={{ color: 'text.disabled' }}>
-                                {row.category}
+                                {row.group}
                             </Box>
                         </Stack>
                     </Stack>
                 </TableCell>
 
                 <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.group || 'not available'}</TableCell>
-                <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.category || 'not available'}</TableCell>
-                <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.costPrice ? `₹${row.costPrice}` : 'not available'}</TableCell>
+                <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.subGroup1 || 'not available'}</TableCell>
+                <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.subGroup2 || 'not available'}</TableCell>
+                <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.description || 'not available'}</TableCell>
                 <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.sellingPrice ? `₹${row.sellingPrice}` : 'not available'}</TableCell>
-                <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.mrpRate ? `₹${row.mrpRate}` : 'not available'}</TableCell>
+                <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.sellingPriceDate || 'not available'}</TableCell>
+                <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.gstRate || 'not available'}</TableCell>
 
                 <TableCell>
                     <Stack direction="row" alignItems="center">

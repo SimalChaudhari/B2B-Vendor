@@ -6,8 +6,6 @@ import axios from 'axios';
 import { parseStringPromise } from 'xml2js'; // Library for parsing XML to JSON
 import { ItemEntity } from './item.entity';
 import { ItemDto } from './item.dto';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { storage } from '../firebase/firebase.config'; // Import Firebase storage
 
 const data = `
 <ENVELOPE>
@@ -128,42 +126,10 @@ export class ItemService {
   }
 
   async findAll(): Promise<ItemEntity[]> {
-    try {
-      return await this.itemRepository.find();
-
-    } catch (error: any) {
-      throw new InternalServerErrorException('Error retrieving FAQs', error.message);
-    }
+    return this.itemRepository.find({ relations: ['files'] }); // Load files for all items
   }
 
   async findById(id: string): Promise<ItemEntity | null> {
-    return this.itemRepository.findOne({ where: { id } }); // Adjust according to your data access layer
-  }
-  async updateProductImagesAndFiles(
-    id: string,
-    productImages: Express.Multer.File[], // Multiple product images
-    dimensionalFiles: Express.Multer.File[], // Multiple dimensional files (pdf/images)
-  ): Promise<any> {
-    const item = await this.itemRepository.findOne({ where: { id } });
-    if (!item) {
-      throw new Error('Item not found');
-    }
-    const productImageUrls = await this.uploadFilesToFirebase(productImages, 'product-images');
-    const dimensionalFileUrls = await this.uploadFilesToFirebase(dimensionalFiles, 'dimensional-files');
-    item.productImages = productImageUrls; // Assuming you have productImageUrls column in ItemEntity
-    item.dimensionalFiles = dimensionalFileUrls; // Assuming you have dimensionalFileUrls column in ItemEntity
-
-    await this.itemRepository.save(item);
-    return { message: 'Item updated successfully with images and files' };
-  }
-
-  private async uploadFilesToFirebase(files: Express.Multer.File[], folder: string): Promise<string[]> {
-    const uploadPromises = files.map(async (file) => {
-      const fileRef = ref(storage, `${folder}/${file.originalname}`);
-      const snapshot = await uploadBytes(fileRef, file.buffer);
-      return getDownloadURL(snapshot.ref); // Return the file's download URL
-    });
-
-    return Promise.all(uploadPromises); // Return an array of URLs after uploading
+    return this.itemRepository.findOne({ where: { id }, relations: ['files'] }); // Load files for the item by ID
   }
 }
