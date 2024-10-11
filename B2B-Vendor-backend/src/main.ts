@@ -13,8 +13,8 @@ async function bootstrap() {
     });
 
     // Other configurations such as global pipes or filters can go here
-    app.useGlobalPipes(new ValidationPipe());
-    app.useGlobalFilters(new HttpExceptionFilter());
+    // app.useGlobalPipes(new ValidationPipe());
+    // app.useGlobalFilters(new HttpExceptionFilter());
 
     await app.listen(3000);
     console.log('Server is running on http://localhost:3000');

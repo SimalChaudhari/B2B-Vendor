@@ -11,9 +11,12 @@ export const CartSlice = createSlice({
         (item) => item.id === action.payload.id
       );
       if (itemPresent) {
-        itemPresent.quantity++;
+        // itemPresent.quantity++;
+        itemPresent.quantity += action.payload.quantity; // Increment by the quantity being added  
       } else {
-        state.cart.push({ ...action.payload, quantity: 1 });
+        // state.cart.push({ ...action.payload, quantity: 1 });
+        // Naya item add karein
+        state.cart.push({ ...action.payload });
       }
     },
     removeFromCart: (state, action) => {

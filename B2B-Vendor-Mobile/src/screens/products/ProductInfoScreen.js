@@ -3,71 +3,68 @@ import {
   Text,
   View,
   ScrollView,
-  Pressable,
-  TextInput,
+  ActivityIndicator,
+  Image,
   ImageBackground,
-  Dimensions,
   TouchableOpacity,
+  Pressable,
 } from "react-native";
-import React, { useState } from "react";
-import { Dropdown } from 'react-native-element-dropdown';
-import { AntDesign, Feather } from "@expo/vector-icons";
-import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
-import { Ionicons } from "@expo/vector-icons";
+import React, { useState, useEffect } from "react";
+import { AntDesign, Entypo, FontAwesome6, Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import Toast from 'react-native-toast-message';
 import { addToCart } from "../../../redux/CartReducer";
-import dealsData from '../../assets/Data/deals.json';
+import { fetchItemById } from "../../BackendApis/itemsApi";
 
 const ProductInfoScreen = () => {
   const route = useRoute();
-  console.log(route.params.id);
+  const navigation = useNavigation();
+  const { id } = route.params;
 
+  const [item, setItem] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [quantity, setQuantity] = useState(1); // Initial quantity set to 1 or any default value  
+  const [addedToCart, setAddedToCart] = useState(false);
+  const dispatch = useDispatch();
 
-  const deals = dealsData.products;
-  const product = deals.find((item) => item.id === route.params.id);
-  console.log('====================================');
-  console.log(product.colors);
-  console.log('====================================');
+  useEffect(() => {
+    const getItemDetails = async () => {
+      try {
+        const data = await fetchItemById(id);
+        setItem(data.data); // Adjust according to your API response structure
+      } catch (err) {
+        setError('Failed to fetch item details');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Calculate average rating
-  const totalStars = product.ratings.reduce(
-    (acc, rating) => acc + parseInt(rating.name[0]) * rating.starCount,
-    0
-  );
-  const totalReviews = product.ratings.reduce(
-    (acc, rating) => acc + rating.starCount,
-    0
-  );
-  const averageRating = (totalStars / totalReviews).toFixed(1); // Rounded to 1 decimal
+    getItemDetails();
+  }, [id]);
 
-  // Helper function to format the review count
-  const formatReviewCount = (count) => {
-    if (count >= 1000) {
-      return `(${(count / 1000).toFixed(2)}k reviews)`; // Convert to 'x.xxk reviews' format
-    }
-    return `(${count} reviews)`; // For counts below 1k
+  // Handle loading and error states
+  if (loading) {
+    return <ActivityIndicator size="large" color="#0000ff" />;
+  }
+
+  if (error) {
+    return <Text>{error}</Text>;
+  }
+
+  const incrementQuantity = () => {
+    // if (quantity < item.data.available) {
+    setQuantity(prevQuantity => prevQuantity + 1);
+    // }
   };
 
-  const [selectedSize, setSelectedSize] = useState(null); // State to hold the selected size
+  const decrementQuantity = () => {
+    if (quantity > 1) {
+      setQuantity(prevQuantity => prevQuantity - 1);
+    }
+  };
 
-  // Sizes array
-  // Prepare items for the dropdown
-  const sizeItems = product.sizes.map((size) => ({
-    label: size,
-    value: size,
-  }));
-
-  // State to track the selected color
-  const [selectedColor, setSelectedColor] = useState('');
-  const { width } = Dimensions.get("window");
-  const navigation = useNavigation();
-  const [addedToCart, setAddedToCart] = useState(false);
-  const height = (width * 100) / 100;
-  const dispatch = useDispatch();
 
   const addItemToCart = (item) => {
     setAddedToCart(true);
@@ -87,140 +84,132 @@ const ProductInfoScreen = () => {
 
     setTimeout(() => {
       setAddedToCart(false);
-    }, 60000);
+    }, 6000);
   };
 
-  const cart = useSelector((state) => state.cart.cart);
-
+  // Your UI rendering logic goes here
   return (
-    <ScrollView
-      style={{ marginTop: 23, flex: 1, backgroundColor: "white" }}
-      showsVerticalScrollIndicator={false}
-    >
-
-
+    <ScrollView style={{ marginTop: 23, flex: 1, backgroundColor: "white" }} showsVerticalScrollIndicator={false}>
+      {/* Horizontal ScrollView for Images */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        {(product.images || []).map((item, index) => (
-          <ImageBackground
-            style={{ width, height, marginTop: 25, resizeMode: "contain" }}
-            source={{ uri: item }}
-            key={index}
-          >
-
-          </ImageBackground>
-        ))}
+        {(item.productImages && item.productImages.length > 0) ? (
+          item.productImages.map((imageUri, index) => (
+            <ImageBackground
+              key={index}
+              style={{ width: 400, height: 400, marginTop: 25, marginRight: 10, resizeMode: "cover" }} // Adjust width and height as needed
+              source={{ uri: imageUri }} // Use imageUri directly
+            >
+              {/* You can add any additional content inside the ImageBackground here */}
+            </ImageBackground>
+          ))
+        ) : (
+          <Text>No Images Available</Text> // Optional: Display a message if no images
+        )}
       </ScrollView>
+      <View style={styles.MainContainer}>
 
-      <View style={styles.productInfo}>
-        {product.available === 0 ? "" : <Text style={styles.productSaleInfo}>{product.saleLabel.content}</Text>}
-        <Text
-          style={[
-            styles.productAvailableInfo,
-            {
-              color: product.available === 0 ? '#FFAB00' : '#22C55E' // Conditional text color
-            },
-          ]}
-        >
-          {product.available === 0 ? 'OUT OF STOCK' : 'IN STOCK'}
-        </Text>
-        <Text style={styles.productTitle}>{product.name}</Text>
+        <Text style={styles.separator} />
+        <Text style={styles.productTitle}>{item.itemName}</Text>
+        <Text style={styles.productsubDescription}>{item.description}</Text>
 
         <View>
+          <Text style={styles.productPrice}>₹{item.sellingPrice}</Text>
+        </View>
 
-          {/* Star visualization for the average rating */}
-          <View style={styles.starRowView}>
-            <View style={styles.starRow}>
-              {[...Array(Math.round(averageRating))].map((_, index) => (
-                <AntDesign key={index} name="star" size={22} color="#FFA500" />
-              ))}
-              {[...Array(5 - Math.round(averageRating))].map((_, index) => (
-                <AntDesign key={index} name="star" size={22} color="#d0d0d0" />
-              ))}
+        {/* Quantity */}
+        <View style={styles.topQuantityContainer}>
+          <Text style={styles.sizeText}>Quantity:</Text>
+          <View>
+            <View style={styles.quantityContainer}>
+              <TouchableOpacity onPress={decrementQuantity} style={styles.decrementButton}>
+                <Text style={styles.buttonText}><Entypo name="minus" size={24} color="#C4CBD2" /></Text>
+              </TouchableOpacity>
+
+              <Text style={styles.quantityText}>{quantity}</Text>
+
+              <TouchableOpacity onPress={incrementQuantity} style={styles.incrementButton}>
+                <Text style={styles.buttonText}><Entypo name="plus" size={24} color="#C4CBD2" /></Text>
+              </TouchableOpacity>
             </View>
-            {/*
-              <View>
-                <Text style={styles.totalReviewsText}>({totalReviews} total ratings)</Text>
+
+          </View>
+        </View>
+
+        <View style={styles.BottomButton}>
+
+          <Pressable
+            // onPress={() => addItemToCart(item)}
+             onPress={() => addItemToCart({ ...item, quantity })}
+            style={[
+              styles.addToCartButton,
+              { backgroundColor: addedToCart ? "#00dd00" : "#FFAB00" } // Dynamic background color
+            ]}
+
+          // style={styles.addToCartButton}
+          >
+            {addedToCart ? (
+              <View style={styles.addToCartBox}>
+                <FontAwesome6 name="cart-plus" size={24} color="black" />
+                <Text style={styles.addToCartText}> Added to Cart</Text>
               </View>
-            */}
+            ) : (
+
+              <View style={styles.addToCartBox}>
+                <FontAwesome6 name="cart-plus" size={24} color="black" />
+                <Text style={styles.addToCartText}> Add to Cart</Text>
+              </View>
+            )}
+          </Pressable>
+
+          <Pressable style={styles.buyNowButton} 
+          // onPress={() => navigation.navigate("Cart")}
+          onPress={() => {
+            addItemToCart({ ...item, quantity }); // Add item to cart
+            navigation.navigate("Cart"); // Navigate to Cart screen
+          }}
+          >
+            <Text style={styles.byeNowText}>Buy Now</Text>
+          </Pressable>
+        </View>
+        <Text style={styles.separator} />
+        {/* Other UI components */}
+        <View style={styles.BottomTextContainer}>
+          <View style={styles.BottomTextComponent}>
+            <Entypo name="plus" size={24} color="#637381" />
+            <Text style={styles.BottomText}>Compare</Text>
           </View>
 
+          <View style={styles.BottomTextComponent}>
+            <AntDesign name="heart" size={20} color="#637381" />
+            <Text style={styles.BottomText}>Favorite</Text>
+          </View>
+
+          <View style={styles.BottomTextComponent}>
+            <Ionicons name="share-social-sharp" size={20} color="#637381" />
+            <Text style={styles.BottomText}>Share</Text>
+          </View>
         </View>
 
-        <Text style={styles.productPrice}>₹{product.price}</Text>
-        <Text style={styles.productsubDescription}>{product.subDescription}</Text>
-      </View>
 
-      <Text style={styles.separator} />
+        <View style={styles.BottomLastContainer}>
+          <View style={styles.BottomTextLastComponent}>
+            <MaterialIcons name="verified" size={40} color="#FF3030" />
+            <Text style={styles.BottomLastText}>100% original</Text>
+            <Text style={styles.BottomContentText}>Chocolate bar candy canes ice cream toffee cookie halvah.</Text>
+          </View>
 
-      <View style={styles.colorSizeContainer}>
-        <Text style={styles.colorText}>Color: </Text>
+          <View style={styles.BottomTextLastComponent}>
+            <MaterialCommunityIcons name="clock" size={40} color="#FF3030" />
+            <Text style={styles.BottomLastText}>10 days replacement</Text>
+            <Text style={styles.BottomContentText}>Marshmallow biscuit donut dragée fruitcake wafer.</Text>
+          </View>
 
-
-        <View style={styles.colorDisplay}>
-          {product.colors.map((color, index) => (
-            <TouchableOpacity
-              key={index}
-              onPress={() => setSelectedColor(color)} // Set the selected color
-              style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 5 }}
-            >
-              {selectedColor === color ? (
-                <AntDesign name="checkcircle" size={28} color={color} /> // Selected color
-              ) : (
-                <FontAwesome name="circle" size={28} color={color} /> // Unselected color
-              )}
-            </TouchableOpacity>
-          ))}
+          <View style={styles.BottomTextLastComponent}>
+            <MaterialIcons name="verified-user" size={40} color="#FF3030" />
+            <Text style={styles.BottomLastText}>Year warranty</Text>
+            <Text style={styles.BottomContentText}>Cotton candy gingerbread cake I love sugar sweet.</Text>
+          </View>
         </View>
-      </View>
-      <View style={styles.colorSizeContainer}>
-        <Text style={styles.sizeText}>Size:</Text>
-
-        <Dropdown
-          style={styles.DropdownStyle}
-          data={sizeItems}
-          labelField="label"  // Field to be displayed in dropdown
-          valueField="value"   // Field to hold the selected value
-          placeholder="Size"
-          value={selectedSize}
-          onChange={item => {
-            setSelectedSize(item.value); // Set the selected size
-          }}
-          selectedTextStyle={styles.selectedText}
-        />
-      </View>
-
-
-      <Text style={styles.separator} />
-
-
-      <View style={styles.BottomButton}>
-
-        <Pressable
-          onPress={() => addItemToCart(route.params.item)}
-          style={[
-            styles.addToCartButton,
-            { backgroundColor: addedToCart ? "#00dd00" : "#FFAB00" } // Dynamic background color
-          ]}
-
-        // style={styles.addToCartButton}
-        >
-          {addedToCart ? (
-            <View style={styles.addToCartBox}>
-              <FontAwesome6 name="cart-plus" size={24} color="black" />
-              <Text style={styles.addToCartText}> Added to Cart</Text>
-            </View>
-          ) : (
-
-            <View style={styles.addToCartBox}>
-              <FontAwesome6 name="cart-plus" size={24} color="black" />
-              <Text style={styles.addToCartText}> Add to Cart</Text>
-            </View>
-          )}
-        </Pressable>
-
-        <Pressable style={styles.buyNowButton} onPress={() => navigation.navigate("Cart")}>
-          <Text style={styles.byeNowText}>Buy Now</Text>
-        </Pressable>
       </View>
     </ScrollView>
   );
@@ -229,84 +218,33 @@ const ProductInfoScreen = () => {
 export default ProductInfoScreen;
 
 const styles = StyleSheet.create({
-  searchContainer: {
-    backgroundColor: "#00CED1",
-    padding: 10,
-    flexDirection: "row",
-    alignItems: "center",
+  productImage: {
+    width: '100%',
+    height: 200, // Adjust height as needed
   },
-  searchInput: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginHorizontal: 7,
-    gap: 10,
-    backgroundColor: "white",
-    borderRadius: 3,
-    height: 38,
-    flex: 1,
+  productName: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginVertical: 10,
+    paddingHorizontal: 10,
   },
-  searchIcon: {
-    paddingLeft: 10,
+
+  MainContainer: {
+    marginHorizontal: 20,
   },
-  imageOverlay: {
-    padding: 20,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+
+  separator: {
+    borderBottomWidth: 1, // Sets the bottom border width
+    borderBottomColor: '#919eab33', // Sets the bottom border color
+    borderStyle: 'dashed', // Sets the bottom border style to dashed
   },
-  discountBadge: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "#C60C30",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  discountText: {
-    color: "white",
-    textAlign: "center",
-    fontWeight: "600",
-    fontSize: 12,
-  },
-  shareIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "#E0E0E0",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  wishIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "#E0E0E0",
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: "auto",
-    marginLeft: 20,
-    marginBottom: 20,
-  },
-  productInfo: {
-    padding: 10,
-  },
-  productSaleInfo: {
-    paddingTop: 5,
-    paddingBottom: 5,
-    paddingLeft: 10,
-    width: "15%",
-    color: "#B71D18",
-    backgroundColor: "#ff563029",
-    fontWeight: "700",
-    borderRadius: 10,
-    marginTop: 10,
-    marginBottom: 10,
-  },
-  productAvailableInfo: {
+
+  productsubDescription: {
     marginTop: 10,
     marginBottom: 10,
     fontSize: 16,
-    fontWeight: "700",
+    color: "#637381",
+
   },
   productTitle: {
     fontSize: 22,
@@ -315,20 +253,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 
-  starRowView: {
-    flexDirection: "row",
-    marginTop: 10,
-    marginBottom: 10,
-    gap: 10,
-  },
-  starRow: {
-    flexDirection: "row",
-    marginBottom: 5,
-  },
-  totalReviewsText: {
-    fontSize: 14,
-    color: "#808080",
-  },
   productPrice: {
     fontSize: 22,
     fontWeight: "700",
@@ -336,100 +260,46 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     color: "#1C252E",
   },
-  productsubDescription: {
-    marginTop: 10,
-    // marginBottom: 10,
-    fontSize: 16,
-    color: "#637381",
 
-  },
-  separator: {
-    borderBottomWidth: 1, // Sets the bottom border width
-    borderBottomColor: '#919eab33', // Sets the bottom border color
-    borderStyle: 'dashed', // Sets the bottom border style to dashed
-  },
-  colorSizeContainer: {
+
+  quantityContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     padding: 10,
-    marginLeft: 10,
-    marginRight: 10,
-  },
-  DropdownStyle: {
-    paddingLeft: 10,
-    paddingRight: 10,
-    height: 50,
-    borderColor: 'gray',
-    borderWidth: 1,
+    // marginLeft: 10,
+    // marginRight: 10,
+    gap: 22,
+
+    borderWidth: 1, // Sets the bottom border width
+    borderColor: '#EAECEE', // Sets the bottom border color
     borderRadius: 5,
-    marginBottom: 20,
-    width: 100,
+  },
+  quantityText: {
+    color: "#283039",
+    fontSize: 18,
   },
 
-  selectedText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: 'black', // You can change the color
-  },
-  selectedText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginLeft: 20,
-  },
-  colorDisplay: {
+  topQuantityContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    justifyContent: "space-between",
+    marginVertical: 10,
+    // padding: 10,
+    // marginLeft: 10,
+    // marginRight: 10,
   },
-  colorText: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  sizeText: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 15,
-  },
-  boldText: {
-    fontSize: 15,
-    fontWeight: "bold",
-  },
-  totalContainer: {
-    padding: 10,
-  },
-  totalText: {
-    fontSize: 15,
-    fontWeight: "bold",
-    marginVertical: 5,
-  },
-  freeDeliveryText: {
-    color: "#00CED1",
-  },
-  deliveryLocation: {
-    flexDirection: "row",
-    marginVertical: 5,
-    alignItems: "center",
-    gap: 5,
-  },
-  deliveryText: {
-    fontSize: 15,
-    fontWeight: "500",
-  },
-  inStockText: {
-    color: "green",
-    marginHorizontal: 10,
-    fontWeight: "500",
-  },
+
+
   addToCartButton: {
     backgroundColor: "#FFAB00",
     padding: 10,
     borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",
-    marginHorizontal: 10,
+    // marginHorizontal: 10,
     marginVertical: 10,
-    width: "45%",
+    width: "48%",
     height: 55,
     gap: 10,
   },
@@ -439,9 +309,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",
-    marginHorizontal: 10,
+    // marginHorizontal: 10,
     marginVertical: 10,
-    width: "45%",
+    width: "48%",
     height: 55,
   },
   addToCartBox: {
@@ -456,13 +326,75 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   byeNowText: {
-    color:"#fff",
+    color: "#fff",
     fontSize: 17,
     fontWeight: "700",
   },
   BottomButton: {
+    marginTop: 20,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+  },
+
+  BottomTextComponent: {
+    flexDirection: "row",
+    // justifyContent: "space-between",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 10,
+  },
+  BottomText: {
+    color: "#637381",
+    fontSize: 17,
+    fontWeight: "700",
+    marginBottom: 3,
+  },
+
+  sizeText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    // marginBottom: 15,
+  },
+
+  BottomTextContainer: {
+    marginTop: 20,
+    // marginBottom: 20,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    // alignItems: "center",
+    // justifyContent: "space-evenly"
+  },
+
+  BottomLastContainer: {
+    marginTop: 20,
+    marginBottom: 20,
+    // flexDirection: "row",
+    // justifyContent: "space-between",
+    alignItems: "center",
+    justifyContent: "space-evenly"
+  },
+
+  BottomTextLastComponent: {
+    // flexDirection: "row",
+    // justifyContent: "space-between",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 10,
+  },
+  BottomLastText: {
+    // color: "#637381",
+    fontSize: 25,
+    fontWeight: "500",
+    // marginBottom: 3,
+  },
+  BottomContentText: {
+    color: "#637381",
+    fontSize: 15,
+    // fontWeight: "700",
+    marginBottom: 20,
+    textAlign: "center",
+    marginLeft: 25,
+    marginRight: 25,
   },
 });
