@@ -1,5 +1,5 @@
 // item.dto.js
-import { IsNotEmpty, IsOptional, IsString, IsNumber, IsDateString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsNumber, IsDateString, IsArray } from 'class-validator';
 
 export class ItemDto {
     @IsNotEmpty()
@@ -69,4 +69,14 @@ export class ItemDto {
     @IsNotEmpty()
     @IsNumber()
     gstRate?: number;
+
+    @IsOptional()
+    @IsArray()
+    @IsString({ each: true })
+    productImages?: string[];  // Array of image URLs
+
+    @IsOptional()
+    @IsArray()
+    @IsString({ each: true })
+    dimensionalFiles?: string[]; // Array of file URLs (pdf/images)
 }
