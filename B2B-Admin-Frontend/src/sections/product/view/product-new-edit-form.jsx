@@ -7,15 +7,15 @@ import {
 import { LoadingButton } from '@mui/lab';
 import { Field, Form } from 'src/components/hook-form';
 
-const imageURL = "https://t3.ftcdn.net/jpg/06/12/00/18/360_F_612001823_TkzT0xmIgagoDCyQ0yuJYEGu8j6VNVYT.jpg"
+// const imageURL = "https://t3.ftcdn.net/jpg/06/12/00/18/360_F_612001823_TkzT0xmIgagoDCyQ0yuJYEGu8j6VNVYT.jpg"
 
 export default function ProductNewEditForm({ currentProduct }) {
-    console.log("🚀 ~ ProductNewEditForm ~ currentProduct:", currentProduct.files[0].productImage)
+
     const [includeTaxes, setIncludeTaxes] = useState(false);
 
     const defaultValues = useMemo(() => ({
         id: currentProduct?.id || '',
-        productImages: currentProduct?.files[0]?.productImage || '',
+        productImages: currentProduct?.files?.[0]?.productImage || '',
         itemName: currentProduct?.itemName || '',
         description: currentProduct?.description || '',
         alias: currentProduct?.alias || '',
