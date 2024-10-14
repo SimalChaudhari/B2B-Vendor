@@ -16,6 +16,7 @@ import { useDispatch } from "react-redux";
 import Toast from 'react-native-toast-message';
 import { addToCart } from "../../../redux/CartReducer";
 import { fetchItemById } from "../../BackendApis/itemsApi";
+import { formatNumber } from "../../utils";
 
 const ProductInfoScreen = () => {
   const route = useRoute();
@@ -113,7 +114,7 @@ const ProductInfoScreen = () => {
         <Text style={styles.productsubDescription}>{item.description}</Text>
 
         <View>
-          <Text style={styles.productPrice}>₹{item.sellingPrice}</Text>
+          <Text style={styles.productPrice}>₹ {formatNumber(item.sellingPrice)}</Text>
         </View>
 
         {/* Quantity */}

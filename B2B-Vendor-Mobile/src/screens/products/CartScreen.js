@@ -17,6 +17,7 @@ import {
   removeFromCart,
 } from "../../../redux/CartReducer";
 import { useNavigation } from "@react-navigation/native";
+import { formatNumber } from "../../utils";
 
 const CartScreen = () => {
 
@@ -55,10 +56,6 @@ const CartScreen = () => {
     dispatch(removeFromCart(item));
   };
 
-   // Function to format number with commas
-   const formatNumber = (num) => {
-  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  };
 
 
   const navigation = useNavigation();
@@ -128,7 +125,7 @@ const CartScreen = () => {
               <View>
                 <Image
                   style={{ width: 140, height: 140, resizeMode: "contain" }}
-                  source={{ uri: item.productImages[0] }}
+                  // source={{ uri: item.productImages[0] }}
                 />
               </View>
 

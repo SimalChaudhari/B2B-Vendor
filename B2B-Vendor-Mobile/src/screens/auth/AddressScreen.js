@@ -5,41 +5,25 @@ import {
     ScrollView,
     Pressable,
 } from "react-native";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useState } from "react";
 import { MaterialIcons, Entypo } from "@expo/vector-icons";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import axios from "axios";
-import { UserContext, UserType } from "../../../UserContext";
+import { useNavigation } from "@react-navigation/native";
 
 const AddressScreen = () => {
-    
-  const { userId, setUserId } = UserContext(UserType);
     const navigation = useNavigation();
-    const [addresses, setAddresses] = useState([]);
-    // const userId = "67036f6ac07b2748247e6331"; // Static userId
-
-    useEffect(() => {
-        fetchAddresses();
-    }, []);
-
-    const fetchAddresses = async () => {
-        try {
-            const response = await axios.get(
-                `http://192.168.1.112:8181/addresses/${userId}`
-            );
-            // Set the addresses from the fetched user data
-            setAddresses(response.data.addresses || []); // Default to an empty array if no addresses found
-        } catch (error) {
-            console.error("Error fetching addresses:", error); // Improved error logging
-        }
-    };
-
-    // Refresh the addresses when the component comes into focus
-    useFocusEffect(
-        useCallback(() => {
-            fetchAddresses();
-        }, [])
-    );
+    const [addresses, setAddresses] = useState([
+        // Example static data
+        {
+            name: "John Doe",
+            mobileNo: "1234567890",
+            houseNo: "123",
+            street: "Main Street",
+            landmark: "Near Park",
+            city: "New York",
+            country: "USA",
+            postalCode: "10001",
+        },
+    ]);
 
     return (
         <ScrollView showsVerticalScrollIndicator={false} style={{ marginTop: 50 }}>
@@ -47,33 +31,42 @@ const AddressScreen = () => {
                 <Text style={styles.headerText}>Your Addresses</Text>
 
                 <Pressable
-                    onPress={() => navigation.navigate("AddAddressScreen")} // Update the route name here
+                    onPress={() => navigation.navigate("AddAddressScreen")}
                     style={styles.addAddressButton}
                 >
                     <Text>Add a new Address</Text>
                     <MaterialIcons name="keyboard-arrow-right" size={24} color="black" />
                 </Pressable>
 
-                {addresses?.length > 0 ? (
+                {addresses.length > 0 ? (
                     addresses.map((item, index) => (
-                        <Pressable
-                            key={index}
-                            style={styles.addressCard}
-                        >
+                        <Pressable key={index} style={styles.addressCard}>
                             <View style={styles.addressHeader}>
                                 <Text style={styles.addressName}>{item.name}</Text>
                                 <Entypo name="location-pin" size={24} color="red" />
                             </View>
-                
+
                             <Text style={styles.addressDetail}>Name: {item.name}</Text>
-                            <Text style={styles.addressDetail}>Mobile No: {item.mobileNo}</Text>
-                            <Text style={styles.addressDetail}>House No: {item.houseNo}</Text>
-                            <Text style={styles.addressDetail}>Street: {item.street}</Text>
-                            <Text style={styles.addressDetail}>Landmark: {item.landmark}</Text>
+                            <Text style={styles.addressDetail}>
+                                Mobile No: {item.mobileNo}
+                            </Text>
+                            <Text style={styles.addressDetail}>
+                                House No: {item.houseNo}
+                            </Text>
+                            <Text style={styles.addressDetail}>
+                                Street: {item.street}
+                            </Text>
+                            <Text style={styles.addressDetail}>
+                                Landmark: {item.landmark}
+                            </Text>
                             <Text style={styles.addressDetail}>City: {item.city}</Text>
-                            <Text style={styles.addressDetail}>Country: {item.country}</Text>
-                            <Text style={styles.addressDetail}>Pin Code: {item.postalCode}</Text>
-                
+                            <Text style={styles.addressDetail}>
+                                Country: {item.country}
+                            </Text>
+                            <Text style={styles.addressDetail}>
+                                Pin Code: {item.postalCode}
+                            </Text>
+
                             <View style={styles.buttonGroup}>
                                 <Pressable style={styles.actionButton}>
                                     <Text>Edit</Text>
@@ -90,7 +83,6 @@ const AddressScreen = () => {
                 ) : (
                     <Text>No addresses found.</Text>
                 )}
-                
             </View>
         </ScrollView>
     );
