@@ -1,11 +1,12 @@
 // product.service.ts
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import axios from 'axios';
 import { parseStringPromise } from 'xml2js'; // Library for parsing XML to JSON
 import { ItemEntity } from './item.entity';
 import { ItemDto } from './item.dto';
+import { FirebaseService } from 'service/firebase.service';
 
 const data = `
 <ENVELOPE>
@@ -30,6 +31,7 @@ export class ItemService {
   constructor(
     @InjectRepository(ItemEntity)
     private itemRepository: Repository<ItemEntity>,
+    private firebaseService: FirebaseService, // Inject Firebase service
   ) { }
 
   async fetchAndStoreItems(): Promise<void> {
@@ -126,10 +128,68 @@ export class ItemService {
   }
 
   async findAll(): Promise<ItemEntity[]> {
-    return this.itemRepository.find({ relations: ['files'] }); // Load files for all items
+    return this.itemRepository.find(); // Load files for all items
   }
 
   async findById(id: string): Promise<ItemEntity | null> {
-    return this.itemRepository.findOne({ where: { id }, relations: ['files'] }); // Load files for the item by ID
+    return this.itemRepository.findOne({ where: { id } }); // Load files for the item by ID
+  }
+
+  async uploadFilesToFirebase(
+    itemId: string,
+    productImages: Express.Multer.File[],
+    dimensionalFiles: Express.Multer.File[]
+  ): Promise<ItemEntity> {
+    const item = await this.itemRepository.findOne({ where: { id: itemId } });
+
+    if (!item) {
+      throw new NotFoundException('Item not found');
+    }
+
+    // Update only product images if new files are provided
+    if (productImages && productImages.length > 0) {
+      const newImageUrls: string[] = []; // Array to hold newly uploaded image URLs
+
+      for (const file of productImages) {
+        const filePath = `images/${Date.now()}-${file.originalname}`;
+        const imageUrl = await this.firebaseService.uploadFile(filePath, file.buffer);
+        newImageUrls.push(imageUrl); // Collect the uploaded image URL
+      }
+
+      // Update the item entity with the new image URLs
+      item.productImages = [...(item.productImages || []), ...newImageUrls]; // Append new image URLs
+    }
+
+    // Update only dimensional files if new files are provided
+    if (dimensionalFiles && dimensionalFiles.length > 0) {
+      const newDimensionalUrls: string[] = []; // Array to hold newly uploaded dimensional URLs
+
+      for (const file of dimensionalFiles) {
+        const filePath = `documents/${Date.now()}-${file.originalname}`;
+        const fileUrl = await this.firebaseService.uploadFile(filePath, file.buffer);
+        newDimensionalUrls.push(fileUrl); // Collect new dimensional URLs
+      }
+
+      // Update dimensionalFiles only if new dimensional files are uploaded
+      item.dimensionalFiles = newDimensionalUrls; // Set to only the newly uploaded dimensional files
+    }
+
+    return await this.itemRepository.save(item); // Save the updated item entity
+  }
+
+  // Method to delete specific images from Firebase
+  async deleteImages(itemId: string, imageUrls: string[]): Promise<ItemEntity> {
+    const item = await this.itemRepository.findOne({ where: { id: itemId } });
+
+    if (!item) {
+      throw new NotFoundException('Item not found');
+    }
+
+    // Delete the specified images from Firebase
+    await this.firebaseService.deleteFiles(imageUrls);
+
+    // Remove deleted image URLs from the item
+    item.productImages = item.productImages.filter(url => !imageUrls.includes(url)); // Filter out deleted URLs
+    return await this.itemRepository.save(item); // Save the updated item entity
   }
 }

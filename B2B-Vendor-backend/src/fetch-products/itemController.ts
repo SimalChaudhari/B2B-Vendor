@@ -1,7 +1,8 @@
-import { Controller, HttpStatus, Post, Get, Res, Param, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { Controller, HttpStatus, Post, Get, Res, Param, UploadedFiles, UseInterceptors, BadRequestException, Delete, Body } from '@nestjs/common';
 import { Response } from 'express'; // Import Response from express
 import { ItemService } from './item.service';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { ItemEntity } from './item.entity';
 
 @Controller('items')
 export class ItemController {
@@ -34,4 +35,28 @@ export class ItemController {
       data: item,
     });
   }
+
+  @Post('/upload-files/:id')
+  @UseInterceptors(FileFieldsInterceptor([
+    { name: 'productImages', maxCount: 10 },
+    { name: 'dimensionalFiles', maxCount: 10 },
+  ]))
+  async uploadFiles(
+    @Param('id') id: string,
+    @UploadedFiles() files: { productImages?: Express.Multer.File[]; dimensionalFiles?: Express.Multer.File[] }
+  ) {
+    // Provide default empty arrays if undefined
+    const productImages: Express.Multer.File[] = files.productImages || [];
+    const dimensionalFiles: Express.Multer.File[] = files.dimensionalFiles || [];
+
+    return this.itemService.uploadFilesToFirebase(id, productImages, dimensionalFiles);
+  }
+ // Endpoint to delete specified images
+ @Delete('delete/:id')
+ async deleteImages(
+   @Param('id') itemId: string, 
+   @Body('imageUrls') imageUrls: string[]
+ ): Promise<ItemEntity> {
+   return this.itemService.deleteImages(itemId, imageUrls);
+ }
 }

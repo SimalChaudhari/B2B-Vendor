@@ -50,10 +50,8 @@ export function ProductTableRow({ row, selected, onEditRow, onSelectRow, onDelet
                     <Stack direction="row" alignItems="center">
                         <Avatar
                             variant="rounded"
-                            alt={row.productImages ? row.productImages.join(', ') : 'No image available'}
-                            src={row.files && row.files.length > 0
-                                ? row.files[0].productImage.split(',')[0].trim() // Get the first image link and trim whitespace
-                                : undefined}
+                            alt={row.productImages}
+                            src={row.productImages ? row?.productImages?.[0] : "No File"} // Get the first image link and trim whitespace
                             sx={{ width: 60, height: 60, mr: 2 }}
                         />
                         <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>

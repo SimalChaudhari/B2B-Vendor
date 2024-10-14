@@ -11,7 +11,7 @@ import { UserModule } from 'users/user/users.module';
 import { OrderModule } from 'admin/orders/order.module';
 import { SettingModule } from 'settings/setting.module';
 import { ItemModule } from 'fetch-products/item.module';
-import { FileModule } from 'files/file.module';
+// import { FileModule } from 'files/file.module';
 
 
 @Module({
@@ -36,7 +36,7 @@ import { FileModule } from 'files/file.module';
     OfferModule,
     OrderModule,
     SettingModule,
-    FileModule
+    // FileModule
   ],
 })
 export class AppModule { }

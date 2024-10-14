@@ -1,5 +1,4 @@
 // Item.entity.ts
-import { File } from 'files/file.entity';
 import { Entity, Column, PrimaryGeneratedColumn,OneToMany } from 'typeorm';
 
 @Entity('Items')
@@ -58,6 +57,9 @@ export class ItemEntity {
   @Column({ type: 'decimal', nullable: true })
   gstRate!: number;
 
-  @OneToMany(() => File, file => file.item)
-  files!: File[]; // relation to files
+  @Column('simple-array', { nullable: true }) // For storing product image paths
+  productImages!: string[];
+
+  @Column('simple-array', { nullable: true }) // For storing dimensional file paths
+  dimensionalFiles!: string[];
 }

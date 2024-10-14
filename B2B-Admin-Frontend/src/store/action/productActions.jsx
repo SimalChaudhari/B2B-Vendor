@@ -82,9 +82,8 @@ export const createProduct = (productData) => async (dispatch) => {
 };
 
 export const editProduct = (productId, productData) => async (dispatch) => {
-    console.log("🚀 ~ editProduct ~ productData:", productData)
     try {
-        const response = await axiosInstance.post(`/items/update-files/${productId}`, productData);
+        const response = await axiosInstance.post(`/items/upload-files/${productId}`, productData);
 
         console.log("🚀 ~ editProduct ~ response:", response)
         // Check if the response is successful
@@ -100,9 +99,12 @@ export const editProduct = (productId, productData) => async (dispatch) => {
     return false; // Return false for any errors or unsuccessful attempts
 };
 
-export const deleteProduct = (productId) => async (dispatch) => {
+export const deleteProduct = (productId, productData) => async (dispatch) => {
     try {
-        const response = await axiosInstance.delete(`/products/delete/${productId}`);
+        const response = await axiosInstance.delete(`/items/delete/${productId}`, {
+            data: productData // Send productData as part of the request body
+        });
+
         // Check if the response is successful
         if (response && response.status >= 200 && response.status < 300) {
             toast.success(response.data.message || 'Product deleted successfully!');
