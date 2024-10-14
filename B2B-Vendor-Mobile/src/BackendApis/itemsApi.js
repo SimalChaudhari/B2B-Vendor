@@ -5,7 +5,7 @@ const BASE_URL = 'http://192.168.1.112:3000';
 export const fetchItems = async () => {
     try {
         const response = await axios.get(`${BASE_URL}/items`);
-        return response.data;
+        return response?.data;
     } catch (error) {
         console.error('Error fetching items:', error);
         throw error;

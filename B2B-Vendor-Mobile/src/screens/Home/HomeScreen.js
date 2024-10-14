@@ -8,6 +8,7 @@ import { useNavigation } from "@react-navigation/native";
 import Feather from '@expo/vector-icons/Feather';
 import { fetchItems } from '../../BackendApis/itemsApi';
 import { Dropdown } from 'react-native-element-dropdown'; // Importing the dropdown
+import { formatNumber } from '../../utils';
 
 const HomeScreen = () => {
   const [items, setItems] = useState([]); // Store the fetched items
@@ -192,13 +193,13 @@ const HomeScreen = () => {
                 <View style={styles.heroProductView}>
                   <Image
                     style={styles.heroTopImage}
-                    source={{ uri: item.productImages[0] }}
+                    // source={{ uri: item.productImages[0] }}
                   />
                   <Text style={styles.heroProductTitle} numberOfLines={1}>
                     {item.itemName}
                   </Text>
                   <View style={styles.heroProductBottom}>
-                    <Text style={{ marginLeft: 10 }}>₹{item.sellingPrice}</Text>
+                    <Text style={{ marginLeft: 10 }}>₹ {formatNumber(item.sellingPrice)}</Text>
                   </View>
                 </View>
               </Pressable>
