@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
         fontSize: 30,
         fontWeight: 'bold', // Adjusted to 'bold' for proper weight
         textAlign: 'left', // Align text to the left
-        marginHorizontal: 20,
+        marginHorizontal: 10,
     },
     heroTopSearch: {
         backgroundColor: '#fff', // White background
@@ -142,8 +142,28 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 5,
         marginTop: 10,
-        marginHorizontal: 20,
+        marginHorizontal: 10,
     },
+    dropdownContainer: {
+        width: 100,
+        marginLeft: 173,
+    },
+    DropdownStyle: {
+        paddingLeft: 10,
+        paddingRight: 10,
+        height: 50,
+        borderColor: '#EAECEE',
+        borderWidth: 1,
+        borderRadius: 5,
+        marginBottom: 12,
+        width: 200,
+    },
+    selectedText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: 'black', // You can change the color
+    },
+
     heroPressable: {
         flex: 1,
         flexDirection: 'row',
@@ -161,12 +181,13 @@ const styles = StyleSheet.create({
     heroFilter: {
         marginTop: 20,
         marginBottom: 20,
-        marginRight: 10,
+        // marginRight: 10,
         flexDirection: 'row',
-        justifyContent: 'flex-end', // Align items to the right
-        // justifyContent: 'center', // Align items to the right
+        // justifyContent: 'flex-end', // Align items to the right
+        justifyContent: 'space-between', // Align items to the right
         alignItems: 'center', // Center vertically
-        // paddingHorizontal: 10,
+        // paddingHorizontal: 3,
+        marginLeft: 3,
         gap: 10,
     },
 
@@ -324,7 +345,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#333', // Dark background for active page
     },
     activePageText: {
-      color: "#fff", // Set text color for active page number
+        color: "#fff", // Set text color for active page number
     },
     pageText: {
         fontSize: 16,
@@ -344,13 +365,16 @@ const styles = StyleSheet.create({
         marginVertical: 20,
     },
     AddAddressinput: {
-        borderWidth: 1,
+        // borderWidth: 1,
         borderColor: "#D0D0D0",
-        borderRadius: 5,
-        padding: 10,
-        marginBottom: 10,
+        borderColor: "#D0D0D0",
+        // borderRadius: 5,
+        // padding: 10,
+        // marginBottom: 10,
+        marginTop:20,
     },
     addButton: {
+        marginVertical:30,
         backgroundColor: "#007BFF",
         padding: 10,
         borderRadius: 5,

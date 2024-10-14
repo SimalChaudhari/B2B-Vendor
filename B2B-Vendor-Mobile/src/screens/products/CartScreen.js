@@ -22,13 +22,27 @@ const CartScreen = () => {
 
   // Access user data from authReducer
 
-  const user = useSelector((state) => state.auth.user);
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   
   const cart = useSelector((state) => state.cart.cart);
   // console.log(cart);
+  
+  // const total = cart
+  //   ?.map((item) => item.price * item.quantity)
+  //   .reduce((curr, prev) => curr + prev, 0);
+  // const dispatch = useDispatch();
+  // const increaseQuantity = (item) => {
+  //   dispatch(incementQuantity(item));
+  // };
+  // const decreaseQuantity = (item) => {
+  //   dispatch(decrementQuantity(item));
+  // };
+  // const deleteItem = (item) => {
+  //   dispatch(removeFromCart(item));
+  // };
+
+  
   const total = cart
-    ?.map((item) => item.price * item.quantity)
+    ?.map((item) => item.sellingPrice * item.quantity)
     .reduce((curr, prev) => curr + prev, 0);
   const dispatch = useDispatch();
   const increaseQuantity = (item) => {
@@ -41,62 +55,28 @@ const CartScreen = () => {
     dispatch(removeFromCart(item));
   };
 
-
-
-  const handleProceedToBuy = () => {
-    if (isAuthenticated) {
-      navigation.navigate("Confirm");
-    } else {
-      navigation.navigate("Login"); // Navigate to Login page if not authenticated
-    }
+   // Function to format number with commas
+   const formatNumber = (num) => {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
 
   const navigation = useNavigation();
   return (
     <ScrollView style={{ marginTop: 55, flex: 1, backgroundColor: "white" }}>
-      <View
-        style={{
-          backgroundColor: "#00CED1",
-          padding: 10,
-          flexDirection: "row",
-          alignItems: "center",
-        }}
-      >
-        <Pressable
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            marginHorizontal: 7,
-            gap: 10,
-            backgroundColor: "white",
-            borderRadius: 3,
-            height: 38,
-            flex: 1,
-          }}
-        >
-          <AntDesign
-            style={{ paddingLeft: 10 }}
-            name="search1"
-            size={22}
-            color="black"
-          />
-          <TextInput placeholder="Search Amazon.in" />
-        </Pressable>
-
-        <Feather name="mic" size={24} color="black" />
-      </View>
+    
+      <Text style={styles.CheckOutText}> Checkout </Text>
 
       <View style={{ padding: 10, flexDirection: "row", alignItems: "center" }}>
         <Text style={{ fontSize: 18, fontWeight: "400" }}>Subtotal : </Text>
-        <Text style={{ fontSize: 20, fontWeight: "bold" }}>{total}</Text>
+        <Text style={{ fontSize: 20, fontWeight: "bold" }}>₹ {formatNumber(total)}</Text>
       </View>
       <Text style={{ marginHorizontal: 10 }}>EMI details Available</Text>
 
 
       <Pressable
-      onPress={handleProceedToBuy} // Updated onPress handler
-        // onPress={() => navigation.navigate("Confirm")}
+      // onPress={handleProceedToBuy} // Updated onPress handler
+        onPress={() => navigation.navigate("Confirm")}
         style={{
           backgroundColor: cart.length > 0 ? "#FFC72C" : "#D3D3D3", // Change color if disabled
           padding: 10,
@@ -125,7 +105,7 @@ const CartScreen = () => {
       />
 
       <View style={{ marginHorizontal: 10 }}>
-        {cart?.map((item, index) => (
+        {cart.map((item, index) => (
           <View
             style={{
               backgroundColor: "white",
@@ -148,28 +128,22 @@ const CartScreen = () => {
               <View>
                 <Image
                   style={{ width: 140, height: 140, resizeMode: "contain" }}
-                  source={{ uri: item?.image }}
+                  source={{ uri: item.productImages[0] }}
                 />
               </View>
 
               <View>
                 <Text numberOfLines={3} style={{ width: 150, marginTop: 10 }}>
-                  {item?.title}
+                  {item.itemName}
                 </Text>
                 <Text
                   style={{ fontSize: 20, fontWeight: "bold", marginTop: 6 }}
                 >
-                  {item?.price}
+                ₹ {formatNumber(item.sellingPrice)}
                 </Text>
-                <Image
-                  style={{ width: 30, height: 30, resizeMode: "contain" }}
-                  source={{
-                    uri: "https://assets.stickpng.com/thumbs/5f4924cc68ecc70004ae7065.png",
-                  }}
-                />
-                <Text style={{ color: "green" }}>In Stock</Text>
+                <Text style={{ color: "green", marginTop: 6 }}>In Stock</Text>
                 {/* <Text style={{ fontWeight: "500", marginTop: 6 }}>
-                    {item?.rating?.rate} ratings
+                    {item.rating.rate} ratings
                   </Text> */}
               </View>
             </Pressable>
@@ -192,7 +166,7 @@ const CartScreen = () => {
                   borderRadius: 7,
                 }}
               >
-                {item?.quantity > 1 ? (
+                {item.quantity > 1 ? (
                   <Pressable
                     onPress={() => decreaseQuantity(item)}
                     style={{
@@ -225,7 +199,7 @@ const CartScreen = () => {
                     paddingVertical: 6,
                   }}
                 >
-                  <Text>{item?.quantity}</Text>
+                  <Text>{item.quantity}</Text>
                 </Pressable>
 
                 <Pressable
@@ -300,4 +274,10 @@ const CartScreen = () => {
 
 export default CartScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+CheckOutText:{
+fontSize: 25,
+fontWeight: "600",
+margin:10,
+},
+});

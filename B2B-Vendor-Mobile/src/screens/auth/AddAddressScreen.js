@@ -4,10 +4,10 @@ import {
   View,
   ScrollView,
   Pressable,
-  TextInput,
 } from "react-native";
 import React, { useEffect, useState, useCallback } from "react";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { TextInput } from 'react-native-paper';
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { updateUserAddresses } from "../../../redux/authReducer"; // Adjust the import path as necessary
@@ -34,7 +34,7 @@ const AddAddressScreen = () => {
     postalCode: "",
   });
   const [loading, setLoading] = useState(false); // Add loading state
-  const [clickCount, setClickCount] = useState(0); // Counter for button clicks
+  const [focus, setFocus] = useState({}); // State to manage focus of inputs
 
   useEffect(() => {
     fetchAddresses();
@@ -56,17 +56,13 @@ const AddAddressScreen = () => {
   );
 
   const handleAddAddress = async () => {
-    // setClickCount((prevCount) => prevCount + 1); // Increment the click count
-    // console.log(`Button clicked: ${clickCount + 1} times`); // Log the count
-
-    // Check if any field is empty
     const isEmptyField = Object.values(newAddress).some(field => field.trim() === '');
 
     if (isEmptyField) {
       Toast.show({
         type: 'error',
         text1: 'Error',
-        text2: 'Please fill in all fields', // Toast for empty fields
+        text2: 'Please fill in all fields',
       });
       return; // Prevent submission if any field is empty
     }
@@ -150,72 +146,185 @@ const AddAddressScreen = () => {
         {/* Add Address Form */}
         <View style={styles.form}>
           <TextInput
-            placeholder="Name"
+            label="Name"
             value={newAddress.name}
+            onFocus={() => setFocus({ ...focus, name: true })}
+            onBlur={() => setFocus({ ...focus, name: false })}
             onChangeText={(text) => setNewAddress({ ...newAddress, name: text })}
+            mode="outlined"
             style={styles.AddAddressinput}
+            theme={{
+              colors: {
+                primary: focus.name ? 'orange' : '#000', // Change primary color on focus
+                text: focus.name ? '#6200ee' : '#000', // Change text color on focus
+                placeholder: focus.name ? '#6200ee' : '#000', // Change placeholder color on focus
+                underlineColor: 'transparent',
+                background: 'white', // Optional, set background color if needed
+              },
+            }}
           />
           <TextInput
-            placeholder="House No"
+            label="House No"
             value={newAddress.houseNo}
+            onFocus={() => setFocus({ ...focus, houseNo: true })}
+            onBlur={() => setFocus({ ...focus, houseNo: false })}
             onChangeText={(text) => setNewAddress({ ...newAddress, houseNo: text })}
+            mode="outlined"
             style={styles.AddAddressinput}
+            theme={{
+              colors: {
+                primary: focus.houseNo ? 'orange' : '#000',
+                text: focus.houseNo ? '#6200ee' : '#000',
+                placeholder: focus.houseNo ? '#6200ee' : '#000',
+                underlineColor: 'transparent',
+                background: 'white',
+              },
+            }}
           />
           <TextInput
-            placeholder="Landmark"
+            label="Landmark"
             value={newAddress.landmark}
+            onFocus={() => setFocus({ ...focus, landmark: true })}
+            onBlur={() => setFocus({ ...focus, landmark: false })}
             onChangeText={(text) => setNewAddress({ ...newAddress, landmark: text })}
+            mode="outlined"
             style={styles.AddAddressinput}
+            theme={{
+              colors: {
+                primary: focus.landmark ? 'orange' : '#000',
+                text: focus.landmark ? '#6200ee' : '#000',
+                placeholder: focus.landmark ? '#6200ee' : '#000',
+                underlineColor: 'transparent',
+                background: 'white',
+              },
+            }}
           />
           <TextInput
-            placeholder="Street"
+            label="Street"
             value={newAddress.street}
+            onFocus={() => setFocus({ ...focus, street: true })}
+            onBlur={() => setFocus({ ...focus, street: false })}
             onChangeText={(text) => setNewAddress({ ...newAddress, street: text })}
+            mode="outlined"
             style={styles.AddAddressinput}
+            theme={{
+              colors: {
+                primary: focus.street ? 'orange' : '#000',
+                text: focus.street ? '#6200ee' : '#000',
+                placeholder: focus.street ? '#6200ee' : '#000',
+                underlineColor: 'transparent',
+                background: 'white',
+              },
+            }}
           />
           <TextInput
-            placeholder="Mobile No"
+            label="Mobile No"
             value={newAddress.mobileNo}
+            onFocus={() => setFocus({ ...focus, mobileNo: true })}
+            onBlur={() => setFocus({ ...focus, mobileNo: false })}
             onChangeText={(text) => setNewAddress({ ...newAddress, mobileNo: text })}
+            mode="outlined"
             style={styles.AddAddressinput}
             keyboardType="phone-pad"
+            theme={{
+              colors: {
+                primary: focus.mobileNo ? 'orange' : '#000',
+                text: focus.mobileNo ? '#6200ee' : '#000',
+                placeholder: focus.mobileNo ? '#6200ee' : '#000',
+                underlineColor: 'transparent',
+                background: 'white',
+              },
+            }}
           />
           <TextInput
-            placeholder="City"
+            label="City"
             value={newAddress.city}
+            onFocus={() => setFocus({ ...focus, city: true })}
+            onBlur={() => setFocus({ ...focus, city: false })}
             onChangeText={(text) => setNewAddress({ ...newAddress, city: text })}
+            mode="outlined"
             style={styles.AddAddressinput}
+            theme={{
+              colors: {
+                primary: focus.city ? 'orange' : '#000',
+                text: focus.city ? '#6200ee' : '#000',
+                placeholder: focus.city ? '#6200ee' : '#000',
+                underlineColor: 'transparent',
+                background: 'white',
+              },
+            }}
           />
           <TextInput
-            placeholder="Country"
+            label="Country"
             value={newAddress.country}
+            onFocus={() => setFocus({ ...focus, country: true })}
+            onBlur={() => setFocus({ ...focus, country: false })}
             onChangeText={(text) => setNewAddress({ ...newAddress, country: text })}
+            mode="outlined"
             style={styles.AddAddressinput}
+            theme={{
+              colors: {
+                primary: focus.country ? 'orange' : '#000',
+                text: focus.country ? '#6200ee' : '#000',
+                placeholder: focus.country ? '#6200ee' : '#000',
+                underlineColor: 'transparent',
+                background: 'white',
+              },
+            }}
           />
           <TextInput
-            placeholder="Postal Code"
+            label="Postal Code"
             value={newAddress.postalCode}
+            onFocus={() => setFocus({ ...focus, postalCode: true })}
+            onBlur={() => setFocus({ ...focus, postalCode: false })}
             onChangeText={(text) => setNewAddress({ ...newAddress, postalCode: text })}
+            mode="outlined"
             style={styles.AddAddressinput}
             keyboardType="numeric"
+            theme={{
+              colors: {
+                primary: focus.postalCode ? 'orange' : '#000',
+                text: focus.postalCode ? '#6200ee' : '#000',
+                placeholder: focus.postalCode ? '#20ee' : '#000',
+                underlineColor: 'transparent',
+                background: 'white',
+              },
+            }}
           />
-          <Pressable onPress={handleAddAddress} style={styles.addButton} disabled={loading}>
-            <Text style={styles.addButtonText}>{loading ? 'Adding...' : 'Add Address'}</Text>
+
+          <Pressable style={styles.addButton} onPress={handleAddAddress} disabled={loading}>
+            <Text style={styles.addButtonText}>
+              {loading ? "Adding..." : "Add Address"}
+            </Text>
           </Pressable>
         </View>
-
-        {/* Displaying Existing Addresses */}
-        {/* ... Add existing addresses display logic here ... */}
-
-        {/* Add Login Button */}
-        {!isAuthenticated && (
-          <Pressable onPress={() => navigation.navigate('Login')} style={styles.loginButton}>
-            <Text style={styles.loginButtonText}>Login to Add Address</Text>
-          </Pressable>
-        )}
       </View>
     </ScrollView>
   );
 };
 
 export default AddAddressScreen;
+
+// const styles = StyleSheet.create({
+//   heading: {
+//     fontSize: 24,
+//     fontWeight: "bold",
+//     marginBottom: 20,
+//   },
+//   form: {
+//     marginVertical: 20,
+//   },
+//   AddAddressinput: {
+//     marginBottom: 15,
+//   },
+//   button: {
+//     backgroundColor: "#6200ee",
+//     padding: 15,
+//     borderRadius: 5,
+//   },
+//   buttonText: {
+//     color: "#fff",
+//     textAlign: "center",
+//     fontWeight: "bold",
+//   },
+// });

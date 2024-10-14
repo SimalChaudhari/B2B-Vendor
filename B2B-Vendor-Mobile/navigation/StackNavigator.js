@@ -15,11 +15,17 @@ import ConfirmationScreen from '../src/screens/auth/ConfirmationScreen';
 import OrderScreen from '../src/screens/products/OrderScreen';
 import ProfileScreen from '../src/screens/auth/ProfileScreen';
 import OTPVerification from '../src/screens/auth/OTPVerification';
+import { useSelector } from 'react-redux';
 
 
 const StackNavigator = () => {
     const Stack = createNativeStackNavigator();
     const Tab = createBottomTabNavigator();
+    const cart = useSelector((state) => state.cart.cart); // Access the cart state
+
+    // Calculate total quantity
+    const totalQuantity = cart.reduce((accumulator, item) => accumulator + item.quantity, 0);
+
 
     function BottomTabs() {
         return (
@@ -33,9 +39,9 @@ const StackNavigator = () => {
                         tabBarLabelStyle: { color: "#008E97" },
                         headerShown: false,
                         tabBarIcon: ({ focused }) => focused ? (
-                            <Ionicons name="home" size={24} color="black" />
+                            <Ionicons name="home" size={26} color="black" />
                         ) : (
-                            <Ionicons name="home-outline" size={24} color="black" />
+                            <Ionicons name="home-outline" size={26} color="black" />
                         )
                     }}
                 />
@@ -52,30 +58,35 @@ const StackNavigator = () => {
                         headerShown: false,
                         tabBarIcon: ({ focused }) => focused ? (
                             // <Ionicons name="person" size={24} color="black" /> // Use a different icon for Profile
-                            <Ionicons name="storefront-sharp" size={24} color="black" />
+                            <Ionicons name="storefront-sharp" size={26} color="black" />
                             
                         ) : (
                             // <Ionicons name="person-outline" size={24} color="black" />
-                            <Ionicons name="storefront-outline" size={24} color="black" />
+                            <Ionicons name="storefront-outline" size={26} color="black" />
                         )
                     }}
                 />
 
-                {/* Cart */}
-                <Tab.Screen
-                    name="Cart" // Corrected from "nam" to "name"
-                    component={CartScreen}
-                    options={{
-                        tabBarLabel: "Cart", // Corrected from "tabBarLable" to "tabBarLabel"
-                        tabBarLabelStyle: { color: "#008E97" },
-                        headerShown: false,
-                        tabBarIcon: ({ focused }) => focused ? (
-                            <Ionicons name="cart" size={24} color="black" /> // Use a different icon for Cart
-                        ) : (
-                            <Ionicons name="cart-outline" size={24} color="black" />
-                        )
-                    }}
-                />
+                 {/* Cart */}
+                 <Tab.Screen
+                 name="Cart"
+                 component={CartScreen}
+                 options={{
+                     tabBarLabel: "Cart",
+                     tabBarLabelStyle: { color: "#008E97" },
+                     headerShown: false,
+                     tabBarIcon: ({ focused }) => (
+                         <View style={{ position: 'relative' }}>
+                             <Ionicons name={focused ? "cart" : "cart-outline"} size={32} color="black" />
+                             {totalQuantity > 0 && ( // Show badge only if total quantity is greater than 0
+                                 <View style={styles.badge}>
+                                     <Text style={styles.badgeText}>{totalQuantity}</Text>
+                                 </View>
+                             )}
+                         </View>
+                     )
+                 }}
+             />
             </Tab.Navigator>
         )
     }
@@ -99,4 +110,21 @@ const StackNavigator = () => {
 
 export default StackNavigator;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+    badge: {
+        position: 'absolute',
+        right: -8,
+        top: -8,
+        backgroundColor: 'red',
+        borderRadius: 10,
+        minWidth: 20,
+        minHeight: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    badgeText: {
+        color: 'white',
+        fontSize: 12,
+        fontWeight: 'bold',
+    },
+});
