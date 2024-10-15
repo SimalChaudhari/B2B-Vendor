@@ -193,7 +193,7 @@ const HomeScreen = () => {
                 <View style={styles.heroProductView}>
                   <Image
                     style={styles.heroTopImage}
-                    // source={{ uri: item.productImages[0] }}
+                    source={{ uri: item.productImages[0] }}
                   />
                   <Text style={styles.heroProductTitle} numberOfLines={1}>
                     {item.itemName}
