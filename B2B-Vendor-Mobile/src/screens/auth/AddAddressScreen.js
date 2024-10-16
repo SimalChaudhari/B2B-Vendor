@@ -49,6 +49,11 @@ const AddAddressScreen = () => {
     }
 
     setLoading(true); // Set loading to true when starting the add address process
+    // Use setTimeout to simulate a refresh delay and stop the loading indicator smoothly
+    setTimeout(() => {
+      console.log('Address Data: ', newAddress);
+      setLoading(false); // Reset loading state
+    }, 2000); // Refresh indicator stops after 2 seconds
 
     try {
       const response = await axios.post("http://192.168.1.112:8181/addresses", {
@@ -91,6 +96,7 @@ const AddAddressScreen = () => {
     } finally {
       setLoading(false); // Reset loading state
     }
+    
   };
 
   const handleError = (error) => {
