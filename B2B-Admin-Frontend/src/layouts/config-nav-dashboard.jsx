@@ -8,10 +8,8 @@ const ICONS = {
   dashboard: icon('ic-dashboard'),
   users: icon('ic-user'),
   products: icon('ic-product'),
+  vendors: icon('ic-kanban'),
   orders: icon('ic-order'),
-  offers: icon('ic-menu-item'), // Add Offer Management icon
-  returns: icon('ic-menu-item'), // Add Return Management icon
-  couriers: icon('ic-menu-item'), // Add Courier Management icon
   settings: icon('ic-lock'),
 };
 
@@ -34,11 +32,8 @@ export const navData = [
     items: [
       { title: 'Users', path: paths.users.root, icon: ICONS.users },
       { title: 'Products', path: paths.products.root, icon: ICONS.products },
-      { title: 'Orders', path: paths.orders.root, icon: ICONS.orders },
-      { title: 'Offer Management', path: paths.offerManagement.root, icon: ICONS.offers }, // New Offer Management
-      { title: 'Return Management', path: paths.returnManagement.root, icon: ICONS.returns }, // New Return Management
-      { title: 'Courier Management', path: paths.courierManagement.root, icon: ICONS.couriers }, // New Courier Management
-      {
+      { title: 'Vendors', path: paths.vendors.root, icon: ICONS.vendors },
+      { title: 'Orders', path: paths.orders.root, icon: ICONS.orders },    {
         title: 'Settings',
         path: paths.settings.root,
         icon: ICONS.settings,

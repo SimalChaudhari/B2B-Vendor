@@ -27,48 +27,38 @@ export const paths = {
     list: `/products/list`,
     details: (id) => `/products/${id}`,
     // edit: (id) => `/products/${id}/edit`,
-    edit:  (id) => `/edit/${id}`,
-    view:  (id) => `/view/${id}`,
+    edit: (id) => `/edit/${id}`,
+    view: (id) => `/view/${id}`,
+  },
 
-
+  vendors: {
+    root: `/vendors`,
+    list: `/vendors/list`,
+    details: (id) => `/vendors/${id}`,
   },
   orders: {
     root: `/orders`,
     list: `/orders/list`,
     details: (id) => `/orders/${id}`,
   },
-  offerManagement: {
-    root: `/offers`,
-    list: `/offers/list`,
-    details: (id) => `/offers/${id}`,
-  },
-  returnManagement: {
-    root: `/returns`,
-    list: `/returns/list`,
-    details: (id) => `/returns/${id}`,
-  },
-  courierManagement: {
-    root: `/couriers`,
-    list: `/couriers/list`,
-    details: (id) => `/couriers/${id}`,
-  },
+
   settings: {
     root: `/settings`,
     faq: `/settings/faq`,
-    create:`/create`,
-    edit:  (id) => `/edit/${id}`,
-    view:  (id) => `/view/${id}`,
+    create: `/create`,
+    edit: (id) => `/edit/${id}`,
+    view: (id) => `/view/${id}`,
 
     contact_us: `/settings/contact-us`,
-    createContact:`/create`,
-    editContact:  (id) => `/edit/${id}`,
-    viewContact:  (id) => `/view/${id}`,
+    createContact: `/create`,
+    editContact: (id) => `/edit/${id}`,
+    viewContact: (id) => `/view/${id}`,
 
     // privacy_policy: `/settings/privacy-policy`,
     terms_conditions: `/settings/terms-conditions`,
-    createTerm:`/create`,
-    editTerm:  (id) => `/edit/${id}`,
-    viewTerm:  (id) => `/view/${id}`,
+    createTerm: `/create`,
+    editTerm: (id) => `/edit/${id}`,
+    viewTerm: (id) => `/view/${id}`,
 
     general_settings: `/settings/general-settings`,
   },

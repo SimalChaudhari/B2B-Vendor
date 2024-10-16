@@ -13,9 +13,12 @@ import { TermCreateView, TermEditView, TermView } from 'src/sections/setting/ter
 const IndexPage = lazy(() => import('src/pages/dashboard'));
 const UsersPage = lazy(() => import('src/pages/users'));
 const ProductPage = lazy(() => import('src/pages/products'));
+const OrderPage = lazy(() => import('src/pages/orders'));
+
+const VendorPage = lazy(() => import('src/pages/vendors'));
+
 const FAQPage = lazy(() => import('src/pages/settings/faq'));
 const ContactPage = lazy(() => import('src/pages/settings/contact-us'));
-// const PrivacyPage = lazy(() => import('src/pages/settings/privacy-policy'));
 const TermsPage = lazy(() => import('src/pages/settings/terms-conditions'));
 const GeneralPage = lazy(() => import('src/pages/settings/general'));
 
@@ -57,6 +60,28 @@ export const dashboardRoutes = [
 
     ],
   },
+  {
+    path: 'vendors',
+    element: CONFIG.auth.skip ? <>{layoutContent}</> : <AuthGuard>{layoutContent}</AuthGuard>,
+    children: [
+      { element: <VendorPage />, index: true },
+      { path: 'edit/:id', element: <ProductEditView /> },
+      { path: 'view/:id', element: <ProductView /> },
+
+    ],
+  },
+
+  {
+    path: 'Orders',
+    element: CONFIG.auth.skip ? <>{layoutContent}</> : <AuthGuard>{layoutContent}</AuthGuard>,
+    children: [
+      { element: <OrderPage />, index: true },
+      { path: 'edit/:id', element: <ProductEditView /> },
+      { path: 'view/:id', element: <ProductView /> },
+
+    ],
+  },
+
 
   {
     path: 'settings',
