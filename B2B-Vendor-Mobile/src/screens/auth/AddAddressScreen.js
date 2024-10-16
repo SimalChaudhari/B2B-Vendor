@@ -36,25 +36,6 @@ const AddAddressScreen = () => {
   const [loading, setLoading] = useState(false); // Add loading state
   const [focus, setFocus] = useState({}); // State to manage focus of inputs
 
-  useEffect(() => {
-    fetchAddresses();
-  }, []);
-
-  const fetchAddresses = async () => {
-    try {
-      const response = await axios.get(`http://192.168.1.112:8181/addresses/${userId}`);
-      setAddresses(response.data.addresses);
-    } catch (error) {
-      console.error("Error fetching addresses: ", error);
-    }
-  };
-
-  useFocusEffect(
-    useCallback(() => {
-      fetchAddresses();
-    }, [])
-  );
-
   const handleAddAddress = async () => {
     const isEmptyField = Object.values(newAddress).some(field => field.trim() === '');
 
@@ -82,7 +63,6 @@ const AddAddressScreen = () => {
       // Dispatch the updated addresses to the authReducer
       dispatch(updateUserAddresses(updatedAddresses)); // Use the new action
 
-      fetchAddresses(); // Refresh the addresses after adding a new one
       setNewAddress({
         name: '',
         houseNo: '',
