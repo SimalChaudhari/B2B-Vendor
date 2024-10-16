@@ -51,9 +51,7 @@ export class ItemController {
 
     return this.itemService.uploadFilesToFirebase(id, productImages, dimensionalFiles);
   }
- // Endpoint to delete specified images
-// Endpoint to delete specified images
-// Endpoint to delete specified images
+
 @Delete('delete/:id')
 async deleteImages(
   @Param('id') itemId: string, 

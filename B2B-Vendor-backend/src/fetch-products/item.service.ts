@@ -7,24 +7,8 @@ import { parseStringPromise } from 'xml2js'; // Library for parsing XML to JSON
 import { ItemEntity } from './item.entity';
 import { ItemDto } from './item.dto';
 import { FirebaseService } from 'service/firebase.service';
+import { products } from 'tally/products';
 
-const data = `
-<ENVELOPE>
-<HEADER>
-  <TALLYREQUEST>Export Data</TALLYREQUEST>
-</HEADER>
-<BODY>
-  <EXPORTDATA>
-    <REQUESTDESC>
-      <STATICVARIABLES> 
-        <SVEXPORTFORMAT>$$SysName:XML</SVEXPORTFORMAT>
-      </STATICVARIABLES>
-      <REPORTNAME>Item Address Book</REPORTNAME>
-    </REQUESTDESC>
-  </EXPORTDATA>
-</BODY>
-</ENVELOPE>
-`
 
 @Injectable()
 export class ItemService {
@@ -36,11 +20,11 @@ export class ItemService {
 
   async fetchAndStoreItems(): Promise<void> {
     try {
-      const response = await axios.get('http://localhost:9000', {
+      const response = await axios.get(process.env.TALLY_URL as string, {
         headers: {
           'Content-Type': 'text/xml',
         },
-        data: data, // Replace with your dynamic XML request
+        data: products, // Replace with your dynamic XML request
       });
 
       const items = await this.parseXmlToItems(response.data);
@@ -177,32 +161,32 @@ export class ItemService {
     return await this.itemRepository.save(item); // Save the updated item entity
   }
 
-// Method to delete specific images from Firebase
-async deleteImages(itemId: string, imagesToDelete: { productImages?: string[]; dimensionalFiles?: string[] }): Promise<ItemEntity> {
-  const item = await this.itemRepository.findOne({ where: { id: itemId } });
+  // Method to delete specific images from Firebase
+  async deleteImages(itemId: string, imagesToDelete: { productImages?: string[]; dimensionalFiles?: string[] }): Promise<ItemEntity> {
+    const item = await this.itemRepository.findOne({ where: { id: itemId } });
 
-  if (!item) {
-    throw new NotFoundException('Item not found');
+    if (!item) {
+      throw new NotFoundException('Item not found');
+    }
+
+    // Delete specified product images from Firebase if URLs are provided
+    const productImages = imagesToDelete.productImages;
+    if (productImages?.length) {
+      await this.firebaseService.deleteFiles(productImages);
+      // Remove deleted product image URLs from the item
+      item.productImages = item.productImages.filter(url => !productImages.includes(url));
+    }
+
+    // Delete specified dimensional files from Firebase if URLs are provided
+    const dimensionalFiles = imagesToDelete.dimensionalFiles;
+    if (dimensionalFiles?.length) {
+      await this.firebaseService.deleteFiles(dimensionalFiles);
+      // Remove deleted dimensional file URLs from the item
+      item.dimensionalFiles = item.dimensionalFiles.filter(url => !dimensionalFiles.includes(url));
+    }
+
+    return await this.itemRepository.save(item); // Save the updated item entity
   }
-
-  // Delete specified product images from Firebase if URLs are provided
-  const productImages = imagesToDelete.productImages;
-  if (productImages?.length) {
-    await this.firebaseService.deleteFiles(productImages);
-    // Remove deleted product image URLs from the item
-    item.productImages = item.productImages.filter(url => !productImages.includes(url));
-  }
-
-  // Delete specified dimensional files from Firebase if URLs are provided
-  const dimensionalFiles = imagesToDelete.dimensionalFiles;
-  if (dimensionalFiles?.length) {
-    await this.firebaseService.deleteFiles(dimensionalFiles);
-    // Remove deleted dimensional file URLs from the item
-    item.dimensionalFiles = item.dimensionalFiles.filter(url => !dimensionalFiles.includes(url));
-  }
-
-  return await this.itemRepository.save(item); // Save the updated item entity
-}
 
 
 }

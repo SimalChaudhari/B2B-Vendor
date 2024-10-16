@@ -11,6 +11,7 @@ import { UserModule } from 'users/user/users.module';
 import { OrderModule } from 'admin/orders/order.module';
 import { SettingModule } from 'settings/setting.module';
 import { ItemModule } from 'fetch-products/item.module';
+import { VendorModule } from 'users/vendors/vendor.module';
 // import { FileModule } from 'files/file.module';
 
 
@@ -36,6 +37,7 @@ import { ItemModule } from 'fetch-products/item.module';
     OfferModule,
     OrderModule,
     SettingModule,
+    VendorModule
     // FileModule
   ],
 })
