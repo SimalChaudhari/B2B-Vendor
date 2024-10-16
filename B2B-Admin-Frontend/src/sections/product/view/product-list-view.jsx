@@ -21,7 +21,6 @@ import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
-
 import {
     useTable,
     emptyRows,
@@ -33,7 +32,6 @@ import {
     TableSelectedAction,
     TablePaginationCustom,
 } from 'src/components/table';
-
 import { ProductTableFiltersResult } from './table/product-table-filters-result';
 import { useDispatch, useSelector } from 'react-redux';
 import { productList, syncProduct } from 'src/store/action/productActions';
@@ -59,8 +57,10 @@ export function ProductListView() {
     const _productList = useSelector((state) => state.product?.product || []);
 
     const options = _productList.map(opt => ({
-        category: opt.category,
         group: opt.group,
+        subGroup1: opt.subGroup1,
+        subGroup2: opt.subGroup2,
+
     }));
 
     const [tableData, setTableData] = useState(_productList);
@@ -70,7 +70,7 @@ export function ProductListView() {
     const [openDialog, setOpenDialog] = useState(false);
 
     // Update the initial state to include lastName, email, and mobile
-    const filters = useSetState({ name: '', group: '', category: '', price: '', imageUrl: '', stock_quantity: '', status: 'all' });
+    const filters = useSetState({ itemName: '', group: '', subGroup1: '', subGroup2: '', status: 'all' });
     //----------------------------------------------------------------------------------------------------
     useEffect(() => {
         fetchData(); // Call fetchData when the component mounts
@@ -88,7 +88,7 @@ export function ProductListView() {
     });
 
     const dataInPage = rowInPage(dataFiltered, table.page, table.rowsPerPage);
-    const canReset = !!filters.state.searchTerm || filters.state.status !== 'all';
+    const canReset = !!filters.state.searchTerm || filters.state.group || filters.state.subGroup1 || filters.state.subGroup2 || filters.state.status !== 'all';
     const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
 
     //----------------------------------------------------------------------------------------------------

@@ -29,10 +29,10 @@ export class FirebaseService {
   }
 
   // Method to delete multiple files from Firebase Storage by URL
-  async deleteFiles(imageUrls: string[]): Promise<void> {
+  async deleteFiles(fileUrls: string[]): Promise<void> {
     const bucket = admin.storage().bucket(); // Get the storage bucket
 
-    const deletionPromises = imageUrls?.map(async (url) => {
+    const deletionPromises = fileUrls?.map(async (url) => {
       // Extract the file name from the URL
       const parts = url.split('/');
       const fileName = parts.pop(); // Get the last part which should be the file name

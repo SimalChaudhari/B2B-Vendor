@@ -177,19 +177,32 @@ export class ItemService {
     return await this.itemRepository.save(item); // Save the updated item entity
   }
 
-  // Method to delete specific images from Firebase
-  async deleteImages(itemId: string, imageUrls: string[]): Promise<ItemEntity> {
-    const item = await this.itemRepository.findOne({ where: { id: itemId } });
+// Method to delete specific images from Firebase
+async deleteImages(itemId: string, imagesToDelete: { productImages?: string[]; dimensionalFiles?: string[] }): Promise<ItemEntity> {
+  const item = await this.itemRepository.findOne({ where: { id: itemId } });
 
-    if (!item) {
-      throw new NotFoundException('Item not found');
-    }
-
-    // Delete the specified images from Firebase
-    await this.firebaseService.deleteFiles(imageUrls);
-
-    // Remove deleted image URLs from the item
-    item.productImages = item.productImages.filter(url => !imageUrls.includes(url)); // Filter out deleted URLs
-    return await this.itemRepository.save(item); // Save the updated item entity
+  if (!item) {
+    throw new NotFoundException('Item not found');
   }
+
+  // Delete specified product images from Firebase if URLs are provided
+  const productImages = imagesToDelete.productImages;
+  if (productImages?.length) {
+    await this.firebaseService.deleteFiles(productImages);
+    // Remove deleted product image URLs from the item
+    item.productImages = item.productImages.filter(url => !productImages.includes(url));
+  }
+
+  // Delete specified dimensional files from Firebase if URLs are provided
+  const dimensionalFiles = imagesToDelete.dimensionalFiles;
+  if (dimensionalFiles?.length) {
+    await this.firebaseService.deleteFiles(dimensionalFiles);
+    // Remove deleted dimensional file URLs from the item
+    item.dimensionalFiles = item.dimensionalFiles.filter(url => !dimensionalFiles.includes(url));
+  }
+
+  return await this.itemRepository.save(item); // Save the updated item entity
+}
+
+
 }

@@ -52,11 +52,13 @@ export class ItemController {
     return this.itemService.uploadFilesToFirebase(id, productImages, dimensionalFiles);
   }
  // Endpoint to delete specified images
- @Delete('delete/:id')
- async deleteImages(
-   @Param('id') itemId: string, 
-   @Body('imageUrls') imageUrls: string[]
- ): Promise<ItemEntity> {
-   return this.itemService.deleteImages(itemId, imageUrls);
- }
+// Endpoint to delete specified images
+// Endpoint to delete specified images
+@Delete('delete/:id')
+async deleteImages(
+  @Param('id') itemId: string, 
+  @Body() imagesToDelete: { productImages?: string[]; dimensionalFiles?: string[] }
+): Promise<ItemEntity> {
+  return this.itemService.deleteImages(itemId, imagesToDelete);
+}
 }

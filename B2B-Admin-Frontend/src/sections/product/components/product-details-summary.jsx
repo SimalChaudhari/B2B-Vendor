@@ -43,7 +43,7 @@ const MOCK_PRODUCT = {
 
 export function ProductDetailsSummary({
   items,
-  // product,
+  products,
   onAddCart,
   onGotoStep,
   disableActions,
@@ -122,47 +122,12 @@ export function ProductDetailsSummary({
 
   const renderPrice = (
     <Box sx={{ typography: 'h5' }}>
-      {priceSale && (
-        <Box
-          component="span"
-          sx={{ color: 'text.disabled', textDecoration: 'line-through', mr: 0.5 }}
-        >
-          {fCurrency(priceSale)}
-        </Box>
-      )}
-
-      {fCurrency(price)}
+    
+      {fCurrency(products?.sellingPrice)}
     </Box>
   );
 
-  const renderShare = (
-    <Stack direction="row" spacing={3} justifyContent="center">
-      <Link
-        variant="subtitle2"
-        sx={{ color: 'text.secondary', display: 'inline-flex', alignItems: 'center' }}
-      >
-        <Iconify icon="mingcute:add-line" width={16} sx={{ mr: 1 }} />
-        Compare
-      </Link>
-
-      <Link
-        variant="subtitle2"
-        sx={{ color: 'text.secondary', display: 'inline-flex', alignItems: 'center' }}
-      >
-        <Iconify icon="solar:heart-bold" width={16} sx={{ mr: 1 }} />
-        Favorite
-      </Link>
-
-      <Link
-        variant="subtitle2"
-        sx={{ color: 'text.secondary', display: 'inline-flex', alignItems: 'center' }}
-      >
-        <Iconify icon="solar:share-bold" width={16} sx={{ mr: 1 }} />
-        Share
-      </Link>
-    </Stack>
-  );
-
+ 
   const renderColorOptions = (
     <Stack direction="row">
       <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
@@ -258,7 +223,7 @@ export function ProductDetailsSummary({
 
   const renderSubDescription = (
     <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-      {subDescription}
+      {products?.description}
     </Typography>
   );
 
@@ -299,7 +264,7 @@ export function ProductDetailsSummary({
 
           {renderInventoryType}
 
-          <Typography variant="h5">{name}</Typography>
+          <Typography variant="h5">{product.itemName}</Typography>
 
           {renderRating}
 
@@ -320,7 +285,6 @@ export function ProductDetailsSummary({
 
         {renderActions}
 
-        {renderShare}
       </Stack>
     </Form>
   );

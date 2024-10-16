@@ -33,9 +33,8 @@ export const TABLE_SUB_CATEGORY_HEAD = [
 
 export const TABLE_PRODUCT_HEAD = [
   { id: 'item', label: 'Item Name' },
-  { id: 'group', label: 'Group' },
-  { id: 'subGroup1', label: 'SubGroup1' },
-  { id: 'subGroup2', label: 'SubGroup2' },
+  { id: 'subGroup1', label: 'Sub-Group' },
+  { id: 'subGroup2', label: 'Sub-Group 2' },
   { id: 'description', label: 'Description' },
   { id: 'sellingPrice', label: 'Selling Price' },
   { id: 'sellingPriceDate', label: 'Selling Price Date' },

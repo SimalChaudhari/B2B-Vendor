@@ -12,18 +12,9 @@ import { useNavigate } from 'react-router';
 
 export default function ProductNewEditForm({ currentProduct }) {
     const [includeTaxes, setIncludeTaxes] = useState(false);
-    const [imageFiles, setImageFiles] = useState([]);
-    const [loading, setLoading] = useState(false);
     const dispatch = useDispatch()
     const navigate = useNavigate()
-
-
-    const handleImageChange = (event) => {
-        if (event.target.files) {
-            setImageFiles(Array.from(event.target.files));
-        }
-    };
-
+    const [loading, setLoading] = useState(false); // State to manage the loader
 
     const defaultValues = useMemo(() => ({
         id: currentProduct?.id || '',
@@ -64,19 +55,15 @@ export default function ProductNewEditForm({ currentProduct }) {
     const onSubmit = handleSubmit(async (data) => {
         // Create a new FormData instance
         const formData = new FormData();
-
-        // Only append new image files if any are selected
-        if (imageFiles.length > 0) {
-            imageFiles.forEach((file) => {
-                formData.append('productImages', file);
-            });
-        } else {
-            // If no new images are uploaded, retain the existing images
-            const existingImages = values.productImages || [];
-            existingImages.forEach((image) => {
-                formData.append('productImages', image); // Append existing image URLs
-            });
-        }
+        // If no new images are uploaded, retain the existing images
+        const existingImages = values.productImages || [];
+        existingImages.forEach((image) => {
+            formData.append('productImages', image); // Append existing image URLs
+        });
+        const existingDimensionalFiles = values.dimensionalFiles || [];
+        existingDimensionalFiles.forEach((file) => {
+            formData.append('dimensionalFiles', file); // Append existing image URLs
+        });
 
         try {
             setLoading(true); // Start loading
@@ -93,24 +80,35 @@ export default function ProductNewEditForm({ currentProduct }) {
 
     const handleRemoveFile = useCallback(async (file, fieldName) => {
         try {
-            // Dispatch the action to delete the image using the correct format
-            const result = await dispatch(deleteProduct(currentProduct.id, { imageUrls: [file] }));
-            if (result) {
-                // Update the form value to remove the deleted image
+            const isLocalFile = file instanceof File;
+            const imageField = fieldName === 'productImages' ? 'productImages' : 'dimensionalFiles';
+
+            if (isLocalFile) {
                 setValue(fieldName, values[fieldName].filter((item) => item !== file));
+            } else {
+                const result = await dispatch(deleteProduct(currentProduct.id, { [imageField]: [file] }));
+                if (result) {
+                    setValue(fieldName, values[fieldName].filter((item) => item !== file));
+                }
             }
         } catch (error) {
             console.error('Error deleting image:', error);
-            // Optionally, you can show a notification or alert to the user
         }
     }, [dispatch, currentProduct.id, setValue, values]);
 
     const handleRemoveAllFiles = useCallback(async (fieldName) => {
         try {
-            // Dispatch the action to delete all images
-            const result = await dispatch(deleteProduct(currentProduct.id, { imageUrls: values[fieldName] }));
-            if (result) {
-                // Update the form value to remove all images
+            const imageField = fieldName === 'productImages' ? 'productImages' : 'dimensionalFiles';
+            const remoteFiles = values[fieldName].filter(file => !(file instanceof File)); // Remote files
+
+            // Only dispatch deleteProduct if there are remote files
+            if (remoteFiles.length > 0) {
+                const result = await dispatch(deleteProduct(currentProduct.id, { [imageField]: remoteFiles }));
+                if (result) {
+                    setValue(fieldName, []); // Clear all files in state
+                }
+            } else {
+                // If there are only local files, just clear the state
                 setValue(fieldName, []);
             }
         } catch (error) {
@@ -119,13 +117,12 @@ export default function ProductNewEditForm({ currentProduct }) {
         }
     }, [dispatch, currentProduct.id, setValue, values]);
 
-
     const handleIncludeTaxes = useCallback((event) => {
         setIncludeTaxes(event.target.checked);
     }, []);
 
     return (
-        <Form methods={methods} >
+        <Form methods={methods} onSubmit={onSubmit}>
             <Stack spacing={3}>
 
                 <Card>
@@ -140,9 +137,10 @@ export default function ProductNewEditForm({ currentProduct }) {
                             maxSize={3145728}
                             onRemove={(file) => handleRemoveFile(file, 'productImages')}
                             onRemoveAll={() => handleRemoveAllFiles('productImages')}
-                            // onUpload={() => console.info('ON UPLOAD')}
-                            onUpload={() => onSubmit()}   
+                        // onUpload={() => console.info('ON UPLOAD')}
+                        // onUpload={() => onSubmit(setLoading)}
                         />
+
 
                         <Field.Text name="itemName" label="Product Name" disabled />
                         <Field.Text name="description" label="Description" multiline rows={5} disabled />
@@ -263,10 +261,18 @@ export default function ProductNewEditForm({ currentProduct }) {
                             thumbnail
                             name="dimensionalFiles"
                             maxSize={3145728}
-                            onUpload={() => onSubmit()}  
+                            onRemove={(file) => handleRemoveFile(file, 'dimensionalFiles')}
+                            onRemoveAll={() => handleRemoveAllFiles('dimensionalFiles')}
+                        // onUpload={() => console.info('ON UPLOAD')}
+                        // onUpload={() => onSubmit()}
                         />
                     </Stack>
                 </Card>
+                <Stack direction="row" justifyContent="flex-end" spacing={2}>
+                    <LoadingButton type="submit" variant="contained" loading={loading}>
+                        Submit
+                    </LoadingButton>
+                </Stack>
 
             </Stack>
         </Form>

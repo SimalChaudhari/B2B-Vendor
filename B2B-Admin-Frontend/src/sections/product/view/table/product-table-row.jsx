@@ -18,26 +18,15 @@ import { usePopover, CustomPopover } from 'src/components/custom-popover';
 import { useState } from 'react';
 import { useFetchProductData } from '../../components/fetch-product';
 import { Link as RouterLink } from 'react-router-dom'; // Import Link from react-router-dom
+import { Typography } from '@mui/material';
 
-const imageURL = "https://t3.ftcdn.net/jpg/06/12/00/18/360_F_612001823_TkzT0xmIgagoDCyQ0yuJYEGu8j6VNVYT.jpg"
 
 export function ProductTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
-   
+
     const confirm = useBoolean();
     const { fetchData } = useFetchProductData();
 
     const popover = usePopover();
-    const quickEdit = useBoolean();
-    const quickView = useBoolean();
-    const [openDialog, setOpenDialog] = useState(false);
-
-    const handleOpenDialog = () => {
-        setOpenDialog(true);
-    };
-
-    const handleCloseDialog = () => {
-        setOpenDialog(false);
-    };
 
     return (
         <>
@@ -64,11 +53,14 @@ export function ProductTableRow({ row, selected, onEditRow, onSelectRow, onDelet
                         </Stack>
                     </Stack>
                 </TableCell>
-
-                <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.group || 'not available'}</TableCell>
                 <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.subGroup1 || 'not available'}</TableCell>
                 <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.subGroup2 || 'not available'}</TableCell>
-                <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.description || 'not available'}</TableCell>
+                <TableCell sx={{
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    maxWidth: '200px'
+                }}>{row.description || 'not available'}</TableCell>
                 <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.sellingPrice ? `₹${row.sellingPrice}` : 'not available'}</TableCell>
                 <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.sellingPriceDate || 'not available'}</TableCell>
                 <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.gstRate || 'not available'}</TableCell>
@@ -76,19 +68,35 @@ export function ProductTableRow({ row, selected, onEditRow, onSelectRow, onDelet
                 <TableCell>
                     <Stack direction="row" alignItems="center">
                         <Tooltip title="Quick Edit" placement="top" arrow>
-                            <Link component={RouterLink} to={`/products/edit/${row.id}`} sx={{ textDecoration: 'none' }}>
-                                <IconButton>
+                            <Link
+                                component={RouterLink}
+                                to={`/products/edit/${row.id}`} // Ensure this route exists
+                                sx={{ textDecoration: 'none' }}
+                            >
+                                <IconButton
+                                    color={popover.open ? 'inherit' : 'default'}
+                                    onClick={(e) => {
+                                        // Prevent the default action of the link if popover should open
+                                        if (popover.open) {
+                                            e.preventDefault();
+                                        } else {
+                                            popover.onOpen(); // Ensure popover opens correctly
+                                        }
+                                    }}
+                                >
                                     <Iconify icon="solar:pen-bold" />
                                 </IconButton>
                             </Link>
                         </Tooltip>
+
+
 
                         <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
                             <Iconify icon="eva:more-vertical-fill" />
                         </IconButton>
                     </Stack>
                 </TableCell>
-            </TableRow>
+            </TableRow >
 
             <CustomPopover
                 open={popover.open}
