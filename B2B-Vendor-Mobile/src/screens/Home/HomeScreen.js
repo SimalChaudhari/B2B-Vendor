@@ -4,32 +4,33 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import styles from '../../assets/cssFile';
+import styles1 from '../Vendor/VendorHomeScreenCss';
 import { useNavigation } from "@react-navigation/native";
 import Feather from '@expo/vector-icons/Feather';
 import { fetchItems } from '../../BackendApis/itemsApi';
 import { Dropdown } from 'react-native-element-dropdown'; // Importing the dropdown
 import { formatNumber } from '../../utils';
+import { useSelector, useDispatch } from 'react-redux';
+import { setSelectedGroupR } from '../../../redux/groupReducer';
 
 const HomeScreen = () => {
+  const dispatch = useDispatch();
+  const [sidebarVisible, setSidebarVisible] = useState(false);
+  const toggleSidebar = () => {
+    setSidebarVisible(!sidebarVisible);
+  };
   const [refreshing, setRefreshing] = useState(false);
   const [items, setItems] = useState([]); // Store the fetched items
+  const [filteredItems, setFilteredItems] = useState([]); // Items to display based on group filter
+  const [group, setGroup] = useState([]);
   const [loading, setLoading] = useState(true); // Show a loading indicator
   const [error, setError] = useState(null); // Handle errors
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(4); // Default number of items per page
   const [dropdownValue, setDropdownValue] = useState(4); // Initial dropdown value
+  const [selectedGroup, setSelectedGroup] = useState(''); // Store selected group
+  const selectedGroupr = useSelector((state) => state.group.selectedGroup);
 
-
-
-  // const onRefresh = useCallback(() => {
-  //   setRefreshing(true);
-
-  //   // Simulate data reloading (API call or state update)
-  //   setTimeout(() => {
-  //     console.log('Data refreshed!');
-  //     setRefreshing(false); // Stop refresh indicator
-  //   }, 2000);
-  // }, []);
 
   const options = [
     // { label: '1 items per page', value: 1 },
@@ -39,13 +40,20 @@ const HomeScreen = () => {
     { label: '30 items per page', value: 30 },
   ];
 
-  // Define getItems outside of useEffect
+  // Get items and filter based on the selected group
   const getItems = async () => {
     setLoading(true);
     console.log("Fetching items...");
     try {
       const data = await fetchItems(); // API call
       setItems(data); // Set the fetched items
+
+      setFilteredItems(data.data);
+      // Filter and set groups based on the group property
+      const groups = data.data.map(item => item.group); // Get all groups
+      const uniqueGroups = [...new Set(groups)]; // Get unique groups
+      setGroup(uniqueGroups); // Set the filtered items to group
+
       setLoading(false); // Stop loading indicator
       setError(null);
     } catch (err) {
@@ -53,6 +61,7 @@ const HomeScreen = () => {
       setLoading(false);
     }
   };
+
 
   // useEffect to call getItems when the component mounts
   useEffect(() => {
@@ -63,14 +72,14 @@ const HomeScreen = () => {
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     setLoading(true);
-
+    setSelectedGroup(selectedGroupr);
     // Introduce a minimum delay of 5 seconds
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise(resolve => setTimeout(resolve, 8000));
 
     await getItems(); // Call getItems to refresh data
     setRefreshing(false);
     setLoading(false);
-}, []);
+  }, []);
 
 
 
@@ -82,8 +91,8 @@ const HomeScreen = () => {
     return <View style={{ color: 'red', flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 20 }}><Text style={{ color: 'red', fontSize: 22 }}>{error}</Text></View>; // Ensure the error is visible
   }
 
-  const totalPages = Math.ceil(items.data.length / itemsPerPage);
-  const currentItems = items.data.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+  const currentItems = filteredItems.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   const goToNextPage = () => {
     if (currentPage < totalPages) {
@@ -159,13 +168,61 @@ const HomeScreen = () => {
 
   const navigation = useNavigation();
 
+
+  // Handle group filtering
+  const filterByGroup = (group) => {
+    dispatch(setSelectedGroupR(group));
+    setSelectedGroup(selectedGroup);
+    const filtered = items.data.filter(item => item.group === group);
+    setFilteredItems(filtered);
+    setCurrentPage(1); // Reset to the first page
+  };
+
+  // Reset filter to show all items
+  const resetFilter = () => {
+    setSelectedGroup(''); // Reset the selected group to an empty string
+    setFilteredItems(items.data); // Reset filtered items to all items
+    setCurrentPage(1); // Reset to the first page
+  };
+
+  // Function to handle resetting filter and toggling sidebar
+  const handleResetAndToggle = (selectedGroup) => {
+    if (selectedGroup) {
+      filterByGroup(selectedGroup); // Call filterByGroup with the selected group
+    } else {
+      resetFilter(); // Call resetFilter
+    }
+    toggleSidebar(); // Call toggleSidebar after handling filtering
+  };
+
+
   return (
     <>
       <SafeAreaView style={styles.heroContainer} >
         <ScrollView refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }>
+          {sidebarVisible && (
+            <View style={styles1.sidebar}>
+              <TouchableOpacity onPress={toggleSidebar} style={styles1.closeButton}>
+                <Text style={styles1.closeButtonLogoText}>Logo</Text>
+                <Text style={styles1.closeButtonText}>✖</Text>
+              </TouchableOpacity>
+              <Text style={styles1.sidebarText}>Sidebar Menu</Text>
 
+              <View style={styles1.filterContainer}>
+                {group.map((groupName, index) => (
+                  <TouchableOpacity key={index} onPress={() => handleResetAndToggle(groupName)}>
+                    <Text style={styles1.sidebarItem}>Filter {groupName}</Text>
+                  </TouchableOpacity>
+                ))}
+                <TouchableOpacity onPress={() => handleResetAndToggle(null)}>
+                  <Text style={styles1.sidebarItem}>Reset Filter</Text>
+                </TouchableOpacity>
+              </View>
+
+            </View>
+          )}
           <Text style={styles.heroTopShop}>Shop</Text>
           <View style={styles.heroTopSearch}>
             <Pressable style={styles.heroPressable}>
@@ -179,7 +236,7 @@ const HomeScreen = () => {
           </View>
 
           <View style={styles.heroFilter}>
-            <Pressable style={styles.filterButton}>
+            <Pressable style={styles.filterButton} onPress={toggleSidebar}>
               <Text style={styles.filterText}>Filters</Text>
               <Ionicons name="filter-sharp" size={24} color="black" />
             </Pressable>

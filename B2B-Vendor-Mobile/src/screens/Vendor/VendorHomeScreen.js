@@ -8,8 +8,11 @@ import { fetchItems } from '../../BackendApis/itemsApi';
 import { AntDesign, Feather } from '@expo/vector-icons';
 import { Dropdown } from 'react-native-element-dropdown';
 import { formatNumber } from '../../utils';
+import { useSelector, useDispatch } from 'react-redux';
+import { setSelectedGroupR } from '../../../redux/groupReducer';
 
 const VendorHomeScreen = () => {
+    const dispatch = useDispatch();
     const [sidebarVisible, setSidebarVisible] = useState(false);
     const toggleSidebar = () => {
         setSidebarVisible(!sidebarVisible);
@@ -25,10 +28,8 @@ const VendorHomeScreen = () => {
     const [itemsPerPage, setItemsPerPage] = useState(4); // Default number of items per page
     const [dropdownValue, setDropdownValue] = useState(4); // Initial dropdown value
     const [selectedGroup, setSelectedGroup] = useState(''); // Store selected group
+    const selectedGroupr = useSelector((state) => state.group.selectedGroup);
 
-            console.log('====================================');
-            console.log("selectedGroup IF:", selectedGroup);
-            console.log('====================================');
     const options = [
         { label: '1 items per page', value: 1 },
         { label: '4 items per page', value: 4 },
@@ -45,21 +46,6 @@ const VendorHomeScreen = () => {
             const data = await fetchItems(); // API call
             setItems(data); // Set the fetched items
 
-            // if (selectedGroup == '') {
-                
-            // // console.log('====================================');
-            // // console.log("selectedGroup IF:", selectedGroup);
-            // // console.log('====================================');
-            //     setFilteredItems(data.data); // Initialize filteredItems with all items
-
-            // } else {
-                
-            // // console.log('====================================');
-            // // console.log("selectedGroup Else:", selectedGroup);
-            // // console.log('====================================');
-            //     const filtered = data.data.filter(item => item.group === selectedGroup);
-            //     setFilteredItems(filtered);
-            // }
             setFilteredItems(data.data);
             // Filter and set groups based on the group property
             const groups = data.data.map(item => item.group); // Get all groups
@@ -84,10 +70,10 @@ const VendorHomeScreen = () => {
     const onRefresh = useCallback(async () => {
         setRefreshing(true);
         setLoading(true);
-
+        setSelectedGroup(selectedGroupr);
         // Introduce a minimum delay of 5 seconds
         await new Promise(resolve => setTimeout(resolve, 2000));
-
+        
         await getItems(); // Call getItems to refresh data
         setRefreshing(false);
         setLoading(false);
@@ -182,7 +168,8 @@ const VendorHomeScreen = () => {
 
     // Handle group filtering
     const filterByGroup = (group) => {
-        setSelectedGroup(group);
+        dispatch(setSelectedGroupR(group));
+        setSelectedGroup(selectedGroup);
         const filtered = items.data.filter(item => item.group === group);
         setFilteredItems(filtered);
         setCurrentPage(1); // Reset to the first page
@@ -272,7 +259,7 @@ const VendorHomeScreen = () => {
                 <Text style={styles.headerText}>Welcome to Vendor Home</Text>
 
                 <View style={styles.heroFilter}>
-                    <Pressable style={styles.filterButton}>
+                    <Pressable style={styles.filterButton} onPress={toggleSidebar}>
                         <Text style={styles.filterText}>Filters</Text>
                         <Ionicons name="filter-sharp" size={24} color="black" />
                     </Pressable>
