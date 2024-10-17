@@ -12,6 +12,7 @@ import { OrderModule } from 'admin/orders/order.module';
 import { SettingModule } from 'settings/setting.module';
 import { ItemModule } from 'fetch-products/item.module';
 import { VendorModule } from 'users/vendors/vendor.module';
+import { CartModule } from 'cart/cart.module';
 // import { FileModule } from 'files/file.module';
 
 
@@ -37,7 +38,8 @@ import { VendorModule } from 'users/vendors/vendor.module';
     OfferModule,
     OrderModule,
     SettingModule,
-    VendorModule
+    VendorModule,
+    CartModule
     // FileModule
   ],
 })

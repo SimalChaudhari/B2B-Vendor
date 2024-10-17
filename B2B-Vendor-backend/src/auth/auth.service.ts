@@ -40,46 +40,47 @@ export class AuthService {
     // private readonly mailerService: MailerService, // If used
   ) { }
 
-  async register(authDto: AuthDto, file?: Express.Multer.File): Promise<{ message: string, user: User }> {
-    try {
-      // Check if the email or mobile already exists
-      const existingUser = await this.userRepository.findOne({
-        where: [{ email: authDto.email }, { mobile: authDto.mobile }],
-      });
+  // async register(authDto: AuthDto, file?: Express.Multer.File): Promise<{ message: string, user: User }> {
+  //   try {
+  //     // Check if the email or mobile already exists
+  //     const existingUser = await this.userRepository.findOne({
+  //       where: [{ email: authDto.email }, { mobile: authDto.mobile }],
+  //     });
 
-      if (existingUser) {
-        throw new BadRequestException('Email or Mobile number already exists');
-      }
+  //     if (existingUser) {
+  //       throw new BadRequestException('Email or Mobile number already exists');
+  //     }
 
-      // Handle file upload if a file is provided
-      let profileImagePath: string | undefined = undefined;
-      if (file) {
-        const uploadPath = path.join(__dirname, '..', '..', 'src', 'uploads', file.originalname);
-        fs.writeFileSync(uploadPath, file.buffer); // Save the file synchronously
-        profileImagePath = uploadPath; // Assign the image path
-      }
+  //     // Handle file upload if a file is provided
+  //     let profileImagePath: string | undefined = undefined;
+  //     if (file) {
+  //       const uploadPath = path.join(__dirname, '..', '..', 'src', 'uploads', file.originalname);
+  //       fs.writeFileSync(uploadPath, file.buffer); // Save the file synchronously
+  //       profileImagePath = uploadPath; // Assign the image path
+  //     }
 
-      // Create a new user instance
-      const newUser = this.userRepository.create({
-        ...authDto,
-        ...(profileImagePath && { profile: profileImagePath }), // Conditionally add profile if the file is uploaded
-      });
-      await this.userRepository.save(newUser); // Save the new user
-      return {
-        message: 'User registered successfully',
-        user: newUser,
-      };
+  //     // Create a new user instance
+  //     const newUser = this.userRepository.create({
+  //       ...authDto,
+  //       ...(profileImagePath && { profile: profileImagePath }), // Conditionally add profile if the file is uploaded
+  //     });
+  //     await this.userRepository.save(newUser); // Save the new user
+  //     return {
+  //       message: 'User registered successfully',
+  //       user: newUser,
+  //     };
 
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        throw new BadRequestException(err.message);
-      }
-      throw err;
+  //   } catch (err: unknown) {
+  //     if (err instanceof Error) {
+  //       throw new BadRequestException(err.message);
+  //     }
+  //     throw err;
 
-    }
-  }
+  //   }
+  // }
 
   // Send OTP for verification
+  
   async verifyOtp(authDto: AuthDto): Promise<{ message: string }> {
     try {
 
@@ -87,7 +88,6 @@ export class AuthService {
       if (!contact) {
         throw new BadRequestException('Either email or mobile number must be provided.');
       }
-
 
       const isEmail = validateEmail(contact);
       const whereCondition = isEmail

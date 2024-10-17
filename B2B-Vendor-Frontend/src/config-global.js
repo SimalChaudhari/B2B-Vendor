@@ -3,7 +3,7 @@ import packageJson from '../package.json';
 
 export const CONFIG = {
   site: {
-    name: 'Admin Panel',
+    name: 'Vendor Panel',
     serverUrl: import.meta.env.VITE_SERVER_URL ?? '',
     assetURL: import.meta.env.VITE_ASSET_URL ?? '',
     basePath: import.meta.env.VITE_BASE_PATH ?? '',
@@ -25,6 +25,5 @@ export const CONFIG = {
     apiKey: import.meta.env.VITE_MAPBOX_API_KEY ?? '',
   },
 };
-
 
 export const PATH_AFTER_LOGIN = paths.dashboard.root; // as '/dashboard'
