@@ -17,7 +17,9 @@ export const IncrementerButton = forwardRef(
       justifyContent="space-between"
       sx={{
         p: 0.5,
-        width: 88,
+        width: 150,
+        height: 48,
+        bgcolor:"primary",
         borderRadius: 1,
         typography: 'subtitle2',
         border: (theme) => `solid 1px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.2)}`,

@@ -4,12 +4,15 @@ import { CONFIG } from 'src/config-global';
 import { DashboardLayout } from 'src/layouts/dashboard';
 import { LoadingScreen } from 'src/components/loading-screen';
 import { AuthGuard } from 'src/auth/guard';
+import { ProductView } from 'src/sections/product/view';
 
 // Overview
 const IndexPage = lazy(() => import('src/pages/dashboard'));
 const ProductPage = lazy(() => import('src/pages/products'));
 const OrderPage = lazy(() => import('src/pages/orders'));
 const GeneralPage = lazy(() => import('src/pages/settings/general'));
+
+
 
 // Error
 const Page500 = lazy(() => import('src/pages/error/500'));
@@ -38,6 +41,7 @@ export const dashboardRoutes = [
     element: CONFIG.auth.skip ? <>{layoutContent}</> : <AuthGuard>{layoutContent}</AuthGuard>,
     children: [
       { element: <ProductPage />, index: true },
+      { path: 'view/:id', element: <ProductView /> },
 
     ],
   },

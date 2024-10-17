@@ -10,12 +10,9 @@ import Divider from '@mui/material/Divider';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import { formHelperTextClasses } from '@mui/material/FormHelperText';
-
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
-
 import { fCurrency, fShortenNumber } from 'src/utils/format-number';
-
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 import { Form, Field } from 'src/components/hook-form';
@@ -122,12 +119,15 @@ export function ProductDetailsSummary({
 
   const renderPrice = (
     <Box sx={{ typography: 'h5' }}>
-    
-      {fCurrency(products?.sellingPrice)}
+      {products?.itemName}
+      <Typography variant="h6" sx={{ flexGrow: 1, mt: 1 }}>
+        {fCurrency(products?.sellingPrice)}
+      </Typography>
+
     </Box>
   );
 
- 
+
   const renderColorOptions = (
     <Stack direction="row">
       <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
