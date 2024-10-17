@@ -24,9 +24,6 @@ const ProductInfoScreen = () => {
   const { id } = route.params;
 
   const [item, setItem] = useState(null);
-  console.log('====================================');
-  console.log(item);
-  console.log('====================================');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [quantity, setQuantity] = useState(1); // Initial quantity set to 1 or any default value  

@@ -18,6 +18,7 @@ import RegisterScreen from '../src/screens/auth/RegisterScreen';
 import ProductInfoScreen from '../src/screens/products/ProductInfoScreen';
 import OTPVerification from '../src/screens/auth/OTPVerification';
 import NoInternetScreen from '../src/screens/NoInternet/NoInternetScreen';
+import VendorHomeScreen from '../src/screens/Vendor/VendorHomeScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -75,7 +76,7 @@ const StackNavigator = () => {
 
                 <Tab.Screen
                     name="Profile"
-                    component={ProfileScreen}
+                    component={VendorHomeScreen}
                     options={{
                         tabBarLabel: "Shop",
                         tabBarLabelStyle: { color: "#008E97" },
@@ -123,6 +124,11 @@ const StackNavigator = () => {
                 <Stack.Screen
                     name="Main"
                     component={BottomTabs}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="VendorHome"
+                    component={VendorHomeScreen}
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen
