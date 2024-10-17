@@ -46,7 +46,6 @@ export class VendorService {
             }
 
         } catch (error) {
-            console.log("🚀 ~ VendorService ~ fetchAndStoreVendors ~ error:", error)
             throw new InternalServerErrorException('Failed to fetch vendors');
         }
     }
@@ -110,5 +109,11 @@ export class VendorService {
 
     async findById(id: string): Promise<VendorEntity | null> {
         return this.vendorRepository.findOne({ where: { id } }); // Load files for the vendor by ID
+    }
+    async delete(id: string): Promise<void> {
+        const result = await this.vendorRepository.delete(id);
+        if (result.affected === 0) {
+            throw new NotFoundException(`Vendor with ID  not found`);
+        }
     }
 }

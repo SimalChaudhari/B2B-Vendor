@@ -4,7 +4,8 @@ import {
     Post, 
     Get, 
     Res, 
-    Param, 
+    Param,
+    Delete, 
 
 } from '@nestjs/common';
 import { Response } from 'express';
@@ -40,6 +41,14 @@ export class VendorController {
         return response.status(HttpStatus.OK).json({
             data: vendor,
         });
+    }
+
+    @Delete('delete/:id')
+    async delete(@Param('id') id: string): Promise<{ message: string }> {
+      await this.vendorService.delete(id); // Call the delete method from the service
+      return {
+        message: `Vendor deleted successfully`, // Success message
+      };
     }
 
 }
