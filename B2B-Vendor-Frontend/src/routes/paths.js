@@ -16,27 +16,13 @@ export const paths = {
   minimalStore: 'https://www.alovate.io/',
   freeUI: 'https://www.alovate.io/',
   figma: 'https://www.alovate.io/',
-  users: {
-    root: `/users`,
-    list: `/users/list`,
-    details: (id) => `/users/${id}`,
-    edit: (id) => `/users/${id}/edit`,
-  },
   products: {
     root: `/products`,
     list: `/products/list`,
     details: (id) => `/products/${id}`,
-    // edit: (id) => `/products/${id}/edit`,
-    edit: (id) => `/edit/${id}`,
-    view: (id) => `/view/${id}`,
+
   },
 
-  vendors: {
-    root: `/vendors`,
-    list: `/vendors/list`,
-    edit: (id) => `/edit/${id}`,
-    view: (id) => `/view/${id}`,
-  },
   orders: {
     root: `/orders`,
     list: `/orders/list`,
@@ -45,22 +31,6 @@ export const paths = {
 
   settings: {
     root: `/settings`,
-    faq: `/settings/faq`,
-    create: `/create`,
-    edit: (id) => `/edit/${id}`,
-    view: (id) => `/view/${id}`,
-
-    contact_us: `/settings/contact-us`,
-    createContact: `/create`,
-    editContact: (id) => `/edit/${id}`,
-    viewContact: (id) => `/view/${id}`,
-
-    // privacy_policy: `/settings/privacy-policy`,
-    terms_conditions: `/settings/terms-conditions`,
-    createTerm: `/create`,
-    editTerm: (id) => `/edit/${id}`,
-    viewTerm: (id) => `/view/${id}`,
-
     general_settings: `/settings/general-settings`,
   },
   // AUTH

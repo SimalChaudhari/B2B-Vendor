@@ -1,5 +1,4 @@
 import { useDispatch } from 'react-redux';
-import { addressList, deleteAddress } from 'src/store/action/addressActions';
 import { deleteProduct, itemList, productList } from 'src/store/action/productActions';
 
 

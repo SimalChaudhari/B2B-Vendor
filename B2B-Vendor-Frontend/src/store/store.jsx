@@ -3,23 +3,15 @@ import { thunk } from 'redux-thunk'; // Correctly import `thunk`
 import { composeWithDevTools } from 'redux-devtools-extension'; // Import Redux DevTools
 import userReducer from './reducer/userReducer';
 import authReducer from './reducer/authReducer';
-import addressReducer from './reducer/addressReducer';
-import categoryReducer from './reducer/categoryReducer';
-import subcategoryReducer from './reducer/subcategoryReducer';
 import productReducer from './reducer/productReducer';
 import settingReducer from './reducer/settingReducer';
-import vendorReducer from './reducer/vendorReducer';
 
 // Combine your reducers
 const rootReducer = combineReducers({
   auth: authReducer,
   user: userReducer,
-  address: addressReducer,
-  category: categoryReducer,
-  subcategory: subcategoryReducer,
   product: productReducer,
   setting: settingReducer,
-  vendor:vendorReducer
 
 
 });
