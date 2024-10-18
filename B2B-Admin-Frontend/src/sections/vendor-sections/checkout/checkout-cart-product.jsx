@@ -18,6 +18,7 @@ import { IncrementerButton } from '../product/components/incrementer-button';
 // ----------------------------------------------------------------------
 
 export function CheckoutCartProduct({ row, onDelete, onDecrease, onIncrease }) {
+  console.log("🚀 ~ CheckoutCartProduct ~ row:", row)
   return (
     <TableRow>
       <TableCell>
@@ -34,15 +35,6 @@ export function CheckoutCartProduct({ row, onDelete, onDecrease, onIncrease }) {
               {row.name}
             </Typography>
 
-            <Stack
-              direction="row"
-              alignItems="center"
-              sx={{ typography: 'body2', color: 'text.secondary' }}
-            >
-              size: <Label sx={{ ml: 0.5 }}> {row.size} </Label>
-              <Divider orientation="vertical" sx={{ mx: 1, height: 16 }} />
-              <ColorPreview colors={row.colors} />
-            </Stack>
           </Stack>
         </Stack>
       </TableCell>

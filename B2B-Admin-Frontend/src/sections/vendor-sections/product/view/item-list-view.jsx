@@ -10,6 +10,7 @@ import { Iconify } from 'src/components/iconify';
 import { Button } from '@mui/material';
 import { ItemCardList } from './item-card-list';
 import { useRouter } from 'src/routes/hooks';
+import { useNavigate } from 'react-router';
 
 // ----------------------------------------------------------------------
 
@@ -17,6 +18,7 @@ export function ItemListView() {
 
   const { fetchData } = useFetchProductData(); // Destructure fetchData from the custom hook
   const router = useRouter(); // Initialize the router
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const productData = useSelector((state) => state.product?.product || []);
   //----------------------------------------------------------------------------------------------------
@@ -27,7 +29,8 @@ export function ItemListView() {
 
   // Define the handler for navigating to the checkout page
   const handleCartListClick = () => {
-    router.push(paths.items); // Use router.push() to navigate to the checkout page
+    router.push(paths.items.checkout); // Use router.push() to navigate to the checkout page
+    // navigate('/items/checkout/list'); // Adjust the path as per your routing structure
   };
 
   return (

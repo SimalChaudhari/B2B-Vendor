@@ -9,22 +9,29 @@ import ListItemText from '@mui/material/ListItemText';
 import { AvatarShape } from 'src/assets/illustrations'; // Assuming this is already defined
 import { Image } from 'src/components/image'; // Assuming this is already defined
 import { varAlpha } from 'src/theme/styles';
-import AutoHeight from 'embla-carousel-auto-height';
 import Rating from '@mui/material/Rating';
-import {  useCarousel } from 'src/components/carousel';
 import { useNavigate } from 'react-router';
+import { useDispatch } from 'react-redux';
+import { addToCart } from 'src/store/action/cartActions';
 
 // ----------------------------------------------------------------------
 
 export function ItemCard({ product }) {
   const navigate = useNavigate(); // Initialize useNavigate
+  const dispatch = useDispatch()
+
   const handleCardClick = (id) => {
-    navigate(`/products/view/${id}`); // Adjust the path as per your routing structure
+    navigate(`/items/view/${id}`); // Adjust the path as per your routing structure
   };
 
-  const handleAddToCart = () => {
-    alert(`Added `);
-  };
+  const handleToAddCard = async (id, quantity = 1) => { // Adjust to accept id and quantity
+     const data = { productId: id, quantity };
+    try {
+      await dispatch(addToCart(data));
+    } catch (error) {
+      console.error('Submission failed', error);
+    }
+  }
 
   return (
     <Card sx={{ m: 1 }}>
@@ -114,6 +121,10 @@ export function ItemCard({ product }) {
       <Divider sx={{ borderStyle: 'dashed' }} />
       <Box sx={{ p: 3, gap: 2, display: 'flex' }}>
         <Button
+          onClick={(e) => {
+            e.stopPropagation(); // Prevent triggering card click
+            handleToAddCard(product.id, 1); // Pass id and quantity 0
+          }}
           fullWidth
           color="error"
           variant="soft"

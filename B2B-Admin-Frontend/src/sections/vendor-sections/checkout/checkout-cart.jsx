@@ -15,11 +15,44 @@ import { EmptyContent } from 'src/components/empty-content';
 import { useCheckoutContext } from './context';
 import { CheckoutSummary } from './checkout-summary';
 import { CheckoutCartProductList } from './checkout-cart-product-list';
+import { useDispatch, useSelector } from 'react-redux';
+import { cartList } from 'src/store/action/cartActions';
+import { useEffect } from 'react';
 
 // ----------------------------------------------------------------------
 
 export function CheckoutCart() {
+  const dispatch = useDispatch();
+
   const checkout = useCheckoutContext();
+
+  const addToCartData = useSelector((state) => state.cart?.cart || []);
+
+  // Dynamically map through cart data
+  const mappedData = addToCartData.map((item, index) => ({
+    id: item.id,
+    quantity: item.quantity,
+    userId: item.userId,
+    price: item.product.sellingPrice,
+    totalAmount: "1000",
+    name: item.product.itemName,
+    // Add more product fields dynamically here if needed
+    // colors: [colors[0]],
+    // size: sizes[0],
+  }));
+
+  //----------------------------------------------------------------------------------------------------
+  useEffect(() => {
+    const fetchData = async () => {
+      await dispatch(cartList());
+    };
+    fetchData(); // Call fetchData when the component mounts
+  }, []);
+
+
+
+
+
 
   const empty = !checkout.items.length;
 
@@ -49,7 +82,7 @@ export function CheckoutCart() {
             />
           ) : (
             <CheckoutCartProductList
-              products={checkout.items}
+              products={mappedData}
               onDelete={checkout.onDeleteCart}
               onIncreaseQuantity={checkout.onIncreaseQuantity}
               onDecreaseQuantity={checkout.onDecreaseQuantity}
@@ -59,7 +92,7 @@ export function CheckoutCart() {
 
         <Button
           component={RouterLink}
-          href={paths.product.root}
+          href={paths.items.root}
           color="inherit"
           startIcon={<Iconify icon="eva:arrow-ios-back-fill" />}
         >

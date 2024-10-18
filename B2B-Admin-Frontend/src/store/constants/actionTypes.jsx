@@ -15,6 +15,7 @@ export const TERM_GET_BY_LIST = "TERM_GET_BY_LIST"
 export const TERM_LIST = "TERM_LIST"
 export const VENDOR_GET_BY_LIST = "VENDOR_GET_BY_LIST"
 export const VENDOR_LIST = "VENDOR_LIST"
+export const CART_LIST ="CART_LIST"
 
 
 

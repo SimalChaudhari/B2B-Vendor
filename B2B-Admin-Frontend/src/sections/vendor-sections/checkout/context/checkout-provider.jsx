@@ -103,7 +103,7 @@ function Container({ children }) {
 
           const colors = colorsAdded.filter((color, index) => colorsAdded.indexOf(color) === index);
 
-          return { ...item, colors, quantity: item.quantity + 1 };
+          return { ...item, quantity: item.quantity + 1 };
         }
         return item;
       });
@@ -243,5 +243,5 @@ function createUrl(type, activeStep) {
 
   const stepParams = new URLSearchParams({ step: `${step}` }).toString();
 
-  return `${paths.product.checkout}?${stepParams}`;
+  return `${paths.items.checkout}?${stepParams}`;
 }

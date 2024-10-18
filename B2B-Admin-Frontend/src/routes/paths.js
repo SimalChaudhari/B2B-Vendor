@@ -67,7 +67,7 @@ export const paths = {
   items: {
     root: `/items`,
     list: `/items/list`,
-    checkout: `/checkout/list`,
+    checkout: `/items/checkout`,
     details: (id) => `/items/${id}`,
     edit: (id) => `/edit/${id}`,
     view: (id) => `/view/${id}`,

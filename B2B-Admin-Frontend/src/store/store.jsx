@@ -9,6 +9,7 @@ import subcategoryReducer from './reducer/subcategoryReducer';
 import productReducer from './reducer/productReducer';
 import settingReducer from './reducer/settingReducer';
 import vendorReducer from './reducer/vendorReducer';
+import cartReducer from './reducer/cartReducer';
 
 // Combine your reducers
 const rootReducer = combineReducers({
@@ -19,7 +20,9 @@ const rootReducer = combineReducers({
   subcategory: subcategoryReducer,
   product: productReducer,
   setting: settingReducer,
-  vendor:vendorReducer
+  vendor:vendorReducer,
+  cart:cartReducer
+
 
 
 });

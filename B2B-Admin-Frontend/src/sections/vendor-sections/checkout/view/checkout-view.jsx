@@ -12,6 +12,7 @@ import { CheckoutSteps } from '../checkout-steps';
 import { CheckoutPayment } from '../checkout-payment';
 import { CheckoutOrderComplete } from '../checkout-order-complete';
 import { CheckoutBillingAddress } from '../checkout-billing-address';
+import { Box } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -24,11 +25,7 @@ export function CheckoutView() {
   }, []);
 
   return (
-    <Container sx={{ mb: 10 }}>
-      <Typography variant="h4" sx={{ my: { xs: 3, md: 5 } }}>
-        Checkout
-      </Typography>
-
+    <Box>
       <Grid container justifyContent={checkout.completed ? 'center' : 'flex-start'}>
         <Grid xs={12} md={8}>
           <CheckoutSteps activeStep={checkout.activeStep} steps={PRODUCT_CHECKOUT_STEPS} />
@@ -43,9 +40,9 @@ export function CheckoutView() {
         {checkout.activeStep === 2 && <CheckoutPayment />}
 
         {checkout.completed && (
-          <CheckoutOrderComplete open onReset={checkout.onReset} onDownloadPDF={() => {}} />
+          <CheckoutOrderComplete open onReset={checkout.onReset} onDownloadPDF={() => { }} />
         )}
       </>
-    </Container>
+    </Box>
   );
 }

@@ -11,7 +11,7 @@ import { TermCreateView, TermEditView, TermView } from 'src/sections/setting/ter
 import { VendorView } from 'src/sections/vendor/view/vendor-view';
 import { VendorEditView } from 'src/sections/vendor/view/vendor-edit';
 import { ItemView } from 'src/sections/vendor-sections/product/view';
-import { CheckoutView } from 'src/sections/vendor-sections/checkout/view';
+import { CheckoutListView } from 'src/sections/vendor-sections/checkout/view/checkout-list';
 
 // Overview
 const IndexPage = lazy(() => import('src/pages/dashboard'));
@@ -123,8 +123,7 @@ export const dashboardRoutes = [
     children: [
       { element: <ItemPage />, index: true },
       { path: 'view/:id', element: <ItemView /> },
-      { path: 'checkout', element: <CheckoutView/> },
-
+      { path: 'checkout', element: <CheckoutListView/> },
 
     ],
   },
