@@ -8,7 +8,7 @@ const colors = {
     linkColor: '#007185',
     white: '#FFFFFF',
     lightGray: '#EAEAEA',
-    darkGray: '#333',
+    darkGray: '#1C252E',
 };
 
 const styles = StyleSheet.create({
@@ -16,7 +16,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: colors.background,
-        marginTop: 20,
         backgroundColor: colors.white,
     },
     VendorContainer: {
@@ -189,14 +188,18 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         flexWrap: "wrap",
         justifyContent: "space-between",
-        paddingHorizontal: 10,
-        marginBottom: 10, marginTop: 10,
+        paddingHorizontal: 6,
+        marginBottom: 10,
+         marginTop: 5,
         // justifyContent: 'center',
         alignItems: 'center',
     },
     heroProductTitle: {
         marginLeft: 14,
-        marginTop: 8,
+        marginTop: 5,
+        color:"#1C252E",
+        fontSize: 13,
+        fontWeight: "bold",
     },
 
     heroProductColor: {
@@ -223,19 +226,22 @@ const styles = StyleSheet.create({
         // backgroundColor: '#f0f0f0', // Light background for page numbers
     },
     activePage: {
-        backgroundColor: '#333', // Dark background for active page
+        backgroundColor: '#1C252E', // Dark background for active page
     },
     activePageText: {
         color: "#fff", // Set text color for active page number
+        fontSize: 15,
+        fontWeight: "bold",
     },
     pageText: {
         fontSize: 16,
-        color: '#333', // Text color for page numbers
+        fontWeight: "bold",
+        color: '#1C252E', // Text color for page numbers
     },
     paginationArrow: {
         fontSize: 20,
         marginHorizontal: 10,
-        color: '#333', // Color for arrows
+        color: '#1C252E', // Color for arrows
     },
 
     heroTopImage: {

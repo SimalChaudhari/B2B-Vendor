@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, ScrollView, Pressable, Alert } from "react-native";
 import React, { useState } from "react";
-import { AntDesign, Entypo } from "@expo/vector-icons";
+import { AntDesign, Entypo, Feather } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
@@ -60,9 +60,9 @@ const ConfirmationScreen = () => {
                     {steps.map((step, index) => (
                         <View key={index} style={{ justifyContent: "center", alignItems: "center" }}>
                             {index > 0 && (
-                                <View style={{ flex: 1, height: 2, backgroundColor: index <= currentStep ? "green" : "#D0D0D0" }} />
+                                <View style={{ flex: 1, height: 2, backgroundColor: index <= currentStep ? "#0C68E9" : "#D0D0D0" }} />
                             )}
-                            <View style={{ width: 30, height: 30, borderRadius: 15, backgroundColor: index <= currentStep ? "green" : "#ccc", justifyContent: "center", alignItems: "center" }}>
+                            <View style={{ width: 30, height: 30, borderRadius: 15, backgroundColor: index <= currentStep ? "#0C68E9" : "#ccc", justifyContent: "center", alignItems: "center" }}>
                                 {index < currentStep ? (
                                     <Text style={{ fontSize: 16, fontWeight: "bold", color: "white" }}>&#10003;</Text>
                                 ) : (
@@ -79,10 +79,10 @@ const ConfirmationScreen = () => {
             {currentStep === 0 && (
                 <View style={{ marginHorizontal: 20, paddingVertical: 15 }}>
                     <Text style={styles.headerText}>Select Delivery Address</Text>
-                    
+
                     <Pressable onPress={() => navigation.navigate("AddAddressScreen")} style={styles.addAddressButton}>
-                        <Text style={{ fontSize: 16, color: "#008397" }}>Add a new Address</Text>
-                        <AntDesign name="pluscircleo" size={24} color="#008397" />
+                        <Text style={{ fontSize: 16, color: "#0C68E9", fontWeight: "bold", }}>Add a new Address</Text>
+                        <AntDesign name="pluscircleo" size={24} color="#0C68E9" />
                     </Pressable>
 
                     {addresses.map((item) => (
@@ -97,7 +97,7 @@ const ConfirmationScreen = () => {
                                 alignItems: "center",
                                 marginVertical: 7,
                                 borderRadius: 8,
-                                shadowColor: "#000",
+                                shadowColor: "#1C252E",
                                 shadowOffset: { width: 0, height: 1 },
                                 shadowOpacity: 0.1,
                                 shadowRadius: 3,
@@ -120,12 +120,19 @@ const ConfirmationScreen = () => {
                             </View>
                         </Pressable>
                     ))}
-                    
+
+                    <Pressable style={styles.emptyLastBox}
+                        onPress={() => navigation.navigate("Cart")}
+                    >
+                        <Feather name="chevron-left" size={20} color="#1C252E" />
+                        <Text style={styles.emptyLastText}>Back</Text>
+                    </Pressable>
+
                     <Pressable
                         onPress={handleProceedToCheckout}
                         style={styles.proceedButton}
                     >
-                        <Text style={{ textAlign: "center", color: "white", fontSize: 16 }}>Proceed to Checkout</Text>
+                        <Text style={{ textAlign: "center", color: "white", fontSize: 16, fontWeight: "bold", }}>Proceed to Checkout</Text>
                     </Pressable>
                 </View>
             )}
@@ -146,25 +153,31 @@ const ConfirmationScreen = () => {
                     {cart.length > 0 ? (
                         cart.map((item, index) => (
                             <View key={index} style={styles.productContainer}>
-                                <Text style={styles.productText}>{item.productName} (x{item.quantity})</Text>
+                                <Text style={styles.productText}>{item.itemName} (x{item.quantity})</Text>
                                 <Text style={styles.productPrice}>₹ {formatNumber(item.sellingPrice * item.quantity)}</Text>
                             </View>
                         ))
                     ) : (
                         <Text style={styles.emptyCartText}>No products in the cart.</Text>
                     )}
-
-                    <Text style={styles.orderTotalText}>Order Total: <Text style={styles.totalAmount}>₹ {formatNumber(total)}</Text></Text>
+                    <View style={styles.productContainer}>
+                    <Text style={styles.orderTotalText}>Order Total: </Text> 
+                    <Text style={styles.totalAmount}> ₹ {formatNumber(total)}</Text>
+                    </View>
 
                     <Pressable
                         onPress={() => {
-                            dispatch(cleanCart());
-                            navigation.navigate("Order");
-                            setCurrentStep(0);
+                            console.log("Order placed by:", user); // Log user data
+                            console.log("Selected address:", selectedAddress); // Log selected address
+                            console.log("Ordered products:", cart); // Log cart items
+                            console.log("Total amount:", total); // Log total amount
+                            // dispatch(cleanCart());
+                            // navigation.navigate("Order");
+                            // setCurrentStep(0);
                         }}
                         style={styles.placeOrderButton}
                     >
-                        <Text style={{ color: "black", fontWeight: "bold" }}>Place your order</Text>
+                        <Text style={{ color: "#fff", fontSize: 18, fontWeight: "bold" }}>Place your order</Text>
                     </Pressable>
                 </View>
             )}
@@ -199,25 +212,27 @@ const styles = StyleSheet.create({
         color: "#555",
     },
     proceedButton: {
-        backgroundColor: "#008397",
+        backgroundColor: "#0C68E9",
         padding: 12,
-        borderRadius: 20,
+        borderRadius: 3,
         justifyContent: "center",
         alignItems: "center",
         marginTop: 15,
         elevation: 5,
-        shadowColor: "#000",
+        shadowColor: "#1C252E",
         shadowOpacity: 0.3,
         shadowOffset: { width: 0, height: 3 },
         shadowRadius: 4,
     },
     orderSummaryTitle: {
+        color: "#1C252E",
         fontSize: 24,
         fontWeight: "bold",
         marginVertical: 10,
     },
     selectedAddressTitle: {
         fontSize: 18,
+        fontWeight: "bold",
         marginVertical: 10,
     },
     selectedAddressText: {
@@ -226,10 +241,11 @@ const styles = StyleSheet.create({
     orderTotalText: {
         fontSize: 18,
         fontWeight: "bold",
-        marginTop: 15,
+        marginTop: 8,
     },
     totalAmount: {
-        color: "#ff5722",
+        fontSize: 22,
+        color: "#1C252E",
         fontWeight: "bold",
     },
     productContainer: {
@@ -239,6 +255,9 @@ const styles = StyleSheet.create({
     },
     productText: {
         fontSize: 16,
+        color: "#1C252E",
+        fontWeight: "bold",
+
     },
     productPrice: {
         fontSize: 16,
@@ -251,17 +270,36 @@ const styles = StyleSheet.create({
         marginVertical: 10,
     },
     placeOrderButton: {
-        backgroundColor: "#ffcc00",
+        backgroundColor: "#0C68E9",
         padding: 12,
-        borderRadius: 20,
+        borderRadius: 3,
         justifyContent: "center",
         alignItems: "center",
-        marginTop: 10,
+        marginTop: 20,
         elevation: 5,
-        shadowColor: "#000",
+        shadowColor: "#1C252E",
         shadowOpacity: 0.3,
         shadowOffset: { width: 0, height: 3 },
         shadowRadius: 4,
+    },
+    emptyLastBox: {
+        // marginTop: 20,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: "flex-start",
+        gap: 3,
+
+        // backgroundColor: "#fff",
+        // paddingHorizontal: 15,
+        paddingVertical: 5,
+        // borderRadius: 5,
+        borderColor: "#C0C0C0",
+        // borderWidth: 0.6,
+    },
+    emptyLastText: {
+        fontSize: 15,
+        fontWeight: 'bold',
+        color: '#1C252E',
     },
 });
 

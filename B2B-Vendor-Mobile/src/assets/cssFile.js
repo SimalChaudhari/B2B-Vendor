@@ -92,6 +92,7 @@ const styles = StyleSheet.create({
     heroContainer: {
         flex: 1,
         backgroundColor: colors.background,
+        marginTop: 30,
         // paddingTop: 20,
         backgroundColor: colors.white,
     },
@@ -310,14 +311,18 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         flexWrap: "wrap",
         justifyContent: "space-between",
-        paddingHorizontal: 10,
-        marginBottom: 10, marginTop: 10,
+        paddingHorizontal: 6,
+        marginBottom: 10,
+         marginTop: 5,
         // justifyContent: 'center',
         alignItems: 'center',
     },
     heroProductTitle: {
         marginLeft: 14,
-        marginTop: 8,
+        marginTop: 5,
+        color:"#1C252E",
+        fontSize: 13,
+        fontWeight: "bold",
     },
 
     heroProductColor: {
@@ -342,19 +347,22 @@ const styles = StyleSheet.create({
         // backgroundColor: '#f0f0f0', // Light background for page numbers
     },
     activePage: {
-        backgroundColor: '#333', // Dark background for active page
+        backgroundColor: '#1C252E', // Dark background for active page
     },
     activePageText: {
         color: "#fff", // Set text color for active page number
+        fontSize: 15,
+        fontWeight: "bold",
     },
     pageText: {
         fontSize: 16,
-        color: '#333', // Text color for page numbers
+        fontWeight: "bold",
+        color: '#1C252E', // Text color for page numbers
     },
     paginationArrow: {
         fontSize: 20,
         marginHorizontal: 10,
-        color: '#333', // Color for arrows
+        color: '#1C252E', // Color for arrows
     },
 
     heading: {
@@ -362,7 +370,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
     },
     form: {
-        marginVertical: 20,
+        marginVertical: 0,
     },
     AddAddressinput: {
         // borderWidth: 1,
@@ -371,18 +379,23 @@ const styles = StyleSheet.create({
         // borderRadius: 5,
         // padding: 10,
         // marginBottom: 10,
-        marginTop:20,
+        marginTop: 10,
     },
     addButton: {
-        marginVertical:30,
-        backgroundColor: "#007BFF",
-        padding: 10,
+        marginVertical: 30,
+        backgroundColor: "#0C68E9",
+        padding: 13,
         borderRadius: 5,
         alignItems: "center",
     },
+    
+    addButtonDisabled: {
+        backgroundColor: "#B0BEC5", // Disabled state background
+    },
+
     addButtonText: {
         color: "white",
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: "bold",
     },
     addressCard: {
@@ -433,6 +446,25 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
     },
 
+    emptyLastBox: {
+        marginTop: 10,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: "flex-start",
+        gap: 3,
+
+        // backgroundColor: "#fff",
+        // paddingHorizontal: 15,
+        paddingVertical: 5,
+        // borderRadius: 5,
+        borderColor: "#C0C0C0",
+        // borderWidth: 0.6,
+    },
+    emptyLastText: {
+        fontSize: 15,
+        fontWeight: 'bold',
+        color: '#1C252E',
+    },
 });
 
 export default styles;

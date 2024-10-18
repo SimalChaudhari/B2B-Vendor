@@ -10,6 +10,7 @@ import { Dropdown } from 'react-native-element-dropdown';
 import { formatNumber } from '../../utils';
 import { useSelector, useDispatch } from 'react-redux';
 import { setSelectedGroupR } from '../../../redux/groupReducer';
+import LoadingComponent from '../../components/Loading/LoadingComponent';
 
 const VendorHomeScreen = () => {
     const dispatch = useDispatch();
@@ -31,7 +32,7 @@ const VendorHomeScreen = () => {
     const selectedGroupr = useSelector((state) => state.group.selectedGroup);
 
     const options = [
-        { label: '1 items per page', value: 1 },
+        // { label: '1 items per page', value: 1 }, // Testing For Short Data
         { label: '4 items per page', value: 4 },
         { label: '10 items per page', value: 10 },
         { label: '20 items per page', value: 20 },
@@ -73,7 +74,7 @@ const VendorHomeScreen = () => {
         setSelectedGroup(selectedGroupr);
         // Introduce a minimum delay of 5 seconds
         await new Promise(resolve => setTimeout(resolve, 2000));
-        
+
         await getItems(); // Call getItems to refresh data
         setRefreshing(false);
         setLoading(false);
@@ -81,7 +82,7 @@ const VendorHomeScreen = () => {
 
 
     if (loading) {
-        return <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 20 }}><ActivityIndicator size="large" color="#0000ff" /></View>;
+        return <LoadingComponent/>;
     }
 
     if (error) {
@@ -205,18 +206,7 @@ const VendorHomeScreen = () => {
                             <Text style={styles.closeButtonText}>✖</Text>
                         </TouchableOpacity>
                         <Text style={styles.sidebarText}>Sidebar Menu</Text>
-                        {/*
-                            {items.data.map((item) => (
-                                <View key={item.id} style={{ margin: '10px 0' }}>
-                                    <Text style={styles.sidebarItem}>{item.group}</Text>
-                                </View>
-                            ))}
-                            
-                            <Text style={styles.sidebarItem}>Item 1</Text>
-                            <Text style={styles.sidebarItem}>Item 2</Text>
-                            <Text style={styles.sidebarItem}>Item 3</Text>
-    
-                            */}
+                        
                         <View style={styles.filterContainer}>
                             {group.map((groupName, index) => (
                                 <TouchableOpacity key={index} onPress={() => handleResetAndToggle(groupName)}>
@@ -228,19 +218,6 @@ const VendorHomeScreen = () => {
                             </TouchableOpacity>
                         </View>
 
-                        {/*
-                                <View style={styles.filterContainer}>
-                                    <TouchableOpacity onPress={() => filterByGroup('Mobile')}>
-                                        <Text style={styles.sidebarItem}>Filter Mobile</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity onPress={() => filterByGroup('Apple')}>
-                                        <Text style={styles.sidebarItem}>Filter Apple</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity onPress={resetFilter}>
-                                        <Text style={styles.sidebarItem}>Reset Filter</Text>
-                                    </TouchableOpacity>
-                                </View>
-                        */}
                     </View>
                 )}
 
@@ -315,7 +292,12 @@ const VendorHomeScreen = () => {
                                     {item.itemName}
                                 </Text>
                                 <View style={styles.heroProductBottom}>
-                                    <Text style={{ marginLeft: 10 }}>₹ {formatNumber(item.sellingPrice)}</Text>
+                                    <Text style={{
+                                        marginLeft: 10,
+                                        color: "#1C252E",
+                                        fontSize: 13,
+                                        fontWeight: "bold",
+                                    }}>₹ {formatNumber(item.sellingPrice)}</Text>
                                 </View>
                             </View>
                         </Pressable>

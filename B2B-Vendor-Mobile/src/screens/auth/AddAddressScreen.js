@@ -8,6 +8,7 @@ import {
 import React, { useEffect, useState, useCallback } from "react";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { TextInput } from 'react-native-paper';
+import { Feather } from "@expo/vector-icons";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { updateUserAddresses } from "../../../redux/authReducer"; // Adjust the import path as necessary
@@ -53,20 +54,21 @@ const AddAddressScreen = () => {
     setTimeout(() => {
       console.log('Address Data: ', newAddress);
       setLoading(false); // Reset loading state
+      navigation.navigate('Confirm');
     }, 2000); // Refresh indicator stops after 2 seconds
 
     try {
-      const response = await axios.post("http://192.168.1.112:8181/addresses", {
-        userId,
-        address: newAddress,
-      });
-      console.log(response.data.message);
+      // const response = await axios.post("http://192.168.1.112:8181/addresses", {
+      //   userId,
+      //   address: newAddress,
+      // });
+      // console.log(response.data.message);
 
-      const addressesResponse = await axios.get(`http://192.168.1.112:8181/addresses/${userId}`);
-      const updatedAddresses = addressesResponse.data.addresses;
+      // const addressesResponse = await axios.get(`http://192.168.1.112:8181/addresses/${userId}`);
+      // const updatedAddresses = addressesResponse.data.addresses;
 
       // Dispatch the updated addresses to the authReducer
-      dispatch(updateUserAddresses(updatedAddresses)); // Use the new action
+      // dispatch(updateUserAddresses(updatedAddresses)); // Use the new action
 
       setNewAddress({
         name: '',
@@ -96,7 +98,7 @@ const AddAddressScreen = () => {
     } finally {
       setLoading(false); // Reset loading state
     }
-    
+
   };
 
   const handleError = (error) => {
@@ -129,6 +131,12 @@ const AddAddressScreen = () => {
       <View style={{ padding: 10 }}>
         <Text style={styles.heading}>Add Your Address</Text>
 
+        <Pressable style={styles.emptyLastBox}
+          onPress={() => navigation.navigate("Cart")}
+        >
+          <Feather name="chevron-left" size={20} color="#1C252E" />
+          <Text style={styles.emptyLastText}>Back</Text>
+        </Pressable>
         {/* Add Address Form */}
         <View style={styles.form}>
           <TextInput
@@ -141,9 +149,9 @@ const AddAddressScreen = () => {
             style={styles.AddAddressinput}
             theme={{
               colors: {
-                primary: focus.name ? 'orange' : '#000', // Change primary color on focus
-                text: focus.name ? '#6200ee' : '#000', // Change text color on focus
-                placeholder: focus.name ? '#6200ee' : '#000', // Change placeholder color on focus
+                primary: focus.name ? '#0C68E9' : '#000', // Change primary color on focus
+                text: focus.name ? '#0C68E9' : '#000', // Change text color on focus
+                placeholder: focus.name ? '#0C68E9' : '#000', // Change placeholder color on focus
                 underlineColor: 'transparent',
                 background: 'white', // Optional, set background color if needed
               },
@@ -159,9 +167,9 @@ const AddAddressScreen = () => {
             style={styles.AddAddressinput}
             theme={{
               colors: {
-                primary: focus.houseNo ? 'orange' : '#000',
-                text: focus.houseNo ? '#6200ee' : '#000',
-                placeholder: focus.houseNo ? '#6200ee' : '#000',
+                primary: focus.houseNo ? '#0C68E9' : '#000',
+                text: focus.houseNo ? '#0C68E9' : '#000',
+                placeholder: focus.houseNo ? '#0C68E9' : '#000',
                 underlineColor: 'transparent',
                 background: 'white',
               },
@@ -177,9 +185,9 @@ const AddAddressScreen = () => {
             style={styles.AddAddressinput}
             theme={{
               colors: {
-                primary: focus.landmark ? 'orange' : '#000',
-                text: focus.landmark ? '#6200ee' : '#000',
-                placeholder: focus.landmark ? '#6200ee' : '#000',
+                primary: focus.landmark ? '#0C68E9' : '#000',
+                text: focus.landmark ? '#0C68E9' : '#000',
+                placeholder: focus.landmark ? '#0C68E9' : '#000',
                 underlineColor: 'transparent',
                 background: 'white',
               },
@@ -195,9 +203,9 @@ const AddAddressScreen = () => {
             style={styles.AddAddressinput}
             theme={{
               colors: {
-                primary: focus.street ? 'orange' : '#000',
-                text: focus.street ? '#6200ee' : '#000',
-                placeholder: focus.street ? '#6200ee' : '#000',
+                primary: focus.street ? '#0C68E9' : '#000',
+                text: focus.street ? '#0C68E9' : '#000',
+                placeholder: focus.street ? '#0C68E9' : '#000',
                 underlineColor: 'transparent',
                 background: 'white',
               },
@@ -214,9 +222,9 @@ const AddAddressScreen = () => {
             keyboardType="phone-pad"
             theme={{
               colors: {
-                primary: focus.mobileNo ? 'orange' : '#000',
-                text: focus.mobileNo ? '#6200ee' : '#000',
-                placeholder: focus.mobileNo ? '#6200ee' : '#000',
+                primary: focus.mobileNo ? '#0C68E9' : '#000',
+                text: focus.mobileNo ? '#0C68E9' : '#000',
+                placeholder: focus.mobileNo ? '#0C68E9' : '#000',
                 underlineColor: 'transparent',
                 background: 'white',
               },
@@ -232,9 +240,9 @@ const AddAddressScreen = () => {
             style={styles.AddAddressinput}
             theme={{
               colors: {
-                primary: focus.city ? 'orange' : '#000',
-                text: focus.city ? '#6200ee' : '#000',
-                placeholder: focus.city ? '#6200ee' : '#000',
+                primary: focus.city ? '#0C68E9' : '#000',
+                text: focus.city ? '#0C68E9' : '#000',
+                placeholder: focus.city ? '#0C68E9' : '#000',
                 underlineColor: 'transparent',
                 background: 'white',
               },
@@ -250,9 +258,9 @@ const AddAddressScreen = () => {
             style={styles.AddAddressinput}
             theme={{
               colors: {
-                primary: focus.country ? 'orange' : '#000',
-                text: focus.country ? '#6200ee' : '#000',
-                placeholder: focus.country ? '#6200ee' : '#000',
+                primary: focus.country ? '#0C68E9' : '#000',
+                text: focus.country ? '#0C68E9' : '#000',
+                placeholder: focus.country ? '#0C68E9' : '#000',
                 underlineColor: 'transparent',
                 background: 'white',
               },
@@ -269,20 +277,29 @@ const AddAddressScreen = () => {
             keyboardType="numeric"
             theme={{
               colors: {
-                primary: focus.postalCode ? 'orange' : '#000',
-                text: focus.postalCode ? '#6200ee' : '#000',
-                placeholder: focus.postalCode ? '#20ee' : '#000',
+                primary: focus.postalCode ? '#0C68E9' : '#000',
+                text: focus.postalCode ? '#0C68E9' : '#000',
+                placeholder: focus.postalCode ? '#0C68E9' : '#000',
                 underlineColor: 'transparent',
                 background: 'white',
               },
             }}
           />
 
-          <Pressable style={styles.addButton} onPress={handleAddAddress} disabled={loading}>
+          <Pressable
+            style={({ pressed }) => [
+              styles.addButton,
+              loading && styles.addButtonDisabled, // If loading, apply disabled style
+              pressed && !loading && { opacity: 0.8 }, // Visual feedback on press
+            ]}
+            onPress={handleAddAddress}
+            disabled={loading}
+          >
             <Text style={styles.addButtonText}>
               {loading ? "Adding..." : "Add Address"}
             </Text>
           </Pressable>
+
         </View>
       </View>
     </ScrollView>
@@ -290,27 +307,3 @@ const AddAddressScreen = () => {
 };
 
 export default AddAddressScreen;
-
-// const styles = StyleSheet.create({
-//   heading: {
-//     fontSize: 24,
-//     fontWeight: "bold",
-//     marginBottom: 20,
-//   },
-//   form: {
-//     marginVertical: 20,
-//   },
-//   AddAddressinput: {
-//     marginBottom: 15,
-//   },
-//   button: {
-//     backgroundColor: "#6200ee",
-//     padding: 15,
-//     borderRadius: 5,
-//   },
-//   buttonText: {
-//     color: "#fff",
-//     textAlign: "center",
-//     fontWeight: "bold",
-//   },
-// });

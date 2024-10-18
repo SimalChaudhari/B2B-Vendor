@@ -291,7 +291,10 @@ const HomeScreen = () => {
                     {item.itemName}
                   </Text>
                   <View style={styles.heroProductBottom}>
-                    <Text style={{ marginLeft: 10 }}>₹ {formatNumber(item.sellingPrice)}</Text>
+                    <Text style={{ marginLeft: 10 , 
+                      color:"#1C252E",
+                      fontSize: 13,
+                      fontWeight: "bold",}}>₹ {formatNumber(item.sellingPrice)}</Text>
                   </View>
                 </View>
               </Pressable>
@@ -301,13 +304,13 @@ const HomeScreen = () => {
           {/* Pagination Controls */}
           <View style={styles.paginationControls}>
             <TouchableOpacity onPress={goToPreviousPage} disabled={currentPage === 1}>
-              <Text style={styles.paginationArrow}><AntDesign name="left" size={18} color="black" /></Text>
+              <Text style={styles.paginationArrow}><AntDesign name="left" size={18} color="#1C252E" /></Text>
             </TouchableOpacity>
 
             {renderPageNumbers()}
 
             <TouchableOpacity onPress={goToNextPage} disabled={currentPage === totalPages}>
-              <Text style={styles.paginationArrow}><AntDesign name="right" size={18} color="black" /></Text>
+              <Text style={styles.paginationArrow}><AntDesign name="right" size={18} color="#1C252E" /></Text>
             </TouchableOpacity>
           </View>
 

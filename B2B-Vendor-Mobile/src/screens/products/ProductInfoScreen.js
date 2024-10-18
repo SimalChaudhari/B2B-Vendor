@@ -150,13 +150,13 @@ const ProductInfoScreen = () => {
           >
             {addedToCart ? (
               <View style={styles.addToCartBox}>
-                <FontAwesome6 name="cart-plus" size={24} color="black" />
+                <FontAwesome6 name="cart-plus" size={24} color="#1C252E" />
                 <Text style={styles.addToCartText}> Added to Cart</Text>
               </View>
             ) : (
 
               <View style={styles.addToCartBox}>
-                <FontAwesome6 name="cart-plus" size={24} color="black" />
+                <FontAwesome6 name="cart-plus" size={24} color="#1C252E" />
                 <Text style={styles.addToCartText}> Add to Cart</Text>
               </View>
             )}
@@ -241,24 +241,26 @@ const styles = StyleSheet.create({
   },
 
   productsubDescription: {
-    marginTop: 10,
+    marginTop: 7,
     marginBottom: 10,
-    fontSize: 16,
+    fontSize: 14,
     color: "#637381",
+    fontWeight: "700",
 
   },
   productTitle: {
     fontSize: 22,
     fontWeight: "700",
     marginTop: 10,
-    marginBottom: 10,
+    // marginBottom: 10,
+    color: "#1C252E",
   },
 
   productPrice: {
     fontSize: 22,
     fontWeight: "700",
-    marginTop: 10,
-    marginBottom: 10,
+    // marginTop: 10,
+    // marginBottom: 10,
     color: "#1C252E",
   },
 
@@ -277,15 +279,16 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   quantityText: {
-    color: "#283039",
+    color: "#1C252E",
     fontSize: 18,
+    fontWeight: "700",
   },
 
   topQuantityContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginVertical: 10,
+    marginVertical: 5,
     // padding: 10,
     // marginLeft: 10,
     // marginRight: 10,
@@ -322,6 +325,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   addToCartText: {
+    color:"#1C252E",
     marginBottom: 2,
     fontSize: 17,
     fontWeight: "700",
