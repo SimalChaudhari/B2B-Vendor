@@ -4,14 +4,15 @@ import { Repository } from 'typeorm';
 import axios from 'axios';
 import { parseStringPromise } from 'xml2js'; // Library for parsing XML to JSON
 import { VendorEntity } from './vendor.entity'; // Make sure to import your Vendor Entity
-import { VendorDto } from './vendor.dto'; // Make sure to import your Vendor DTO
 import { Vendors } from 'tally/vendors';
+import { User } from 'users/user/users.entity';
+import { VendorDto } from './../user/users.dto';
 
 @Injectable()
 export class VendorService {
     constructor(
-        @InjectRepository(VendorEntity)
-        private vendorRepository: Repository<VendorEntity>,
+        @InjectRepository(User)
+        private vendorRepository: Repository<User>,
     ) { }
 
     async fetchAndStoreVendors(): Promise<void> {
@@ -50,7 +51,7 @@ export class VendorService {
         }
     }
 
-    async parseXmlToVendors(xml: string): Promise<VendorEntity[]> {
+    async parseXmlToVendors(xml: string): Promise<User[]> {
         const parsedResult = await parseStringPromise(xml);
         const vendorItems = parsedResult.ENVELOPE.LEDGER || []; // Adjust based on your XML structure
 
@@ -66,7 +67,7 @@ export class VendorService {
             vendorDto.state = this.cleanString(vendor.STATE?.[0]);
             vendorDto.pincode = this.cleanString(vendor.PINCODE?.[0]);
             vendorDto.contactPerson = this.cleanString(vendor.CONTACTPERSON?.[0]);
-            vendorDto.phone = this.cleanString(vendor.PHONE?.[0]);
+            vendorDto.mobile = this.cleanString(vendor.PHONE?.[0]);
             vendorDto.email = this.cleanString(vendor.EMAIL?.[0]);
             vendorDto.pan = this.cleanString(vendor.PAN?.[0]);
             vendorDto.gstType = this.cleanString(vendor.GSTTYPE?.[0]);
@@ -82,7 +83,7 @@ export class VendorService {
     }
 
     // Function to check if the existing vendor has changes
-    private hasChanges(existingVendor: VendorEntity, newVendor: VendorEntity): boolean {
+    private hasChanges(existingVendor: User, newVendor: User): boolean {
         return (
             existingVendor.slNo !== newVendor.slNo ||
             existingVendor.name !== newVendor.name ||
@@ -94,7 +95,7 @@ export class VendorService {
             existingVendor.state !== newVendor.state ||
             existingVendor.pincode !== newVendor.pincode ||
             existingVendor.contactPerson !== newVendor.contactPerson ||
-            existingVendor.phone !== newVendor.phone ||
+            existingVendor.mobile !== newVendor.mobile ||
             existingVendor.email !== newVendor.email ||
             existingVendor.pan !== newVendor.pan ||
             existingVendor.gstType !== newVendor.gstType ||
@@ -103,11 +104,11 @@ export class VendorService {
         );
     }
 
-    async findAll(): Promise<VendorEntity[]> {
+    async findAll(): Promise<User[]> {
         return this.vendorRepository.find(); // Load files for all vendors
     }
 
-    async findById(id: string): Promise<VendorEntity | null> {
+    async findById(id: string): Promise<User | null> {
         return this.vendorRepository.findOne({ where: { id } }); // Load files for the vendor by ID
     }
     async delete(id: string): Promise<void> {

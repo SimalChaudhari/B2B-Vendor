@@ -1,6 +1,5 @@
 //users.service.ts
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
-import { UpdateUserDto } from './users.dto';
 import { User } from './users.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -25,31 +24,6 @@ export class UserService {
         });
       }
 
-    // Update the method to accept an optional file parameter
-    async updateUser(id: string, updateUserDto: UpdateUserDto, file?: Express.Multer.File): Promise<User> {
-        const user = await this.userRepository.findOne({ where: { id, isDeleted: false } });
-        if (!user) {
-            throw new NotFoundException('User not found or has been deleted');
-        }
-        // Check for existing email and mobile number
-        const conflictUser = await this.userRepository.findOne({
-            where: [
-                { email: updateUserDto.email},
-                { mobile: updateUserDto.mobile},
-            ]
-        });
-        if (conflictUser && conflictUser.id !== user.id) {
-            throw new ConflictException(`${conflictUser.email === updateUserDto.email ? 'Email' : 'Mobile number'} already exists`);
-        }
-
-        if (file) {
-            const uploadPath = path.join(__dirname, '..', '..', '..', 'src', 'uploads', file.originalname);
-            fs.writeFileSync(uploadPath, file.buffer); // Save the file (you may want to do this asynchronously)
-            user.profile = uploadPath; // Assume you have a field in your User entity for the image path
-        }
-        Object.assign(user, updateUserDto);
-        return await this.userRepository.save(user);
-    }
 
     async getById(id: string): Promise<User> {
         const user = await this.userRepository.findOne({ where: { id, isDeleted: false } }); // Correct way to find by ID

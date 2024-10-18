@@ -32,7 +32,7 @@ export class AddressesService {
         const address = this.addressesRepository.create(createAddressDto);
 
         // Assign the fetched user entity to the user field
-        address.user = user;
+        // address.user = user;
 
         return this.addressesRepository.save(address);
     }

@@ -24,7 +24,7 @@ export class Address {
     @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     created_at!: Date;
 
-    @ManyToOne(() => User, (user) => user.addresses)
-    user!: User; // TypeORM will automatically create a `userId` foreign key.
+    // @ManyToOne(() => User, (user) => user.addresses)
+    // user!: User; // TypeORM will automatically create a `userId` foreign key.
     // user_id: string;
 }

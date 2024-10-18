@@ -4,11 +4,7 @@ import { IsEmail, IsMobilePhone, IsNotEmpty, IsOptional, IsString } from 'class-
 export class AuthDto {
   @IsString()
   @IsNotEmpty()
-  firstName!: string;
-
-  @IsString()
-  @IsNotEmpty()
-  lastName!: string;
+  name!: string;
 
   @IsEmail()
   @IsNotEmpty()
@@ -17,11 +13,6 @@ export class AuthDto {
   @IsMobilePhone()
   @IsNotEmpty()
   mobile!: string;
-  
-
-  @IsString()
-  @IsOptional()
-  profile?: string;
 
   @IsString()
   @IsOptional()

@@ -60,9 +60,20 @@ export const paths = {
     createTerm: `/create`,
     editTerm: (id) => `/edit/${id}`,
     viewTerm: (id) => `/view/${id}`,
-
     general_settings: `/settings/general-settings`,
   },
+
+  // Vendor  Panel 
+  items: {
+    root: `/items`,
+    list: `/items/list`,
+    checkout: `/checkout/list`,
+    details: (id) => `/items/${id}`,
+    edit: (id) => `/edit/${id}`,
+    view: (id) => `/view/${id}`,
+  },
+
+
   // AUTH
   auth: {
     jwt: {

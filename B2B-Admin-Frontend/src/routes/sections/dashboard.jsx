@@ -10,19 +10,23 @@ import { ContactCreateView, ContactEditView, ContactView } from 'src/sections/se
 import { TermCreateView, TermEditView, TermView } from 'src/sections/setting/terms-conditions/view';
 import { VendorView } from 'src/sections/vendor/view/vendor-view';
 import { VendorEditView } from 'src/sections/vendor/view/vendor-edit';
+import { ItemView } from 'src/sections/vendor-sections/product/view';
+import { CheckoutView } from 'src/sections/vendor-sections/checkout/view';
 
 // Overview
 const IndexPage = lazy(() => import('src/pages/dashboard'));
 const UsersPage = lazy(() => import('src/pages/users'));
 const ProductPage = lazy(() => import('src/pages/products'));
 const OrderPage = lazy(() => import('src/pages/orders'));
-
 const VendorPage = lazy(() => import('src/pages/vendors'));
-
 const FAQPage = lazy(() => import('src/pages/settings/faq'));
 const ContactPage = lazy(() => import('src/pages/settings/contact-us'));
 const TermsPage = lazy(() => import('src/pages/settings/terms-conditions'));
 const GeneralPage = lazy(() => import('src/pages/settings/general'));
+
+// Vendor
+const ItemPage = lazy(() => import('src/pages/vendor-page/items'));
+
 
 // Error
 const Page500 = lazy(() => import('src/pages/error/500'));
@@ -110,10 +114,21 @@ export const dashboardRoutes = [
       { path: 'terms-conditions/view/:id', element: <TermView /> },
 
       { path: 'general-settings', element: <GeneralPage /> },
+    ],
+  },
+
+  {
+    path: 'items',
+    element: CONFIG.auth.skip ? <>{layoutContent}</> : <AuthGuard>{layoutContent}</AuthGuard>,
+    children: [
+      { element: <ItemPage />, index: true },
+      { path: 'view/:id', element: <ItemView /> },
+      { path: 'checkout', element: <CheckoutView/> },
 
 
     ],
   },
+
 
   { path: '500', element: <Page500 /> },
   { path: '404', element: <Page404 /> },

@@ -1,5 +1,4 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
-import { Address } from 'users/address/addresses/addresses.entity';
 
 export enum UserStatus {
     Active = 'Active',
@@ -17,17 +16,53 @@ export class User {
     @PrimaryGeneratedColumn('uuid')
     id!: string;
 
-    @Column()
-    firstName!: string;
+    @Column({ type: 'varchar' })
+    slNo?: string; // Vendor no
 
-    @Column()
-    lastName!: string;
+    @Column({ type: 'varchar' })
+    name?: string; // Vendor name
 
-    @Column({ unique: true })
-    email!: string;
+    @Column({ type: 'varchar', nullable: true })
+    alias?: string; // Optional alias for the vendor
 
-    @Column({ unique: true })
-    mobile!: string;
+    @Column({ type: 'varchar' })
+    active?: string; // Vendor status (active or inactive)
+
+    @Column({ type: 'varchar', nullable: true })
+    parent?: string; // Optional parent vendor reference
+
+    @Column({ type: 'varchar' })
+    address?: string; // Vendor address
+
+    @Column({ type: 'varchar' })
+    country?: string; // Vendor country
+
+    @Column({ type: 'varchar' })
+    state?: string; // Vendor state
+
+    @Column({ type: 'varchar' })
+    pincode?: string; // Vendor pincode
+
+    @Column({ type: 'varchar' })
+    contactPerson?: string; // Name of the contact person
+
+    @Column({ type: 'varchar' })
+    mobile!: string; // Vendor phone number
+
+    @Column({ type: 'varchar'}) // Ensure email is unique
+    email!: string; // Vendor email address
+
+    @Column({ type: 'varchar' })
+    pan?: string; // Optional PAN number
+
+    @Column({ type: 'varchar' })
+    gstType?: string; // GST type (e.g., Regular, Composition)
+
+    @Column({ type: 'varchar' })
+    gstNo?: string; // GST number
+
+    @Column({ type: 'varchar', nullable: true })
+    gstDetails?: string; // Optional additional GST details
 
     @Column({ type: 'varchar', length: 255, nullable: true })
     profile?: string;
@@ -35,9 +70,9 @@ export class User {
     @Column({
         type: 'enum',
         enum: UserRole,
-        default: UserRole.Customer,
+        default: UserRole.Vendor,
     })
-    role!: UserRole;
+    role?: UserRole;
 
     @Column({
         type: 'enum',
@@ -51,9 +86,6 @@ export class User {
 
     @Column({ nullable: true, type: 'timestamp' })
     otpExpires?: Date | null;
-
-    @OneToMany(() => Address, (address) => address.user, { cascade: true })
-    addresses!: Address[]; // A user can have multiple addresses
 
     @Column({ default: false })
     isDeleted!: boolean;
