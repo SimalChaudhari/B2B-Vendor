@@ -1,5 +1,5 @@
 // cart.controller.ts
-import { Controller, Post, Body, Get, Delete, Param, Req, UseGuards, Res } from '@nestjs/common';
+import { Controller, Post, Body, Get, Delete, Param, Req, UseGuards, Res, Patch } from '@nestjs/common';
 import { CartService } from './cart.service';
 import { AddToCartDto } from './cart.dto';
 import { Request, Response } from 'express';
@@ -9,6 +9,26 @@ import { JwtAuthGuard } from 'auth/jwt/jwt-auth.guard';
 @Controller('cart')
 export class CartController {
     constructor(private readonly cartService: CartService) { }
+
+      // Increment cart item quantity
+      @Patch('/increment/:cartItemId')
+      async incrementQuantity(
+          @Req() req: Request,
+          @Param('cartItemId') cartItemId: string
+      ) {
+          const userId = req.user.id;
+          return this.cartService.updateCartItemQuantity(userId, cartItemId, 1); // Increment by 1
+      }
+  
+      // Decrement cart item quantity
+      @Patch('/decrement/:cartItemId')
+      async decrementQuantity(
+          @Req() req: Request,
+          @Param('cartItemId') cartItemId: string
+      ) {
+          const userId = req.user.id;
+          return this.cartService.updateCartItemQuantity(userId, cartItemId, -1); // Decrement by 1
+      }
 
     @Post('/add')
     async addToCart(

@@ -3,9 +3,6 @@ import { CONFIG } from 'src/config-global';
 import { SvgColor } from 'src/components/svg-color';
 
 const icon = (name) => <SvgColor src={`${CONFIG.site.basePath}/assets/icons/navbar/${name}.svg`} />;
-const userRole = JSON.parse(localStorage.getItem("userData"))?.user.role
-
-// const AuthAdmin = userRole && userRole === "Admin" 
 
 const ICONS = {
   dashboard: icon('ic-dashboard'),
@@ -17,6 +14,9 @@ const ICONS = {
 };
 
 
+// Retrieve user role from localStorage synchronously
+const userData = JSON.parse(localStorage.getItem('userData'));
+const userRole = userData?.user?.role;
 
 export const navData = [
   {

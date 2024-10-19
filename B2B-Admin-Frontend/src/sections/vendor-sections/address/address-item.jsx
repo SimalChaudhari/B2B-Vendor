@@ -23,9 +23,9 @@ export function AddressItem({ address, action, sx, ...other }) {
       <Stack flexGrow={1} spacing={1}>
         <Stack direction="row" alignItems="center">
           <Typography variant="subtitle2">
-            {address.name}
+            {address.address}
             <Box component="span" sx={{ ml: 0.5, typography: 'body2', color: 'text.secondary' }}>
-              ({address.addressType})
+              ({address.country})
             </Box>
           </Typography>
 
@@ -37,11 +37,11 @@ export function AddressItem({ address, action, sx, ...other }) {
         </Stack>
 
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          {address.fullAddress}
+          {address.state}
         </Typography>
 
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          {address.phoneNumber}
+          {address.mobile || "Not Available"}
         </Typography>
       </Stack>
 

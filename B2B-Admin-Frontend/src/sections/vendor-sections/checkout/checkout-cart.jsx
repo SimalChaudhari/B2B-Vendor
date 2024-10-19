@@ -16,45 +16,49 @@ import { useCheckoutContext } from './context';
 import { CheckoutSummary } from './checkout-summary';
 import { CheckoutCartProductList } from './checkout-cart-product-list';
 import { useDispatch, useSelector } from 'react-redux';
-import { cartList } from 'src/store/action/cartActions';
+import { cartList, decreaseQuantity, deleteCartItem, increaseQuantity } from 'src/store/action/cartActions';
 import { useEffect } from 'react';
+import useCart from './components/useCart';
 
 // ----------------------------------------------------------------------
 
 export function CheckoutCart() {
   const dispatch = useDispatch();
 
+  const mappedData = useCart();
+
+  const totalItems = mappedData.reduce((acc, item) => acc + item.quantity, 0);
+  const subtotal = mappedData.reduce((acc, item) => acc + item.totalAmount, 0);
+  const discount = 0;
+  //----------------------------------------------------------------------------------------------------
+
+  const fetchData = async () => {
+    await dispatch(cartList());
+  };
+
   const checkout = useCheckoutContext();
 
-  const addToCartData = useSelector((state) => state.cart?.cart || []);
+  const empty = mappedData.length === 0;
 
-  // Dynamically map through cart data
-  const mappedData = addToCartData.map((item, index) => ({
-    id: item.id,
-    quantity: item.quantity,
-    userId: item.userId,
-    price: item.product.sellingPrice,
-    totalAmount: "1000",
-    name: item.product.itemName,
-    // Add more product fields dynamically here if needed
-    // colors: [colors[0]],
-    // size: sizes[0],
-  }));
+  const handleDeleteCart = async (id) => {
+    const res = await dispatch(deleteCartItem(id)); // Action to delete an item
+    if (res) {
+      fetchData();
 
-  //----------------------------------------------------------------------------------------------------
-  useEffect(() => {
-    const fetchData = async () => {
-      await dispatch(cartList());
-    };
-    fetchData(); // Call fetchData when the component mounts
-  }, []);
+    }
+  };
 
+  const handleIncreaseQuantity = async (id) => {
+    await dispatch(increaseQuantity(id)); // Action to increase item quantity
+    fetchData();
 
+  };
 
+  const handleDecreaseQuantity = async (id) => {
+    await dispatch(decreaseQuantity(id)); // Action to decrease item quantity
+    fetchData();
 
-
-
-  const empty = !checkout.items.length;
+  };
 
   return (
     <Grid container spacing={3}>
@@ -65,8 +69,7 @@ export function CheckoutCart() {
               <Typography variant="h6">
                 Cart
                 <Typography component="span" sx={{ color: 'text.secondary' }}>
-                  &nbsp;(
-                  {checkout.totalItems} item)
+                  &nbsp;({totalItems} item{totalItems > 1 ? 's' : ''})
                 </Typography>
               </Typography>
             }
@@ -83,9 +86,9 @@ export function CheckoutCart() {
           ) : (
             <CheckoutCartProductList
               products={mappedData}
-              onDelete={checkout.onDeleteCart}
-              onIncreaseQuantity={checkout.onIncreaseQuantity}
-              onDecreaseQuantity={checkout.onDecreaseQuantity}
+              onDelete={handleDeleteCart}
+              onIncreaseQuantity={handleIncreaseQuantity}
+              onDecreaseQuantity={handleDecreaseQuantity}
             />
           )}
         </Card>
@@ -102,10 +105,10 @@ export function CheckoutCart() {
 
       <Grid xs={12} md={4}>
         <CheckoutSummary
-          total={checkout.total}
-          discount={checkout.discount}
-          subtotal={checkout.subtotal}
-          onApplyDiscount={checkout.onApplyDiscount}
+           total={subtotal}
+          discount={discount}
+          subtotal={subtotal}
+          onApplyDiscount={() => {}} // Optional: handle discount application
         />
 
         <Button

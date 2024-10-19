@@ -54,6 +54,7 @@ export const logout = () => async (dispatch) => {
         localStorage.removeItem("userData");
         localStorage.removeItem("token");
         dispatch({ type: "LOGOUT" });
+     
         toast.success("Logged out successfully!");
         return true;
     } catch (error) {

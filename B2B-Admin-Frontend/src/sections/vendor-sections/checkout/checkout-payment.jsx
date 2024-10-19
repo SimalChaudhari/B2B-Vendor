@@ -14,26 +14,27 @@ import { CheckoutSummary } from './checkout-summary';
 import { CheckoutDelivery } from './checkout-delivery';
 import { CheckoutBillingInfo } from './checkout-billing-info';
 import { CheckoutPaymentMethods } from './checkout-payment-methods';
+import useCart from './components/useCart';
 
 // ----------------------------------------------------------------------
 
 const DELIVERY_OPTIONS = [
   { value: 0, label: 'Free', description: '5-7 days delivery' },
-  { value: 10, label: 'Standard', description: '3-5 days delivery' },
-  { value: 20, label: 'Express', description: '2-3 days delivery' },
+  // { value: 10, label: 'Standard', description: '3-5 days delivery' },
+  // { value: 20, label: 'Express', description: '2-3 days delivery' },
 ];
 
 const PAYMENT_OPTIONS = [
-  {
-    value: 'paypal',
-    label: 'Pay with Paypal',
-    description: 'You will be redirected to PayPal website to complete your purchase securely.',
-  },
-  {
-    value: 'credit',
-    label: 'Credit / Debit card',
-    description: 'We support Mastercard, Visa, Discover and Stripe.',
-  },
+  // {
+  //   value: 'paypal',
+  //   label: 'Pay with Paypal',
+  //   description: 'You will be redirected to PayPal website to complete your purchase securely.',
+  // },
+  // {
+  //   value: 'credit',
+  //   label: 'Credit / Debit card',
+  //   description: 'We support Mastercard, Visa, Discover and Stripe.',
+  // },
   { value: 'cash', label: 'Cash', description: 'Pay with cash when your order is delivered.' },
 ];
 
@@ -55,6 +56,11 @@ export const PaymentSchema = zod.object({
 
 export function CheckoutPayment() {
   const checkout = useCheckoutContext();
+
+  const mappedData = useCart();
+
+  const subtotal = mappedData.reduce((acc, item) => acc + item.totalAmount, 0);
+  const discount = 0;
 
   const defaultValues = { delivery: checkout.shipping, payment: '' };
 
@@ -103,12 +109,11 @@ export function CheckoutPayment() {
         </Grid>
 
         <Grid xs={12} md={4}>
-          <CheckoutBillingInfo billing={checkout.billing} onBackStep={checkout.onBackStep} />
-
+          
           <CheckoutSummary
-            total={checkout.total}
-            subtotal={checkout.subtotal}
-            discount={checkout.discount}
+            total={subtotal}
+            subtotal={subtotal}
+            discount={discount}
             shipping={checkout.shipping}
             onEdit={() => checkout.onGotoStep(0)}
           />

@@ -17,8 +17,8 @@ const userReducer = (state = initialState, { type, payload } = {}) => {
 
     case "LOGOUT":
       return {
-        isAuthenticated: false,
-        user: null,
+        authenticated: false,
+        authUser: null,
       };
 
 

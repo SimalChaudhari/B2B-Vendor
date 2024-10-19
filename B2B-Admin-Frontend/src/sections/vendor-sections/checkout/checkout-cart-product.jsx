@@ -18,7 +18,7 @@ import { IncrementerButton } from '../product/components/incrementer-button';
 // ----------------------------------------------------------------------
 
 export function CheckoutCartProduct({ row, onDelete, onDecrease, onIncrease }) {
-  console.log("🚀 ~ CheckoutCartProduct ~ row:", row)
+
   return (
     <TableRow>
       <TableCell>

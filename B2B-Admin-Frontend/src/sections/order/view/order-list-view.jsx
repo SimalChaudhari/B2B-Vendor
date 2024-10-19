@@ -142,7 +142,7 @@ export function OrderListView() {
 
   return (
     <div>
-      <DashboardContent>
+      <DashboardContent maxWidth="2xl">
         <CustomBreadcrumbs
           heading="List"
           links={[

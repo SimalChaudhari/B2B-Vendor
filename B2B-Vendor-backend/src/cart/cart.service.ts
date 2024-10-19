@@ -1,5 +1,5 @@
 // cart.service.ts
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CartItemEntity } from './cart.entity';
@@ -57,5 +57,23 @@ export class CartService {
 
     async clearCart(userId: string): Promise<void> {
         await this.cartRepository.delete({ userId });
+    }
+
+    async updateCartItemQuantity(userId: string, cartItemId: string, quantityChange: number): Promise<CartItemEntity> {
+        const cartItem = await this.cartRepository.findOne({ where: { id: cartItemId, userId } });
+
+        if (!cartItem) {
+            throw new NotFoundException('Cart item not found');
+        }
+
+        // Update the quantity
+        cartItem.quantity += quantityChange;
+
+        // Prevent quantity from going below 1
+        if (cartItem.quantity < 1) {
+            throw new HttpException('Quantity cannot be less than 1', HttpStatus.BAD_REQUEST);
+        }
+
+        return this.cartRepository.save(cartItem);
     }
 }

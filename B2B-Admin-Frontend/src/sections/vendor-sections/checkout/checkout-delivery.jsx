@@ -63,8 +63,9 @@ function OptionItem({ option, selected, ...other }) {
       {...other}
     >
       {label === 'Free' && <Iconify icon="carbon:bicycle" width={32} />}
-      {label === 'Standard' && <Iconify icon="carbon:delivery" width={32} />}
+      {/* {label === 'Standard' && <Iconify icon="carbon:delivery" width={32} />}
       {label === 'Express' && <Iconify icon="carbon:rocket" width={32} />}
+      */}
 
       <ListItemText
         sx={{ ml: 2 }}

@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 
 import Box from '@mui/material/Box';
@@ -18,6 +18,9 @@ import { Iconify } from 'src/components/iconify';
 import { Form, Field } from 'src/components/hook-form';
 import { ColorPicker } from 'src/components/color-utils';
 import { IncrementerButton } from './incrementer-button';
+import { addToCart, cartList, decreaseQuantity, increaseQuantity } from 'src/store/action/cartActions';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router';
 
 const MOCK_PRODUCT = {
   id: 1,
@@ -46,7 +49,6 @@ export function ProductDetailsSummary({
   disableActions,
   ...other
 }) {
-  const router = useRouter();
 
   const product = MOCK_PRODUCT;
 
@@ -57,21 +59,12 @@ export function ProductDetailsSummary({
     price,
     coverUrl,
     colors,
-    newLabel,
     available,
-    priceSale,
-    saleLabel,
     totalRatings,
     totalReviews,
     inventoryType,
-    subDescription,
   } = product;
 
-  const existProduct = !!items?.length && items.map((item) => item.id).includes(id);
-
-  const isMaxQuantity =
-    !!items?.length &&
-    items.filter((item) => item.id === id).map((item) => item.quantity)[0] >= available;
 
   const defaultValues = {
     id,
@@ -87,8 +80,26 @@ export function ProductDetailsSummary({
   const methods = useForm({ defaultValues });
 
   const { reset, watch, control, setValue, handleSubmit } = methods;
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const values = watch();
+
+  const [quantity, setQuantity] = useState(1);
+
+
+  // Handler to increase quantity
+  const handleIncreaseQuantity = () => {
+    setQuantity(prevQuantity => prevQuantity + 1);
+
+  };
+
+  // Handler to decrease quantity
+  const handleDecreaseQuantity = () => {
+    if (quantity > 1) {
+      setQuantity(prevQuantity => prevQuantity - 1);
+    }
+  };
+
 
   useEffect(() => {
     if (product) {
@@ -98,24 +109,40 @@ export function ProductDetailsSummary({
   }, [product]);
 
   const onSubmit = handleSubmit(async (data) => {
-    try {
-      if (!existProduct) {
-        onAddCart?.({ ...data, colors: [values.colors], subtotal: data.price * data.quantity });
-      }
-      onGotoStep?.(0);
-      router.push(paths.product.checkout);
-    } catch (error) {
-      console.error(error);
-    }
+
+
   });
 
-  const handleAddCart = useCallback(() => {
+
+  const handleAddCart = async () => { // Adjust to accept id and quantity
+    const data = { productId: products.id, quantity };
     try {
-      onAddCart?.({ ...values, colors: [values.colors], subtotal: values.price * values.quantity });
+      const res = await dispatch(addToCart(data));
+
     } catch (error) {
-      console.error(error);
+      console.error('Submission failed', error);
     }
-  }, [onAddCart, values]);
+  }
+
+
+
+
+  const handleBuyProduct = async () => { // Adjust to accept id and quantity
+    const data = { productId: products.id, quantity };
+    try {
+      const res = await dispatch(addToCart(data));
+      if (res) {
+        navigate('/items/checkout?step=0')
+      }
+    } catch (error) {
+      console.error('Submission failed', error);
+    }
+  }
+
+
+  const fetchData = async () => {
+    await dispatch(cartList());
+  };
 
   const renderPrice = (
     <Box sx={{ typography: 'h5' }}>
@@ -128,55 +155,6 @@ export function ProductDetailsSummary({
   );
 
 
-  const renderColorOptions = (
-    <Stack direction="row">
-      <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
-        Color
-      </Typography>
-
-      <Controller
-        name="colors"
-        control={control}
-        render={({ field }) => (
-          <ColorPicker
-            colors={colors}
-            selected={field.value}
-            onSelectColor={(color) => field.onChange(color)}
-            limit={4}
-          />
-        )}
-      />
-    </Stack>
-  );
-
-  const renderSizeOptions = (
-    <Stack direction="row">
-      <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
-        Size
-      </Typography>
-
-      <Field.Select
-        name="size"
-        size="small"
-        helperText={
-          <Link underline="always" color="textPrimary">
-            Size chart
-          </Link>
-        }
-        sx={{
-          maxWidth: 88,
-          [`& .${formHelperTextClasses.root}`]: { mx: 0, mt: 1, textAlign: 'right' },
-        }}
-      >
-        {sizes.map((size) => (
-          <MenuItem key={size} value={size}>
-            {size}
-          </MenuItem>
-        ))}
-      </Field.Select>
-    </Stack>
-  );
-
   const renderQuantity = (
     <Stack direction="row">
       <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
@@ -186,11 +164,9 @@ export function ProductDetailsSummary({
       <Stack spacing={1}>
         <IncrementerButton
           name="quantity"
-          quantity={values.quantity}
-          disabledDecrease={values.quantity <= 1}
-          disabledIncrease={values.quantity >= available}
-          onIncrease={() => setValue('quantity', values.quantity + 1)}
-          onDecrease={() => setValue('quantity', values.quantity - 1)}
+          quantity={quantity}
+          onIncrease={handleIncreaseQuantity}
+          onDecrease={handleDecreaseQuantity}
         />
 
         <Typography variant="caption" component="div" sx={{ textAlign: 'right' }}>
@@ -204,7 +180,6 @@ export function ProductDetailsSummary({
     <Stack direction="row" spacing={2}>
       <Button
         fullWidth
-        disabled={isMaxQuantity || disableActions}
         size="large"
         color="warning"
         variant="contained"
@@ -215,7 +190,7 @@ export function ProductDetailsSummary({
         Add to cart
       </Button>
 
-      <Button fullWidth size="large" type="submit" variant="contained" disabled={disableActions}>
+      <Button onClick={handleBuyProduct} fullWidth size="large" type="submit" variant="contained" >
         Buy now
       </Button>
     </Stack>
@@ -231,13 +206,6 @@ export function ProductDetailsSummary({
     <Stack direction="row" alignItems="center" sx={{ color: 'text.disabled', typography: 'body2' }}>
       <Rating size="small" value={totalRatings} precision={0.1} readOnly sx={{ mr: 1 }} />
       {`(${fShortenNumber(totalReviews)} reviews)`}
-    </Stack>
-  );
-
-  const renderLabels = (newLabel.enabled || saleLabel.enabled) && (
-    <Stack direction="row" alignItems="center" spacing={1}>
-      {newLabel.enabled && <Label color="info">{newLabel.content}</Label>}
-      {saleLabel.enabled && <Label color="error">{saleLabel.content}</Label>}
     </Stack>
   );
 
@@ -260,11 +228,8 @@ export function ProductDetailsSummary({
     <Form methods={methods} onSubmit={onSubmit}>
       <Stack spacing={3} sx={{ pt: 3 }} {...other}>
         <Stack spacing={2} alignItems="flex-start">
-          {renderLabels}
-
           {renderInventoryType}
 
-          <Typography variant="h5">{product.itemName}</Typography>
 
           {renderRating}
 
@@ -275,9 +240,7 @@ export function ProductDetailsSummary({
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
-        {renderColorOptions}
 
-        {renderSizeOptions}
 
         {renderQuantity}
 

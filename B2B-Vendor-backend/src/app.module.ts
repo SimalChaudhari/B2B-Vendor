@@ -8,11 +8,11 @@ import { SubcategoryModule } from 'admin/products/sub-categories/subcategories.m
 import { ProductModule } from 'admin/products/products/products.module';
 import { OfferModule } from 'admin/products/offers/offers.module';
 import { UserModule } from 'users/user/users.module';
-import { OrderModule } from 'admin/orders/order.module';
 import { SettingModule } from 'settings/setting.module';
 import { ItemModule } from 'fetch-products/item.module';
 import { VendorModule } from 'users/vendors/vendor.module';
 import { CartModule } from 'cart/cart.module';
+import { OrderModule } from 'order/order.module';
 // import { FileModule } from 'files/file.module';
 
 
@@ -36,10 +36,10 @@ import { CartModule } from 'cart/cart.module';
     ProductModule,
     ItemModule,
     OfferModule,
-    OrderModule,
     SettingModule,
     VendorModule,
-    CartModule
+    CartModule,
+    OrderModule
     // FileModule
   ],
 })
