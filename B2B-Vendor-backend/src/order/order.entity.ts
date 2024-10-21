@@ -1,38 +1,27 @@
-import { CartItemEntity } from 'cart/cart.entity';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Address } from 'users/address/addresses/addresses.entity';
 import { User } from 'users/user/users.entity';
+import { OrderItemEntity } from './order.item.entity';
 
 @Entity('orders')
 export class OrderEntity {
     @PrimaryGeneratedColumn('uuid')
     id!: string;
 
-    @ManyToOne(() => User, { eager: true })
-    @JoinColumn({ name: 'customer_id' })
-    customer!: User;
+    @ManyToOne(() => User, (user) => user.orders, { nullable: false, onDelete: 'CASCADE' })
+    user!: User;  // Made non-nullable
+
+    @ManyToOne(() => Address, (address) => address.orders, { nullable: false })
+    address!: Address; // Made non-nullable
+
+    @OneToMany(() => OrderItemEntity, (orderItem) => orderItem.order) // Add relation to OrderItemEntity
+    orderItems!: OrderItemEntity[];
 
     @Column()
-    orderDate!: Date;
-
-    @Column()
-    totalAmount!: number;
-
-    @Column()
-    orderStatus!: string;
-
-    @Column()
-    paymentMethod!: string;
-
-    @Column()
-    shippingAddress?: string;
+    totalPrice!: number;
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-    createdAt!: Date;
-
-    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
-    updatedAt!: Date;
-
-    @ManyToOne(() => CartItemEntity, { eager: true })
-    @JoinColumn({ name: 'cart_item_id' })
-    cartItems!: CartItemEntity[];
+    createdAt?: Date;
+    
 }
+// 

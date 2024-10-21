@@ -1,4 +1,5 @@
 // Item.entity.ts
+import { OrderItemEntity } from 'order/order.item.entity';
 import { Entity, Column, PrimaryGeneratedColumn,OneToMany } from 'typeorm';
 
 @Entity('Items')
@@ -62,4 +63,9 @@ export class ItemEntity {
 
   @Column('simple-array', { nullable: true }) // For storing dimensional file paths
   dimensionalFiles!: string[];
+    orderItems: any;
+
+
+  @OneToMany(() => OrderItemEntity, (order) => order.product)
+  orderItem?: OrderItemEntity[];
 }

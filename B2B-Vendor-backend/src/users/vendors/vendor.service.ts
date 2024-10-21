@@ -7,12 +7,15 @@ import { VendorEntity } from './vendor.entity'; // Make sure to import your Vend
 import { Vendors } from 'tally/vendors';
 import { User } from 'users/user/users.entity';
 import { VendorDto } from './../user/users.dto';
+import { AddressesService } from 'users/address/addresses/addresses.service';
+import { CreateAddressDto } from 'users/address/addresses/addresses.dto';
 
 @Injectable()
 export class VendorService {
     constructor(
         @InjectRepository(User)
         private vendorRepository: Repository<User>,
+        private readonly addressesService: AddressesService,
     ) { }
 
     async fetchAndStoreVendors(): Promise<void> {
@@ -34,20 +37,44 @@ export class VendorService {
                 const existingVendor = existingVendorMap.get(vendor.name);
 
                 if (existingVendor) {
-                    // If the Vendor exists, compare and update if necessary
-                    if (this.hasChanges(existingVendor, vendor)) {
-                        await this.vendorRepository.save(vendor);
+                    const vendorUpdated = this.hasChanges(existingVendor, vendor);
+                    if (vendorUpdated) {
+                        await this.vendorRepository.update(existingVendor.id, this.getUpdatedFields(existingVendor, vendor));
+                        console.log(`Vendor updated: ${vendor.name}`);
                     } else {
                         console.log(`No changes for vendor: ${vendor.name}`);
                     }
+
+                    // Handle address separately
+                    await this.storeVendorAddress(existingVendor, vendor);
                 } else {
-                    // If the vendor does not exist, create a new entry
-                    await this.vendorRepository.save(vendor);
+                    const savedVendor = await this.vendorRepository.save(vendor);
+                    await this.storeVendorAddress(savedVendor, vendor);
+                    console.log(`New vendor and address saved: ${vendor.name}`);
                 }
             }
 
         } catch (error) {
+            console.log("🚀 ~ VendorService ~ fetchAndStoreVendors ~ error:", error)
             throw new InternalServerErrorException('Failed to fetch vendors');
+        }
+    }
+
+    async storeVendorAddress(vendor: User, vendorDto: VendorDto): Promise<void> {
+        const createAddressDto: CreateAddressDto = {
+            userId: vendor.id,
+            mobile: vendorDto.mobile || 'N/A',
+            street_address: vendorDto.address || 'N/A',
+            state: vendorDto.state || 'N/A',
+            zip_code: vendorDto.pincode || 'N/A',
+            country: vendorDto.country || 'N/A',
+        };
+
+        const existingAddress = await this.addressesService.findByUserId(vendor.id);
+        if (existingAddress) {
+            await this.addressesService.update(existingAddress.id, createAddressDto);
+        } else {
+            await this.addressesService.create(createAddressDto, vendor.id);
         }
     }
 
@@ -102,6 +129,24 @@ export class VendorService {
             existingVendor.gstNo !== newVendor.gstNo ||
             existingVendor.gstDetails !== newVendor.gstDetails
         );
+    }
+
+    private getUpdatedFields(existingVendor: User, newVendor: VendorDto): Partial<User> {
+        const updatedFields: Partial<User> = {};
+        if (existingVendor.slNo !== newVendor.slNo) updatedFields.slNo = newVendor.slNo;
+        if (existingVendor.name !== newVendor.name) updatedFields.name = newVendor.name;
+        if (existingVendor.alias !== newVendor.alias) updatedFields.alias = newVendor.alias;
+        if (existingVendor.active !== newVendor.active) updatedFields.active = newVendor.active;
+        if (existingVendor.parent !== newVendor.parent) updatedFields.parent = newVendor.parent;
+        if (existingVendor.contactPerson !== newVendor.contactPerson) updatedFields.contactPerson = newVendor.contactPerson;
+        if (existingVendor.mobile !== newVendor.mobile) updatedFields.mobile = newVendor.mobile;
+        if (existingVendor.email !== newVendor.email) updatedFields.email = newVendor.email;
+        if (existingVendor.pan !== newVendor.pan) updatedFields.pan = newVendor.pan;
+        if (existingVendor.gstType !== newVendor.gstType) updatedFields.gstType = newVendor.gstType;
+        if (existingVendor.gstNo !== newVendor.gstNo) updatedFields.gstNo = newVendor.gstNo;
+        if (existingVendor.gstDetails !== newVendor.gstDetails) updatedFields.gstDetails = newVendor.gstDetails;
+
+        return updatedFields;
     }
 
     async findAll(): Promise<User[]> {

@@ -6,15 +6,19 @@ export class CreateAddressDto {
 
     @IsString()
     @IsNotEmpty()
+    mobile!: string;
+
+    @IsString()
+    @IsNotEmpty()
     street_address!: string;
 
     @IsString()
     @IsNotEmpty()
     state!: string;
 
-    @IsString()
-    @IsNotEmpty()
-    city!: string;
+    // @IsString()
+    // @IsNotEmpty()
+    // city!: string;
 
     @IsString()
     @IsNotEmpty()

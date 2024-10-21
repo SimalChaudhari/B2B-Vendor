@@ -1,31 +1,34 @@
-import { IsNotEmpty, IsUUID, IsString, IsNumber, IsArray, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
+import { ArrayMinSize, IsNotEmpty, IsNumber, ValidateNested } from 'class-validator';
 
-class OrderItem {
+export class CreateOrderDto {
+
     @IsNotEmpty()
-    @IsUUID()
+    cartId?: string; // Address ID for the order
+
+
+    @IsNotEmpty()
+    addressId?: string; // Address ID for the order
+
+    @IsNumber()
+    totalPrice?: number; // Total price of the order
+}
+
+export class ProductOrderDto {
+    @IsNotEmpty()
     productId!: string;
 
-    @IsNotEmpty()
     @IsNumber()
     quantity!: number;
 }
 
-export class CreateOrderDto {
-    @IsNotEmpty()
-    @IsUUID()
-    customerId!: string;
+export class CreateItemOrderDto {
 
     @IsNotEmpty()
-    @IsString()
-    paymentMethod!: string;
+    orderId!: string;
 
-    @IsNotEmpty()
-    @IsString()
-    shippingAddress?: string;
-
-    @IsArray()
     @ValidateNested({ each: true })
-    @Type(() => OrderItem)
-    items!: OrderItem[];
+    @Type(() => ProductOrderDto)
+    @ArrayMinSize(1) // Ensure there's at least one item
+    products!: ProductOrderDto[];
 }

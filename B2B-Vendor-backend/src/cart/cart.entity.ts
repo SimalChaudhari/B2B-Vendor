@@ -15,5 +15,5 @@ export class CartItemEntity {
 
   @Column()
   userId!: string; // Associate with the user (assuming you have users)
-    price!: number;
+  price!: number;
 }

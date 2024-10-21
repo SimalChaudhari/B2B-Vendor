@@ -1,4 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { Address } from 'users/address/addresses/addresses.entity';
+import { OrderEntity } from 'order/order.entity';
 
 export enum UserStatus {
     Active = 'Active',
@@ -90,9 +92,19 @@ export class User {
     @Column({ default: false })
     isDeleted!: boolean;
 
+    @OneToMany(() => Address, (address) => address.user)
+    addresses?: Address[];
+
+    @OneToMany(() => OrderEntity, (order) => order.user)
+    orders?: OrderEntity[];
+
     @CreateDateColumn({ type: 'timestamp' })
     createdAt!: Date;
 
     @UpdateDateColumn({ type: 'timestamp' })
     updatedAt!: Date;
+
+    // @OneToMany(() => OrderEntity, (order) => order.user, { onDelete: 'CASCADE' })
+    // orders?: OrderEntity[];
+
 }

@@ -13,7 +13,7 @@ import { ItemModule } from 'fetch-products/item.module';
 import { VendorModule } from 'users/vendors/vendor.module';
 import { CartModule } from 'cart/cart.module';
 import { OrderModule } from 'order/order.module';
-// import { FileModule } from 'files/file.module';
+
 
 
 @Module({
@@ -27,6 +27,7 @@ import { OrderModule } from 'order/order.module';
       database: process.env.DATABASE_NAME,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true, // Set to false in production
+      
     }),
     AuthModule,
     UserModule,

@@ -21,21 +21,30 @@ export class AddressesService {
     }
 
     async create(createAddressDto: CreateAddressDto, userId: string): Promise<Address> {
-        // Fetch the user entity by userId
+        // Step 1: Fetch the user entity by userId
         const user = await this.userRepository.findOne({ where: { id: userId } });
 
+        // Step 2: Check if the user exists
         if (!user) {
             throw new Error('User not found');
         }
 
-        // Create a new address instance
+        // Step 3: Create a new address instance
         const address = this.addressesRepository.create(createAddressDto);
 
-        // Assign the fetched user entity to the user field
-        // address.user = user;
+        // Step 4: Assign the fetched user entity to the address
+        address.user = user; // Link the user to the address
 
+        // Step 5: Save the address with the associated user
         return this.addressesRepository.save(address);
     }
+
+    async findByUserId(userId: string): Promise<Address | null> {
+        return this.addressesRepository.findOne({
+            where: { user: { id: userId } },
+        });
+    }
+
 
     async getById(id: string): Promise<Address> {
         const address = await this.addressesRepository.findOne({ where: { id } }); // Correct way to find by ID

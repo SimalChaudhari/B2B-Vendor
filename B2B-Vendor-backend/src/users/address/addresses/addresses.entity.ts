@@ -1,5 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, OneToMany } from 'typeorm';
 import { User } from '../../user/users.entity';
+import { OrderEntity } from 'order/order.entity';
 
 @Entity('addresses')
 export class Address {
@@ -7,10 +8,13 @@ export class Address {
     id!: string;
 
     @Column({ type: 'varchar', length: 255 })
-    street_address!: string;
+    mobile!: string;
 
     @Column({ type: 'varchar', length: 255 })
-    city!: string;
+    street_address!: string;
+
+    // @Column({ type: 'varchar', length: 255 })
+    // city!: string;
 
     @Column({ type: 'varchar', length: 255 })
     state!: string;
@@ -24,7 +28,9 @@ export class Address {
     @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     created_at!: Date;
 
-    // @ManyToOne(() => User, (user) => user.addresses)
-    // user!: User; // TypeORM will automatically create a `userId` foreign key.
-    // user_id: string;
+    @ManyToOne(() => User, (user) => user.addresses, { nullable: false, onDelete: 'CASCADE' })
+    user!: User; // Made non-nullable
+
+    @OneToMany(() => OrderEntity, (order) => order.address)
+    orders?: OrderEntity[]; // This can remain optional
 }
