@@ -76,7 +76,7 @@ const StackNavigator = () => {
 
                 <Tab.Screen
                     name="Profile"
-                    component={VendorHomeScreen}
+                    component={ProfileScreen}
                     options={{
                         tabBarLabel: "Shop",
                         tabBarLabelStyle: { color: "#008E97" },

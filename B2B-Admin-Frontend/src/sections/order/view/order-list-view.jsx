@@ -127,9 +127,14 @@ export function OrderListView() {
 
   const handleViewRow = useCallback(
     (id) => {
-      router.push(paths.dashboard.order.details(id));
+      router.push(paths.dashboard.orders.details(id));
+      // router.push(paths.dashboard.orders.details(id));
+      router.push(`/orders/view/${id}`);
+      console.log('====================================');
+      console.log(paths);
+      console.log('====================================');
     },
-    [router]
+    // [router]
   );
 
   const handleFilterStatus = useCallback(

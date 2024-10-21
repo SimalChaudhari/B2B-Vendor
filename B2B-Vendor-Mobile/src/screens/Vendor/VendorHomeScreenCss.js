@@ -17,6 +17,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: colors.background,
         backgroundColor: colors.white,
+        marginTop: 30,
     },
     VendorContainer: {
         marginTop: 20,

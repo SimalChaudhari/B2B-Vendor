@@ -12,6 +12,7 @@ import { Dropdown } from 'react-native-element-dropdown'; // Importing the dropd
 import { formatNumber } from '../../utils';
 import { useSelector, useDispatch } from 'react-redux';
 import { setSelectedGroupR } from '../../../redux/groupReducer';
+import LoadingComponent from '../../components/Loading/LoadingComponent';
 
 const HomeScreen = () => {
   const dispatch = useDispatch();
@@ -84,7 +85,7 @@ const HomeScreen = () => {
 
 
   if (loading) {
-    return <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 20 }}><ActivityIndicator size="large" color="#0000ff" /></View>;
+    return <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 20 }}><LoadingComponent /></View>;
   }
 
   if (error) {

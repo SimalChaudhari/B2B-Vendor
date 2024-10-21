@@ -17,6 +17,7 @@ import Toast from 'react-native-toast-message';
 import { addToCart } from "../../../redux/CartReducer";
 import { fetchItemById } from "../../BackendApis/itemsApi";
 import { formatNumber } from "../../utils";
+import { addCart } from "../../BackendApis/cartApi";
 
 const ProductInfoScreen = () => {
   const route = useRoute();
@@ -67,16 +68,58 @@ const ProductInfoScreen = () => {
   };
 
 
-  const addItemToCart = (item) => {
+  // const addItemToCart = (item) => {
+  //   setAddedToCart(true);
+  //   dispatch(addToCart(item));
+
+
+  //   // Show a toast notification
+  //   Toast.show({
+  //     text1: `Product added to cart!`,
+  //     position: 'bottom',
+  //     type: 'success', // Can be 'success', 'error', 'info', or 'normal'
+  //     visibilityTime: 3000,
+  //     autoHide: true,
+  //     topOffset: 30,
+  //     bottomOffset: 40,
+  //   });
+
+  //   setTimeout(() => {
+  //     setAddedToCart(false);
+  //   }, 6000);
+  // };
+
+  const addItemToCart = async (item) => {
+    console.log('====================================');
+    console.log(item.id);
+    console.log(quantity);
+    console.log('====================================');
+
     setAddedToCart(true);
     dispatch(addToCart(item));
+const productId= item.id
+    try {
+      // Assuming quantity is part of the item or you have it defined elsewhere
+      await addCart( productId, quantity );
+    } catch (error) {
+      console.error('Error adding item to cart:', error);
+      // Optionally show an error toast here
+      Toast.show({
+        text1: `Failed to add product to cart.`,
+        position: 'bottom',
+        type: 'error',
+        visibilityTime: 3000,
+        autoHide: true,
+        topOffset: 30,
+        bottomOffset: 40,
+      });
+    }
 
-
-    // Show a toast notification
+    // Show a success toast notification
     Toast.show({
       text1: `Product added to cart!`,
       position: 'bottom',
-      type: 'success', // Can be 'success', 'error', 'info', or 'normal'
+      type: 'success',
       visibilityTime: 3000,
       autoHide: true,
       topOffset: 30,
@@ -87,6 +130,7 @@ const ProductInfoScreen = () => {
       setAddedToCart(false);
     }, 6000);
   };
+
 
   // Your UI rendering logic goes here
   return (
@@ -140,7 +184,7 @@ const ProductInfoScreen = () => {
 
           <Pressable
             // onPress={() => addItemToCart(item)}
-             onPress={() => addItemToCart({ ...item, quantity })}
+            onPress={() => addItemToCart({ ...item, quantity })}
             style={[
               styles.addToCartButton,
               { backgroundColor: addedToCart ? "#00dd00" : "#FFAB00" } // Dynamic background color
@@ -162,12 +206,12 @@ const ProductInfoScreen = () => {
             )}
           </Pressable>
 
-          <Pressable style={styles.buyNowButton} 
-          // onPress={() => navigation.navigate("Cart")}
-          onPress={() => {
-            addItemToCart({ ...item, quantity }); // Add item to cart
-            navigation.navigate("Cart"); // Navigate to Cart screen
-          }}
+          <Pressable style={styles.buyNowButton}
+            // onPress={() => navigation.navigate("Cart")}
+            onPress={() => {
+              addItemToCart({ ...item, quantity }); // Add item to cart
+              navigation.navigate("Cart"); // Navigate to Cart screen
+            }}
           >
             <Text style={styles.byeNowText}>Buy Now</Text>
           </Pressable>
@@ -325,7 +369,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   addToCartText: {
-    color:"#1C252E",
+    color: "#1C252E",
     marginBottom: 2,
     fontSize: 17,
     fontWeight: "700",

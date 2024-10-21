@@ -22,6 +22,7 @@ import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { usePopover, CustomPopover } from 'src/components/custom-popover';
+import { RouterLink } from 'src/routes/components';
 
 // ----------------------------------------------------------------------
 
@@ -193,6 +194,9 @@ export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteR
               onViewRow();
               popover.onClose();
             }}
+            component={RouterLink} // Set the component to Link
+            to={`/orders/details/${row.id}`} // Set the destination URL
+            sx={{ color: 'green' }} // Keep your existing styling
           >
             <Iconify icon="solar:eye-bold" />
             View
