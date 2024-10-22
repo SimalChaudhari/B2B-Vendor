@@ -1,13 +1,30 @@
 import { toast } from "sonner";
 import axiosInstance from "src/configs/axiosInstance";
-import { ADDRESS_LIST } from "../constants/actionTypes";
+import { ADDRESS_LIST,ADDRESS_BY_LIST } from "../constants/actionTypes";
 
 export const addressList = () => async (dispatch) => {
     try {
         const response = await axiosInstance.get('/addresses');
-        console.log("🚀 ~ addressList ~ response:", response.data)
-        dispatch({
+         dispatch({
             type: ADDRESS_LIST,
+            payload: response.data, // Assuming response contains the customers data
+        });
+        return true;
+    } catch (error) {
+        // Check if error response exists and handle error message
+        const errorMessage = error?.response?.data?.message || 'An unexpected error occurred. Please try again.';
+        toast.error(errorMessage);
+    }
+    return false; // Return false for any errors
+};
+
+export const addressGetByList = (id) => async (dispatch) => {
+    try {
+        const response = await axiosInstance.get(`/addresses/get/${id}`);
+        console.log("🚀 ~ addressGetByList ~ response:", response)
+
+         dispatch({
+            type: ADDRESS_BY_LIST,
             payload: response.data, // Assuming response contains the customers data
         });
         return true;

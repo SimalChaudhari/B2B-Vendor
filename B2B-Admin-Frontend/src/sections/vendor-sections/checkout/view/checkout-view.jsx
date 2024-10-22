@@ -13,16 +13,31 @@ import { CheckoutPayment } from '../checkout-payment';
 import { CheckoutOrderComplete } from '../checkout-order-complete';
 import { CheckoutBillingAddress } from '../checkout-billing-address';
 import { Box } from '@mui/material';
+import { useSelector } from 'react-redux';
 
 // ----------------------------------------------------------------------
 
 export function CheckoutView() {
   const checkout = useCheckoutContext();
 
+  const addressByData = useSelector((state) => state.address?.addressByID);
+
   useEffect(() => {
     checkout.initialStep();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const handleCheckoutStep = () => {
+    if (checkout.activeStep === 1 && !addressByData) {
+      return <CheckoutBillingAddress />;
+    }
+
+    if (checkout.activeStep === 2 && !addressByData) {
+      checkout.onBackStep(); // Reset to previous step
+      return <CheckoutBillingAddress />;
+    }
+    return null; // Default return if no conditions are met
+  };
 
   return (
     <Box>
@@ -35,9 +50,9 @@ export function CheckoutView() {
       <>
         {checkout.activeStep === 0 && <CheckoutCart />}
 
-        {checkout.activeStep === 1 && <CheckoutBillingAddress />}
+        {handleCheckoutStep()} {/* Call the new function to handle step rendering */}
 
-        {checkout.activeStep === 2 && <CheckoutPayment />}
+        {addressByData && checkout.activeStep === 2 && <CheckoutPayment />}
 
         {checkout.completed && (
           <CheckoutOrderComplete open onReset={checkout.onReset} onDownloadPDF={() => { }} />
