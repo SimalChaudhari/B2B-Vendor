@@ -82,7 +82,7 @@ const VendorHomeScreen = () => {
 
 
     if (loading) {
-        return <LoadingComponent/>;
+        return <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 20 }}><LoadingComponent/></View>;
     }
 
     if (error) {

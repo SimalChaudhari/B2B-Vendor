@@ -12,6 +12,7 @@ import { VendorView } from 'src/sections/vendor/view/vendor-view';
 import { VendorEditView } from 'src/sections/vendor/view/vendor-edit';
 import { ItemView } from 'src/sections/vendor-sections/product/view';
 import { CheckoutListView } from 'src/sections/vendor-sections/checkout/view/checkout-list';
+import { OrderDetailsView } from 'src/sections/order/view';
 
 // Overview
 const IndexPage = lazy(() => import('src/pages/dashboard'));
@@ -83,7 +84,7 @@ export const dashboardRoutes = [
     children: [
       { element: <OrderPage />, index: true },
       { path: 'edit/:id', element: <ProductEditView /> },
-      { path: 'view/:id', element: <ProductView /> },
+      { path: 'details/:id', element: <OrderDetailsView /> },
 
     ],
   },

@@ -12,14 +12,17 @@ import { Ionicons, AntDesign } from "@expo/vector-icons";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch, useSelector } from 'react-redux';
-import { logout as logoutAction } from '../../../redux/authReducer'; // Adjust the import path as necessary
+import { logout as logoutAction, setUser } from '../../../redux/authReducer'; // Adjust the import path as necessary
 
 
 const ProfileScreen = () => {
+  
+  const AuthUser = useSelector((state) => state.auth);
+
   const [userId, setUserId] = useState(null);
   const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState();
+  const [loading, setLoading] = useState(false);
+  const [userData, setUserData] = useState();
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
@@ -52,11 +55,13 @@ const ProfileScreen = () => {
     const token = await AsyncStorage.getItem("authToken");
     const userData = await AsyncStorage.getItem("userData");
     const storedUserId = await AsyncStorage.getItem("userId");
+    const parsedUser = typeof userData === "string" ? JSON.parse(userData) : userData;
 
     if (token && storedUserId) {
+      dispatch(setUser(parsedUser));
       setUserId(storedUserId);
-      await fetchUserProfile(storedUserId);
-      await fetchOrders(storedUserId);
+      // await fetchUserProfile(storedUserId);
+      // await fetchOrders(storedUserId);
     } else {
       setLoading(false);
     }
@@ -66,66 +71,66 @@ const ProfileScreen = () => {
     checkUserLogin(); // Initial check on component mount
 
     const unsubscribe = navigation.addListener('focus', () => {
-      checkUserLogin(); // Re-check user login status when the screen is focused
+      checkUserLogin(); // Re-check userData login status when the screen is focused
     });
 
     return unsubscribe; // Cleanup the listener on unmount
   }, [navigation]);
 
-  const fetchUserProfile = async (userId) => {
-    try {
-      const response = await axios.get(`http://192.168.1.112:8181/profile/${userId}`);
-      const { user } = response.data;
-      setUser(user);
-    } catch (error) {
-      console.log("Error fetching user profile:", error);
-    }
-  };
+  // const fetchUserProfile = async (userId) => {
+  //   try {
+  //     const response = await axios.get(`http://192.168.1.112:8181/profile/${userId}`);
+  //     const { userData } = response.data;
+  //     setUserData(userData);
+  //   } catch (error) {
+  //     console.log("Error fetching userData profile:", error);
+  //   }
+  // };
 
-  const fetchOrders = async (userId) => {
-    try {
-      const response = await axios.get(`http://192.168.1.112:8181/orders/${userId}`);
-      const orders = response.data.orders;
-      setOrders(orders);
-    } catch (error) {
-      console.log("Error fetching orders:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const fetchOrders = async (userId) => {
+  //   try {
+  //     const response = await axios.get(`http://192.168.1.112:8181/orders/${userId}`);
+  //     const orders = response.data.orders;
+  //     setOrders(orders);
+  //   } catch (error) {
+  //     console.log("Error fetching orders:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
-  const logout = async () => {
-    try {
-      const userId = await AsyncStorage.getItem("userId");
+  // const logout = async () => {
+  //   try {
+  //     const userId = await AsyncStorage.getItem("userId");
 
-      if (userId) {
-        await axios.post('http://192.168.1.112:8181/logout', { userId });
-      }
+  //     if (userId) {
+  //       await axios.post('http://192.168.1.112:8181/logout', { userId });
+  //     }
 
-      await AsyncStorage.removeItem("authToken");
-      await AsyncStorage.removeItem("userData");
-      await AsyncStorage.removeItem("userId");
+  //     await AsyncStorage.removeItem("authToken");
+  //     await AsyncStorage.removeItem("userData");
+  //     await AsyncStorage.removeItem("userId");
 
-      // Dispatch logout action
-      dispatch(logoutAction());
+  //     // Dispatch logout action
+  //     dispatch(logoutAction());
 
-      setUserId(null);
-      setUser(null);
-      setOrders([]);
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
-  };
+  //     setUserId(null);
+  //     setUserData(null);
+  //     setOrders([]);
+  //   } catch (error) {
+  //     console.error("Logout failed:", error);
+  //   }
+  // };
 
   return (
     <ScrollView style={{ marginTop: 55 }}>
       <ScrollView style={{ padding: 10, flex: 1, backgroundColor: "white" }}>
         {loading ? (
           <Text style={styles.loadingText}>Loading...</Text>
-        ) : user ? (
-          user.verified ? (
+        ) : authData ? (
+          authData.isAuthenticated ? (
             <>
-              <Text style={styles.welcomeText}>Welcome, {user?.name}</Text>
+              <Text style={styles.welcomeText}>Welcome, {authData?.name}</Text>
 
               <View style={styles.buttonContainer}>
                 <Pressable style={styles.button}>
@@ -142,9 +147,11 @@ const ProfileScreen = () => {
                   <Text style={styles.buttonText}>Buy Again</Text>
                 </Pressable>
 
-                <Pressable onPress={logout} style={styles.button}>
-                  <Text style={styles.buttonText}>Logout</Text>
-                </Pressable>
+                {/*
+                  <Pressable onPress={logout} style={styles.button}>
+                    <Text style={styles.buttonText}>Logout</Text>
+                  </Pressable>
+                   */}
               </View>
 
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>

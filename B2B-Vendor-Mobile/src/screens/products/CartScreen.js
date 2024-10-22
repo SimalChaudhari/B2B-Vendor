@@ -7,7 +7,7 @@ import {
   TextInput,
   Image,
 } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { Feather } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,6 +18,7 @@ import {
 } from "../../../redux/CartReducer";
 import { useNavigation } from "@react-navigation/native";
 import { formatNumber } from "../../utils";
+import { fetchCart } from "../../BackendApis/cartApi";
 
 const CartScreen = () => {
 
@@ -57,6 +58,26 @@ const CartScreen = () => {
   };
 
 
+  // Fetch cart data from the backend
+  const getCartData = async () => {
+    // setLoading(true);
+    try {
+      const data = await fetchCart(); // API call
+      // Assuming the response format is { data: [...] }
+      // Update your Redux store or local state as needed
+      // dispatch(setCart(data.data)); // Uncomment this if you have a Redux action to set the cart
+      // setLoading(false);
+      setError(null);
+    } catch (err) {
+      setError('Failed to fetch Cart Data'); // Set error message
+      setLoading(false);
+    }
+  };
+
+  // useEffect to call getCartData when the component mounts
+  useEffect(() => {
+    getCartData(); // Call the async function
+  }, []); // Only run once when the component mounts
 
   const navigation = useNavigation();
   return (
