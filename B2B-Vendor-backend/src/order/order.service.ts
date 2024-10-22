@@ -121,6 +121,21 @@ export class OrderService {
         return savedOrderItems;
     }
 
+
+    async getAll(): Promise<OrderItemEntity[]> {
+        const address = await this.orderItemRepository.find();
+        return address
+    }
+
+    async getOrderItemByUserId(userId: string): Promise<OrderItemEntity[]> {
+        return this.orderItemRepository.find({
+            where: { order: { user: { id: userId } } },
+            relations: ['order', 'order.user', 'order.address', 'product'],
+        });
+    }
+
+
+
     async getOrderItemsByOrderId(orderId: string): Promise<OrderItemEntity[]> {
         return this.orderItemRepository.find({
             where: { order: { id: orderId } },

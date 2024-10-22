@@ -32,6 +32,7 @@ export const addToCart = (data) => async (dispatch) => {
         const errorMessage = error?.response?.data?.message || 'An unexpected error occurred. Please try again.';
         toast.error(errorMessage);
     }
+    
     return false; // Return false for any errors
 };
 

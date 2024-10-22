@@ -27,6 +27,7 @@ import { RouterLink } from 'src/routes/components';
 // ----------------------------------------------------------------------
 
 export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteRow }) {
+  console.log("🚀 ~ OrderTableRow ~ row:", row)
   const confirm = useBoolean();
 
   const collapse = useBoolean();
@@ -44,15 +45,9 @@ export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteR
       </TableCell>
 
       <TableCell>
-        <Link color="inherit" onClick={onViewRow} underline="always" sx={{ cursor: 'pointer' }}>
-          {row.orderNumber}
-        </Link>
-      </TableCell>
-
-      <TableCell>
         <Stack spacing={2} direction="row" alignItems="center">
-          <Avatar alt={row.customer.name} src={row.customer.avatarUrl} />
-
+          <Avatar alt={row.product.itemName
+          } src={row.product.productImages} />
           <Stack
             sx={{
               typography: 'body2',
@@ -60,18 +55,37 @@ export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteR
               alignItems: 'flex-start',
             }}
           >
-            <Box component="span">{row.customer.name}</Box>
-            <Box component="span" sx={{ color: 'text.disabled' }}>
-              {row.customer.email}
-            </Box>
+            <Box component="span">{row.product.itemName}</Box>
+
           </Stack>
         </Stack>
       </TableCell>
 
       <TableCell>
+        <Stack spacing={2} direction="row" alignItems="center">
+          <Stack
+            sx={{
+              typography: 'body2',
+              flex: '1 1 auto',
+              alignItems: 'flex-start',
+            }}
+          >
+            <Box component="span">{row.order.user?.name}</Box>
+            <Box component="span" sx={{ color: 'text.disabled' }}>
+              {row.order.user.email}
+            </Box>
+          </Stack>
+        </Stack>
+      </TableCell>
+
+      <TableCell align="center"> {row.quantity} </TableCell>
+
+      <TableCell> {fCurrency(row.order.totalPrice)} </TableCell>
+
+      <TableCell>
         <ListItemText
-          primary={fDate(row.createdAt)}
-          secondary={fTime(row.createdAt)}
+          primary={fDate(row.order.createdAt)}
+          secondary={fTime(row.order.createdAt)}
           primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           secondaryTypographyProps={{
             mt: 0.5,
@@ -80,10 +94,6 @@ export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteR
           }}
         />
       </TableCell>
-
-      <TableCell align="center"> {row.totalQuantity} </TableCell>
-
-      <TableCell> {fCurrency(row.subtotal)} </TableCell>
 
       <TableCell>
         <Label
@@ -95,7 +105,7 @@ export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteR
             'default'
           }
         >
-          {row.status}
+          {row?.status}
         </Label>
       </TableCell>
 
@@ -125,40 +135,41 @@ export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteR
           sx={{ bgcolor: 'background.neutral' }}
         >
           <Paper sx={{ m: 1.5 }}>
-            {row.items.map((item) => (
-              <Stack
-                key={item.id}
-                direction="row"
-                alignItems="center"
-                sx={{
-                  p: (theme) => theme.spacing(1.5, 2, 1.5, 1.5),
-                  '&:not(:last-of-type)': {
-                    borderBottom: (theme) => `solid 2px ${theme.vars.palette.background.neutral}`,
-                  },
+            <Stack
+              key={row.product.id}
+              direction="row"
+              alignItems="center"
+              sx={{
+                p: (theme) => theme.spacing(1.5, 2, 1.5, 1.5),
+                '&:not(:last-of-type)': {
+                  borderBottom: (theme) => `solid 2px ${theme.vars.palette.background.neutral}`,
+                },
+              }}
+            >
+              <Avatar
+                src={row?.product?.productImages?.[0]}
+                variant="rounded"
+                sx={{ width: 48, height: 48, mr: 2 }}
+              />
+
+              <ListItemText
+                primary={row.product.itemName}
+                secondary={row.product.baseUnit
+                }
+                primaryTypographyProps={{ typography: 'body2' }}
+                secondaryTypographyProps={{
+                  component: 'span',
+                  color: 'text.disabled',
+                  mt: 0.5,
                 }}
-              >
-                <Avatar
-                  src={item.coverUrl}
-                  variant="rounded"
-                  sx={{ width: 48, height: 48, mr: 2 }}
-                />
+              />
 
-                <ListItemText
-                  primary={item.name}
-                  secondary={item.sku}
-                  primaryTypographyProps={{ typography: 'body2' }}
-                  secondaryTypographyProps={{
-                    component: 'span',
-                    color: 'text.disabled',
-                    mt: 0.5,
-                  }}
-                />
+              <div>x{row.quantity} </div>
 
-                <div>x{item.quantity} </div>
+              <Box sx={{ width: 110, textAlign: 'right' }}>{fCurrency(row.product.
+                sellingPrice)}</Box>
+            </Stack>
 
-                <Box sx={{ width: 110, textAlign: 'right' }}>{fCurrency(item.price)}</Box>
-              </Stack>
-            ))}
           </Paper>
         </Collapse>
       </TableCell>
@@ -193,11 +204,7 @@ export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteR
             onClick={() => {
               onViewRow();
               popover.onClose();
-            }}
-            component={RouterLink} // Set the component to Link
-            to={`/orders/details/${row.id}`} // Set the destination URL
-            sx={{ color: 'green' }} // Keep your existing styling
-          >
+            }}>
             <Iconify icon="solar:eye-bold" />
             View
           </MenuItem>

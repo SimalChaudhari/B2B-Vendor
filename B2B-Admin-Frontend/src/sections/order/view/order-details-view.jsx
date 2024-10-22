@@ -10,7 +10,7 @@ import { DashboardContent } from 'src/layouts/dashboard';
 
 import { OrderDetailsInfo } from '../order-details-info';
 import { OrderDetailsItems } from '../order-details-item';
-import { OrderDetailsToolbar } from '../order-details-toolbar';
+import { OrderDetailsToolbar } from './table/order-details-toolbar';
 import { OrderDetailsHistory } from '../order-details-history';
 
 // ----------------------------------------------------------------------
@@ -25,7 +25,7 @@ export function OrderDetailsView({ order }) {
   return (
     <DashboardContent>
       <OrderDetailsToolbar
-        backLink={paths.dashboard.orders.root}
+        backLink={paths?.dashboard?.orders?.root}
         orderNumber={order?.orderNumber}
         createdAt={order?.createdAt}
         status={status}

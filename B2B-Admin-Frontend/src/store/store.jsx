@@ -10,6 +10,7 @@ import productReducer from './reducer/productReducer';
 import settingReducer from './reducer/settingReducer';
 import vendorReducer from './reducer/vendorReducer';
 import cartReducer from './reducer/cartReducer';
+import orderReducer from './reducer/orderReducer';
 
 // Combine your reducers
 const rootReducer = combineReducers({
@@ -20,8 +21,9 @@ const rootReducer = combineReducers({
   subcategory: subcategoryReducer,
   product: productReducer,
   setting: settingReducer,
-  vendor:vendorReducer,
-  cart:cartReducer
+  vendor: vendorReducer,
+  cart: cartReducer,
+  order: orderReducer
 
 
 

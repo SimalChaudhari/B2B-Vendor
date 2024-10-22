@@ -5,6 +5,8 @@ import { OrderItemEntity } from './order.item.entity';
 import { DeliveryType, PaymentMethod } from './order.dto'; // Import enums from DTO
 
 
+
+
 @Entity('orders')
 export class OrderEntity {
     @PrimaryGeneratedColumn('uuid')

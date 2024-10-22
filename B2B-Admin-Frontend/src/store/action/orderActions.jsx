@@ -4,7 +4,7 @@ import { Order_LIST, ORDER_BY_LIST } from "../constants/actionTypes";
 
 export const orderList = () => async (dispatch) => {
     try {
-        const response = await axiosInstance.get('/order');
+        const response = await axiosInstance.get('/order/items-order/get');
         dispatch({
             type: Order_LIST,
             payload: response.data, // Assuming response contains the customers data
@@ -20,7 +20,7 @@ export const orderList = () => async (dispatch) => {
 
 export const orderGetByList = (id) => async (dispatch) => {
     try {
-        const response = await axiosInstance.get(`/order/get/${id}`);
+        const response = await axiosInstance.get(`/order/items-order/${id}`);
 
         dispatch({
             type: ORDER_BY_LIST,
@@ -63,3 +63,5 @@ export const createOrderItem = (data) => async (dispatch) => {
     }
     return false; // Return false for any errors
 };
+
+export const deleteOrder = (data) => async (dispatch) => { } 
