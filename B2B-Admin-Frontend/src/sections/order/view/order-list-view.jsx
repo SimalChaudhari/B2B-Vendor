@@ -51,7 +51,6 @@ import { useFetchOrderData } from '../components/fetch-order';
 const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...ORDER_STATUS_OPTIONS];
 
 const TABLE_HEAD = [
-  { id: 'productName', label: 'Product Name' },
   { id: 'Customer', label: 'customer' },
   { id: 'Quantity', label: 'Quantity', width: 140, align: "center" },
   { id: 'Amount', label: 'Price' },

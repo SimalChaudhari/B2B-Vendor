@@ -24,7 +24,9 @@ export class OrderEntity {
     @Column()
     totalPrice!: number;
 
-
+    @Column()
+    totalQuantity!: number;
+    
     @Column({ type: 'enum', enum: DeliveryType, default: DeliveryType.FREE })
     delivery!: DeliveryType; // Delivery type, default is 'free'
 

@@ -2,7 +2,7 @@ import { Controller, Post, Get, Body, Req, UseGuards, Param, Delete, Res, HttpSt
 import { OrderService } from './order.service';
 
 import { JwtAuthGuard } from 'auth/jwt/jwt-auth.guard'; // Adjust the import path
-import { Request } from 'express';
+import { Request,Response } from 'express';
 import { CreateItemOrderDto, CreateOrderDto } from './order.dto';
 import { OrderEntity } from './order.entity';
 import { OrderItemEntity } from './order.item.entity';
@@ -23,11 +23,20 @@ export class OrderController {
         const userId = req.user.id; // Assume user is authenticated
         return this.orderService.getOrdersByUserId(userId);
     }
-
     @Get(':orderId')
-    async getOrderById(@Param('orderId') orderId: string): Promise<OrderEntity> {
+    async getOrderById(@Param('orderId') orderId: string): Promise<OrderEntity | null> {
         return this.orderService.getOrderById(orderId);
     }
+
+    @Get(':id')
+    async findOne(@Param('orderId') orderId: string, @Res() response: Response) {
+        const result = await this.orderService.getOrderById(orderId);
+        return response.status(HttpStatus.OK).json({
+            data: result,
+        });
+
+    }
+
 
     @Delete('delete/:orderId')
     async deleteOrder(@Param('orderId') orderId: string): Promise<{ message: string }> {
@@ -39,19 +48,6 @@ export class OrderController {
     @Post('add-items')
     async addItemsToOrder(@Body() createItemOrderDto: CreateItemOrderDto): Promise<OrderItemEntity[]> {
         return this.orderService.addItemToOrder(createItemOrderDto);
-    }
-
-    @Get('items-order/get')
-    async getAllAddresses(@Req() request: Request) {
-        const userId = request.user?.id; // Assuming you store the logged-in user's ID in request.user
-        return this.orderService.getOrderItemByUserId(userId); // Pass userId directly
-
-
-    }
-
-    @Get('items-order/:orderId')
-    async getOrderItemsByOrderId(@Param('orderId') orderId: string): Promise<OrderItemEntity[]> {
-        return this.orderService.getOrderItemsByOrderId(orderId);
     }
 
     @Delete('item-order/:orderItemId')

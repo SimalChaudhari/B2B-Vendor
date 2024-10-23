@@ -23,6 +23,9 @@ export class CreateOrderDto {
     @IsNumber()
     totalPrice?: number; // Total price of the order
 
+    @IsNumber()
+    totalQuantity?: number; // Total price of the order
+
     @IsEnum(DeliveryType)
     @IsOptional()
     delivery: DeliveryType = DeliveryType.FREE; // Default value is 'free'

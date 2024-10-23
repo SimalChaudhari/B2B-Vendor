@@ -1,5 +1,4 @@
 import React from 'react';
-
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
@@ -24,51 +23,13 @@ import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { usePopover, CustomPopover } from 'src/components/custom-popover';
+import { RouterLink } from 'src/routes/components';
+import { Typography } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
 export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteRow }) {
- 
-
-  function groupOrders(data) {
-    // Check if data is an array, or convert to an empty array if not
-    if (!Array.isArray(data)) {
-      console.warn("Expected an array as input, but got:", data);
-      return []; // Return an empty array or handle as needed
-    }
-  
-    const groupedData = {};
-  
-    data.forEach(order => {
-      const orderId = order.order.id;
-  
-      // Check if the order already exists in the groupedData
-      if (!groupedData[orderId]) {
-        groupedData[orderId] = {
-          orderId,
-          products: [],
-        };
-      }
-  
-      // Push the product into the corresponding order
-      groupedData[orderId].products.push(order.product.name);
-    });
-  
-    // Convert the grouped object back to an array
-    return Object.values(groupedData);
-  }
-  
-  
-  // Check and group orders
-  try {
-    const groupedOrders = groupOrders(row);
-    console.log(groupedOrders);
-  } catch (error) {
-    console.error(error);
-  }
-  
-
-
+  console.log("🚀 ~ OrderTableRow ~ row:", row)
   const confirm = useBoolean();
 
   const collapse = useBoolean();
@@ -85,22 +46,7 @@ export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteR
         />
       </TableCell>
 
-      <TableCell>
-        <Stack spacing={2} direction="row" alignItems="center">
-          <Avatar alt={row.product.itemName
-          } src={row.product.productImages} />
-          <Stack
-            sx={{
-              typography: 'body2',
-              flex: '1 1 auto',
-              alignItems: 'flex-start',
-            }}
-          >
-            <Box component="span">{row.product.itemName}</Box>
 
-          </Stack>
-        </Stack>
-      </TableCell>
 
       <TableCell>
         <Stack spacing={2} direction="row" alignItems="center">
@@ -111,22 +57,22 @@ export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteR
               alignItems: 'flex-start',
             }}
           >
-            <Box component="span">{row.order.user?.name}</Box>
+            <Box component="span">{row.user?.name}</Box>
             <Box component="span" sx={{ color: 'text.disabled' }}>
-              {row.order.user.email}
+              {row.user.email}
             </Box>
           </Stack>
         </Stack>
       </TableCell>
 
-      <TableCell align="center"> {row.quantity} </TableCell>
+      <TableCell align="center"> {row?.totalQuantity} </TableCell>
 
-      <TableCell> {fCurrency(row.order.totalPrice)} </TableCell>
+      <TableCell> {fCurrency(row.totalPrice)} </TableCell>
 
       <TableCell>
         <ListItemText
-          primary={fDate(row.order.createdAt)}
-          secondary={fTime(row.order.createdAt)}
+          primary={fDate(row.createdAt)}
+          secondary={fTime(row.createdAt)}
           primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           secondaryTypographyProps={{
             mt: 0.5,
@@ -176,41 +122,53 @@ export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteR
           sx={{ bgcolor: 'background.neutral' }}
         >
           <Paper sx={{ m: 1.5 }}>
-            <Stack
-              key={row.product.id}
-              direction="row"
-              alignItems="center"
-              sx={{
-                p: (theme) => theme.spacing(1.5, 2, 1.5, 1.5),
-                '&:not(:last-of-type)': {
-                  borderBottom: (theme) => `solid 2px ${theme.vars.palette.background.neutral}`,
-                },
-              }}
-            >
-              <Avatar
-                src={row?.product?.productImages?.[0]}
-                variant="rounded"
-                sx={{ width: 48, height: 48, mr: 2 }}
-              />
-
-              <ListItemText
-                primary={row.product.itemName}
-                secondary={row.product.baseUnit
-                }
-                primaryTypographyProps={{ typography: 'body2' }}
-                secondaryTypographyProps={{
-                  component: 'span',
-                  color: 'text.disabled',
-                  mt: 0.5,
+            {row.orderItems.map((item) => (
+              <Stack
+                key={item.id}
+                direction="row"
+                alignItems="center"
+                sx={{
+                  p: (theme) => theme.spacing(1.5, 2, 1.5, 1.5),
+                  '&:not(:last-of-type)': {
+                    borderBottom: (theme) => `solid 2px ${theme.vars.palette.background.neutral}`,
+                  },
                 }}
-              />
-
-              <div>x{row.quantity} </div>
-
-              <Box sx={{ width: 110, textAlign: 'right' }}>{fCurrency(row.product.
-                sellingPrice)}</Box>
-            </Stack>
-
+              >
+                <Avatar
+                  src={item.product.productImages?.[0]}
+                  variant="rounded"
+                  sx={{ width: 48, height: 48, mr: 2 }}
+                />
+                <ListItemText
+                  primary={item.product.itemName}
+                  secondary={item.product.alias}
+                  primaryTypographyProps={{ typography: 'body2' }}
+                  secondaryTypographyProps={{
+                    component: 'span',
+                    color: 'text.disabled',
+                    mt: 0.5,
+                  }}
+                />
+                <Box sx={{ width: 130, textAlign: 'right', margin: 2 }}>
+                  <Typography variant="body2" color="text.primary">
+                    {`Original Price: ${fCurrency(item.product.sellingPrice)}`}
+                  </Typography>
+                </Box>
+                <Typography variant="body2" sx={{ width: 30, textAlign: 'center' }}>
+                  x{item.quantity}
+                </Typography>
+                <Box sx={{ width: 130, textAlign: 'right' }}>
+                  <Typography variant="body2" color="text.primary">
+                    {fCurrency(item.product.sellingPrice * item.quantity)}
+                  </Typography>
+                </Box>
+                <Box sx={{ width: 130, textAlign: 'right', margin: 2 }}>
+                  <Typography variant="body2" color="text.primary">
+                    {`Status: ${(item.status)}`}
+                  </Typography>
+                </Box>
+              </Stack>
+            ))}
           </Paper>
         </Collapse>
       </TableCell>

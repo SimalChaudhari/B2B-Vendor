@@ -57,6 +57,7 @@ export function CheckoutPayment() {
   const checkout = useCheckoutContext();
   const dispatch = useDispatch();
   const mappedData = useCart();
+  console.log("🚀 ~ CheckoutPayment ~ mappedData:", mappedData)
 
   const [payment, setPayment] = useState()
 
@@ -64,6 +65,8 @@ export function CheckoutPayment() {
 
 
   const subtotal = mappedData.reduce((acc, item) => acc + item.totalAmount, 0);
+  const quantity = mappedData.reduce((acc, item) => acc + item.quantity, 0);
+
   const discount = 0;
 
 
@@ -99,6 +102,7 @@ export function CheckoutPayment() {
       // Prepare the order data with total price, address ID, and payment method
       const orderData = {
         totalPrice: subtotal, // Add subtotal
+        totalQuantity: quantity, // Add subtotal
         addressId: addressByData?.id, // Include address data
         paymentMethod: payment, // Include the selected payment method
       };

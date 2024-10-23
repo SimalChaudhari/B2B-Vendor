@@ -11,9 +11,7 @@ import { CartItemEntity } from 'cart/cart.entity';
 
 @Injectable()
 export class OrderService {
-    getOrderById(orderId: string): OrderEntity | PromiseLike<OrderEntity> {
-        throw new Error('Method not implemented.');
-    }
+
     constructor(
         @InjectRepository(OrderEntity)
         private readonly orderRepository: Repository<OrderEntity>,
@@ -32,7 +30,7 @@ export class OrderService {
     ) { }
 
     async createOrder(userId: string, createOrderDto: CreateOrderDto): Promise<OrderEntity> {
-        const { addressId, totalPrice, delivery, paymentMethod } = createOrderDto;
+        const { addressId, totalPrice,totalQuantity, delivery, paymentMethod } = createOrderDto;
 
         const user = await this.userRepository.findOne({ where: { id: userId } });
         if (!user) {
@@ -48,6 +46,7 @@ export class OrderService {
             user,
             address,
             totalPrice,
+            totalQuantity,
             delivery,
             paymentMethod,
         });
@@ -60,6 +59,21 @@ export class OrderService {
             where: { user: { id: userId } },
             relations: ['address', 'user', 'orderItems.product'],
         });
+    }
+
+    async getOrderById(orderId: string): Promise<OrderEntity> {
+        try {
+            const order = await this.orderRepository.findOne({
+                where: { id: orderId },
+                relations: ['address', 'user', 'orderItems.product'],
+            });
+            if (!order) {
+                throw new NotFoundException(`order  not found`);
+            }
+            return order;
+        } catch (error: any) {
+            throw error
+        }
     }
 
 
@@ -127,21 +141,21 @@ export class OrderService {
         return address
     }
 
-    async getOrderItemByUserId(userId: string): Promise<OrderItemEntity[]> {
-        return this.orderItemRepository.find({
-            where: { order: { user: { id: userId } } },
-            relations: ['order.user', 'order.address', 'order.orderItems.product'],
-        });
-    }
+    // async getOrderItemByUserId(userId: string): Promise<OrderItemEntity[]> {
+    //     return this.orderItemRepository.find({
+    //         where: { order: { user: { id: userId } } },
+    //         relations: ['order.user', 'order.address', 'order.orderItems.product'],
+    //     });
+    // }
 
 
 
-    async getOrderItemsByOrderId(orderId: string): Promise<OrderItemEntity[]> {
-        return this.orderItemRepository.find({
-            where: { order: { id: orderId } },
-            relations: ['order.user', 'order.address', 'order.orderItems.product'],
-        });
-    }
+    // async getOrderItemsByOrderId(orderId: string): Promise<OrderItemEntity[]> {
+    //     return this.orderItemRepository.find({
+    //         where: { order: { id: orderId } },
+    //         relations: ['order.user', 'order.address', 'order.orderItems.product'],
+    //     });
+    // }
 
 
 
