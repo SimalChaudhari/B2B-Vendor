@@ -5,7 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import styles from '../../assets/cssFile';
 import styles1 from '../Vendor/VendorHomeScreenCss';
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import Feather from '@expo/vector-icons/Feather';
 import { fetchItems } from '../../BackendApis/itemsApi';
 import { Dropdown } from 'react-native-element-dropdown'; // Importing the dropdown
@@ -14,9 +14,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setSelectedGroupR } from '../../../redux/groupReducer';
 import LoadingComponent from '../../components/Loading/LoadingComponent';
 import { fetchCart } from '../../BackendApis/cartApi';
-import { addToCart } from '../../../redux/CartReducer';
+import { addToCart, setCartQuantity } from '../../../redux/CartReducer';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import useAuthToken from '../../components/AuthToken/useAuthToken';
 
 const HomeScreen = () => {
+  const { token } = useAuthToken();
   const dispatch = useDispatch();
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const toggleSidebar = () => {
@@ -43,16 +46,34 @@ const HomeScreen = () => {
     { label: '30 items per page', value: 30 },
   ];
 
+  useFocusEffect(
+    React.useCallback(() => {
+      if (token) {
+        getItems();
+      }
+      // setLoading(false);
+    }, [token]) // This dependency array ensures that the effect runs again when the token changes
+  );
+
   // Get items and filter based on the selected group
   const getItems = async () => {
     setLoading(true);
-    console.log("Fetching items...");
     try {
       const data = await fetchItems(); // API call
       setItems(data); // Set the fetched items
 
-      const cartData = await fetchCart(); // API call
-      dispatch(addToCart(cartData));
+      if (token) {
+        
+        const cartData = await fetchCart(); // API call
+        dispatch(addToCart(cartData));
+
+        const totalQuantity = cartData.reduce((acc, item) => {
+          return acc + item.quantity; // Summing the quantity of each item
+      }, 0);
+      
+      dispatch(setCartQuantity(totalQuantity));
+      
+      }
 
       setFilteredItems(data.data);
       // Filter and set groups based on the group property

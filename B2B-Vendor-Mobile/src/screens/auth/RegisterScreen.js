@@ -73,7 +73,6 @@ const RegisterScreen = ({ navigation }) => {
     axios
       .post("http://192.168.1.112:8181/register", user)
       .then(async (response) => {
-        console.log(response);
 
         Toast.show({
           type: 'success',

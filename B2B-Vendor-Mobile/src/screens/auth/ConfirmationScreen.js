@@ -7,8 +7,12 @@ import { useNavigation } from "@react-navigation/native";
 import { cleanCart } from "../../../redux/CartReducer";
 import { formatNumber } from "../../utils";
 import { fetchAddress } from "../../BackendApis/userApi";
+import { fetchCart } from "../../BackendApis/cartApi";
+import { addOrderFirst, addOrderSecond } from "../../BackendApis/orderApi";
 
 const ConfirmationScreen = () => {
+    const [cart, setCart] = useState([]);
+
     const user = useSelector((state) => state.auth.user);
     const navigation = useNavigation();
     const dispatch = useDispatch();
@@ -20,38 +24,18 @@ const ConfirmationScreen = () => {
 
     const [currentStep, setCurrentStep] = useState(0);
     const [selectedAddress, setSelectedAddress] = useState([]);
-    console.log('====================================');
-    console.log("selectedAddress :",selectedAddress);
-    console.log('====================================');
     const [addresses, setAddress] = useState([]);
-    // const [addresses] = useState([
-    //     {
-    //         id: "1",
-    //         houseNo: "123",
-    //         landmark: "Near Park",
-    //         street: "Main St.",
-    //         mobileNo: "1234567890",
-    //         postalCode: "560001",
-    //     },
-    //     {
-    //         id: "2",
-    //         houseNo: "456",
-    //         landmark: "Near Mall",
-    //         street: "Second St.",
-    //         mobileNo: "0987654321",
-    //         postalCode: "560002",
-    //     },
-    // ]);
-
-    const cartData = useSelector((state) => state.cart.cart);
-    const cartArray = Array.isArray(cartData) ? cartData : Object.values(cartData);
-    const ff = cartArray?.[0];
-    const cart = [ff?.[0]];
 
 
     const total = cart
         ?.map((item) => item.product.sellingPrice * item.quantity)
         .reduce((curr, prev) => curr + prev, 0);
+
+    const totalQuantity = cart
+        ?.map((item) => item.quantity)
+        .reduce((curr, prev) => curr + prev, 0);
+
+    // console.log('Total Quantity:', totalQuantity); // Output: Total Quantity: 6
 
     const handleProceedToCheckout = () => {
         if (!selectedAddress) {
@@ -65,26 +49,56 @@ const ConfirmationScreen = () => {
 
     // Get Address and filter based on the selected group
     const getAddrsssData = async () => {
-        console.log("Fetching Address...");
         try {
             const data = await fetchAddress(); // API call
-            console.log('====================================');
-            console.log("ccccccccccccc", data);
-            console.log('====================================');
-            setAddress(data);
+            const cartDatas = await fetchCart();
+            setCart(cartDatas);
 
-            setError(null);
+            // Ensure data is an array
+            if (data && typeof data === 'object' && !Array.isArray(data)) {
+                console.log("Wrapping fetched address in an array.");
+                setAddress([data]); // Wrap the object in an array
+            } else if (Array.isArray(data)) {
+                setAddress(data);
+            } else {
+                console.error("Fetched data is not an array:", data);
+                setAddress([]); // Reset to empty array if not valid
+            }
         } catch (err) {
-            setError('Failed to fetch Address'); // Set error message
-            setLoading(false);
+            console.error("Error fetching addresses:", err);
+            // Handle error appropriately
         }
     };
-
 
     // useEffect to call getAddrsssData when the component mounts
     useEffect(() => {
         getAddrsssData(); // Call the async function
     }, []); // Only run once when the component mounts
+
+    const handleAddToOrder = async (total, addressId, products) => {
+        try {
+            // Call the first order API
+            const response = await addOrderFirst(addressId, total, totalQuantity);
+
+            // Prepare products data for the second order API
+            const orderProducts = products.map(product => ({
+                productId: product.product.id, // Ensure this is the correct path to product ID
+                quantity: product.quantity
+            }));
+            const orderId = response.id;
+
+            // Call the second order API
+            await addOrderSecond(orderId, orderProducts);
+
+            // Optionally, handle navigation or state updates here
+            dispatch(cleanCart());
+            navigation.navigate("Order");
+            // setCurrentStep(0);
+
+        } catch (error) {
+            console.error('Error placing order:', error);
+        }
+    };
 
     return (
         <ScrollView style={{ marginTop: 55 }}>
@@ -117,7 +131,7 @@ const ConfirmationScreen = () => {
                         <Text style={{ fontSize: 16, color: "#0C68E9", fontWeight: "bold", }}>Add a new Address</Text>
                         <AntDesign name="pluscircleo" size={24} color="#0C68E9" />
                     </Pressable>
-                    
+
                     {addresses.map((item) => (
                         <Pressable
                             key={item.id}
@@ -199,13 +213,7 @@ const ConfirmationScreen = () => {
 
                     <Pressable
                         onPress={() => {
-                            console.log("Order placed by:", user); // Log user data
-                            console.log("Selected address:", selectedAddress); // Log selected address
-                            console.log("Ordered products:", cart); // Log cart items
-                            console.log("Total amount:", total); // Log total amount
-                            // dispatch(cleanCart());
-                            // navigation.navigate("Order");
-                            // setCurrentStep(0);
+                            handleAddToOrder(total, selectedAddress.id, cart);
                         }}
                         style={styles.placeOrderButton}
                     >

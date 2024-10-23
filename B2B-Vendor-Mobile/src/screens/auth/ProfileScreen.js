@@ -7,17 +7,21 @@ import {
   Pressable,
 } from "react-native";
 import React, { useLayoutEffect, useEffect, useState } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { Ionicons, AntDesign } from "@expo/vector-icons";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch, useSelector } from 'react-redux';
 import { logout as logoutAction, setUser } from '../../../redux/authReducer'; // Adjust the import path as necessary
+import { getAllOrder } from "../../BackendApis/orderApi";
+import { authLogout, fetchUserData } from "../../BackendApis/userApi";
+import useAuthToken from "../../components/AuthToken/useAuthToken";
+import LoadingComponent from "../../components/Loading/LoadingComponent";
 
 
 const ProfileScreen = () => {
-  
-  const AuthUser = useSelector((state) => state.auth);
+
+  const { token } = useAuthToken();
 
   const [userId, setUserId] = useState(null);
   const [orders, setOrders] = useState([]);
@@ -51,86 +55,60 @@ const ProfileScreen = () => {
     });
   }, [navigation]);
 
-  const checkUserLogin = async () => {
-    const token = await AsyncStorage.getItem("authToken");
-    const userData = await AsyncStorage.getItem("userData");
-    const storedUserId = await AsyncStorage.getItem("userId");
-    const parsedUser = typeof userData === "string" ? JSON.parse(userData) : userData;
+  // Use useFocusEffect to call getCartData whenever the screen is focused
+  useFocusEffect(
+    React.useCallback(() => {
+      if (token) {
+        getOrderData();
+      }
+      // setLoading(false);
+    }, [token]) // This dependency array ensures that the effect runs again when the token changes
+  );
 
-    if (token && storedUserId) {
-      dispatch(setUser(parsedUser));
-      setUserId(storedUserId);
-      // await fetchUserProfile(storedUserId);
-      // await fetchOrders(storedUserId);
-    } else {
+  const getOrderData = async () => {
+    setLoading(true);
+    try {
+      setOrders([]);
+
+      // Delay for 1 seconds (1000 milliseconds)
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      const data = await getAllOrder();
+      setOrders(data);
+
+      const userData = await fetchUserData();
+      setUserData(userData)
+
+    } catch (err) {
+      console.error("Failed to fetch orders:", err);
+    } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    checkUserLogin(); // Initial check on component mount
+  const handleLogout = async () => {
+    try {
+      await authLogout(); // API call
+      navigation.navigate("Home")
+    } catch (err) {
+      setError('Failed to Logout...');
+      setLoading(false);
+    }
+  };
 
-    const unsubscribe = navigation.addListener('focus', () => {
-      checkUserLogin(); // Re-check userData login status when the screen is focused
-    });
 
-    return unsubscribe; // Cleanup the listener on unmount
-  }, [navigation]);
-
-  // const fetchUserProfile = async (userId) => {
-  //   try {
-  //     const response = await axios.get(`http://192.168.1.112:8181/profile/${userId}`);
-  //     const { userData } = response.data;
-  //     setUserData(userData);
-  //   } catch (error) {
-  //     console.log("Error fetching userData profile:", error);
-  //   }
-  // };
-
-  // const fetchOrders = async (userId) => {
-  //   try {
-  //     const response = await axios.get(`http://192.168.1.112:8181/orders/${userId}`);
-  //     const orders = response.data.orders;
-  //     setOrders(orders);
-  //   } catch (error) {
-  //     console.log("Error fetching orders:", error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-  // const logout = async () => {
-  //   try {
-  //     const userId = await AsyncStorage.getItem("userId");
-
-  //     if (userId) {
-  //       await axios.post('http://192.168.1.112:8181/logout', { userId });
-  //     }
-
-  //     await AsyncStorage.removeItem("authToken");
-  //     await AsyncStorage.removeItem("userData");
-  //     await AsyncStorage.removeItem("userId");
-
-  //     // Dispatch logout action
-  //     dispatch(logoutAction());
-
-  //     setUserId(null);
-  //     setUserData(null);
-  //     setOrders([]);
-  //   } catch (error) {
-  //     console.error("Logout failed:", error);
-  //   }
-  // };
-
+  if (loading) {
+    return <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 20 }}><LoadingComponent /></View>;
+  }
   return (
     <ScrollView style={{ marginTop: 55 }}>
       <ScrollView style={{ padding: 10, flex: 1, backgroundColor: "white" }}>
         {loading ? (
           <Text style={styles.loadingText}>Loading...</Text>
-        ) : authData ? (
-          authData.isAuthenticated ? (
+        ) : token ? (
+          token ? (
             <>
-              <Text style={styles.welcomeText}>Welcome, {authData?.name}</Text>
+              <Text style={styles.welcomeText}>Welcome, {userData?.data[0]?.name}</Text>
 
               <View style={styles.buttonContainer}>
                 <Pressable style={styles.button}>
@@ -146,6 +124,9 @@ const ProfileScreen = () => {
                 <Pressable style={styles.button}>
                   <Text style={styles.buttonText}>Buy Again</Text>
                 </Pressable>
+                <Pressable style={styles.button} onPress={() => handleLogout()}>
+                  <Text style={styles.buttonText}>Logout</Text>
+                </Pressable>
 
                 {/*
                   <Pressable onPress={logout} style={styles.button}>
@@ -153,20 +134,46 @@ const ProfileScreen = () => {
                   </Pressable>
                    */}
               </View>
-
-              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <ScrollView >
                 {orders.length > 0 ? (
                   orders.map((order) => (
-                    <Pressable
-                      style={styles.orderCard}
-                      key={order._id}
-                    >
-                      {order.products.slice(0, 1)?.map((product) => (
-                        <View style={{ marginVertical: 10 }} key={product._id}>
-                          <Image
-                            source={{ uri: product.image }}
-                            style={styles.productImage}
-                          />
+                    <Pressable style={styles.orderCard} key={order.id}>
+                      {/*
+                        */}
+                      <View style={styles.orderDetails}>
+                        <Text style={styles.productDetail}>
+                          Date: {new Date(order.createdAt).toLocaleDateString()}
+                        </Text>
+                        <Text style={styles.productDetail}>Total Price: ₹{order.totalPrice}</Text>
+                        <Text style={styles.productDetail}>Delivery: {order.delivery}</Text>
+                        <Text style={styles.separator} />
+                      </View>
+
+                      {/* Iterate over orderItems to access product details */}
+                      {order.orderItems.map((item) => (
+                        <View style={styles.productContainer} key={item.id}>
+                          {/* Check if 'item.product' exists and use safe access */}
+                          {item.product ? (
+                            <View style={styles.orderProductContainer}>
+                              <View >
+                                <Image
+                                  source={{ uri: item.product.productImages[0] || 'https://via.placeholder.com/100' }} // Fallback image
+                                  style={styles.productImage}
+                                />
+                              </View>
+                              <View style={styles.productInfo}>
+                                <Text> <Text style={styles.productDetail}></Text> <Text>{item.product.itemName}</Text> </Text>
+                                <Text> <Text style={styles.productDetail}>Price: ₹</Text> <Text>{item.product.sellingPrice}</Text> </Text>
+                                <Text> <Text style={styles.productDetail}>Quantity: </Text> <Text>{item.quantity}</Text> </Text>
+                                <Text> <Text style={styles.productDetail}>Status: </Text> <Text>{item.status}</Text> </Text>
+
+                              </View>
+
+                              <Text style={styles.separator} />
+                            </View>
+                          ) : (
+                            <Text style={styles.noProductText}>No product details available</Text>
+                          )}
                         </View>
                       ))}
                     </Pressable>
@@ -175,6 +182,9 @@ const ProfileScreen = () => {
                   <Text style={styles.noOrdersText}>No orders found</Text>
                 )}
               </ScrollView>
+
+
+
             </>
           ) : (
             <View style={styles.loginContainer}>
@@ -236,9 +246,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   productImage: {
-    width: 100,
-    height: 100,
+    width: 120,
+    height: 120,
     resizeMode: "contain",
+
+    borderWidth: 1,
+    borderColor: '#919eab33',
   },
   loadingText: {
     textAlign: "center",
@@ -257,6 +270,23 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
+
+  separator: {
+    borderBottomWidth: 1, // Sets the bottom border width
+    borderBottomColor: '#919eab33', // Sets the bottom border color
+    borderStyle: 'dashed', // Sets the bottom border style to dashed
+  },
+  orderProductContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 20,
+    marginVertical: 10,
+  },
+  productDetail: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#1C252E"
+  }
 });
 
 export default ProfileScreen;

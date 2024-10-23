@@ -58,18 +58,6 @@ const AddAddressScreen = () => {
     }, 2000); // Refresh indicator stops after 2 seconds
 
     try {
-      // const response = await axios.post("http://192.168.1.112:8181/addresses", {
-      //   userId,
-      //   address: newAddress,
-      // });
-      // console.log(response.data.message);
-
-      // const addressesResponse = await axios.get(`http://192.168.1.112:8181/addresses/${userId}`);
-      // const updatedAddresses = addressesResponse.data.addresses;
-
-      // Dispatch the updated addresses to the authReducer
-      // dispatch(updateUserAddresses(updatedAddresses)); // Use the new action
-
       setNewAddress({
         name: '',
         houseNo: '',

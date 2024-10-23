@@ -44,7 +44,6 @@ const OTPVerification = ({ route, navigation }) => {
         const contact = email;
         try {
             const response = await authLogin(contact, otp); // Call the authVerify function
-            console.log("API Response:", response);
     
             const { token, user } = response; // Get token and user from response
     
