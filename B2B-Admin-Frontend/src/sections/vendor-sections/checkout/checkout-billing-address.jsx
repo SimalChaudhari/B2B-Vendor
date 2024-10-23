@@ -6,35 +6,40 @@ import { Iconify } from 'src/components/iconify';
 import { useCheckoutContext } from './context';
 import { CheckoutSummary } from './checkout-summary';
 import { AddressItem, AddressNewForm } from 'src/sections/vendor-sections/address';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import useCart from './components/useCart';
+import useAddress from './components/userAddress';
+import { addressGetByList, addressList } from 'src/store/action/addressActions';
+import { useEffect } from 'react';
 
 // ----------------------------------------------------------------------
 
 export function CheckoutBillingAddress() {
   const checkout = useCheckoutContext();
 
+  const dispatch = useDispatch();
   const mappedData = useCart();
 
   const subtotal = mappedData.reduce((acc, item) => acc + item.totalAmount, 0);
   const discount = 0;
-  // Get the single user address from the state
-  const userAddress = useSelector((state) => state.auth?.authUser || {});
-
-  // Map the address data to a format suitable for AddressItem
-  const mappedAddressData = (address) => {
-    if (!address || Object.keys(address).length === 0) return {};
-
-    return {
-      address: address.address,
-      country: address.country,
-      state: address.state,
-      pincode: address.pincode,
-      mobile: address.mobile,
-    };
-  };
 
   const addressForm = useBoolean();
+  // test
+
+  // Get address data from Redux store
+  const userAddress = useSelector((state) => state.address?.address || []);
+
+  useEffect(() => {
+    // Dispatch the action to fetch addresses when the component mounts
+    dispatch(addressList());
+  }, [dispatch]);
+
+  const handleAddressByID = async (id) => {
+    const res = await dispatch(addressGetByList(id))
+    if (res) {
+      checkout.onNextStep()
+    }
+  }
 
   return (
     <>
@@ -43,7 +48,7 @@ export function CheckoutBillingAddress() {
           {/* Display the single user address */}
           {Object.keys(userAddress).length > 0 ? (
             <AddressItem
-              address={mappedAddressData(userAddress)}
+              address={userAddress}
               action={
                 <Stack flexDirection="row" flexWrap="wrap" flexShrink={0}>
                   {/* Optionally display "Delete" if the address is not primary */}
@@ -55,7 +60,7 @@ export function CheckoutBillingAddress() {
                   <Button
                     variant="outlined"
                     size="small"
-                    onClick={() => checkout.onCreateBilling(userAddress)}
+                    onClick={(id) => handleAddressByID(userAddress.id)}
                   >
                     Deliver to this address
                   </Button>

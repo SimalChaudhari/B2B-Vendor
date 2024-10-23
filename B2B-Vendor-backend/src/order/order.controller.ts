@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Req, UseGuards, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Get, Body, Req, UseGuards, Param, Delete, Res, HttpStatus } from '@nestjs/common';
 import { OrderService } from './order.service';
 
 import { JwtAuthGuard } from 'auth/jwt/jwt-auth.guard'; // Adjust the import path
@@ -41,6 +41,13 @@ export class OrderController {
         return this.orderService.addItemToOrder(createItemOrderDto);
     }
 
+    @Get('items-order/get')
+    async getAllAddresses(@Req() request: Request) {
+        const userId = request.user?.id; // Assuming you store the logged-in user's ID in request.user
+        return this.orderService.getOrderItemByUserId(userId); // Pass userId directly
+
+
+    }
 
     @Get('items-order/:orderId')
     async getOrderItemsByOrderId(@Param('orderId') orderId: string): Promise<OrderItemEntity[]> {

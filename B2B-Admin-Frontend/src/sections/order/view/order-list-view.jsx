@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
@@ -39,38 +39,40 @@ import {
   TablePaginationCustom,
 } from 'src/components/table';
 
-import { OrderTableRow } from '../order-table-row';
+import { OrderTableRow } from './table/order-table-row';
 import { OrderTableToolbar } from '../order-table-toolbar';
-import { OrderTableFiltersResult } from '../order-table-filters-result';
-import { _orders, ORDER_STATUS_OPTIONS } from 'src/_mock/_order';
+import { OrderTableFiltersResult } from './table/order-table-filters-result';
+import {  ORDER_STATUS_OPTIONS } from 'src/_mock/_order';
+import { useDispatch, useSelector } from 'react-redux';
+import { useFetchOrderData } from '../components/fetch-order';
 
 // ----------------------------------------------------------------------
 
 const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...ORDER_STATUS_OPTIONS];
 
 const TABLE_HEAD = [
-  { id: 'orderNumber', label: 'Order', width: 88 },
-  { id: 'name', label: 'Customer' },
-  { id: 'createdAt', label: 'Date', width: 140 },
-  {
-    id: 'totalQuantity',
-    label: 'Items',
-    width: 120,
-    align: 'center',
-  },
-  { id: 'totalAmount', label: 'Price', width: 140 },
-  { id: 'status', label: 'Status', width: 110 },
+  { id: 'productName', label: 'Product Name' },
+  { id: 'Customer', label: 'customer' },
+  { id: 'Quantity', label: 'Quantity', width: 140, align: "center" },
+  { id: 'Amount', label: 'Price' },
+  { id: 'createdAt', label: 'Order Date' },
+  { id: 'status', label: 'Status' },
   { id: '', width: 88 },
 ];
 
 // ----------------------------------------------------------------------
 
 export function OrderListView() {
-  const table = useTable({ defaultOrderBy: 'orderNumber' });
-
+  const table = useTable();
   const router = useRouter();
-
   const confirm = useBoolean();
+  const dispatch = useDispatch();
+
+  const [loading, setLoading] = useState(false);
+  const { fetchData, fetchDeleteData } = useFetchOrderData(); // Destructure fetchData from the custom hook
+  const _orders = useSelector((state) => state.order?.order || []);
+  console.log("🚀 ~ OrderListView ~ _orders:", _orders)
+
 
   const [tableData, setTableData] = useState(_orders);
 
@@ -82,6 +84,17 @@ export function OrderListView() {
   });
 
   const dateError = fIsAfter(filters.state.startDate, filters.state.endDate);
+
+  //----------------------------------------------------------------------------------------------------
+  useEffect(() => {
+    fetchData(); // Call fetchData when the component mounts
+  }, []);
+
+  useEffect(() => {
+    setTableData(_orders);
+  }, [_orders]);
+  //----------------------------------------------------------------------------------------------------
+
 
   const dataFiltered = applyFilter({
     inputData: tableData,
@@ -98,44 +111,14 @@ export function OrderListView() {
     (!!filters.state.startDate && !!filters.state.endDate);
 
   const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
+  //----------------------------------------------------
+  const handleDeleteRows = useCallback((id) => { fetchDeleteData(id) }, []);
 
-  const handleDeleteRow = useCallback(
-    (id) => {
-      const deleteRow = tableData.filter((row) => row.id !== id);
+  const handleDeleteRow = useCallback((id) => { fetchDeleteData(id) }, []);
 
-      toast.success('Delete success!');
+  const handleEditRow = useCallback((id) => id, []);
 
-      setTableData(deleteRow);
-
-      table.onUpdatePageDeleteRow(dataInPage.length);
-    },
-    [dataInPage.length, table, tableData]
-  );
-
-  const handleDeleteRows = useCallback(() => {
-    const deleteRows = tableData.filter((row) => !table.selected.includes(row.id));
-
-    toast.success('Delete success!');
-
-    setTableData(deleteRows);
-
-    table.onUpdatePageDeleteRows({
-      totalRowsInPage: dataInPage.length,
-      totalRowsFiltered: dataFiltered.length,
-    });
-  }, [dataFiltered.length, dataInPage.length, table, tableData]);
-
-  const handleViewRow = useCallback(
-    (id) => {
-      router.push(paths.dashboard.orders.details(id));
-      // router.push(paths.dashboard.orders.details(id));
-      router.push(`/orders/view/${id}`);
-      console.log('====================================');
-      console.log(paths);
-      console.log('====================================');
-    },
-    // [router]
-  );
+  const handleViewRow = useCallback((id) => id, []);
 
   const handleFilterStatus = useCallback(
     (event, newValue) => {
@@ -145,6 +128,7 @@ export function OrderListView() {
     [filters, table]
   );
 
+  //--------------------------------------------------
   return (
     <div>
       <DashboardContent maxWidth="2xl">

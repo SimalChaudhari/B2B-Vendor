@@ -1,7 +1,8 @@
-import { ADDRESS_LIST } from "../constants/actionTypes";
+import { ADDRESS_LIST, ADDRESS_BY_LIST } from "../constants/actionTypes";
 
 const initialState = {
-    address: []
+    address: [],
+    addressByID: ""
 };
 const addressReducer = (state = initialState, { type, payload } = {}) => {
     switch (type) {
@@ -10,6 +11,14 @@ const addressReducer = (state = initialState, { type, payload } = {}) => {
                 ...state,
                 address: payload,
             };
+
+        case ADDRESS_BY_LIST:
+            return {
+                ...state,
+                addressByID: payload,
+            };
+
+
         default:
             return state;
     }

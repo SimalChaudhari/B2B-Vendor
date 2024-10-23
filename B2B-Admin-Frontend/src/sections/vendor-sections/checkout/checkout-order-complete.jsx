@@ -8,6 +8,8 @@ import Typography from '@mui/material/Typography';
 import { OrderCompleteIllustration } from 'src/assets/illustrations';
 
 import { Iconify } from 'src/components/iconify';
+import { RouterLink } from 'src/routes/components';
+import { paths } from 'src/routes/paths';
 
 // ----------------------------------------------------------------------
 
@@ -62,17 +64,11 @@ export function CheckoutOrderComplete({ open, onReset, onDownloadPDF }) {
             variant="outlined"
             onClick={onReset}
             startIcon={<Iconify icon="eva:arrow-ios-back-fill" />}
+            component={RouterLink}
+            href={paths.items.root}
+         
           >
             Continue shopping
-          </Button>
-
-          <Button
-            size="large"
-            variant="contained"
-            startIcon={<Iconify icon="eva:cloud-download-fill" />}
-            onClick={onDownloadPDF}
-          >
-            Download as PDF
           </Button>
         </Box>
       </Box>

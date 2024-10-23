@@ -1,5 +1,15 @@
 import { Type } from 'class-transformer';
-import { ArrayMinSize, IsNotEmpty, IsNumber, ValidateNested } from 'class-validator';
+import { ArrayMinSize, IsEnum, IsNotEmpty, IsNumber, IsOptional, ValidateNested } from 'class-validator';
+
+export enum DeliveryType {
+    FREE = 'free',
+    PAID = 'paid',
+}
+
+export enum PaymentMethod {
+    CASH_ON_DELIVERY = 'cash_on_delivery',
+    DEBIT_CARD = 'debit_card',
+}
 
 export class CreateOrderDto {
 
@@ -12,6 +22,14 @@ export class CreateOrderDto {
 
     @IsNumber()
     totalPrice?: number; // Total price of the order
+
+    @IsEnum(DeliveryType)
+    @IsOptional()
+    delivery: DeliveryType = DeliveryType.FREE; // Default value is 'free'
+
+    @IsEnum(PaymentMethod)
+    @IsOptional()
+    paymentMethod: PaymentMethod = PaymentMethod.CASH_ON_DELIVERY; // Default value is 
 }
 
 export class ProductOrderDto {

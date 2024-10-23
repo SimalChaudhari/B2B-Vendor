@@ -4,6 +4,14 @@ import { Address } from 'users/address/addresses/addresses.entity';
 import { User } from 'users/user/users.entity';
 import { OrderEntity } from './order.entity';
 
+export enum OrderStatus {
+    PENDING = 'pending',
+    SUCCESS = 'success',
+    REFUSED = 'refused',
+}
+
+
+
 @Entity('ordersItem')
 export class OrderItemEntity {
     @PrimaryGeneratedColumn('uuid')
@@ -17,6 +25,10 @@ export class OrderItemEntity {
 
     @Column()
     quantity!: number;
+
+    // Add status column with enum and default value
+    @Column({ type: 'enum', enum: OrderStatus, default: OrderStatus.PENDING })
+    status!: OrderStatus; // Order status, default is 'pending'
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     createdAt?: Date;

@@ -10,8 +10,8 @@ import { DashboardContent } from 'src/layouts/dashboard';
 
 import { OrderDetailsInfo } from '../order-details-info';
 import { OrderDetailsItems } from '../order-details-item';
-import { OrderDetailsToolbar } from '../order-details-toolbar';
 import { OrderDetailsHistory } from '../order-details-history';
+import { OrderDetailsToolbar } from './table/order-details-toolbar';
 
 // ----------------------------------------------------------------------
 
