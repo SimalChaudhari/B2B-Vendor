@@ -45,14 +45,6 @@ export class AddressesService {
         });
     }
 
-    async findByUserIds(userId: string): Promise<Address | null> {
-        const res = await this.addressesRepository.findOne({where: { user: {id: userId } }});
-        if (!res) {
-            throw new NotFoundException('Address not found');
-        }
-        return res;
-    }
-
 
     async getById(id: string): Promise<Address> {
         const address = await this.addressesRepository.findOne({ where: { id } }); // Correct way to find by ID

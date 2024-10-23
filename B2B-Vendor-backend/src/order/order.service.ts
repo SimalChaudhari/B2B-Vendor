@@ -7,7 +7,6 @@ import { Address } from 'users/address/addresses/addresses.entity';
 import { CreateItemOrderDto, CreateOrderDto } from './order.dto';
 import { ItemEntity } from 'fetch-products/item.entity';
 import { OrderItemEntity } from './order.item.entity';
-import { CartItemEntity } from 'cart/cart.entity';
 
 @Injectable()
 export class OrderService {
@@ -26,13 +25,10 @@ export class OrderService {
         private readonly productRepository: Repository<ItemEntity>,
         @InjectRepository(OrderItemEntity)
         private readonly orderItemRepository: Repository<OrderItemEntity>,
-
-        @InjectRepository(CartItemEntity)
-        private readonly cartRepository: Repository<CartItemEntity>,
     ) { }
 
     async createOrder(userId: string, createOrderDto: CreateOrderDto): Promise<OrderEntity> {
-        const { addressId, totalPrice, delivery, paymentMethod } = createOrderDto;
+        const { addressId, totalPrice } = createOrderDto;
 
         const user = await this.userRepository.findOne({ where: { id: userId } });
         if (!user) {
@@ -48,8 +44,6 @@ export class OrderService {
             user,
             address,
             totalPrice,
-            delivery,
-            paymentMethod,
         });
 
         return this.orderRepository.save(order);
@@ -112,29 +106,11 @@ export class OrderService {
             // Save each OrderItem in the database
             const savedOrderItem = await this.orderItemRepository.save(orderItem);
             savedOrderItems.push(savedOrderItem); // Collect saved items
-            // Option 1: Delete cart items for this product after adding to the order
-            await this.cartRepository.delete({ userId: order.user.id });
-
         }
 
         // Return the array of saved OrderItem entities
         return savedOrderItems;
     }
-
-
-    async getAll(): Promise<OrderItemEntity[]> {
-        const address = await this.orderItemRepository.find();
-        return address
-    }
-
-    async getOrderItemByUserId(userId: string): Promise<OrderItemEntity[]> {
-        return this.orderItemRepository.find({
-            where: { order: { user: { id: userId } } },
-            relations: ['order', 'order.user', 'order.address', 'product'],
-        });
-    }
-
-
 
     async getOrderItemsByOrderId(orderId: string): Promise<OrderItemEntity[]> {
         return this.orderItemRepository.find({
@@ -142,7 +118,7 @@ export class OrderService {
             relations: ['order', 'order.user', 'order.address', 'product'],
         });
     }
-
+    
 
 
     async deleteOrderItemById(orderItemId: string): Promise<{ message: string }> {
@@ -152,6 +128,7 @@ export class OrderService {
         if (!orderItem) {
             throw new NotFoundException('Order item not found');
         }
+
         // Delete the order item
         await this.orderItemRepository.delete(orderItemId);
 

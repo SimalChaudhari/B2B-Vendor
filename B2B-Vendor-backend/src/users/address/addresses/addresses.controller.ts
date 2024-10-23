@@ -24,26 +24,11 @@ import { JwtAuthGuard } from 'auth/jwt/jwt-auth.guard';
 export class AddressesController {
     constructor(private readonly addressesService: AddressesService) { }
 
-    // @Get()
-    // async getAllAddresses(@Res() response: Response) {
-    //     const addresses = await this.addressesService.getAll();
-    //     return response.status(HttpStatus.OK).json(addresses);
-    // }
-
     @Get()
-    async getAllAddresses(@Req() request: Request, @Res() response: Response) {
-        const userId = request.user?.id; // Assuming you store the logged-in user's ID in request.user
-        try {
-            const addresses = await this.addressesService.findByUserIds(userId); // Pass userId directly
-            return response.status(HttpStatus.OK).json(addresses);
-        } catch (error : any) {
-            return response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-                message: 'Error retrieving addresses.',
-                error: error.message,
-            });
-        }
+    async getAllAddresses(@Res() response: Response) {
+        const addresses = await this.addressesService.getAll();
+        return response.status(HttpStatus.OK).json(addresses);
     }
-    
 
     @Post('create')
     async createAddress(

@@ -13,6 +13,8 @@ import { formatNumber } from '../../utils';
 import { useSelector, useDispatch } from 'react-redux';
 import { setSelectedGroupR } from '../../../redux/groupReducer';
 import LoadingComponent from '../../components/Loading/LoadingComponent';
+import { fetchCart } from '../../BackendApis/cartApi';
+import { addToCart } from '../../../redux/CartReducer';
 
 const HomeScreen = () => {
   const dispatch = useDispatch();
@@ -49,6 +51,9 @@ const HomeScreen = () => {
       const data = await fetchItems(); // API call
       setItems(data); // Set the fetched items
 
+      const cartData = await fetchCart(); // API call
+      dispatch(addToCart(cartData));
+
       setFilteredItems(data.data);
       // Filter and set groups based on the group property
       const groups = data.data.map(item => item.group); // Get all groups
@@ -75,7 +80,7 @@ const HomeScreen = () => {
     setLoading(true);
     setSelectedGroup(selectedGroupr);
     // Introduce a minimum delay of 5 seconds
-    await new Promise(resolve => setTimeout(resolve, 8000));
+    await new Promise(resolve => setTimeout(resolve, 2000));
 
     await getItems(); // Call getItems to refresh data
     setRefreshing(false);

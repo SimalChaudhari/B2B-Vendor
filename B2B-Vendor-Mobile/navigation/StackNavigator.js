@@ -24,11 +24,19 @@ const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const StackNavigator = () => {
-    const cart = useSelector((state) => state.cart.cart); // Access the cart state
+
     const [isConnected, setIsConnected] = useState(true); // Track network status
 
-    // Calculate total quantity for cart badge
-    const totalQuantity = cart.reduce((acc, item) => acc + item.quantity, 0);
+    const cart = useSelector((state) => state.cart.cart); // Access the cart state
+    
+    // Assuming the cart is an array with one object
+    const totalQuantity = Object.values(cart[0] || {}).reduce((acc, item) => {
+        // Check if the item has a quantity field
+        if (item && typeof item.quantity === 'number') {
+            return acc + item.quantity;
+        }
+        return acc; // Return accumulator if no quantity
+    }, 0);
 
     // Check network status
     useEffect(() => {
@@ -105,11 +113,13 @@ const StackNavigator = () => {
                                     size={32}
                                     color="black"
                                 />
-                                {totalQuantity > 0 && (
-                                    <View style={styles.badge}>
-                                        <Text style={styles.badgeText}>{totalQuantity}</Text>
-                                    </View>
-                                )}
+                                {/*
+                                    {totalQuantity > 0 && (
+                                        <View style={styles.badge}>
+                                            <Text style={styles.badgeText}>{totalQuantity}</Text>
+                                        </View>
+                                    )}
+                                     */}
                             </View>
                         ),
                     }}
