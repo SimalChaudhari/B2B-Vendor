@@ -24,7 +24,6 @@ export function CheckoutBillingAddress() {
   const discount = 0;
 
   const addressForm = useBoolean();
-  // test
 
   // Get address data from Redux store
   const userAddress = useSelector((state) => state.address?.address || []);
