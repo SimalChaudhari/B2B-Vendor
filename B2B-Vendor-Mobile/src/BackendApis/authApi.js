@@ -25,12 +25,6 @@ export const authLogin = async (contact, otp) => {
         // Ensure your backend returns the correct structure
         const token = response?.data?.access_token; // Ensure this is correct
         const user = response?.data?.user; // Adjust if the user data structure is different
-
-
-        console.log('====================================');
-        console.log("API ", response?.data);
-        console.log('====================================');
-
         return { success: true, user, token }; // Return user and token
     } catch (error) {
         console.error('Error during login:', error?.response?.data || error.message);

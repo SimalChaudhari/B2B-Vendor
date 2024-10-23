@@ -6,52 +6,55 @@ export const CartSlice = createSlice({
     cart: [],
   },
   reducers: {
+    getToCart : (state, action) =>{
+      state.cart = action.payload;
+    },
     addToCart: (state, action) => {
-      const itemPresent = state.cart.find(
-        (item) => item.id === action.payload.id
-      );
+      // Check if the item already exists in the cart
+      const itemPresent = state.cart.find(item => item.id === action.payload.id);
       if (itemPresent) {
-        // itemPresent.quantity++;
-        itemPresent.quantity += action.payload.quantity; // Increment by the quantity being added  
+        // Increment the quantity by the amount being added
+        itemPresent.quantity += action.payload.quantity;
       } else {
-        // state.cart.push({ ...action.payload, quantity: 1 });
-        // Naya item add karein
-        state.cart.push({ ...action.payload });
+        // Add new item to the cart with quantity initialized
+        state.cart.push({ ...action.payload, quantity: action.payload.quantity });
       }
     },
     removeFromCart: (state, action) => {
-      const removeItem = state.cart.filter(
-        (item) => item.id !== action.payload.id
-      );
+      // Filter out the item to be removed
+      const removeItem = state.cart.filter(item => item.id !== action.payload.id);
       state.cart = removeItem;
     },
-    incementQuantity: (state, action) => {
-      const itemPresent = state.cart.find(
-        (item) => item.id === action.payload.id
-      );
-      itemPresent.quantity++;
-    },
-    decrementQuantity: (state, action) => {
-      const itemPresent = state.cart.find(
-        (item) => item.id === action.payload.id
-      );
-      if (itemPresent.quantity === 1) {
-        itemPresent.quantity = 0;
-        const removeItem = state.cart.filter(
-          (item) => item.id !== action.payload.id
-        );
-        state.cart = removeItem;
-      } else {
-        itemPresent.quantity--;
+    incrementQuantity: (state, action) => {
+      // Increment quantity of the specified item
+      const itemPresent = state.cart.find(item => item.id === action.payload.id);
+      if (itemPresent) {
+        itemPresent.quantity++;
       }
     },
-    cleanCart:(state) => {
-        state.cart = [];
+    decrementQuantity: (state, action) => {
+      // Decrement quantity of the specified item
+      const itemPresent = state.cart.find(item => item.id === action.payload.id);
+      if (itemPresent) {
+        if (itemPresent.quantity === 1) {
+          // If quantity is 1, remove the item from the cart
+          const removeItem = state.cart.filter(item => item.id !== action.payload.id);
+          state.cart = removeItem;
+        } else {
+          // Otherwise just decrement the quantity
+          itemPresent.quantity--;
+        }
+      }
+    },
+    cleanCart: (state) => {
+      // Clear the entire cart
+      state.cart = [];
     }
   },
 });
 
+// Exporting actions for use in components
+export const { getToCart, addToCart, removeFromCart, incrementQuantity, decrementQuantity, cleanCart } = CartSlice.actions;
 
-export const {addToCart,removeFromCart,incementQuantity,decrementQuantity,cleanCart} = CartSlice.actions;
-
-export default CartSlice.reducer    
+// Exporting the reducer for the store
+export default CartSlice.reducer;

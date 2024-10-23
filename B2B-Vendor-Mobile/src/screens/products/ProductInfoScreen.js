@@ -17,7 +17,7 @@ import Toast from 'react-native-toast-message';
 import { addToCart } from "../../../redux/CartReducer";
 import { fetchItemById } from "../../BackendApis/itemsApi";
 import { formatNumber } from "../../utils";
-import { addCart } from "../../BackendApis/cartApi";
+import { addCart, fetchCart } from "../../BackendApis/cartApi";
 
 const ProductInfoScreen = () => {
   const route = useRoute();
@@ -90,17 +90,16 @@ const ProductInfoScreen = () => {
   // };
 
   const addItemToCart = async (item) => {
-    console.log('====================================');
-    console.log(item.id);
-    console.log(quantity);
-    console.log('====================================');
 
     setAddedToCart(true);
-    dispatch(addToCart(item));
-const productId= item.id
+    // await dispatch(addToCart(item));
+    const productId = item.id
     try {
       // Assuming quantity is part of the item or you have it defined elsewhere
-      await addCart( productId, quantity );
+      await addCart(productId, quantity);
+
+      const cartData = await fetchCart(); // API call
+      dispatch(addToCart(cartData));
     } catch (error) {
       console.error('Error adding item to cart:', error);
       // Optionally show an error toast here

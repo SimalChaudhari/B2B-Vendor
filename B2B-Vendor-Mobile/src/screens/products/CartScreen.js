@@ -7,31 +7,38 @@ import {
   TextInput,
   Image,
 } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Feather } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  addToCart,
   decrementQuantity,
   incementQuantity,
   removeFromCart,
 } from "../../../redux/CartReducer";
 import { useNavigation } from "@react-navigation/native";
 import { formatNumber } from "../../utils";
-import { fetchCart } from "../../BackendApis/cartApi";
+import { addCart, decreaseQuantity, deleteCartItem, fetchCart, increaseQuantity } from "../../BackendApis/cartApi";
 
 const CartScreen = () => {
 
-  // Access user data from authReducer
+  const [cart, setCart] = useState([]);
+  console.log('====================================');
+  console.log("ddddddddddddddddaaaaaaaaaaaaaaaaaaaaaaaa",cart);
+  console.log('====================================');
+  const [refreshing, setRefreshing] = useState(false);
+  const [quantity, setQuantity] = useState(1); // Initial quantity set to 1 or any default value  
 
 
-  const cart = useSelector((state) => state.cart.cart);
-  // console.log(cart);
-
-  // const total = cart
-  //   ?.map((item) => item.price * item.quantity)
-  //   .reduce((curr, prev) => curr + prev, 0);
-  // const dispatch = useDispatch();
+  const cartScreen = useSelector((state) => state.cart.cart); // Access the cart state
+  console.log('====================================');
+  console.log("cartScreen :", cartScreen);
+  console.log('====================================');
+  const total = cart
+    ?.map((item) => parseFloat(item.product.sellingPrice) * item.quantity)
+    .reduce((curr, prev) => curr + prev, 0);
+  const dispatch = useDispatch();
   // const increaseQuantity = (item) => {
   //   dispatch(incementQuantity(item));
   // };
@@ -43,30 +50,14 @@ const CartScreen = () => {
   // };
 
 
-  const total = cart
-    ?.map((item) => item.sellingPrice * item.quantity)
-    .reduce((curr, prev) => curr + prev, 0);
-  const dispatch = useDispatch();
-  const increaseQuantity = (item) => {
-    dispatch(incementQuantity(item));
-  };
-  const decreaseQuantity = (item) => {
-    dispatch(decrementQuantity(item));
-  };
-  const deleteItem = (item) => {
-    dispatch(removeFromCart(item));
-  };
-
-
   // Fetch cart data from the backend
   const getCartData = async () => {
     // setLoading(true);
     try {
       const data = await fetchCart(); // API call
-      // Assuming the response format is { data: [...] }
-      // Update your Redux store or local state as needed
-      // dispatch(setCart(data.data)); // Uncomment this if you have a Redux action to set the cart
+      dispatch(addToCart(data)); // Uncomment this if you have a Redux action to set the cart
       // setLoading(false);
+      setCart(data);
       setError(null);
     } catch (err) {
       setError('Failed to fetch Cart Data'); // Set error message
@@ -79,7 +70,54 @@ const CartScreen = () => {
     getCartData(); // Call the async function
   }, []); // Only run once when the component mounts
 
+  // Handle item quantity changes
+  const handleIncreaseQuantity = async (id) => {
+    try {
+      await increaseQuantity(id);
+
+      const cartData = await fetchCart(); // API call
+      dispatch(addToCart(cartData));
+      setCart((prevCart) =>
+        prevCart.map((item) =>
+          item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+        )
+      );
+    } catch (error) {
+      console.error('Error increasing quantity:', error);
+    }
+  };
+
+  const handleDecreaseQuantity = async (id) => {
+    try {
+      await decreaseQuantity(id);
+
+      const cartData = await fetchCart(); // API call
+      dispatch(addToCart(cartData));
+      setCart((prevCart) =>
+        prevCart.map((item) =>
+          item.id === id ? { ...item, quantity: item.quantity - 1 } : item
+        )
+      );
+    } catch (error) {
+      console.error('Error decreasing quantity:', error);
+    }
+  };
+
+  const handleDeleteItem = async (id) => {
+    try {
+      await deleteCartItem(id);
+
+      const cartData = await fetchCart(); // API call
+      dispatch(addToCart(cartData));
+
+      setCart((prevCart) => prevCart.filter((item) => item.id !== id));
+    } catch (error) {
+      console.error('Error deleting item:', error);
+    }
+  };
+
   const navigation = useNavigation();
+
   return (
     <ScrollView style={{ marginTop: 30, flex: 1, backgroundColor: "white" }}>
 
@@ -167,26 +205,56 @@ const CartScreen = () => {
                   }}
                 >
                   <View>
-                    <Image
-                      style={{ width: 140, height: 140, resizeMode: "contain" }}
-                      source={{ uri: item.productImages[0] }}
-                    />
+                    {item.product.productImages && item.product.productImages.length > 0 ? (
+                      <Image
+                        style={{ width: 140, height: 140, resizeMode: "contain" }}
+                        source={{ uri: item.product.productImages[0] }}
+                      />
+                    ) : (
+                      <Image
+                        style={{ width: 140, height: 140, resizeMode: "contain" }}
+                      // source={require("../../assets/images/placeholder.png")}
+                      />
+                    )}
                   </View>
 
                   <View>
-                  <Text numberOfLines={3} style={{ width: 150, marginTop: 10, fontSize: 15, fontWeight: "600", color: "#1C252E", }}>
-                    {item.itemName}
-                  </Text>
-                  <Text numberOfLines={3} style={{ width: 120, marginTop: 5, fontSize: 12, fontWeight: "600", color: "#637381", }}>
-                    {item.description}
-                  </Text>
                     <Text
-                      style={{ fontSize: 20, fontWeight: "bold", marginTop: 6, color: "#1C252E" }}
+                      numberOfLines={3}
+                      style={{
+                        width: 150,
+                        marginTop: 10,
+                        fontSize: 15,
+                        fontWeight: "600",
+                        color: "#1C252E",
+                      }}
                     >
-                      ₹ {formatNumber(item.sellingPrice)}
+                      {item.product.itemName} &nbsp;
+                      {item.id}
+                    </Text>
+                    <Text
+                      numberOfLines={3}
+                      style={{
+                        width: 120,
+                        marginTop: 5,
+                        fontSize: 12,
+                        fontWeight: "600",
+                        color: "#637381",
+                      }}
+                    >
+                      {item.product.description}
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 20,
+                        fontWeight: "bold",
+                        marginTop: 6,
+                        color: "#1C252E",
+                      }}
+                    >
+                      ₹ {formatNumber(item.product.sellingPrice)}
                     </Text>
                     <Text style={{ color: "green", marginTop: 6 }}>In Stock</Text>
-                    
                   </View>
                 </Pressable>
 
@@ -210,7 +278,7 @@ const CartScreen = () => {
                   >
                     {item.quantity > 1 ? (
                       <Pressable
-                        onPress={() => decreaseQuantity(item)}
+                        onPress={() => handleDecreaseQuantity(item.id)}
                         style={{
                           backgroundColor: "#D8D8D8",
                           padding: 7,
@@ -222,7 +290,7 @@ const CartScreen = () => {
                       </Pressable>
                     ) : (
                       <Pressable
-                        onPress={() => deleteItem(item)}
+                        onPress={() => handleDeleteItem(item.id)}
                         style={{
                           backgroundColor: "#D8D8D8",
                           padding: 7,
@@ -241,11 +309,19 @@ const CartScreen = () => {
                         paddingVertical: 6,
                       }}
                     >
-                      <Text style={{ color:"#1C252E", fontSize: 18, fontWeight: "bold", }}>{item.quantity}</Text>
+                      <Text
+                        style={{
+                          color: "#1C252E",
+                          fontSize: 18,
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {item.quantity}
+                      </Text>
                     </Pressable>
 
                     <Pressable
-                      onPress={() => increaseQuantity(item)}
+                      onPress={() => handleIncreaseQuantity(item.id)}
                       style={{
                         backgroundColor: "#D8D8D8",
                         padding: 7,
@@ -256,8 +332,9 @@ const CartScreen = () => {
                       <Feather name="plus" size={24} color="#1C252E" />
                     </Pressable>
                   </View>
+
                   <Pressable
-                    onPress={() => deleteItem(item)}
+                    onPress={() => handleDeleteItem(item.id)}
                     style={{
                       backgroundColor: "white",
                       paddingHorizontal: 8,
@@ -270,9 +347,9 @@ const CartScreen = () => {
                     <Text>Delete</Text>
                   </Pressable>
                 </Pressable>
-
               </View>
             ))}
+
           </View>
         </View>
       )}

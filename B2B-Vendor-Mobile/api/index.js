@@ -369,9 +369,7 @@ app.post("/resend-otp", async (req, res) => {
 
 // Endpoint to delete an address
 app.delete("/addresses/:userId/:addressId", async (req, res) => {
-  console.log('====================================');
-  console.log("req.params lllllllllll", req.params);
-  console.log('====================================');
+  
   try {
     const { userId, addressId } = req.params;
 

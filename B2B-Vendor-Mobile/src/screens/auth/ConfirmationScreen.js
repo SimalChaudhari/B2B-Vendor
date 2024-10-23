@@ -1,11 +1,12 @@
 import { StyleSheet, Text, View, ScrollView, Pressable, Alert } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AntDesign, Entypo, Feather } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { cleanCart } from "../../../redux/CartReducer";
 import { formatNumber } from "../../utils";
+import { fetchAddress } from "../../BackendApis/userApi";
 
 const ConfirmationScreen = () => {
     const user = useSelector((state) => state.auth.user);
@@ -18,31 +19,38 @@ const ConfirmationScreen = () => {
     ];
 
     const [currentStep, setCurrentStep] = useState(0);
-    const [selectedAddress, setSelectedAddress] = useState(null);
-    const [addresses] = useState([
-        {
-            _id: "1",
-            name: "John Doe",
-            houseNo: "123",
-            landmark: "Near Park",
-            street: "Main St.",
-            mobileNo: "1234567890",
-            postalCode: "560001",
-        },
-        {
-            _id: "2",
-            name: "Jane Doe",
-            houseNo: "456",
-            landmark: "Near Mall",
-            street: "Second St.",
-            mobileNo: "0987654321",
-            postalCode: "560002",
-        },
-    ]);
+    const [selectedAddress, setSelectedAddress] = useState([]);
+    console.log('====================================');
+    console.log("selectedAddress :",selectedAddress);
+    console.log('====================================');
+    const [addresses, setAddress] = useState([]);
+    // const [addresses] = useState([
+    //     {
+    //         id: "1",
+    //         houseNo: "123",
+    //         landmark: "Near Park",
+    //         street: "Main St.",
+    //         mobileNo: "1234567890",
+    //         postalCode: "560001",
+    //     },
+    //     {
+    //         id: "2",
+    //         houseNo: "456",
+    //         landmark: "Near Mall",
+    //         street: "Second St.",
+    //         mobileNo: "0987654321",
+    //         postalCode: "560002",
+    //     },
+    // ]);
 
-    const cart = useSelector((state) => state.cart.cart);
+    const cartData = useSelector((state) => state.cart.cart);
+    const cartArray = Array.isArray(cartData) ? cartData : Object.values(cartData);
+    const ff = cartArray?.[0];
+    const cart = [ff?.[0]];
+
+
     const total = cart
-        ?.map((item) => item.sellingPrice * item.quantity)
+        ?.map((item) => item.product.sellingPrice * item.quantity)
         .reduce((curr, prev) => curr + prev, 0);
 
     const handleProceedToCheckout = () => {
@@ -52,6 +60,31 @@ const ConfirmationScreen = () => {
         }
         setCurrentStep(1);
     };
+
+
+
+    // Get Address and filter based on the selected group
+    const getAddrsssData = async () => {
+        console.log("Fetching Address...");
+        try {
+            const data = await fetchAddress(); // API call
+            console.log('====================================');
+            console.log("ccccccccccccc", data);
+            console.log('====================================');
+            setAddress(data);
+
+            setError(null);
+        } catch (err) {
+            setError('Failed to fetch Address'); // Set error message
+            setLoading(false);
+        }
+    };
+
+
+    // useEffect to call getAddrsssData when the component mounts
+    useEffect(() => {
+        getAddrsssData(); // Call the async function
+    }, []); // Only run once when the component mounts
 
     return (
         <ScrollView style={{ marginTop: 55 }}>
@@ -84,12 +117,12 @@ const ConfirmationScreen = () => {
                         <Text style={{ fontSize: 16, color: "#0C68E9", fontWeight: "bold", }}>Add a new Address</Text>
                         <AntDesign name="pluscircleo" size={24} color="#0C68E9" />
                     </Pressable>
-
+                    
                     {addresses.map((item) => (
                         <Pressable
-                            key={item._id}
+                            key={item.id}
                             style={{
-                                backgroundColor: selectedAddress?._id === item._id ? "#e0f7fa" : "#f9f9f9",
+                                backgroundColor: selectedAddress?.id === item.id ? "#e0f7fa" : "#f9f9f9",
                                 borderWidth: 1,
                                 borderColor: "#D0D0D0",
                                 padding: 15,
@@ -105,18 +138,17 @@ const ConfirmationScreen = () => {
                             }}
                             onPress={() => setSelectedAddress(item)}
                         >
-                            {selectedAddress?._id === item._id ? (
+                            {selectedAddress?.id === item.id ? (
                                 <FontAwesome5 name="dot-circle" size={20} color="#008397" />
                             ) : (
                                 <Entypo name="circle" size={20} color="gray" />
                             )}
                             <View style={{ marginLeft: 10 }}>
-                                <Text style={styles.addressText}>{item.name}</Text>
-                                <Text style={styles.addressDetailsText}>{item.houseNo}, {item.landmark}</Text>
-                                <Text style={styles.addressDetailsText}>{item.street}</Text>
-                                <Text style={styles.addressDetailsText}>India, Bangalore</Text>
-                                <Text style={styles.addressDetailsText}>Phone No: {item.mobileNo}</Text>
-                                <Text style={styles.addressDetailsText}>Pin code: {item.postalCode}</Text>
+                                <Text style={styles.addressDetailsText}>Street Address: {item.street_address}</Text>
+                                <Text style={styles.addressDetailsText}>Phone No: {item.mobile}</Text>
+                                <Text style={styles.addressDetailsText}>Zip Code: {item.zip_code}</Text>
+                                <Text style={styles.addressDetailsText}>State: {item.state}</Text>
+                                <Text style={styles.addressDetailsText}>Country: {item.country}</Text>
                             </View>
                         </Pressable>
                     ))}
@@ -143,26 +175,26 @@ const ConfirmationScreen = () => {
                     <Text style={styles.orderSummaryTitle}>Order Summary</Text>
 
                     <Text style={styles.selectedAddressTitle}>Selected Address:</Text>
-                    <Text style={styles.selectedAddressText}>{selectedAddress?.name}</Text>
-                    <Text style={styles.selectedAddressText}>{selectedAddress?.houseNo}, {selectedAddress?.landmark}</Text>
-                    <Text style={styles.selectedAddressText}>{selectedAddress?.street}, India, Bangalore</Text>
-                    <Text style={styles.selectedAddressText}>Phone: {selectedAddress?.mobileNo}</Text>
-                    <Text style={styles.selectedAddressText}>Pin Code: {selectedAddress?.postalCode}</Text>
+                    <Text style={styles.selectedAddressText}>{selectedAddress?.street_address}</Text>
+                    <Text style={styles.selectedAddressText}>Phone: {selectedAddress?.mobile}</Text>
+                    <Text style={styles.selectedAddressText}>{selectedAddress?.state}</Text>
+                    <Text style={styles.selectedAddressText}>{selectedAddress?.country}</Text>
+                    <Text style={styles.selectedAddressText}>Zip Code: {selectedAddress?.zip_code}</Text>
 
                     <Text style={styles.orderSummaryTitle}>Products:</Text>
                     {cart.length > 0 ? (
                         cart.map((item, index) => (
                             <View key={index} style={styles.productContainer}>
-                                <Text style={styles.productText}>{item.itemName} (x{item.quantity})</Text>
-                                <Text style={styles.productPrice}>₹ {formatNumber(item.sellingPrice * item.quantity)}</Text>
+                                <Text style={styles.productText}>{item.product.itemName} (x{item.quantity})</Text>
+                                <Text style={styles.productPrice}>₹ {formatNumber(item.product.sellingPrice * item.quantity)}</Text>
                             </View>
                         ))
                     ) : (
                         <Text style={styles.emptyCartText}>No products in the cart.</Text>
                     )}
                     <View style={styles.productContainer}>
-                    <Text style={styles.orderTotalText}>Order Total: </Text> 
-                    <Text style={styles.totalAmount}> ₹ {formatNumber(total)}</Text>
+                        <Text style={styles.orderTotalText}>Order Total: </Text>
+                        <Text style={styles.totalAmount}> ₹ {formatNumber(total)}</Text>
                     </View>
 
                     <Pressable
