@@ -29,8 +29,14 @@ export class OrderService {
         private readonly cartRepository: Repository<CartItemEntity>,
     ) { }
 
+    async getAllOrders(): Promise<OrderEntity[]> {
+        return this.orderRepository.find({
+            relations: ['address', 'user', 'orderItems.product'],
+        });
+    }
+
     async createOrder(userId: string, createOrderDto: CreateOrderDto): Promise<OrderEntity> {
-        const { addressId, totalPrice,totalQuantity, delivery, paymentMethod } = createOrderDto;
+        const { addressId, totalPrice, totalQuantity, delivery, paymentMethod } = createOrderDto;
 
         const user = await this.userRepository.findOne({ where: { id: userId } });
         if (!user) {

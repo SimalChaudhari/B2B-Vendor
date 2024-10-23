@@ -2,12 +2,14 @@ import { Controller, Post, Get, Body, Req, UseGuards, Param, Delete, Res, HttpSt
 import { OrderService } from './order.service';
 
 import { JwtAuthGuard } from 'auth/jwt/jwt-auth.guard'; // Adjust the import path
-import { Request,Response } from 'express';
+import { Request, Response } from 'express';
 import { CreateItemOrderDto, CreateOrderDto } from './order.dto';
 import { OrderEntity } from './order.entity';
 import { OrderItemEntity } from './order.item.entity';
+import { isAdmin } from 'utils/auth.utils';
+import { RolesGuard } from 'auth/jwt/roles.guard';
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard,RolesGuard)
 @Controller('order')
 export class OrderController {
     constructor(private readonly orderService: OrderService) { }
@@ -20,9 +22,16 @@ export class OrderController {
 
     @Get('get')
     async getOrders(@Req() req: Request): Promise<OrderEntity[]> {
-        const userId = req.user.id; // Assume user is authenticated
-        return this.orderService.getOrdersByUserId(userId);
+        const user = req.user;
+        const userRole = user?.role;
+          // Admin users get all orders
+        if (isAdmin(userRole)) {
+            return this.orderService.getAllOrders(); // Ensure service method exists
+        }
+        // Regular users get their own orders
+        return this.orderService.getOrdersByUserId(user.id);
     }
+
     @Get(':orderId')
     async getOrderById(@Param('orderId') orderId: string): Promise<OrderEntity | null> {
         return this.orderService.getOrderById(orderId);
@@ -34,9 +43,7 @@ export class OrderController {
         return response.status(HttpStatus.OK).json({
             data: result,
         });
-
     }
-
 
     @Delete('delete/:orderId')
     async deleteOrder(@Param('orderId') orderId: string): Promise<{ message: string }> {

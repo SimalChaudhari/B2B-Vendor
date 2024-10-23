@@ -23,7 +23,9 @@ const VendorPage = lazy(() => import('src/pages/vendors'));
 const FAQPage = lazy(() => import('src/pages/settings/faq'));
 const ContactPage = lazy(() => import('src/pages/settings/contact-us'));
 const TermsPage = lazy(() => import('src/pages/settings/terms-conditions'));
-const GeneralPage = lazy(() => import('src/pages/settings/general'));
+const GeneralPage = lazy(() => import('src/pages/vendor-page/settings/general'));
+const ProfilePage = lazy(() => import('src/pages/vendor-page/settings/profile'));
+
 
 // Vendor
 const ItemPage = lazy(() => import('src/pages/vendor-page/items'));
@@ -115,6 +117,8 @@ export const dashboardRoutes = [
       { path: 'terms-conditions/view/:id', element: <TermView /> },
 
       { path: 'general-settings', element: <GeneralPage /> },
+      { path: 'profile-settings', element: <ProfilePage /> },
+
     ],
   },
 
@@ -124,7 +128,7 @@ export const dashboardRoutes = [
     children: [
       { element: <ItemPage />, index: true },
       { path: 'view/:id', element: <ItemView /> },
-      { path: 'checkout', element: <CheckoutListView/> },
+      { path: 'checkout', element: <CheckoutListView /> },
 
     ],
   },

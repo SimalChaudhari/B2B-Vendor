@@ -8,9 +8,9 @@ export enum OrderStatus {
     PENDING = 'pending',
     SUCCESS = 'success',
     REFUSED = 'refused',
+    Cancelled = 'cancelled',
+
 }
-
-
 
 @Entity('ordersItem')
 export class OrderItemEntity {

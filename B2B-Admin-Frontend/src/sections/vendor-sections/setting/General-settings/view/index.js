@@ -1,1 +1,1 @@
-export * from './general-list-view';
+export * from '../general-list-view';

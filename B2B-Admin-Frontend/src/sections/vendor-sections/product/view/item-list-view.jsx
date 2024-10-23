@@ -7,10 +7,11 @@ import { useFetchProductData } from '../components/fetch-product';
 import { useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { Iconify } from 'src/components/iconify';
-import { Button } from '@mui/material';
+import { Badge, Button } from '@mui/material';
 import { ItemCardList } from './item-card-list';
 import { useRouter } from 'src/routes/hooks';
 import { useNavigate } from 'react-router';
+import useCart from '../../checkout/components/useCart';
 
 // ----------------------------------------------------------------------
 
@@ -18,9 +19,9 @@ export function ItemListView() {
 
   const { fetchData } = useFetchProductData(); // Destructure fetchData from the custom hook
   const router = useRouter(); // Initialize the router
-  const navigate = useNavigate(); // Initialize useNavigate
-
+  const mappedData = useCart();
   const productData = useSelector((state) => state.product?.product || []);
+
   //----------------------------------------------------------------------------------------------------
   useEffect(() => {
     fetchData(); // Call fetchData when the component mounts
@@ -44,20 +45,28 @@ export function ItemListView() {
         ]}
 
         action={
-          <Button
-            size="large"
-            color="success"
-            variant="contained"
-            startIcon={<Iconify icon="solar:cart-plus-bold" width={24} />}
-            sx={{
-              px: 4,
-              whiteSpace: 'nowrap',
-              width: '100%' // Ensure full width on all screens
-            }}
-            onClick={handleCartListClick} // Add the click handler here
+          <Badge
+            badgeContent={mappedData.length} // Display the number of items in the cart
+            // badgeContent={6} // Display the number of items in the cart
+
+            color="error"
+            overlap="rectangular"
           >
-            Cart List
-          </Button>
+            <Button
+              size="large"
+              color="success"
+              variant="contained"
+              startIcon={<Iconify icon="solar:cart-plus-bold" width={24} />}
+              sx={{
+                px: 4,
+                whiteSpace: 'nowrap',
+                width: '100%' // Ensure full width on all screens
+              }}
+              onClick={handleCartListClick} // Add the click handler here
+            >
+              Cart List
+            </Button>
+          </Badge>
         }
         sx={{ mb: { xs: 3, md: 5 } }}
       />

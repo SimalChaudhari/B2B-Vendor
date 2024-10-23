@@ -13,6 +13,8 @@ export class CartItemEntity {
   @Column()
   quantity!: number;
 
+  
+
   @Column()
   userId!: string; // Associate with the user (assuming you have users)
   price!: number;

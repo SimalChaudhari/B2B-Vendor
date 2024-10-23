@@ -12,7 +12,9 @@ import { varAlpha } from 'src/theme/styles';
 import Rating from '@mui/material/Rating';
 import { useNavigate } from 'react-router';
 import { useDispatch } from 'react-redux';
-import { addToCart } from 'src/store/action/cartActions';
+import { addToCart, cartList } from 'src/store/action/cartActions';
+import useCart from '../../checkout/components/useCart';
+import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
@@ -20,14 +22,21 @@ export function ItemCard({ product }) {
   const navigate = useNavigate(); // Initialize useNavigate
   const dispatch = useDispatch()
 
+  // State to track if the product is added to the cart
+  const [isAddedToCart, setIsAddedToCart] = useState(false);
+
   const handleCardClick = (id) => {
     navigate(`/items/view/${id}`); // Adjust the path as per your routing structure
   };
 
   const handleToAddCard = async (id, quantity = 1) => { // Adjust to accept id and quantity
-     const data = { productId: id, quantity };
+    const data = { productId: id, quantity };
     try {
-      await dispatch(addToCart(data));
+      const res = await dispatch(addToCart(data));
+      if (res) {
+        await dispatch(cartList());
+        setIsAddedToCart(true); // Set to true once the item is added
+      }
     } catch (error) {
       console.error('Submission failed', error);
     }
@@ -119,17 +128,21 @@ export function ItemCard({ product }) {
 
       </Box>
       <Divider sx={{ borderStyle: 'dashed' }} />
-      <Box sx={{ p: 3, gap: 2, display: 'flex' }}>
+      <Box sx={{ p:1, gap: 2, display: 'flex' }}>
         <Button
           onClick={(e) => {
             e.stopPropagation(); // Prevent triggering card click
-            handleToAddCard(product.id, 1); // Pass id and quantity 0
+            handleToAddCard(product.id, 1);
           }}
           fullWidth
-          color="error"
-          variant="soft"
+          size="large"
+          color="warning"
+          variant="contained"
+          startIcon={<Iconify icon="solar:cart-plus-bold"  />}
+          disabled={isAddedToCart} // Disable the button if added to cart
+          sx={{ whiteSpace: 'nowrap' }}
         >
-          Add To Cart
+          {isAddedToCart ? 'Added to Cart' : 'Add To Cart'} {/* Update button text */}
         </Button>
         <Button onClick={() => handleCardClick(product.id)}
           fullWidth

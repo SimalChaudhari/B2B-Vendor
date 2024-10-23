@@ -42,7 +42,7 @@ import {
 import { OrderTableRow } from './table/order-table-row';
 import { OrderTableToolbar } from '../order-table-toolbar';
 import { OrderTableFiltersResult } from './table/order-table-filters-result';
-import {  ORDER_STATUS_OPTIONS } from 'src/_mock/_order';
+import { ORDER_STATUS_OPTIONS } from 'src/_mock/_order';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFetchOrderData } from '../components/fetch-order';
 
@@ -52,10 +52,11 @@ const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...ORDER_STATUS_OPTIONS]
 
 const TABLE_HEAD = [
   { id: 'Customer', label: 'customer' },
-  { id: 'Quantity', label: 'Quantity', width: 140, align: "center" },
-  { id: 'Amount', label: 'Price' },
+  { id: 'Mobile', label: 'mobile', align: "center" },
+  { id: 'Quantity', label: 'Quantity', align: "center" },
+  { id: 'Amount', label: 'Total Price' },
   { id: 'createdAt', label: 'Order Date' },
-  { id: 'status', label: 'Status' },
+  // { id: 'status', label: 'Status' },
   { id: '', width: 88 },
 ];
 
@@ -297,7 +298,7 @@ export function OrderListView() {
 }
 
 function applyFilter({ inputData, comparator, filters, dateError }) {
-  const { status, name, startDate, endDate } = filters;
+  const { status, name, email, mobile, totalPrice, startDate, endDate } = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index]);
 
@@ -308,13 +309,13 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
   });
 
   inputData = stabilizedThis.map((el) => el[0]);
-
   if (name) {
     inputData = inputData.filter(
       (order) =>
-        order.orderNumber.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.customer.name.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.customer.email.toLowerCase().indexOf(name.toLowerCase()) !== -1
+        order.user.name.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        order.user.email.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        order.user.mobile.toLowerCase().indexOf(name.toLowerCase()) !== -1
+
     );
   }
 

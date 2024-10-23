@@ -60,7 +60,10 @@ export const paths = {
     createTerm: `/create`,
     editTerm: (id) => `/edit/${id}`,
     viewTerm: (id) => `/view/${id}`,
+
     general_settings: `/settings/general-settings`,
+    profile: `/settings/profile-settings`,
+
   },
 
   // Vendor  Panel 

@@ -29,7 +29,7 @@ import { Typography } from '@mui/material';
 // ----------------------------------------------------------------------
 
 export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteRow }) {
-  console.log("🚀 ~ OrderTableRow ~ row:", row)
+
   const confirm = useBoolean();
 
   const collapse = useBoolean();
@@ -50,20 +50,21 @@ export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteR
 
       <TableCell>
         <Stack spacing={2} direction="row" alignItems="center">
-          <Stack
-            sx={{
-              typography: 'body2',
-              flex: '1 1 auto',
-              alignItems: 'flex-start',
-            }}
-          >
-            <Box component="span">{row.user?.name}</Box>
+          <Avatar alt={row?.user?.name} src={row?.user?.name} />
+          <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
+            <Link color="inherit" sx={{ cursor: 'pointer' }}>
+              {row?.user?.name}
+            </Link>
             <Box component="span" sx={{ color: 'text.disabled' }}>
-              {row.user.email}
+              {row?.user?.email}
             </Box>
           </Stack>
         </Stack>
+
       </TableCell>
+
+      <TableCell align="center"> {row?.user.mobile || "N/A"} </TableCell>
+
 
       <TableCell align="center"> {row?.totalQuantity} </TableCell>
 
@@ -82,6 +83,7 @@ export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteR
         />
       </TableCell>
 
+      {/*
       <TableCell>
         <Label
           variant="soft"
@@ -95,7 +97,7 @@ export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteR
           {row?.status}
         </Label>
       </TableCell>
-
+ */}
       <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
         <IconButton
           color={collapse.value ? 'inherit' : 'default'}
@@ -155,16 +157,11 @@ export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteR
                   </Typography>
                 </Box>
                 <Typography variant="body2" sx={{ width: 30, textAlign: 'center' }}>
-                  x{item.quantity}
+                  x {item.quantity}
                 </Typography>
                 <Box sx={{ width: 130, textAlign: 'right' }}>
                   <Typography variant="body2" color="text.primary">
                     {fCurrency(item.product.sellingPrice * item.quantity)}
-                  </Typography>
-                </Box>
-                <Box sx={{ width: 130, textAlign: 'right', margin: 2 }}>
-                  <Typography variant="body2" color="text.primary">
-                    {`Status: ${(item.status)}`}
                   </Typography>
                 </Box>
               </Stack>

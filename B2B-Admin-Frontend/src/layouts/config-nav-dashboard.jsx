@@ -34,7 +34,8 @@ export const navData = [
         // { title: 'Users', path: paths.users.root, icon: ICONS.users },
         { title: 'Products', path: paths.products.root, icon: ICONS.products },
         { title: 'Vendors', path: paths.vendors.root, icon: ICONS.vendors },
-        { title: 'Orders', path: paths.orders.root, icon: ICONS.orders }, {
+        { title: 'Orders', path: paths.orders.root, icon: ICONS.orders },
+        {
           title: 'Settings',
           path: paths.settings.root,
           icon: ICONS.settings,
@@ -49,8 +50,17 @@ export const navData = [
 
 
       ...(userRole === 'Vendor' ? [
-        {title: 'Products', path: paths.items.root, icon: ICONS.products},
-        {title: 'Orders', path: paths.orders.root, icon: ICONS.orders },
+        { title: 'Products', path: paths.items.root, icon: ICONS.products },
+        { title: 'Orders', path: paths.orders.root, icon: ICONS.orders },
+        {
+          title: 'Settings',
+          path: paths.settings.root,
+          icon: ICONS.settings,
+          children: [
+            { title: 'Profile', path: paths.settings.profile }
+
+          ],
+        },
       ] : []),
     ],
   },
