@@ -58,7 +58,7 @@ export class OrderService {
     async getOrdersByUserId(userId: string): Promise<OrderEntity[]> {
         return this.orderRepository.find({
             where: { user: { id: userId } },
-            relations: ['address', 'user'],
+            relations: ['address', 'user', 'orderItems.product'],
         });
     }
 
@@ -130,7 +130,7 @@ export class OrderService {
     async getOrderItemByUserId(userId: string): Promise<OrderItemEntity[]> {
         return this.orderItemRepository.find({
             where: { order: { user: { id: userId } } },
-            relations: ['order', 'order.user', 'order.address', 'product'],
+            relations: ['order.user', 'order.address', 'order.orderItems.product'],
         });
     }
 
@@ -139,7 +139,7 @@ export class OrderService {
     async getOrderItemsByOrderId(orderId: string): Promise<OrderItemEntity[]> {
         return this.orderItemRepository.find({
             where: { order: { id: orderId } },
-            relations: ['order', 'order.user', 'order.address', 'product'],
+            relations: ['order.user', 'order.address', 'order.orderItems.product'],
         });
     }
 

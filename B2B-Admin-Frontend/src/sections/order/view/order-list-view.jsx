@@ -71,7 +71,6 @@ export function OrderListView() {
   const [loading, setLoading] = useState(false);
   const { fetchData, fetchDeleteData } = useFetchOrderData(); // Destructure fetchData from the custom hook
   const _orders = useSelector((state) => state.order?.order || []);
-  console.log("🚀 ~ OrderListView ~ _orders:", _orders)
 
 
   const [tableData, setTableData] = useState(_orders);

@@ -1,3 +1,5 @@
+import React from 'react';
+
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
@@ -22,12 +24,51 @@ import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { usePopover, CustomPopover } from 'src/components/custom-popover';
-import { RouterLink } from 'src/routes/components';
 
 // ----------------------------------------------------------------------
 
 export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteRow }) {
-  console.log("🚀 ~ OrderTableRow ~ row:", row)
+ 
+
+  function groupOrders(data) {
+    // Check if data is an array, or convert to an empty array if not
+    if (!Array.isArray(data)) {
+      console.warn("Expected an array as input, but got:", data);
+      return []; // Return an empty array or handle as needed
+    }
+  
+    const groupedData = {};
+  
+    data.forEach(order => {
+      const orderId = order.order.id;
+  
+      // Check if the order already exists in the groupedData
+      if (!groupedData[orderId]) {
+        groupedData[orderId] = {
+          orderId,
+          products: [],
+        };
+      }
+  
+      // Push the product into the corresponding order
+      groupedData[orderId].products.push(order.product.name);
+    });
+  
+    // Convert the grouped object back to an array
+    return Object.values(groupedData);
+  }
+  
+  
+  // Check and group orders
+  try {
+    const groupedOrders = groupOrders(row);
+    console.log(groupedOrders);
+  } catch (error) {
+    console.error(error);
+  }
+  
+
+
   const confirm = useBoolean();
 
   const collapse = useBoolean();
