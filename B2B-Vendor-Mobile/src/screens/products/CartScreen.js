@@ -12,63 +12,60 @@ import { Feather } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  addToCart,
-  decrementQuantity,
-  incementQuantity,
-  removeFromCart,
+  addToCart
 } from "../../../redux/CartReducer";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { formatNumber } from "../../utils";
-import { addCart, decreaseQuantity, deleteCartItem, fetchCart, increaseQuantity } from "../../BackendApis/cartApi";
+import { decreaseQuantity, deleteCartItem, fetchCart, increaseQuantity } from "../../BackendApis/cartApi";
+import useAuthToken from "../../components/AuthToken/useAuthToken";
+import LoadingComponent from "../../components/Loading/LoadingComponent";
 
 const CartScreen = () => {
 
+  const { token } = useAuthToken();
   const [cart, setCart] = useState([]);
-  console.log('====================================');
-  console.log("ddddddddddddddddaaaaaaaaaaaaaaaaaaaaaaaa",cart);
-  console.log('====================================');
+  const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [quantity, setQuantity] = useState(1); // Initial quantity set to 1 or any default value  
 
 
-  const cartScreen = useSelector((state) => state.cart.cart); // Access the cart state
-  console.log('====================================');
-  console.log("cartScreen :", cartScreen);
-  console.log('====================================');
   const total = cart
     ?.map((item) => parseFloat(item.product.sellingPrice) * item.quantity)
     .reduce((curr, prev) => curr + prev, 0);
   const dispatch = useDispatch();
-  // const increaseQuantity = (item) => {
-  //   dispatch(incementQuantity(item));
-  // };
-  // const decreaseQuantity = (item) => {
-  //   dispatch(decrementQuantity(item));
-  // };
-  // const deleteItem = (item) => {
-  //   dispatch(removeFromCart(item));
-  // };
 
-
-  // Fetch cart data from the backend
-  const getCartData = async () => {
-    // setLoading(true);
-    try {
-      const data = await fetchCart(); // API call
-      dispatch(addToCart(data)); // Uncomment this if you have a Redux action to set the cart
+  // Use useFocusEffect to call getCartData whenever the screen is focused
+  useFocusEffect(
+    React.useCallback(() => {
+      if (token) {
+        getCartData();
+      }
       // setLoading(false);
+    }, [token]) // This dependency array ensures that the effect runs again when the token changes
+  );
+
+  const getCartData = async () => {
+    try {
+      setCart([]);
+      setLoading(true);
+
+      // Delay for 1 seconds (1000 milliseconds)
+      await new Promise((resolve) => setTimeout(resolve, 10));
+
+      const data = await fetchCart(); // Fetch cart data after the delay
+      dispatch(addToCart(data)); // Uncomment this if you have a Redux action to set the cart
       setCart(data);
-      setError(null);
-    } catch (err) {
-      setError('Failed to fetch Cart Data'); // Set error message
       setLoading(false);
+    } catch (err) {
+      setLoading(false);
+      console.error('Failed to fetch Cart Data:', err);
     }
   };
 
-  // useEffect to call getCartData when the component mounts
-  useEffect(() => {
-    getCartData(); // Call the async function
-  }, []); // Only run once when the component mounts
+
+  if (loading) {
+    return <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 20 }}><LoadingComponent /></View>;
+  }
 
   // Handle item quantity changes
   const handleIncreaseQuantity = async (id) => {
@@ -115,6 +112,7 @@ const CartScreen = () => {
       console.error('Error deleting item:', error);
     }
   };
+
 
   const navigation = useNavigation();
 
@@ -229,8 +227,7 @@ const CartScreen = () => {
                         color: "#1C252E",
                       }}
                     >
-                      {item.product.itemName} &nbsp;
-                      {item.id}
+                      {item.product.itemName}
                     </Text>
                     <Text
                       numberOfLines={3}

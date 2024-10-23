@@ -42,7 +42,6 @@ const VendorHomeScreen = () => {
     // Get items and filter based on the selected group
     const getItems = async () => {
         setLoading(true);
-        console.log("Fetching items...");
         try {
             const data = await fetchItems(); // API call
             setItems(data); // Set the fetched items

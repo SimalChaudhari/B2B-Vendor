@@ -18,16 +18,18 @@ import { addToCart } from "../../../redux/CartReducer";
 import { fetchItemById } from "../../BackendApis/itemsApi";
 import { formatNumber } from "../../utils";
 import { addCart, fetchCart } from "../../BackendApis/cartApi";
+import useAuthToken from "../../components/AuthToken/useAuthToken";
 
 const ProductInfoScreen = () => {
   const route = useRoute();
+  const { token } = useAuthToken();
   const navigation = useNavigation();
   const { id } = route.params;
 
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [quantity, setQuantity] = useState(1); // Initial quantity set to 1 or any default value  
+  const [quantity, setQuantity] = useState(1);
   const [addedToCart, setAddedToCart] = useState(false);
   const dispatch = useDispatch();
 
@@ -35,7 +37,7 @@ const ProductInfoScreen = () => {
     const getItemDetails = async () => {
       try {
         const data = await fetchItemById(id);
-        setItem(data.data); // Adjust according to your API response structure
+        setItem(data.data);
       } catch (err) {
         setError('Failed to fetch item details');
       } finally {
@@ -46,7 +48,6 @@ const ProductInfoScreen = () => {
     getItemDetails();
   }, [id]);
 
-  // Handle loading and error states
   if (loading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
   }
@@ -56,9 +57,7 @@ const ProductInfoScreen = () => {
   }
 
   const incrementQuantity = () => {
-    // if (quantity < item.data.available) {
     setQuantity(prevQuantity => prevQuantity + 1);
-    // }
   };
 
   const decrementQuantity = () => {
@@ -67,42 +66,24 @@ const ProductInfoScreen = () => {
     }
   };
 
-
-  // const addItemToCart = (item) => {
-  //   setAddedToCart(true);
-  //   dispatch(addToCart(item));
-
-
-  //   // Show a toast notification
-  //   Toast.show({
-  //     text1: `Product added to cart!`,
-  //     position: 'bottom',
-  //     type: 'success', // Can be 'success', 'error', 'info', or 'normal'
-  //     visibilityTime: 3000,
-  //     autoHide: true,
-  //     topOffset: 30,
-  //     bottomOffset: 40,
-  //   });
-
-  //   setTimeout(() => {
-  //     setAddedToCart(false);
-  //   }, 6000);
-  // };
-
   const addItemToCart = async (item) => {
-
     setAddedToCart(true);
-    // await dispatch(addToCart(item));
-    const productId = item.id
+    const productId = item.id;
     try {
-      // Assuming quantity is part of the item or you have it defined elsewhere
       await addCart(productId, quantity);
-
-      const cartData = await fetchCart(); // API call
+      const cartData = await fetchCart();
       dispatch(addToCart(cartData));
+      Toast.show({
+        text1: `Product added to cart!`,
+        position: 'bottom',
+        type: 'success',
+        visibilityTime: 3000,
+        autoHide: true,
+        topOffset: 30,
+        bottomOffset: 40,
+      });
     } catch (error) {
       console.error('Error adding item to cart:', error);
-      // Optionally show an error toast here
       Toast.show({
         text1: `Failed to add product to cart.`,
         position: 'bottom',
@@ -112,55 +93,55 @@ const ProductInfoScreen = () => {
         topOffset: 30,
         bottomOffset: 40,
       });
+    } finally {
+      setTimeout(() => {
+        setAddedToCart(false);
+      }, 6000);
     }
-
-    // Show a success toast notification
-    Toast.show({
-      text1: `Product added to cart!`,
-      position: 'bottom',
-      type: 'success',
-      visibilityTime: 3000,
-      autoHide: true,
-      topOffset: 30,
-      bottomOffset: 40,
-    });
-
-    setTimeout(() => {
-      setAddedToCart(false);
-    }, 6000);
   };
 
+  const handleAddToCart = () => {
+    if (token) {
 
-  // Your UI rendering logic goes here
+      if (item) {
+        addItemToCart({ ...item, quantity });
+      }
+    } else {
+      Toast.show({
+        text1: `Please Login to Add to Cart.`,
+        position: 'bottom',
+        type: 'error',
+        visibilityTime: 3000,
+        autoHide: true,
+        topOffset: 30,
+        bottomOffset: 40,
+      });
+    }
+  };
+
   return (
     <ScrollView style={{ marginTop: 23, flex: 1, backgroundColor: "white" }} showsVerticalScrollIndicator={false}>
-      {/* Horizontal ScrollView for Images */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         {(item.productImages && item.productImages.length > 0) ? (
           item.productImages.map((imageUri, index) => (
             <ImageBackground
               key={index}
-              style={{ width: 400, height: 400, marginTop: 25, marginRight: 10, resizeMode: "cover" }} // Adjust width and height as needed
-              source={{ uri: imageUri }} // Use imageUri directly
-            >
-              {/* You can add any additional content inside the ImageBackground here */}
-            </ImageBackground>
+              style={{ width: 400, height: 400, marginTop: 25, marginRight: 10, resizeMode: "cover" }}
+              source={{ uri: imageUri }}
+            />
           ))
         ) : (
-          <Text>No Images Available</Text> // Optional: Display a message if no images
+          <Text>No Images Available</Text>
         )}
       </ScrollView>
       <View style={styles.MainContainer}>
-
         <Text style={styles.separator} />
         <Text style={styles.productTitle}>{item.itemName}</Text>
         <Text style={styles.productsubDescription}>{item.description}</Text>
-
         <View>
           <Text style={styles.productPrice}>₹ {formatNumber(item.sellingPrice)}</Text>
         </View>
 
-        {/* Quantity */}
         <View style={styles.topQuantityContainer}>
           <Text style={styles.sizeText}>Quantity:</Text>
           <View>
@@ -168,55 +149,35 @@ const ProductInfoScreen = () => {
               <TouchableOpacity onPress={decrementQuantity} style={styles.decrementButton}>
                 <Text style={styles.buttonText}><Entypo name="minus" size={24} color="#C4CBD2" /></Text>
               </TouchableOpacity>
-
               <Text style={styles.quantityText}>{quantity}</Text>
-
               <TouchableOpacity onPress={incrementQuantity} style={styles.incrementButton}>
                 <Text style={styles.buttonText}><Entypo name="plus" size={24} color="#C4CBD2" /></Text>
               </TouchableOpacity>
             </View>
-
           </View>
         </View>
 
         <View style={styles.BottomButton}>
-
           <Pressable
-            // onPress={() => addItemToCart(item)}
-            onPress={() => addItemToCart({ ...item, quantity })}
-            style={[
-              styles.addToCartButton,
-              { backgroundColor: addedToCart ? "#00dd00" : "#FFAB00" } // Dynamic background color
-            ]}
-
-          // style={styles.addToCartButton}
-          >
-            {addedToCart ? (
-              <View style={styles.addToCartBox}>
-                <FontAwesome6 name="cart-plus" size={24} color="#1C252E" />
-                <Text style={styles.addToCartText}> Added to Cart</Text>
-              </View>
-            ) : (
-
-              <View style={styles.addToCartBox}>
-                <FontAwesome6 name="cart-plus" size={24} color="#1C252E" />
-                <Text style={styles.addToCartText}> Add to Cart</Text>
-              </View>
-            )}
+            onPress={handleAddToCart}
+            style={[styles.addToCartButton, { backgroundColor: addedToCart ? "#00dd00" : "#FFAB00" }]}>
+            <View style={styles.addToCartBox}>
+              <FontAwesome6 name="cart-plus" size={24} color="#1C252E" />
+              <Text style={styles.addToCartText}>{addedToCart ? " Added to Cart" : " Add to Cart"}</Text>
+            </View>
           </Pressable>
 
           <Pressable style={styles.buyNowButton}
-            // onPress={() => navigation.navigate("Cart")}
             onPress={() => {
-              addItemToCart({ ...item, quantity }); // Add item to cart
-              navigation.navigate("Cart"); // Navigate to Cart screen
-            }}
-          >
+              handleAddToCart();
+              if (token) {
+                navigation.navigate("Cart");
+              }
+            }}>
             <Text style={styles.byeNowText}>Buy Now</Text>
           </Pressable>
         </View>
         <Text style={styles.separator} />
-        {/* Other UI components */}
         <View style={styles.BottomTextContainer}>
           <View style={styles.BottomTextComponent}>
             <Entypo name="plus" size={24} color="#637381" />
@@ -233,7 +194,6 @@ const ProductInfoScreen = () => {
             <Text style={styles.BottomText}>Share</Text>
           </View>
         </View>
-
 
         <View style={styles.BottomLastContainer}>
           <View style={styles.BottomTextLastComponent}>

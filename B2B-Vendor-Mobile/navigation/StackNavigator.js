@@ -19,24 +19,49 @@ import ProductInfoScreen from '../src/screens/products/ProductInfoScreen';
 import OTPVerification from '../src/screens/auth/OTPVerification';
 import NoInternetScreen from '../src/screens/NoInternet/NoInternetScreen';
 import VendorHomeScreen from '../src/screens/Vendor/VendorHomeScreen';
+import { fetchCart } from '../src/BackendApis/cartApi';
+import useAuthToken from '../src/components/AuthToken/useAuthToken';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const StackNavigator = () => {
 
-    const [isConnected, setIsConnected] = useState(true); // Track network status
-
-    const cart = useSelector((state) => state.cart.cart); // Access the cart state
+    const { token } = useAuthToken();
+    const [isConnected, setIsConnected] = useState(true); // Track network status    
+    const [cartData, setCartData] = useState([]); // Store the fetched items
     
+    const cart = useSelector((state) => state.cart.cart); // Access the cart state
+    const cartQuantity = useSelector((state) => state.cart.cartQuantity); // Access the cart state
+    console.log('====================================');
+    console.log("cartQuantity :",cartQuantity);
+    console.log('====================================');
     // Assuming the cart is an array with one object
-    const totalQuantity = Object.values(cart[0] || {}).reduce((acc, item) => {
-        // Check if the item has a quantity field
-        if (item && typeof item.quantity === 'number') {
-            return acc + item.quantity;
+
+    // const totalQuantity = cartData.reduce((acc, item) => {
+    //     return acc + item.quantity; // Summing the quantity of each item
+    // }, 0);
+
+    useEffect(() => {
+        if (token) {
+            getCartData();
         }
-        return acc; // Return accumulator if no quantity
-    }, 0);
+    }, [token]);
+    
+    const getCartData = async () => {
+        // setLoading(true);
+        try {
+
+            const data = await fetchCart(); // API call
+            setCartData(data);
+
+            setError(null);
+        } catch (err) {
+            setError('Failed to fetch items');
+            setLoading(false);
+        }
+    };
+
 
     // Check network status
     useEffect(() => {
@@ -47,7 +72,7 @@ const StackNavigator = () => {
         checkNetwork();
     }, []);
 
-    // Redirect to NoInternetScreen if not connected
+
     if (!isConnected) {
         return (
             <NavigationContainer>
@@ -119,7 +144,7 @@ const StackNavigator = () => {
                                             <Text style={styles.badgeText}>{totalQuantity}</Text>
                                         </View>
                                     )}
-                                     */}
+                                    */}
                             </View>
                         ),
                     }}

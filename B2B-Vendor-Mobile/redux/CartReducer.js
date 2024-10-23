@@ -4,10 +4,11 @@ export const CartSlice = createSlice({
   name: "cart",
   initialState: {
     cart: [],
+    cartQuantity: "",
   },
   reducers: {
-    getToCart : (state, action) =>{
-      state.cart = action.payload;
+    setCartQuantity: (state, action) => {
+      state.cartQuantity = action.payload;
     },
     addToCart: (state, action) => {
       // Check if the item already exists in the cart
@@ -54,7 +55,7 @@ export const CartSlice = createSlice({
 });
 
 // Exporting actions for use in components
-export const { getToCart, addToCart, removeFromCart, incrementQuantity, decrementQuantity, cleanCart } = CartSlice.actions;
+export const { setCartQuantity, addToCart, removeFromCart, incrementQuantity, decrementQuantity, cleanCart } = CartSlice.actions;
 
 // Exporting the reducer for the store
 export default CartSlice.reducer;
