@@ -7,18 +7,21 @@ import { AuthController } from './auth.controller';
 import { JwtModule } from '@nestjs/jwt';
 
 import * as dotenv from 'dotenv';
+import { AddressesService } from 'users/address/addresses/addresses.service';
+import { Address } from 'users/address/addresses/addresses.entity';
+
 dotenv.config(); // Load environment variables
 
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User]),
+  imports: [TypeOrmModule.forFeature([User,Address]),
   JwtModule.register({
     secret: process.env.JWT_SECRET, // Use your JWT secret from the .env file
     signOptions: { }, // Set your token expiration
   }),
 
 ],
-  providers: [AuthService],
+  providers: [AuthService,AddressesService],
   controllers: [AuthController],
 })
 export class AuthModule {}

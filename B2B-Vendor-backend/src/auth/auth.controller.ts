@@ -10,13 +10,13 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
-  @UseInterceptors(FileInterceptor('profile')) // Use 'profile' as the field name for the uploaded file
+  // @UseInterceptors(FileInterceptor('profile')) // Use 'profile' as the field name for the uploaded file
   async register(
     @Res() response: Response,  // Move the required parameter before the optional one
     @Body() authDto: AuthDto, 
-    @UploadedFile() file?: Express.Multer.File // Optional profile image
+    // @UploadedFile() file?: Express.Multer.File // Optional profile image
   ) {
-    const result = await this.authService.register(authDto, file);
+    const result = await this.authService.register(authDto);
     return response.status(HttpStatus.OK).json({
       message: result.message,
       user: result.user,

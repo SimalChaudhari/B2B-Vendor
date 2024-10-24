@@ -6,15 +6,15 @@ export class CreateAddressDto {
 
     @IsString()
     @IsNotEmpty()
-    mobile!: string;
+    mobile?: string;
 
     @IsString()
     @IsNotEmpty()
-    street_address!: string;
+    street_address?: string;
 
     @IsString()
     @IsNotEmpty()
-    state!: string;
+    state?: string;
 
     // @IsString()
     // @IsNotEmpty()
@@ -22,11 +22,11 @@ export class CreateAddressDto {
 
     @IsString()
     @IsNotEmpty()
-    zip_code!: string;
+    zip_code?: string;
 
     @IsString()
     @IsNotEmpty()
-    country!: string;
+    country?: string;
 }
 
 export class UpdateAddressDto {

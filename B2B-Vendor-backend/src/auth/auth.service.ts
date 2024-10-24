@@ -3,11 +3,14 @@ import { Injectable, BadRequestException, NotFoundException, UnauthorizedExcepti
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { User } from 'users/user/users.entity';
+import { User, UserRole } from 'users/user/users.entity';
 import { AuthDto } from './auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as fs from 'fs';
 import * as path from 'path';
+import { Address } from 'users/address/addresses/addresses.entity';
+import { AddressesService } from 'users/address/addresses/addresses.service';
+import { CreateAddressDto } from 'users/address/addresses/addresses.dto';
 
 const generateOTP = (): string => {
   const otp = Math.floor(100000 + Math.random() * 900000).toString(); // Generate a 6-digit OTP
@@ -38,9 +41,10 @@ export class AuthService {
     private userRepository: Repository<User>,
     private readonly JwtService: JwtService, // Inject JwtService
     // private readonly mailerService: MailerService, // If used
+    private readonly addressesService: AddressesService,
   ) { }
 
-  async register(authDto: AuthDto, file?: Express.Multer.File): Promise<{ message: string, user: User }> {
+  async register(authDto: AuthDto): Promise<{ message: string, user: User }> {
     try {
       // Check if the email or mobile already exists
       const existingUser = await this.userRepository.findOne({
@@ -51,22 +55,42 @@ export class AuthService {
         throw new BadRequestException('Email or Mobile number already exists');
       }
 
-      // Handle file upload if a file is provided
-      let profileImagePath: string | undefined = undefined;
-      if (file) {
-        const uploadPath = path.join(__dirname, '..', '..', 'src', 'uploads', file.originalname);
-        fs.writeFileSync(uploadPath, file.buffer); // Save the file synchronously
-        profileImagePath = uploadPath; // Assign the image path
-      }
-
-      // Create a new user instance
+      // Create the new user
       const newUser = this.userRepository.create({
         ...authDto,
-        ...(profileImagePath && { profile: profileImagePath }), // Conditionally add profile if the file is uploaded
+        role: UserRole.Customer, // Default role to Customer
+        slNo: 'N/A',  // Default values for other fields
+        alias: 'N/A',
+        active: 'N/A',
+        contactPerson: 'N/A',
+        pan: 'N/A',
+        gstType: 'N/A',
+        gstNo: 'N/A',
+        gstDetails: 'N/A',
+        isDeleted: false,
       });
+
       await this.userRepository.save(newUser); // Save the new user
+
+      const createAddressDto: CreateAddressDto = {
+        mobile: authDto.mobile,
+        street_address: authDto.address,
+        country: authDto.country,
+        state: authDto.state,
+        zip_code: authDto.pincode,
+        userId: newUser.id,
+      };
+
+      const existingAddress = await this.addressesService.findByUserId(newUser.id);
+
+      if (existingAddress) {
+        await this.addressesService.update(existingAddress.id, createAddressDto);
+      } else {
+        await this.addressesService.create(createAddressDto, newUser.id);
+      }
+
       return {
-        message: 'User registered successfully',
+        message: 'User data Added successfully',
         user: newUser,
       };
 
