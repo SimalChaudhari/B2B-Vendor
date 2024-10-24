@@ -25,7 +25,7 @@ export function CheckoutCartProduct({ row, onDelete, onDecrease, onIncrease }) {
           <Avatar
             variant="rounded"
             alt={row.name}
-            src={row.productImages[0]}
+            src={row.productImages?.[0]}
             sx={{ width: 64, height: 64 }}
           />
 
