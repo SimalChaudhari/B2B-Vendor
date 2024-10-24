@@ -22,6 +22,7 @@ export const paths = {
   product: {
     root: `/product`,
     checkout: `/product/checkout`,
+    form: `/product/form`,
     details: (id) => `/product/${id}`,
     demo: { details: `/product/${MOCK_ID}` },
   },

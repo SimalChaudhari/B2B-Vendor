@@ -11,6 +11,7 @@ import { CheckoutSteps } from '../checkout-steps';
 import { CheckoutPayment } from '../checkout-payment';
 import { CheckoutOrderComplete } from '../checkout-order-complete';
 import { CheckoutBillingAddress } from '../checkout-billing-address';
+import { FormView } from '../form/view';
 
 // ----------------------------------------------------------------------
 
@@ -28,17 +29,21 @@ export function CheckoutView() {
         Checkout
       </Typography>
 
-      <>
+      <div>
         {checkout.activeStep === 0 && <CheckoutCart />}
 
-        {checkout.activeStep === 1 && <CheckoutBillingAddress />}
-
-        {checkout.activeStep === 2 && <CheckoutPayment />}
+        
+        {/*
+          {checkout.activeStep === 1 && <CheckoutBillingAddress />}
+          {checkout.activeStep === 2 && <CheckoutPayment />}
+          */}
+          {checkout.activeStep === 1 && <FormView />}
+          {checkout.activeStep === 2 && <CheckoutOrderComplete open onReset={checkout.onReset} onDownloadPDF={() => {}} />}
 
         {checkout.completed && (
           <CheckoutOrderComplete open onReset={checkout.onReset} onDownloadPDF={() => {}} />
         )}
-      </>
+      </div>
     </Container>
   );
 }

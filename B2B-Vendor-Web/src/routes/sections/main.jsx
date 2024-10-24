@@ -13,6 +13,7 @@ const PaymentPage = lazy(() => import('src/pages/payment'));
 const ProductListPage = lazy(() => import('src/pages/product/list'));
 const ProductDetailsPage = lazy(() => import('src/pages/product/details'));
 const ProductCheckoutPage = lazy(() => import('src/pages/product/checkout'));
+const ProductCheckoutFormPage = lazy(() => import('src/pages/product/checkoutForm'));
 
 // Error
 const Page500 = lazy(() => import('src/pages/error/500'));
@@ -60,6 +61,7 @@ export const mainRoutes = [
               { path: 'list', element: <ProductListPage /> },
               { path: ':id', element: <ProductDetailsPage /> },
               { path: 'checkout', element: <ProductCheckoutPage /> },
+              { path: 'form', element: <ProductCheckoutFormPage /> },
             ],
           },
         ],
