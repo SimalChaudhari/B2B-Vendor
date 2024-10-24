@@ -13,7 +13,6 @@ import {
 } from 'src/components/carousel';
 
 // ----------------------------------------------------------------------
-
 export function ProductDetailsCarousel({ images }) {
   const carousel = useCarousel({
     thumbs: {

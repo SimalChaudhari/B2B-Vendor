@@ -46,6 +46,7 @@ const SUMMARY = [
   },
 ];
 
+
 // ----------------------------------------------------------------------
 
 export function ProductShopDetailsView({ product }) {

@@ -5,7 +5,6 @@ import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 
 import { PRODUCT_CHECKOUT_STEPS } from 'src/_mock/_product';
-
 import { CheckoutCart } from '../checkout-cart';
 import { useCheckoutContext } from '../context';
 import { CheckoutSteps } from '../checkout-steps';
@@ -28,12 +27,6 @@ export function CheckoutView() {
       <Typography variant="h4" sx={{ my: { xs: 3, md: 5 } }}>
         Checkout
       </Typography>
-
-      <Grid container justifyContent={checkout.completed ? 'center' : 'flex-start'}>
-        <Grid xs={12} md={8}>
-          <CheckoutSteps activeStep={checkout.activeStep} steps={PRODUCT_CHECKOUT_STEPS} />
-        </Grid>
-      </Grid>
 
       <>
         {checkout.activeStep === 0 && <CheckoutCart />}
