@@ -120,14 +120,22 @@ export function ProductDetailsSummary({
     }
   }, [onAddCart, values]);
 
-  const renderPrice = (
+
+
+  const renderProduct = (
     <Box sx={{ typography: 'h5' }}>
-    
+      {products?.itemName}
+
+    </Box>
+  );
+
+  const renderPrice = (
+    <Box sx={{ typography: 'h6' }}>
+
       {fCurrency(products?.sellingPrice)}
     </Box>
   );
 
- 
   const renderColorOptions = (
     <Stack direction="row">
       <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
@@ -200,26 +208,7 @@ export function ProductDetailsSummary({
     </Stack>
   );
 
-  const renderActions = (
-    <Stack direction="row" spacing={2}>
-      <Button
-        fullWidth
-        disabled={isMaxQuantity || disableActions}
-        size="large"
-        color="warning"
-        variant="contained"
-        startIcon={<Iconify icon="solar:cart-plus-bold" width={24} />}
-        onClick={handleAddCart}
-        sx={{ whiteSpace: 'nowrap' }}
-      >
-        Add to cart
-      </Button>
 
-      <Button fullWidth size="large" type="submit" variant="contained" disabled={disableActions}>
-        Buy now
-      </Button>
-    </Stack>
-  );
 
   const renderSubDescription = (
     <Typography variant="body2" sx={{ color: 'text.secondary' }}>
@@ -264,7 +253,7 @@ export function ProductDetailsSummary({
 
           {renderInventoryType}
 
-          <Typography variant="h5">{product.itemName}</Typography>
+          {renderProduct}
 
           {renderRating}
 
@@ -283,7 +272,7 @@ export function ProductDetailsSummary({
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
-        {renderActions}
+
 
       </Stack>
     </Form>

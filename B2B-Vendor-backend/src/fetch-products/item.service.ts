@@ -119,6 +119,17 @@ export class ItemService {
     return this.itemRepository.findOne({ where: { id } }); // Load files for the item by ID
   }
 
+
+  async delete(id: string): Promise<{ message: string }> {
+    const items = await this.findById(id);
+    // Check if the item exists
+    if (!items) {
+      throw new NotFoundException(`Item with id ${id} not found`); // or handle it differently
+    }
+    await this.itemRepository.remove(items);
+    return { message: 'Product deleted successfully' };
+  }
+
   async uploadFilesToFirebase(
     itemId: string,
     productImages: Express.Multer.File[],
@@ -187,6 +198,8 @@ export class ItemService {
 
     return await this.itemRepository.save(item); // Save the updated item entity
   }
+
+
 
 
 }

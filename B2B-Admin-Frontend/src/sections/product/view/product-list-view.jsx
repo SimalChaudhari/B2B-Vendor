@@ -50,7 +50,7 @@ export function ProductListView() {
     const confirm = useBoolean();
     const [loading, setLoading] = useState(false);
 
-    const { fetchData, fetchDeleteData } = useFetchProductData(); // Destructure fetchData from the custom hook
+    const { fetchData, fetchDeleteData ,fetchDeleteItem } = useFetchProductData(); // Destructure fetchData from the custom hook
 
     const dispatch = useDispatch();
 
@@ -95,7 +95,7 @@ export function ProductListView() {
 
     const handleDeleteRows = useCallback((id) => { fetchDeleteData(id) }, []);
 
-    const handleDeleteRow = useCallback((id) => { fetchDeleteData(id) }, []);
+    const handleDeleteRow = useCallback((id) => { fetchDeleteItem(id) }, []);
 
     const handleEditRow = useCallback((id) => id, []);
 

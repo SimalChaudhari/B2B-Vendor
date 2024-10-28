@@ -1,4 +1,4 @@
-import { Controller, HttpStatus, Post, Get, Res, Param, UploadedFiles, UseInterceptors, BadRequestException, Delete, Body } from '@nestjs/common';
+import { Controller, HttpStatus, Post, Get, Res, Param, UploadedFiles, UseInterceptors, BadRequestException, Delete, Body, NotFoundException } from '@nestjs/common';
 import { Response } from 'express'; // Import Response from express
 import { ItemService } from './item.service';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
@@ -59,4 +59,19 @@ async deleteImages(
 ): Promise<ItemEntity> {
   return this.itemService.deleteImages(itemId, imagesToDelete);
 }
+
+@Delete('delete/item/:id')
+async delete(@Param('id') id: string, @Res() response: Response) {
+    try {
+        const result = await this.itemService.delete(id);
+        return response.status(HttpStatus.OK).json(result);
+    } catch (error) {
+        // Handle the error appropriately
+        if (error instanceof NotFoundException) {
+            return response.status(HttpStatus.NOT_FOUND).json({ message: error.message });
+        }
+        return response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: 'An error occurred while deleting the product.' });
+    }
+}
+
 }

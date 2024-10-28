@@ -14,6 +14,7 @@ import { CheckoutOrderComplete } from '../checkout-order-complete';
 import { CheckoutBillingAddress } from '../checkout-billing-address';
 import { Box } from '@mui/material';
 import { useSelector } from 'react-redux';
+import { ProductFilterView } from '../components/product-filter';
 
 // ----------------------------------------------------------------------
 
@@ -41,13 +42,8 @@ export function CheckoutView() {
 
   return (
     <Box>
-      <Grid container justifyContent={checkout.completed ? 'center' : 'flex-start'}>
-        <Grid xs={12} md={8}>
-          <CheckoutSteps activeStep={checkout.activeStep} steps={PRODUCT_CHECKOUT_STEPS} />
-        </Grid>
-      </Grid>
-
-      <>
+        <ProductFilterView />
+      <Box>
         {checkout.activeStep === 0 && <CheckoutCart />}
 
         {handleCheckoutStep()} {/* Call the new function to handle step rendering */}
@@ -57,7 +53,7 @@ export function CheckoutView() {
         {checkout.completed && (
           <CheckoutOrderComplete open onReset={checkout.onReset} onDownloadPDF={() => { }} />
         )}
-      </>
+      </Box>
     </Box>
   );
 }

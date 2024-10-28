@@ -112,7 +112,7 @@ export function ItemCard({ product }) {
 
           <ListItemText
             primary={product?.itemName}
-            secondary='Posted Posted 16 Oct 2024 12:03 pm'
+            secondary={product?.group}
             secondaryTypographyProps={{
               mt: 0.5,
               component: 'span',
@@ -122,13 +122,18 @@ export function ItemCard({ product }) {
           />
         </Box>
 
-        <Rating value={product?.rating} size="small" readOnly precision={0.5} />
+        {/* <Rating value={product?.rating} size="small" readOnly precision={0.5} /> */}
+        <Rating name="size-small" defaultValue={4} size="small" />
 
-        <Typography variant="body2">{product.description}</Typography>
+        <Typography sx={{
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis'
+        }} variant="body2">{product.description}</Typography>
 
       </Box>
       <Divider sx={{ borderStyle: 'dashed' }} />
-      <Box sx={{ p:1, gap: 2, display: 'flex' }}>
+      <Box sx={{ p: 1, gap: 2, display: 'flex' }}>
         <Button
           onClick={(e) => {
             e.stopPropagation(); // Prevent triggering card click
@@ -138,7 +143,7 @@ export function ItemCard({ product }) {
           size="large"
           color="warning"
           variant="contained"
-          startIcon={<Iconify icon="solar:cart-plus-bold"  />}
+          startIcon={<Iconify icon="solar:cart-plus-bold" />}
           disabled={isAddedToCart} // Disable the button if added to cart
           sx={{ whiteSpace: 'nowrap' }}
         >
