@@ -13,18 +13,16 @@ import Checkbox from '@mui/material/Checkbox';
 import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
 import ListItemText from '@mui/material/ListItemText';
-
 import { useBoolean } from 'src/hooks/use-boolean';
-
 import { fCurrency } from 'src/utils/format-number';
 import { fDate, fTime } from 'src/utils/format-time';
-
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { usePopover, CustomPopover } from 'src/components/custom-popover';
 import { RouterLink } from 'src/routes/components';
 import { Typography } from '@mui/material';
+import useUserRole from 'src/layouts/components/user-role';
 
 // ----------------------------------------------------------------------
 
@@ -36,6 +34,8 @@ export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteR
 
   const popover = usePopover();
 
+  const userRole = useUserRole();
+
   const renderPrimary = (
     <TableRow hover selected={selected}>
       <TableCell padding="checkbox">
@@ -45,27 +45,25 @@ export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteR
           inputProps={{ id: `row-checkbox-${row.id}`, 'aria-label': `Row checkbox` }}
         />
       </TableCell>
-
-
-
-      <TableCell>
-        <Stack spacing={2} direction="row" alignItems="center">
-          <Avatar alt={row?.user?.name} src={row?.user?.name} />
-          <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
-            <Link color="inherit" sx={{ cursor: 'pointer' }}>
-              {row?.user?.name}
-            </Link>
-            <Box component="span" sx={{ color: 'text.disabled' }}>
-              {row?.user?.email}
-            </Box>
-          </Stack>
-        </Stack>
-
-      </TableCell>
-
-      <TableCell align="center"> {row?.user.mobile || "N/A"} </TableCell>
-
-
+      <TableCell align="center"> {row?.orderNo || "N/A"} </TableCell>
+      {userRole === "Admin" &&
+        <>
+          <TableCell>
+            <Stack spacing={2} direction="row" alignItems="center">
+              <Avatar alt={row?.user?.name} src={row?.user?.name} />
+              <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
+                <Link color="inherit" sx={{ cursor: 'pointer' }}>
+                  {row?.user?.name}
+                </Link>
+                <Box component="span" sx={{ color: 'text.disabled' }}>
+                  {row?.user?.email}
+                </Box>
+              </Stack>
+            </Stack>
+          </TableCell>
+          <TableCell align="center"> {row?.user.mobile || "N/A"} </TableCell>
+        </>
+      }
       <TableCell align="center"> {row?.totalQuantity} </TableCell>
 
       <TableCell> {fCurrency(row.totalPrice)} </TableCell>
@@ -83,7 +81,7 @@ export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteR
         />
       </TableCell>
 
-      {/*
+
       <TableCell>
         <Label
           variant="soft"
@@ -97,7 +95,7 @@ export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteR
           {row?.status}
         </Label>
       </TableCell>
- */}
+
       <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
         <IconButton
           color={collapse.value ? 'inherit' : 'default'}
@@ -197,10 +195,10 @@ export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteR
           </MenuItem>
 
           <MenuItem
-            onClick={() => {
-              onViewRow();
-              popover.onClose();
-            }}>
+            component={RouterLink} // Set the component to Link
+            to={`/orders/details/${row.id}`} // Set the destination URL
+            sx={{ color: 'green' }} // Keep your existing styling
+          >
             <Iconify icon="solar:eye-bold" />
             View
           </MenuItem>

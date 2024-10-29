@@ -41,6 +41,8 @@ export const paths = {
     root: `/orders`,
     list: `/orders/list`,
     details: (id) => `/orders/${id}`,
+    view: (id) => `/view/${id}`,
+
   },
 
   settings: {
@@ -68,7 +70,7 @@ export const paths = {
 
   // Vendor  Panel 
   items: {
-    root: `/items`,
+    root: `/items/checkout`,
     list: `/items/list`,
     checkout: `/items/checkout`,
     details: (id) => `/items/${id}`,

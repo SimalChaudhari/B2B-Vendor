@@ -17,11 +17,11 @@ export function CheckoutListView() {
           { name: 'Products', href: paths?.dashboard?.items?.root },
           { name: 'List' },
         ]}
-        
+
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <CheckoutView/>
+      <CheckoutView />
     </DashboardContent>
   );
 }

@@ -4,13 +4,22 @@ import { User } from 'users/user/users.entity';
 import { OrderItemEntity } from './order.item.entity';
 import { DeliveryType, PaymentMethod } from './order.dto'; // Import enums from DTO
 
+export enum OrderStatus {
+    PENDING = 'pending',
+    SUCCESS = 'success',
+    REFUSED = 'refused',
+    Cancelled = 'cancelled',
 
+}
 
 
 @Entity('orders')
 export class OrderEntity {
     @PrimaryGeneratedColumn('uuid')
     id!: string;
+
+    @Column()
+    orderNo!: string;
 
     @ManyToOne(() => User, (user) => user.orders, { nullable: false, onDelete: 'CASCADE' })
     user!: User;  // Made non-nullable
@@ -26,7 +35,7 @@ export class OrderEntity {
 
     @Column()
     totalQuantity!: number;
-    
+
     @Column({ type: 'enum', enum: DeliveryType, default: DeliveryType.FREE })
     delivery!: DeliveryType; // Delivery type, default is 'free'
 
@@ -34,8 +43,12 @@ export class OrderEntity {
     paymentMethod!: PaymentMethod; // Payment method, default is 'cash_on_delivery'
 
 
+    // Add status column with enum and default value
+    @Column({ type: 'enum', enum: OrderStatus, default: OrderStatus.PENDING })
+    status!: OrderStatus; // Order status, default is 'pending'
+
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     createdAt?: Date;
-    
+
 }
 // 

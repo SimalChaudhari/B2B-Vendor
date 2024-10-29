@@ -20,7 +20,7 @@ export function ProductToolbar({ options, filters }) {
     const [selectedSubGroup1, setSelectedSubGroup1] = useState(filters.state.subGroup1 || []);
     const [availableSubGroup2, setAvailableSubGroup2] = useState([]);
     const [selectedSubGroup2, setSelectedSubGroup2] = useState(filters.state.subGroup2 || []);
-
+   
     const uniqueGroups = Array.from(
         new Set(options.map(option => option.group.toLowerCase()))
     ).map(group => options.find(option => option.group.toLowerCase() === group).group);
@@ -61,7 +61,7 @@ export function ProductToolbar({ options, filters }) {
             subGroup1: prev.subGroup1.filter(sub => availableSubGroup1Set.has(sub)),
             subGroup2: prev.subGroup2.filter(sub => availableSubGroup2Set.has(sub))
         }));
-    }, []);
+    }, [selectedGroups, selectedSubGroup1, selectedSubGroup2]);
 
     // Handle filter changes
     const handleFilterGroup = useCallback(
@@ -96,24 +96,23 @@ export function ProductToolbar({ options, filters }) {
         [filters]
     );
 
-    const handleFilterName = useCallback(
-        (event) => {
-            filters.setState({ searchTerm: event.target.value });
-        },
-        [filters]
-    );
     
+
 
     return (
 
         <Stack
             spacing={2}
-            alignItems={{ xs: 'flex-end', md: 'center' }}
-            direction={{ xs: 'column', md: 'row' }}
-            sx={{ p: 2.5, pr: { xs: 2.5, md: 1 } }}
+            direction="row"
+            sx={{
+                width: '100%', // Full width for the entire stack
+                flexWrap: 'wrap', // Allow wrapping for smaller screens
+                gap: 2, // Add spacing between elements
+                // p: 2.5,
+            }}
         >
             {/* Group Filter */}
-            <FormControl sx={{ flexShrink: 0, width: { xs: 1, md: 200 } }}>
+            <FormControl sx={{ flex: 1, minWidth: 200 }}>
                 <InputLabel htmlFor="group-filter-select-label">Group</InputLabel>
                 <Select
                     multiple
@@ -138,7 +137,7 @@ export function ProductToolbar({ options, filters }) {
             </FormControl>
 
             {/* SubGroup1 Filter */}
-            <FormControl sx={{ flexShrink: 0, width: { xs: 1, md: 200 } }}>
+            <FormControl sx={{ flex: 1, minWidth: 200 }}>
                 <InputLabel htmlFor="subgroup1-filter-select-label">Sub-Group</InputLabel>
                 <Select
                     multiple
@@ -163,7 +162,7 @@ export function ProductToolbar({ options, filters }) {
             </FormControl>
 
             {/* SubGroup2 Filter */}
-            <FormControl sx={{ flexShrink: 0, width: { xs: 1, md: 200 } }}>
+            <FormControl sx={{ flex: 1, minWidth: 200 }}>
                 <InputLabel htmlFor="subgroup2-filter-select-label">Sub-Group 2</InputLabel>
                 <Select
                     multiple
@@ -186,28 +185,8 @@ export function ProductToolbar({ options, filters }) {
                     ))}
                 </Select>
             </FormControl>
-
-            {/* Search Filter */}
-            <Stack direction="row" alignItems="center" spacing={2} flexGrow={1} sx={{ width: 1 }}>
-                <TextField
-                    fullWidth
-                    value={filters.state.searchTerm}
-                    onChange={handleFilterName}
-                    placeholder="Search..."
-                    InputProps={{
-                        startAdornment: (
-                            <InputAdornment position="start">
-                                <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
-                            </InputAdornment>
-                        ),
-                    }}
-                />
-
-                <IconButton onClick={popover.onOpen}>
-                    <Iconify icon="eva:more-vertical-fill" />
-                </IconButton>
-            </Stack>
         </Stack>
+
 
     );
 }

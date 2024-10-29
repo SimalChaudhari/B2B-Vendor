@@ -6,7 +6,6 @@ import Typography from '@mui/material/Typography';
 
 import { PRODUCT_CHECKOUT_STEPS } from 'src/_mock/_product';
 
-import { CheckoutCart } from '../checkout-cart';
 import { useCheckoutContext } from '../context';
 import { CheckoutSteps } from '../checkout-steps';
 import { CheckoutPayment } from '../checkout-payment';
@@ -15,6 +14,7 @@ import { CheckoutBillingAddress } from '../checkout-billing-address';
 import { Box } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { ProductFilterView } from '../components/product-filter';
+import { CheckoutCart } from '../checkout-cart';
 
 // ----------------------------------------------------------------------
 
@@ -22,38 +22,45 @@ export function CheckoutView() {
   const checkout = useCheckoutContext();
 
   const addressByData = useSelector((state) => state.address?.addressByID);
-
+ 
   useEffect(() => {
     checkout.initialStep();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleCheckoutStep = () => {
-    if (checkout.activeStep === 1 && !addressByData) {
-      return <CheckoutBillingAddress />;
-    }
+  const handleCheckoutStep = () =>
+    checkout.activeStep === 1 && !addressByData
+      ? <CheckoutBillingAddress />
+      : checkout.activeStep === 2 && !addressByData
+        ? (checkout.onBackStep(), <CheckoutBillingAddress />)
+        : null;
 
-    if (checkout.activeStep === 2 && !addressByData) {
-      checkout.onBackStep(); // Reset to previous step
-      return <CheckoutBillingAddress />;
-    }
-    return null; // Default return if no conditions are met
-  };
+
 
   return (
     <Box>
-        <ProductFilterView />
-      <Box>
-        {checkout.activeStep === 0 && <CheckoutCart />}
+      {checkout.activeStep === 0 && (
+        <Box>
+          <ProductFilterView />
+          <Box mt={3}>
+            <CheckoutCart />
+          </Box>
+        </Box>
+      )}
+      <Box mt={3}>
+        {handleCheckoutStep()} {/* Render dynamic step components */}
 
-        {handleCheckoutStep()} {/* Call the new function to handle step rendering */}
-
-        {addressByData && checkout.activeStep === 2 && <CheckoutPayment />}
+        {checkout.activeStep === 2 && addressByData && <CheckoutPayment />}
 
         {checkout.completed && (
-          <CheckoutOrderComplete open onReset={checkout.onReset} onDownloadPDF={() => { }} />
+          <CheckoutOrderComplete
+            open
+            onReset={checkout.onReset}
+            onDownloadPDF={() => { }}
+          />
         )}
       </Box>
     </Box>
+
   );
 }
