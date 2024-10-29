@@ -21,12 +21,12 @@ import LoadingComponent from "../../components/Loading/LoadingComponent";
 
 const ProfileScreen = () => {
 
-  const { token } = useAuthToken();
+  const { token, userData } = useAuthToken();
 
+  const parsedUserData = JSON.parse(userData);
   const [userId, setUserId] = useState(null);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [userData, setUserData] = useState();
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
@@ -76,11 +76,9 @@ const ProfileScreen = () => {
       const data = await getAllOrder();
       setOrders(data);
 
-      const userData = await fetchUserData();
-      setUserData(userData)
 
     } catch (err) {
-      console.error("Failed to fetch orders:", err);
+      // console.error("Failed to fetch orders:", err);
     } finally {
       setLoading(false);
     }
@@ -108,7 +106,7 @@ const ProfileScreen = () => {
         ) : token ? (
           token ? (
             <>
-              <Text style={styles.welcomeText}>Welcome, {userData?.data[0]?.name}</Text>
+              <Text style={styles.welcomeText}>Welcome, {parsedUserData?.name}</Text>
 
               <View style={styles.buttonContainer}>
                 <Pressable style={styles.button}>
@@ -136,7 +134,7 @@ const ProfileScreen = () => {
               </View>
               <ScrollView >
                 {orders.length > 0 ? (
-                  orders.map((order) => (
+                  orders?.map((order) => (
                     <Pressable style={styles.orderCard} key={order.id}>
                       {/*
                         */}
@@ -150,7 +148,7 @@ const ProfileScreen = () => {
                       </View>
 
                       {/* Iterate over orderItems to access product details */}
-                      {order.orderItems.map((item) => (
+                      {order.orderItems?.map((item) => (
                         <View style={styles.productContainer} key={item.id}>
                           {/* Check if 'item.product' exists and use safe access */}
                           {item.product ? (

@@ -130,19 +130,19 @@ export function ProductItem({ product }) {
       <Box component="span" sx={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
         {description}
       </Box>
+      {/* 5-Star Rating */}
+      <Rating name="size-small" defaultValue={2} size="small" />
 
       <Stack direction="row" alignItems="center" justifyContent="space-between">
         <Stack direction="row" spacing={0.5} sx={{ typography: 'subtitle1' }}>
 
-          {/* 5-Star Rating */}
-          <Rating name="size-small" defaultValue={2} size="small" />
 
           {sellingPrice && (
             <Box component="span" sx={{ color: 'text.disabled', textDecoration: 'line-through' }}>
               {fCurrency(sellingPrice - 500)}
             </Box>
           )}
-          <Box component="span">{fCurrency(sellingPrice)}</Box>
+          <Box component="span">&nbsp; {fCurrency(sellingPrice)}</Box>
         </Stack>
       </Stack>
     </Stack >

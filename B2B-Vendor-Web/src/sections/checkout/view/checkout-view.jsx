@@ -30,14 +30,14 @@ export function CheckoutView() {
       </Typography>
 
       <div>
+      
+      
+      {/*
         {checkout.activeStep === 0 && <CheckoutCart />}
-
-        
-        {/*
           {checkout.activeStep === 1 && <CheckoutBillingAddress />}
           {checkout.activeStep === 2 && <CheckoutPayment />}
           */}
-          {checkout.activeStep === 1 && <FormView />}
+          {checkout.activeStep === 0 && <FormView />}
           {checkout.activeStep === 2 && <CheckoutOrderComplete open onReset={checkout.onReset} onDownloadPDF={() => {}} />}
 
         {checkout.completed && (

@@ -1,4 +1,6 @@
 import 'src/global.css';
+import 'src/style.css';
+import 'src/communStyle.css';
 import { Router } from 'src/routes/sections';
 
 import { useScrollToTop } from 'src/hooks/use-scroll-to-top';

@@ -3,18 +3,22 @@ import { BackToTop } from 'src/components/animate/back-to-top';
 import { ScrollProgress, useScrollProgress } from 'src/components/animate/scroll-progress';
 
 import { HomeHero } from '../home-hero';
+import { HomeCarousel } from '../home-crousel';
+import { HomeProductGroup } from '../home-productGroup';
 import { HomeFAQs } from '../home-faqs';
 import { HomeZoneUI } from '../home-zone-ui';
 import { HomePricing } from '../home-pricing';
 import { HomeTestimonials } from '../home-testimonials';
 import { HomeAdvertisement } from '../home-advertisement';
+import { HomeLetestProduct } from '../home-letestProduct';
 
 export function HomeView() {
   // Hook to track page scroll progress for scroll indicator
   const pageProgress = useScrollProgress();
 
   return (
-    <>
+    <div>
+
       {/* Scroll progress bar for visual feedback on page scroll */}
       <ScrollProgress
         variant="linear"
@@ -26,25 +30,34 @@ export function HomeView() {
       <BackToTop />
 
       {/* Main Hero Section */}
-      <HomeHero />
+      {/**
+        <HomeHero />
+         */}
 
       {/* Content stack for homepage sections */}
       <Stack sx={{ position: 'relative', bgcolor: 'background.default' }}>
         {/* Pricing section for e-commerce plans, deals, or products */}
-        <HomePricing />
+        {/* Home Banner */}
+        <HomeCarousel />
 
-        {/* Customer testimonials section */}
+        {/* Home Category */}
+        <HomeProductGroup />
+
+        {/* Home Letest Product */}
+        <HomeLetestProduct/>
+
+        {/*
+        <HomePricing />
         <HomeTestimonials />
 
-        {/* Frequently Asked Questions (FAQs) section */}
         <HomeFAQs />
 
-        {/* Interactive UI/UX section for user engagement */}
         <HomeZoneUI />
-
-        {/* Advertisement or promotional banner section */}
         <HomeAdvertisement />
+         */}
+
+
       </Stack>
-    </>
+    </div>
   );
 }

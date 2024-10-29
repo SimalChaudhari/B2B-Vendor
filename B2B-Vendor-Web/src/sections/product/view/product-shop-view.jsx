@@ -30,7 +30,7 @@ import { ProductFilters } from '../product-filters';
 import { useCheckoutContext } from '../../checkout/context';
 import { ProductFiltersResult } from '../product-filters-result';
 
-export function ProductShopView({ products, loading }) {
+export function ProductShopView({ products = [], loading }) {
 
   const items = useSelector((state) => state.product.items.data);
 
@@ -82,7 +82,7 @@ export function ProductShopView({ products, loading }) {
     setSearchQuery(inputValue);
   }, []);
 
-  const productsEmpty = !loading && !products.length;
+  const productsEmpty = !loading && !products?.length;
 
   const renderFilters = (
     <Stack
@@ -128,9 +128,11 @@ export function ProductShopView({ products, loading }) {
     <Container sx={{ mb: 15 }}>
       <CartIcon totalItems={checkout.totalItems} />
 
-      <Typography variant="h4" sx={{ my: { xs: 3, md: 5 } }}>
-        Shop
-      </Typography>
+      {/* 
+        <Typography variant="h4" sx={{ my: { xs: 3, md: 5 } }}>
+          Shop
+        </Typography>
+        */}
 
       <Stack spacing={2.5} sx={{ mb: { xs: 3, md: 5 } }}>
         {renderFilters}

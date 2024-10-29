@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const useAuthToken = () => {
   const [token, setToken] = useState(null);
+  const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true); // Optional: track loading state
   const [error, setError] = useState(null); // Optional: track errors
 
@@ -11,7 +12,9 @@ const useAuthToken = () => {
     const fetchAuthToken = async () => {
       try {
         const tokenData = await AsyncStorage.getItem('authToken');
+        const Data = await AsyncStorage.getItem('userData');
         setToken(tokenData);
+        setUserData(Data);
       } catch (error) {
         console.error("Error fetching authToken:", error);
         setError(error);
@@ -23,7 +26,7 @@ const useAuthToken = () => {
     fetchAuthToken();
   }, []);
 
-  return { token, loading, error };
+  return { token, userData, loading, error };
 };
 
 export default useAuthToken;

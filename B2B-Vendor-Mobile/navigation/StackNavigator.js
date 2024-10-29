@@ -33,9 +33,6 @@ const StackNavigator = () => {
     
     const cart = useSelector((state) => state.cart.cart); // Access the cart state
     const cartQuantity = useSelector((state) => state.cart.cartQuantity); // Access the cart state
-    console.log('====================================');
-    console.log("cartQuantity :",cartQuantity);
-    console.log('====================================');
     // Assuming the cart is an array with one object
 
     // const totalQuantity = cartData.reduce((acc, item) => {

@@ -29,7 +29,6 @@ export const addOrderSecond = async (id, orderProducts) => {
 export const getAllOrder = async () => {   
     try {
         const response = await axiosInstance.get(`/order/get`); // Use axiosInstance directly
-        
         return response.data; // Return the data from response
     } catch (error) {
         console.error(`Error fetching Orders And Items:`, error);

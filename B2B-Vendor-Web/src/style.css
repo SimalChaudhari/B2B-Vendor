@@ -1,0 +1,329 @@
+/* Define root variables for colors */
+:root {
+    --primary-color: #EC2932;
+    --primary-color-1: #ff6c73;
+    --primary-color-2: #ff494e;
+    --primary-color-3: #ff0005;
+    /* --primary-color-2: #EA2030;
+    --primary-color-3: #EB282D; */
+    --primary-light-color: #ec293372;
+    --black-color: #1C252E;
+    --dot-color: #bbb;
+    --white-color: #fff;
+    --active-dot-color: #ec293362;
+}
+
+.text-black{
+    color: var(--black-color);
+}
+
+/* Apply root variables */
+.containerCss {
+    width: 100%;
+    /* background-color: var(--primary-color);  */
+    padding: 20px;
+    color: white;
+}
+
+.mainCss {
+    max-width: 1200px;
+    margin: 0 auto;
+    /* background-color: var(--black-color); */
+    padding: 20px;
+}
+
+/* Crousel */
+.slick-dots {
+    bottom: 10px; /* Position of the dots */
+}
+
+.slick-dots li {
+    margin: 0 5px; /* Space between dots */
+}
+
+.slick-dots li button {
+    font-size: 0; /* Hide default button text */
+    width: 12px; /* Dot size */
+    height: 12px; /* Dot size */
+    border-radius: 50%; /* Make dots circular */
+    background: var(--dot-color); /* Use variable for dot color */
+    transition: background 0.3s; /* Transition effect */
+}
+
+.slick-dots li.slick-active button {
+    background: var(--active-dot-color); /* Use variable for active dot color */
+}
+
+.slick-dots li button:before {
+    color: var(--primary-color) !important; /* Use variable for dot text color */
+}
+
+.css-k1hft1-MuiInputBase-root-MuiOutlinedInput-root {
+    background-color: var(--white-color) !important; /* Use variable for dot text color */
+}
+
+.slick-dots {
+    bottom: 15px !important;
+}
+
+
+.css-1nerq20-MuiStack-root{
+    padding-top: 26px;
+    padding-bottom: 28px;
+    border-bottom: 2px solid;
+}
+
+/* Add To Cart */
+.css-1dwtaeb {
+    /* top: 112px; */
+    top: 191px !important;
+    /* display: none !important; */
+}
+
+/* Display None  */
+.css-19aqap1{
+    display: none !important;
+}
+
+.css-7cs04n {
+    position: relative;
+    color: var(--white-color);
+    background-color: var(--primary-color) !important;
+    border-top: 2px solid;
+}
+
+.css-1hdpwt6-MuiPaper-root-MuiDrawer-paper{
+    color: var(--white-color) !important;
+    background-color: var(--primary-color) !important;
+}
+/* Mobile Menue */
+.css-20tp2x-MuiButtonBase-root, .css-15n8fl2-MuiButtonBase-root,
+.css-1pqh946-MuiTypography-root-MuiLink-root, .css-1s57tya-MuiTypography-root,
+.css-s40881, .css-tspqtr-MuiTypography-root-MuiLink-root
+
+{
+    color: var(--white-color) !important;
+}
+
+.css-doqcgj-MuiButtonBase-root-MuiButton-root, .css-7h543u-MuiButtonBase-root-MuiButton-root{
+    background-color: var(--white-color) !important;
+    color: var(--black-color) !important;
+}
+
+.css-1u5ns5q-MuiStack-root, .css-onb08y, .css-1osdj08{
+    color: var(--black-color);
+    background-color: var(--white-color) !important;
+}
+.css-1soysxg-MuiTypography-root, .css-12bcmgn-MuiTypography-root-MuiLink-root, .css-1ma9um7-MuiTypography-root, .css-1noyxly-MuiTypography-root{
+    font-size: large !important;
+}
+
+.css-1yzvhb-MuiFormHelperText-root.Mui-error {
+    color: var(--white-color) !important;
+}
+
+.formContainer{
+    background-color: var(--white-color);
+    border-radius: 5px;
+}
+/* .css-6zu2a3-MuiInputBase-root-MuiOutlinedInput-root, .css-wxnaqj-MuiInputBase-root-MuiOutlinedInput-root,
+.css-1vstzmk-MuiInputBase-root-MuiOutlinedInput-root {
+    background-color: var(--white-color) !important;
+}
+
+.css-1y72oty-MuiFormLabel-root-MuiInputLabel-root.Mui-error {
+    color: var(--primary-color) !important;
+} */
+
+/* Header Style */
+
+
+.css-wd5w37-MuiContainer-root{
+    /* background-color: var(--primary-color) !important; */
+    background: linear-gradient(
+    to right,                        
+    var(--primary-color),            
+    var(--primary-color-2),       
+    var(--primary-color-3)         
+  ) !important;
+    border-bottom: 2px solid var(--white-color);
+}
+
+
+.css-1g4yje1{
+    height: 26px !important;
+    padding: 16px;
+}
+.css-1g4yje1:hover{
+    background: var(--white-color);
+    border-radius: 5px;
+    height: 26px !important;
+    padding: 16px;
+}
+
+
+.css-1cevvmw-MuiButtonBase-root{
+    color: var(--white-color) !important;
+    font-size: large !important;
+}
+
+.css-1cevvmw-MuiButtonBase-root::before, .css-zall6v-MuiButtonBase-root::before{
+    background-color: var(--white-color) !important;
+}
+
+
+.css-zall6v-MuiButtonBase-root{
+    font-size: large !important;
+    color: var(--white-color) !important;
+}
+.css-1cevvmw-MuiButtonBase-root:hover, .css-zall6v-MuiButtonBase-root:hover{
+    color: red !important;
+    font-weight: 700;
+}
+
+
+
+
+/* Media Queries */
+@media (min-width: 1200px) {
+    .css-wd5w37-MuiContainer-root, .css-la6rwg-MuiContainer-root {
+        max-width: 100% !important;
+    }
+    
+    .css-la6rwg-MuiContainer-root {
+        padding-left: 0; 
+        padding-right: 0;
+    }
+}
+
+@media (min-width: 1200px) {
+    .css-k3x22v-MuiContainer-root {
+        max-width: 1350px !important;
+    }
+    .css-181h50y-MuiContainer-root, .containerCss {
+        max-width: 1350px !important;
+    }
+}
+
+.css-15qbjvl-MuiContainer-root{
+    max-width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+/* .css-181h50y-MuiContainer-root {
+    max-width: 100% !important;
+} */
+
+/* Logo */
+.css-ga3xdk {
+    width: 150px !important;
+    height: 60px !important;
+}
+
+
+  
+  /* Product card styles */
+  .productCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: white !important;
+    color: var(--black-color) !important;
+    /* width: 50%; */
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+    cursor: pointer;
+  }
+  
+  .productCard:hover {
+    /* transform: translateY(-5px); */
+    background-color: var(--primary-color) !important;
+    color: var(--white-color) !important;
+  }
+  
+  
+  /* Product card styles */
+  .letestProductCard {
+    /* display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; */
+    background-color: white !important;
+    color: var(--black-color) !important;
+    /* width: 50%; */
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+    cursor: pointer;
+  }
+  
+  .productTitle {
+    font-size: 1.5rem;
+    margin: 0 0 10px;
+  }
+  
+  .productDescription {
+    font-size: 1rem;
+    margin: 0 0 15px;
+  }
+  
+  .productImage {
+    width: 100px !important;
+    height: 100px !important;
+    /* height: auto; */
+    border-radius: 4px;
+    margin: 10px 0;
+  }
+  
+  .letestProductImage {
+    width: 100% !important;
+    height: 200px !important;
+    border-radius: 4px;
+    margin: 10px 0;
+    transition: transform 0.3s ease; /* Smooth transition for transformations */
+  }
+  
+  .letestProductImage:hover {
+    transform: scale(1.05) rotate(5deg); /* Scale up and rotate on hover */
+  }
+
+  
+
+  /* Loading screen */
+  .loadingScreen {
+    text-align: center;
+    margin-top: 50px;
+  }
+  
+  /* Login screen styles */
+  .loginScreen {
+    text-align: center;
+    margin-top: 50px;
+  }
+  
+  .loginButton {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .loginButton:hover {
+    background-color: #45a049;
+  }
+
+  /* Scorrler */
+    
+    /* For Firefox */
+    * {
+        scrollbar-width: thin; /* Use 'thin' for a thinner scrollbar */
+        scrollbar-color: var(--primary-color) #f5f5f5; /* Thumb color and track color */
+    }
+

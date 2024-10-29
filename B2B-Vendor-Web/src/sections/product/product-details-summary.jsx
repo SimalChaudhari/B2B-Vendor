@@ -85,15 +85,22 @@ export function ProductDetailsSummary({
   }, [product]);
 
   const onSubmit = handleSubmit(async (data) => {
-    try {
-      if (!existProduct) {
-        onAddCart?.({ ...data, colors: [values.colors], subtotal: data.sellingPrice * data.quantity });
-      }
-      onGotoStep?.(0);
-      router.push(paths.product.checkout);
-    } catch (error) {
-      console.error(error);
+    if (data) {
+      onGotoStep?.(1); // Call to update the step in the context if necessary
+      router.push({ 
+          pathname: paths.product.checkout, 
+          query: { step: 1 } // Add step 1 to the query parameters
+      });
     }
+    // try {
+      // if (!existProduct) {
+    //     onAddCart?.({ ...data, colors: [values.colors], subtotal: data.sellingPrice * data.quantity });
+      // }
+      // onGotoStep?.(1);
+      // router.push(paths.product.checkout);
+    // } catch (error) {
+    //   console.error(error);
+    // }
   });
 
   const handleAddCart = useCallback(() => {
@@ -213,6 +220,7 @@ export function ProductDetailsSummary({
 
   const renderActions = (
     <Stack direction="row" spacing={2}>
+    {/*
       <Button
         fullWidth
         // disabled={isMaxQuantity || disableActions}
@@ -225,6 +233,7 @@ export function ProductDetailsSummary({
       >
         Add to cart
       </Button>
+       */}
 
       <Button fullWidth size="large" type="submit" variant="contained"
       // disabled={disableActions}
