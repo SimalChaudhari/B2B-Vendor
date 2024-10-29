@@ -15,7 +15,9 @@ import { fDateTime } from 'src/utils/format-time';
 
 // ----------------------------------------------------------------------
 
-export function OrderDetailsHistory({ history }) {
+export function OrderDetailsHistory({ orderDate, history }) {
+
+
   const renderSummary = (
     <Paper
       variant="outlined"
@@ -33,19 +35,19 @@ export function OrderDetailsHistory({ history }) {
     >
       <Stack spacing={0.5}>
         <Box sx={{ color: 'text.disabled' }}>Order time</Box>
-        {fDateTime(history?.orderTime)}
+        {fDateTime(orderDate)}
       </Stack>
       <Stack spacing={0.5}>
         <Box sx={{ color: 'text.disabled' }}>Payment time</Box>
-        {fDateTime(history?.orderTime)}
+        {fDateTime(orderDate)}
       </Stack>
       <Stack spacing={0.5}>
         <Box sx={{ color: 'text.disabled' }}>Delivery time for the carrier</Box>
-        {fDateTime(history?.orderTime)}
+        {fDateTime(orderDate)}
       </Stack>
       <Stack spacing={0.5}>
         <Box sx={{ color: 'text.disabled' }}>Completion time</Box>
-        {fDateTime(history?.orderTime)}
+        {fDateTime(orderDate)}
       </Stack>
     </Paper>
   );
@@ -54,10 +56,11 @@ export function OrderDetailsHistory({ history }) {
     <Timeline
       sx={{ p: 0, m: 0, [`& .${timelineItemClasses.root}:before`]: { flex: 0, padding: 0 } }}
     >
-      {history?.timeline.map((item, index) => {
+      {history?.map((item, index) => {
+        console.log("🚀 ~ {history?.timeline.map ~ item:", item)
         const firstTimeline = index === 0;
 
-        const lastTimeline = index === history.timeline.length - 1;
+        const lastTimeline = index === history.length - 1;
 
         return (
           <TimelineItem key={item.title}>
@@ -88,7 +91,7 @@ export function OrderDetailsHistory({ history }) {
         direction={{ xs: 'column-reverse', md: 'row' }}
         sx={{ p: 3 }}
       >
-        {renderTimeline}
+       {renderTimeline}
 
         {renderSummary}
       </Stack>

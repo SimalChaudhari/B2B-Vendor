@@ -7,11 +7,12 @@ import { useTheme } from '@mui/material/styles';
 import { RouterLink } from 'src/routes/components';
 
 import { logoClasses } from './classes';
+import pngLogo from './assets/logo.png'
 
 // ----------------------------------------------------------------------
 
 export const Logo = forwardRef(
-  ({ width = 60, height = 60, disableLink = false, className, href = '/', sx, ...other }, ref) => {
+  ({ width = 90, height = 60, disableLink = false, className, href = '/', sx, ...other }, ref) => {
     const theme = useTheme();
 
     const gradientId = useId();
@@ -27,7 +28,7 @@ export const Logo = forwardRef(
      * const logo = ( <Box alt="logo" component="img" src={`${CONFIG.site.basePath}/logo/logo-single.svg`} width={width} height={height} /> );
      */
     const logo = (
-      <img alt="logo" src={isDark ? '/logo/logo-full.png' : '/logo/logo-full.png'} />
+      <img alt="logo" src={isDark ? pngLogo : pngLogo} width={width} height={height} />
     );
 
     return (

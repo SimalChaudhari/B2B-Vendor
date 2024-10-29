@@ -21,11 +21,11 @@ import { _account } from '../config-nav-account';
 import { HeaderBase } from '../core/header-base';
 import { _workspaces } from '../config-nav-workspace';
 import { LayoutSection } from '../core/layout-section';
-import { navData as dashboardNavData } from '../config-nav-dashboard';
+import { useNavData } from '../config-nav-dashboard';
 
 export function DashboardLayout({ sx, children, data }) {
   const theme = useTheme();
-
+  // const navData = useNavData();
   const mobileNavOpen = useBoolean();
 
   const settings = useSettingsContext();
@@ -34,7 +34,7 @@ export function DashboardLayout({ sx, children, data }) {
 
   const layoutQuery = 'lg';
 
-  const navData = data?.nav ?? dashboardNavData;
+  const navData = useNavData();
 
   const isNavMini = settings.navLayout === 'mini';
 
