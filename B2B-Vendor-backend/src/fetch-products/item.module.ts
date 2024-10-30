@@ -11,5 +11,6 @@ import { FirebaseService } from 'service/firebase.service';
   imports: [TypeOrmModule.forFeature([ItemEntity])],
   controllers: [ItemController],
   providers: [ItemService,FirebaseService],
+  exports: [ItemService], // Exporting ItemService
 })
 export class ItemModule {}

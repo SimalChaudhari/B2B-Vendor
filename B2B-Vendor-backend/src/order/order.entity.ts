@@ -6,8 +6,7 @@ import { DeliveryType, PaymentMethod } from './order.dto'; // Import enums from 
 
 export enum OrderStatus {
     PENDING = 'pending',
-    SUCCESS = 'success',
-    REFUSED = 'refused',
+    SUCCESS = 'completed',
     Cancelled = 'cancelled',
 
 }

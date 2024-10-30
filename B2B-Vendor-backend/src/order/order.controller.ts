@@ -9,7 +9,7 @@ import { OrderItemEntity } from './order.item.entity';
 import { isAdmin } from 'utils/auth.utils';
 import { RolesGuard } from 'auth/jwt/roles.guard';
 
-@UseGuards(JwtAuthGuard,RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('order')
 export class OrderController {
     constructor(private readonly orderService: OrderService) { }
@@ -24,13 +24,29 @@ export class OrderController {
     async getOrders(@Req() req: Request): Promise<OrderEntity[]> {
         const user = req.user;
         const userRole = user?.role;
-          // Admin users get all orders
+        // Admin users get all orders
         if (isAdmin(userRole)) {
             return this.orderService.getAllOrders(); // Ensure service method exists
         }
         // Regular users get their own orders
         return this.orderService.getOrdersByUserId(user.id);
     }
+
+    @Get('get/monthly')
+    async getOrdersMonthly(
+      @Req() req: Request,
+    ): Promise<Array<{ month: string; status: string; count: number }>> {
+      const user = req.user;
+      const userRole = user?.role;
+    
+      // Admin users get all orders
+      if (isAdmin(userRole)) {
+        return this.orderService.getMonthlyProductCounts();
+      }
+      // Handle case where the user is not an admin
+      return [];
+    }
+    
 
     @Get(':orderId')
     async getOrderById(@Param('orderId') orderId: string): Promise<OrderEntity | null> {

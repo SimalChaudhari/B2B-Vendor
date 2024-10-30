@@ -55,19 +55,15 @@ const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...ORDER_STATUS_OPTIONS]
 
 export function OrderListView() {
   const table = useTable();
-  const router = useRouter();
   const confirm = useBoolean();
-  const dispatch = useDispatch();
-
   const userRole = useUserRole();
-
-  const [loading, setLoading] = useState(false);
   const { fetchData, fetchDeleteData } = useFetchOrderData(); // Destructure fetchData from the custom hook
-  const _orders = useSelector((state) => state.order?.order || []);
 
+  const _orders = useSelector((state) => 
+    userRole === 'Admin' ? state.order?.order || [] : state.order?.order?.orders || []
+  );
 
   const [tableData, setTableData] = useState(_orders);
-
   const filters = useSetState({
     name: '',
     status: 'all',
@@ -113,8 +109,6 @@ export function OrderListView() {
     userRole, // Add userRole here
   });
 
-  const dataInPage = rowInPage(dataFiltered, table.page, table.rowsPerPage);
-
   const canReset =
     !!filters.state.name ||
     filters.state.status !== 'all' ||
@@ -125,8 +119,6 @@ export function OrderListView() {
   const handleDeleteRows = useCallback((id) => { fetchDeleteData(id) }, []);
 
   const handleDeleteRow = useCallback((id) => { fetchDeleteData(id) }, []);
-
-  const handleEditRow = useCallback((id) => id, []);
 
   const handleViewRow = useCallback((id) => id, []);
 
@@ -181,7 +173,7 @@ export function OrderListView() {
                       'default'
                     }
                   >
-                    {['completed', 'pending', 'cancelled', 'refunded'].includes(tab.value)
+                    {['completed', 'pending', 'cancelled'].includes(tab.value)
                       ? tableData.filter((user) => user.status === tab.value).length
                       : tableData.length}
                   </Label>

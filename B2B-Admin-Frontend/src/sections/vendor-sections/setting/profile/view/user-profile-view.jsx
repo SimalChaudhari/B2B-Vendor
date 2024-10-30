@@ -9,6 +9,7 @@ import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 import { useMockedUser } from 'src/auth/hooks';
 import { ProfileHome } from '../profile-home';
 import { ProfileCover } from '../profile-cover';
+import { useSelector } from 'react-redux';
 
 
 // ----------------------------------------------------------------------
@@ -17,6 +18,8 @@ export function UserProfileView() {
   const { user } = useMockedUser();
 
   const [searchFriends, setSearchFriends] = useState('');
+
+  const { authUser } = useSelector((state) => state.auth);
 
   const tabs = useTabs('profile');
 
@@ -38,14 +41,14 @@ export function UserProfileView() {
 
       <Card sx={{ mb: 3, height: 290 }}>
         <ProfileCover
-          role={_userAbout.role}
-          name={user?.displayName}
-          avatarUrl={user?.photoURL}
+          role={authUser.role}
+          name={authUser?.name}
+          avatarUrl={user?.profile}
           coverUrl={_userAbout.coverUrl}
         />
       </Card>
 
-      {tabs.value === 'profile' && <ProfileHome info={_userAbout} posts={_userFeeds} />}
+      {tabs.value === 'profile' && <ProfileHome info={authUser}  />}
 
     </DashboardContent>
   );

@@ -3,6 +3,11 @@ export const USER_LIST = "USER_LIST";
 export const ADDRESS_LIST = "ADDRESS_LIST";
 export const ADDRESS_BY_LIST = "ADDRESS_BY_LIST"
 
+
+export const DASHBOARD_LENGTH = "DASHBOARD_LENGTH"
+export const MONTHLY_ORDER_LIST = "MONTHLY_ORDER_LIST"
+
+
 export const CATEGORY_LIST = "CATEGORY_LIST"
 export const SUB_CATEGORY_LIST = "SUB_CATEGORY_LIST"
 export const PRODUCT_LIST = "PRODUCT_LIST"
@@ -21,6 +26,7 @@ export const CART_LIST = "CART_LIST"
 
 export const ORDER_BY_LIST = "ORDER_BY_LIST"
 export const Order_LIST = "Order_LIST"
+
 
 
 

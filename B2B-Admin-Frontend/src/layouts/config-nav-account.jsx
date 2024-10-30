@@ -10,7 +10,7 @@ export const _account = [
   },
   {
     label: 'Profile',
-    href: '#',
+    href: '/settings/profile-settings',
     icon: (
       <SvgIcon>
         <path
@@ -24,10 +24,5 @@ export const _account = [
         />
       </SvgIcon>
     ),
-  },
-  {
-    label: 'Account settings',
-    href: '#',
-    icon: <Iconify icon="solar:settings-bold-duotone" />,
-  },
+  }
 ];

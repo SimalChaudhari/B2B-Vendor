@@ -24,12 +24,8 @@ export function OrderDetailsView() {
 
   const { fetchByIdData } = useFetchOrderData()
   const { id } = useParams(); // Get the vendor ID from URL
-
   const order = useSelector((state) => state.order?.orderByID || []);
-
-
   const [status, setStatus] = useState(order?.status);
-
   const handleChangeStatus = useCallback((newValue) => {
     setStatus(newValue);
   }, []);

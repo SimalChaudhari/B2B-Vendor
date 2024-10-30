@@ -26,28 +26,7 @@ export function AppWidgetSummary({ title, percent, total, chart, sx, ...other })
     ...chart.options,
   });
 
-  const renderTrending = (
-    <Box sx={{ gap: 0.5, display: 'flex', alignItems: 'center' }}>
-      <Iconify
-        width={24}
-        icon={
-          percent < 0
-            ? 'solar:double-alt-arrow-down-bold-duotone'
-            : 'solar:double-alt-arrow-up-bold-duotone'
-        }
-        sx={{ flexShrink: 0, color: 'success.main', ...(percent < 0 && { color: 'error.main' }) }}
-      />
-
-      <Box component="span" sx={{ typography: 'subtitle2' }}>
-        {percent > 0 && '+'}
-        {fPercent(percent)}
-      </Box>
-      <Box component="span" sx={{ typography: 'body2', color: 'text.secondary' }}>
-        last 7 days
-      </Box>
-    </Box>
-  );
-
+ 
   return (
     <Card
       sx={{
@@ -61,7 +40,7 @@ export function AppWidgetSummary({ title, percent, total, chart, sx, ...other })
       <Box sx={{ flexGrow: 1 }}>
         <Box sx={{ typography: 'subtitle2' }}>{title}</Box>
         <Box sx={{ mt: 1.5, mb: 1, typography: 'h3' }}>{fNumber(total)}</Box>
-        {renderTrending}
+   
       </Box>
 
       <Chart

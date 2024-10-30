@@ -1,13 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { OrderEntity } from './order.entity';
+import { OrderEntity, OrderStatus } from './order.entity';
 import { User } from 'users/user/users.entity';
 import { Address } from 'users/address/addresses/addresses.entity';
 import { CreateItemOrderDto, CreateOrderDto } from './order.dto';
 import { ItemEntity } from 'fetch-products/item.entity';
 import { OrderItemEntity } from './order.item.entity';
 import { CartItemEntity } from 'cart/cart.entity';
+
+
 
 @Injectable()
 export class OrderService {
@@ -35,7 +37,30 @@ export class OrderService {
         });
     }
 
+    async getMonthlyProductCounts(): Promise<Array<{ month: string; status: string; count: number }>> {
+        // Fetch monthly data and group by month and status
+        const monthlyData = await this.orderRepository
+            .createQueryBuilder('order')
+            .select("TO_CHAR(order.createdAt, 'YYYY-MM')", 'month')
+            .addSelect('order.status', 'status')
+            .addSelect('COUNT(order.id)', 'count')
+            .where('order.status != :status', { status: OrderStatus.Cancelled }) // Exclude canceled orders
+            .groupBy("TO_CHAR(order.createdAt, 'YYYY-MM'), order.status")
+            .orderBy('month', 'ASC')
+            .getRawMany();
 
+        // Ensure the count is returned as a number
+        return monthlyData.map((data) => ({
+            month: data.month,
+            status: data.status,
+            count: Number(data.count),
+        }));
+    }
+
+
+    async findAllCompleted(): Promise<OrderEntity[]> {
+        return this.orderRepository.find({ where: { status: OrderStatus.SUCCESS } });
+    }
 
     async createOrder(userId: string, createOrderDto: CreateOrderDto): Promise<OrderEntity> {
         const { addressId, totalPrice, totalQuantity, delivery, paymentMethod } = createOrderDto;
@@ -82,12 +107,100 @@ export class OrderService {
     }
 
 
-    async getOrdersByUserId(userId: string): Promise<OrderEntity[]> {
-        return this.orderRepository.find({
+    async getOrdersByUserId(userId: string): Promise<any> {
+
+        const orders = await this.orderRepository.find({
             where: { user: { id: userId } },
             relations: ['address', 'user', 'orderItems.product'],
         });
+
+        // Aggregate counts of orders by status using QueryBuilder
+        const statusCounts = await this.orderRepository
+            .createQueryBuilder('order')
+            .select('order.status', 'status')
+            .addSelect('COUNT(order.id)', 'count')
+            .where('order.userId = :userId', { userId })
+            .groupBy('order.status')
+            .getRawMany();
+
+        // Convert query result into an easy-to-use object
+        const statusSummary = statusCounts.reduce((acc, { status, count }) => {
+            acc[status] = parseInt(count, 10);
+            return acc;
+        }, {});
+
+        const totalOrders = orders.length;
+
+        // Fetch monthly data and group by month and status
+        const monthlyData = await this.orderRepository
+            .createQueryBuilder('order')
+            .select("TO_CHAR(order.createdAt, 'YYYY-MM')", 'month')
+            .addSelect('order.status', 'status')
+            .addSelect('COUNT(order.id)', 'count')
+            .where('order.userId = :userId', { userId })
+            .groupBy("TO_CHAR(order.createdAt, 'YYYY-MM'), order.status")
+            .orderBy('month', 'ASC')
+            .getRawMany();
+
+        // Transform the monthly data into an array format
+        const monthlySummary = this.transformMonthlyData(monthlyData);
+
+        return {
+            orders,
+            statusSummary: {
+                totalOrders,
+                pending: statusSummary[OrderStatus.PENDING] || 0,
+                completed: statusSummary[OrderStatus.SUCCESS] || 0,
+                cancelled: statusSummary[OrderStatus.Cancelled] || 0,
+            },
+            monthlyData: monthlySummary, // Include the monthly summary here
+        };
     }
+
+
+    private transformMonthlyData(
+        data: { month: string; status: string; count: string }[]
+    ): { month: string; total: number; pending: number; completed: number; cancelled: number }[] {
+        // Define the type for the summary object
+        const summary: Record<
+            string,
+            { month: string; total: number; pending: number; completed: number; cancelled: number }
+        > = {};
+
+        // Helper function to map database statuses to object keys
+        const mapStatus = (status: string): 'pending' | 'completed' | 'cancelled' => {
+            switch (status) {
+                case OrderStatus.PENDING:
+                    return 'pending';
+                case OrderStatus.SUCCESS:
+                    return 'completed';
+                case OrderStatus.Cancelled:
+                    return 'cancelled';
+                default:
+                    throw new Error(`Unknown status: ${status}`);
+            }
+        };
+
+        // Group data by month and accumulate status counts and total orders
+        data.forEach(({ month, status, count }) => {
+            if (!summary[month]) {
+                summary[month] = { month, total: 0, pending: 0, completed: 0, cancelled: 0 };
+            }
+            const key = mapStatus(status);
+            const parsedCount = parseInt(count, 10);
+
+            // Accumulate counts for each status and the total
+            summary[month][key] += parsedCount;
+            summary[month].total += parsedCount;
+        });
+
+        // Convert the summary object into an array
+        return Object.values(summary);
+    }
+
+
+
+
 
     async getOrderById(orderId: string): Promise<OrderEntity> {
         try {
@@ -168,23 +281,6 @@ export class OrderService {
         const address = await this.orderItemRepository.find();
         return address
     }
-
-    // async getOrderItemByUserId(userId: string): Promise<OrderItemEntity[]> {
-    //     return this.orderItemRepository.find({
-    //         where: { order: { user: { id: userId } } },
-    //         relations: ['order.user', 'order.address', 'order.orderItems.product'],
-    //     });
-    // }
-
-
-
-    // async getOrderItemsByOrderId(orderId: string): Promise<OrderItemEntity[]> {
-    //     return this.orderItemRepository.find({
-    //         where: { order: { id: orderId } },
-    //         relations: ['order.user', 'order.address', 'order.orderItems.product'],
-    //     });
-    // }
-
 
 
     async deleteOrderItemById(orderItemId: string): Promise<{ message: string }> {

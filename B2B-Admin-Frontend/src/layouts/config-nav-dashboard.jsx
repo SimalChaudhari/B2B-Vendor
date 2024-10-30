@@ -47,34 +47,34 @@ export const useNavData = () => {
       items: [
         ...(userRole === 'Admin'
           ? [
-              { title: 'Products', path: paths.products.root, icon: ICONS.products },
-              { title: 'Vendors', path: paths.vendors.root, icon: ICONS.vendors },
-              { title: 'Orders', path: paths.orders.root, icon: ICONS.orders },
-              {
-                title: 'Settings',
-                path: paths.settings.root,
-                icon: ICONS.settings,
-                children: [
-                  { title: 'FAQ', path: paths.settings.faq },
-                  { title: 'Contact us', path: paths.settings.contact_us },
-                  { title: 'Terms Conditions', path: paths.settings.terms_conditions },
-                  { title: 'General Setting', path: paths.settings.general_settings },
-                ],
-              },
-            ]
+            { title: 'Products', path: paths.products.root, icon: ICONS.products },
+            { title: 'Vendors', path: paths.vendors.root, icon: ICONS.vendors },
+            { title: 'Orders', path: paths.orders.root, icon: ICONS.orders },
+            {
+              title: 'Settings',
+              path: paths.settings.root,
+              icon: ICONS.settings,
+              children: [
+                { title: 'FAQ', path: paths.settings.faq },
+                { title: 'Contact us', path: paths.settings.contact_us },
+                { title: 'Terms Conditions', path: paths.settings.terms_conditions },
+                { title: 'Profile', path: paths.settings.profile },
+              ],
+            },
+          ]
           : []),
 
         ...(userRole === 'Vendor'
           ? [
-              { title: 'Products', path: paths.items.root, icon: ICONS.products },
-              { title: 'Orders', path: paths.orders.root, icon: ICONS.orders },
-              {
-                title: 'Settings',
-                path: paths.settings.root,
-                icon: ICONS.settings,
-                children: [{ title: 'Profile', path: paths.settings.profile }],
-              },
-            ]
+            { title: 'Products', path: paths.items.root, icon: ICONS.products },
+            { title: 'Orders', path: paths.orders.root, icon: ICONS.orders },
+            {
+              title: 'Settings',
+              path: paths.settings.root,
+              icon: ICONS.settings,
+              children: [{ title: 'Profile', path: paths.settings.profile }],
+            },
+          ]
           : []),
       ],
     },
