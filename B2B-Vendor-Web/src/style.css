@@ -7,6 +7,7 @@
     /* --primary-color-2: #EA2030;
     --primary-color-3: #EB282D; */
     --primary-light-color: #ec293372;
+    --badge-color: #ff5630;
     --black-color: #1C252E;
     --dot-color: #bbb;
     --white-color: #fff;
@@ -17,6 +18,117 @@
     color: var(--black-color);
 }
 
+.HeroHome {
+    position: relative; /* This is important for positioning the pseudo-element */
+    background-color: #f0f0f0; /* Example background color */
+    overflow: hidden; /* Ensure content is clipped to the box */
+}
+
+/* Larger Circle */
+.HeroHome::before {
+    content: "";
+    position: absolute;
+    bottom: 50%;
+    left: 5%;
+    width: 100px; /* Larger circle */
+    height: 100px;
+    background-color: rgba(241, 156, 156, 0.5);
+    border-radius: 50%;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    z-index: 0;
+    animation: grow 15s infinite alternate; /* Animation for larger circle */
+}
+
+/* First Smaller Circle */
+.HeroHome::after {
+    content: "";
+    position: absolute;
+    bottom: 55%; /* Position above the larger circle */
+    left: 10%; /* Adjust left position */
+    width: 50px; /* Smaller circle */
+    height: 50px;
+    background-color: rgba(255, 150, 150, 0.5); /* Green color */
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 0;
+    animation: grow-small 10s infinite alternate; /* Animation for smaller circle */
+}
+
+.small-circle {
+    position: absolute;
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 0;
+    animation: grow-small 7s infinite alternate; /* Animation for smaller circles */
+}
+
+.circle-1 {
+    bottom: 30%; /* Position for first smaller circle */
+    right: 10%; /* Adjust left position */
+    width: 50px; /* Size of first smaller circle */
+    height: 50px;
+    background-color: rgba(255, 134, 113, 0.5); /* Green color */
+}
+
+.circle-2 {
+    bottom: 20%; /* Position for second smaller circle */
+    right: 5%; /* Adjust left position */
+    width: 150px; /* Size of second smaller circle */
+    height: 150px;
+    background-color: rgba(255, 175, 175, 0.5); /* Blue color */
+}
+
+
+/* Define the keyframes for the animation */
+@keyframes grow {
+    0% {
+        transform: scale(1); /* Original size */
+        opacity: 1; /* Fully visible */
+    }
+    100% {
+        transform: scale(1.2); /* Grow by 20% */
+        opacity: 0.7; /* Slightly transparent */
+    }
+}
+
+@keyframes grow-small {
+    0% {
+        transform: scale(1); /* Original size */
+        opacity: 1; /* Fully visible */
+    }
+    100% {
+        transform: scale(0.8); /* Shrink by 20% */
+        opacity: 0.7; /* Slightly transparent */
+    }
+}
+
+
+/* Define the keyframes for the animation */
+@keyframes grow {
+    0% {
+        transform: scale(1); /* Original size */
+        opacity: 1; /* Fully visible */
+    }
+    100% {
+        transform: scale(1.2); /* Grow by 20% */
+        opacity: 0.7; /* Slightly transparent */
+    }
+}
+
+@keyframes grow-small {
+    0% {
+        transform: scale(1); /* Original size */
+        opacity: 1; /* Fully visible */
+    }
+    100% {
+        transform: scale(0.8); /* Shrink by 20% */
+        opacity: 0.7; /* Slightly transparent */
+    }
+}
+
+.css-ixi1sr-MuiSlider-root, .Mui-checked{
+    color: var(--badge-color) !important;
+}
 /* Apply root variables */
 .containerCss {
     width: 100%;
@@ -71,6 +183,7 @@
     padding-top: 26px;
     padding-bottom: 28px;
     border-bottom: 2px solid;
+    border-color: var(--badge-color) !important;
 }
 
 /* Add To Cart */
@@ -154,35 +267,79 @@
     height: 26px !important;
     padding: 16px;
 }
-.css-1g4yje1:hover{
-    background: var(--white-color);
+
+/* Apply hover styles to .css-1g4yje1 */
+.css-1g4yje1:hover {
+    background: var(--white-color) !important;
+    color: var(--primary-color) !important;
     border-radius: 5px;
     height: 26px !important;
     padding: 16px;
+}
+
+/* Ensure that both .css-zall6v-MuiButtonBase-root and .css-1cevvmw-MuiButtonBase-root are styled on hover */
+.css-1g4yje1:hover .css-zall6v-MuiButtonBase-root, 
+.css-1g4yje1:hover .css-1cevvmw-MuiButtonBase-root {
+    color: var(--primary-color) !important;
+    font-weight: 700;
+}
+
+/* Independent hover effect on both buttons */
+.css-zall6v-MuiButtonBase-root:hover, 
+.css-1cevvmw-MuiButtonBase-root:hover {
+    color: var(--primary-color) !important;
+    font-weight: 700;
 }
 
 
 .css-1cevvmw-MuiButtonBase-root{
     color: var(--white-color) !important;
     font-size: large !important;
+    width: 100%;
 }
 
-.css-1cevvmw-MuiButtonBase-root::before, .css-zall6v-MuiButtonBase-root::before{
+.css-zall6v-MuiButtonBase-root::before{
+    /* display: none; */
     background-color: var(--white-color) !important;
+    color: var(--primary-color) !important;
+    width: 100% !important;
+    height: 2px !important;
+    opacity: 1 !important;
+    content: "" !important;
+    border-radius: 0% !important;
+    top: 12px !important;
+    position: absolute !important;
+    left: 0px !important;
+    /* z-index: 1; */
+}
+
+.css-1cevvmw-MuiButtonBase-root::before{
+    background-color: var(--white-color) !important;
+    color: var(--primary-color) !important;
+    display: none;
 }
 
 
-.css-zall6v-MuiButtonBase-root{
+.css-1g4yje1 .css-zall6v-MuiButtonBase-root{
     font-size: large !important;
     color: var(--white-color) !important;
+    /* color: green !important; */
 }
-.css-1cevvmw-MuiButtonBase-root:hover, .css-zall6v-MuiButtonBase-root:hover{
+
+/* .css-1cevvmw-MuiButtonBase-root:hover, .css-zall6v-MuiButtonBase-root:hover{
     color: red !important;
     font-weight: 700;
+} */
+ /* bottom to top */
+.css-gyf09-MuiButtonBase-root-MuiFab-root, .css-vaf0t4-MuiButtonBase-root-MuiFab-root {
+    background: var(--white-color) !important;
+    color: var(--primary-color) !important;
 }
 
-
-
+/* Cart */
+.css-1dwtaeb{
+    display: none !important;
+}
 
 /* Media Queries */
 @media (min-width: 1200px) {
@@ -223,7 +380,38 @@
 
   
   /* Product card styles */
-  .productCard {
+  /* .productCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: white !important;
+    color: var(--black-color) !important;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+    cursor: pointer;
+  } */
+  
+  .productCard:hover {
+    /* transform: translateY(-5px); */
+    background-color: var(--primary-color) !important;
+    color: var(--white-color) !important;
+  }
+  
+  .imageDiv{
+    width: 100%;
+    height: 100%;
+    overflow: hidden; 
+    border-radius: 4px; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Product card styles */
+  .letestProductCard {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -237,29 +425,7 @@
     transition: transform 0.2s;
     cursor: pointer;
   }
-  
-  .productCard:hover {
-    /* transform: translateY(-5px); */
-    background-color: var(--primary-color) !important;
-    color: var(--white-color) !important;
-  }
-  
-  
-  /* Product card styles */
-  .letestProductCard {
-    /* display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center; */
-    background-color: white !important;
-    color: var(--black-color) !important;
-    /* width: 50%; */
-    border-radius: 8px;
-    padding: 15px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s;
-    cursor: pointer;
-  }
+
   
   .productTitle {
     font-size: 1.5rem;
@@ -274,22 +440,35 @@
   .productImage {
     width: 100px !important;
     height: 100px !important;
+    object-fit: contain !important;
     /* height: auto; */
     border-radius: 4px;
     margin: 10px 0;
+    
   }
-  
   .letestProductImage {
-    width: 100% !important;
-    height: 200px !important;
+    width: 100%; 
+    max-width: 300px;
+    max-height: 200px;
+    object-fit: contain !important;
     border-radius: 4px;
     margin: 10px 0;
-    transition: transform 0.3s ease; /* Smooth transition for transformations */
-  }
-  
-  .letestProductImage:hover {
-    transform: scale(1.05) rotate(5deg); /* Scale up and rotate on hover */
-  }
+    transition: transform 0.3s ease;
+    display: block;
+}
+.css-ljjsc7{
+
+    width: 100%; 
+    /* max-width: 300px; */
+    height: 200px;
+    object-fit: contain !important;
+}
+
+/* Hover effect */
+.letestProductImage:hover {
+    transform: scale(1.05) rotate(5deg); /* Scale up and rotate slightly on hover */
+}
+
 
   
 
@@ -327,3 +506,144 @@
         scrollbar-color: var(--primary-color) #f5f5f5; /* Thumb color and track color */
     }
 
+
+    /* From Uiverse.io by SteveBloX */ 
+.card {
+    box-sizing: border-box;
+    min-width: 180px;
+    height: 100%;
+    background: rgba(217, 217, 217, 0.58);
+    border: 1px solid white;
+    box-shadow: 12px 17px 51px rgba(0, 0, 0, 0.22);
+    backdrop-filter: blur(6px);
+    border-radius: 17px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.5s;
+    display: flex;
+    /* align-items: center; */
+    justify-content: center;
+    user-select: none;
+    font-weight: bolder;
+    color: black;
+  }
+  
+  .card:hover {
+    border: 1px solid black;
+    transform: scale(1.05);
+  }
+  
+  .card:active {
+    transform: scale(0.95) rotateZ(1.7deg);
+  }
+
+
+/* From Uiverse.io by TemRevil */ 
+.card2 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    max-width: 190px;
+    height: 190px;
+    background: var(--white-color);
+    color: var(--black-color);
+    font-size: 32px;
+    font-weight: 700;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.1s 0s linear;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--primary-color) !important;
+  }
+  .card2:active {
+    scale: 0.95;
+  }
+  .card2::after {
+    content: "";
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    position: absolute;
+    right: 250px;
+    transition: right 0.4s 0s linear;
+    z-index: 1;
+  }
+  .card2:hover::after {
+    right: -160px;
+  }
+  .card2:hover {
+    color: var(--white-color);
+  }
+  .card2 div {
+    position: absolute;
+    z-index: 10;
+  }
+  
+
+  /* From Uiverse.io by ahmedyasserdev */ 
+.unique-card {
+    position: relative;
+    width: 90%;
+    height: 350px;
+    overflow: hidden;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s, box-shadow 0.3s;
+    margin-bottom: 42px;
+    cursor: pointer;
+  }
+  
+  .unique-card:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  }
+  
+  .card-content {
+    width: 80%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: #888;
+    z-index: 2;
+    transition: color 0.3s;
+  }
+  
+  .unique-card:hover .card-content {
+    color: var(--white-color);
+  }
+  
+  .background-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--primary-color);
+    border-radius: 15px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  
+  .unique-card:hover .background-overlay {
+    opacity: 1;
+  }
+  
+  .card-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .card-description {
+    font-size: 16px;
+  }
+  
+
+  .css-qrjz2g-MuiStack-root {
+    align-items: start !important;
+    }

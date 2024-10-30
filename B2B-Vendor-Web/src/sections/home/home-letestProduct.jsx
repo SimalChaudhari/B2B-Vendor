@@ -11,11 +11,15 @@ import {
   Typography,
   CircularProgress,
   Box,
+  Button,
 } from '@mui/material';
 import { AiOutlineWarning } from 'react-icons/ai';
+import { useNavigate } from 'react-router';
+import { MdOutlineKeyboardDoubleArrowRight } from "react-icons/md";
 
 export function HomeLetestProduct() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { items: products = [], loading: productsLoading } = useSelector((state) => state.product);
 
   useEffect(() => {
@@ -65,34 +69,53 @@ export function HomeLetestProduct() {
   }
 
   // Limit to the first 4 products directly
-  const displayedProducts = products.slice(0, 4);
+  const displayedProducts = products.slice(0, 8);
 
   return (
-    <Container className='containerCss'>
-      <Typography className='text-black mb-2 mt-2' variant="h4" component="h1" gutterBottom>
-        Home Latest Products
-      </Typography>
+    <Container className='containerCss mb-5'>
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+        <Typography variant="h4" component="h1" className='text-black mb-2 mt-2'>
+          Latest Products
+        </Typography>
+        <Button
+          variant="text"
+          onClick={() => navigate('/product')}
+          className='text-primary font-lg'
+        // sx={{ color: 'primary.main', textTransform: 'none' }}
+        >
+          View All <MdOutlineKeyboardDoubleArrowRight className='font-lg ml-1' />
+        </Button>
+      </Box>
+
       <Grid container spacing={2}>
         {displayedProducts.map((product) => (
           <Grid item xs={6} sm={4} md={3} key={product.id}>
-            <Card className='letestProductCard'>
-              {product.productImages && product.productImages.length > 0 && (
-                <CardMedia
-                  component="img"
-                  image={product.productImages[0]}
-                  alt={product.itemName}
-                  className='letestProductImage' // Added class for styling
-                />
-              )}
-              <CardContent>
-                <Typography variant="h6" className='productTitle'>
-                  {product.itemName} {/* Display product name instead of group */}
-                </Typography>
-                <Typography >
-                  {product.description} {/* Display product name instead of group */}
-                </Typography>
-              </CardContent>
-            </Card>
+            <div className="unique-card">
+              <div className="background-overlay" />
+              <div className="card-content">
+
+                <span className=''>
+                  {product.productImages && product.productImages.length > 0 && (
+                    <div className=''>
+                      <CardMedia
+                        component="img"
+                        image={product.productImages[0]}
+                        alt={product.itemName}
+                        className='letestProductImage' // Added class for styling
+                      />
+                    </div>
+                  )}
+                  <CardContent>
+                    <Typography variant="h6" className='productTitle'>
+                      {product.itemName} {/* Display product name instead of group */}
+                    </Typography>
+                    <Typography >
+                      {product.description} {/* Display product name instead of group */}
+                    </Typography>
+                  </CardContent>
+                </span>
+              </div>
+            </div>
           </Grid>
         ))}
       </Grid>

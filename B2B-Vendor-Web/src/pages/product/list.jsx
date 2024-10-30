@@ -71,6 +71,7 @@ export default function Page() {
       <Helmet>
         <title>{metadata.title}</title>
       </Helmet>
+      
       <ProductShopView products={products.data} loading={productsLoading} />
     </div>
   );

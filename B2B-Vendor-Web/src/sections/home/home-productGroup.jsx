@@ -1,21 +1,22 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { fetchProductsFailure, fetchProductsStart, fetchProductsSuccess } from 'src/redux/ProductReducer';
-import { fetchItems } from 'src/services/productApi'; // Ensure this file is correct
+import { fetchItems } from 'src/services/productApi'; 
 import {
     Container,
     Grid,
-    Card,
     CardMedia,
-    CardContent,
     Typography,
     CircularProgress,
     Box,
+    Divider,
 } from '@mui/material';
 import { AiOutlineWarning } from 'react-icons/ai';
 
 export function HomeProductGroup() {
     const dispatch = useDispatch();
+    const navigate = useNavigate(); // Initialize navigate
     const { items: products = [], loading: productsLoading } = useSelector((state) => state.product);
 
     useEffect(() => {
@@ -42,17 +43,17 @@ export function HomeProductGroup() {
             <Container className='containerCss' style={{ textAlign: 'center', marginTop: '50px' }}>
                 <Box
                     sx={{
-                        backgroundColor: 'rgba(255, 0, 0, 0.1)', // Light red background
+                        backgroundColor: 'rgba(255, 0, 0, 0.1)',
                         borderRadius: '8px',
-                        padding: '30px', // Increased padding for a spacious feel
-                        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)', // Enhanced shadow for depth
-                        transition: 'transform 0.3s ease', // Smooth transition effect
+                        padding: '30px',
+                        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+                        transition: 'transform 0.3s ease',
                         '&:hover': {
-                            transform: 'scale(1.02)', // Scale effect on hover
+                            transform: 'scale(1.02)',
                         },
                     }}
                 >
-                    <AiOutlineWarning style={{ fontSize: '48px', color: '#f44336' }} /> {/* Icon with color */}
+                    <AiOutlineWarning style={{ fontSize: '48px', color: '#f44336' }} />
                     <Typography variant="h5" color="textPrimary" style={{ fontWeight: 'bold', marginTop: '15px' }}>
                         No products found.
                     </Typography>
@@ -71,31 +72,60 @@ export function HomeProductGroup() {
 
     const displayedProducts = uniqueGroups.slice(0, 6);
 
+    const handleProductClick = (category) => {
+        // Redirect to /product with query string for category
+        navigate(`/product?category=${encodeURIComponent(category)}`);
+    };
+
     return (
         <Container className='containerCss'>
-            <Typography className='text-black mb-2 mt-2' variant="h4" component="h1" gutterBottom>
-                Home Product Category
+            <Typography className='text-black mt-2 mb-2' variant="h4" component="h1" gutterBottom>
+                Product Categories
             </Typography>
             <Grid container spacing={2}>
-                {displayedProducts.map((product) => (
-                    <Grid item xs={6} sm={4} md={2} key={product.id}>
-
-                        <Card className='productCard'>
-                            <Typography variant="h6" className='productTitle'>
-                                {product.group}
-                            </Typography>
-                            {product.productImages && product.productImages.length > 0 && (
-                                <CardMedia
-                                    component="img"
-                                    image={product.productImages[0]}
-                                    alt={product.itemName}
-                                    className='productImage' // Added class for styling
-                                />
-                            )}
-                        </Card>
-                    </Grid>
-                ))}
+            {displayedProducts.map((product) => (
+                <Grid item xs={6} sm={4} md={2} key={product.id}>
+                    <button
+                        type="button" // Add this line to specify the button type
+                        className="card2"
+                        onClick={() => handleProductClick(product.group)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                                handleProductClick(product.group);
+                            }
+                        }}
+                        style={{
+                            background: 'none',
+                            border: 'none',
+                            padding: '0',
+                            cursor: 'pointer',
+                            width: '100%',
+                            textAlign: 'left', // Ensure text is aligned left
+                        }} // Optional inline styles
+                        aria-label={`View products in category ${product.group}`} // Accessible label
+                    >
+                        <div>
+                            <span className='productCard'>
+                                <Typography variant="h6" className='productTitle'>
+                                    {product.group}
+                                </Typography>
+                                {product.productImages && product.productImages.length > 0 && (
+                                    <CardMedia
+                                        component="img"
+                                        image={product.productImages[0]}
+                                        alt={product.itemName}
+                                        className='productImage'
+                                    />
+                                )}
+                            </span>
+                        </div>
+                    </button>
+                </Grid>
+            ))}
+            
             </Grid>
+
+            <Divider sx={{ borderStyle: 'dashed' }} className='mt-4' />
         </Container>
     );
 }

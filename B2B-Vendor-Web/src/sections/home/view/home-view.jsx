@@ -35,7 +35,9 @@ export function HomeView() {
          */}
 
       {/* Content stack for homepage sections */}
-      <Stack sx={{ position: 'relative', bgcolor: 'background.default' }}>
+      <Stack sx={{ position: 'relative', bgcolor: 'background.default' }} className='HeroHome'>
+      <div className="small-circle circle-1" />
+    <div className="small-circle circle-2" />
         {/* Pricing section for e-commerce plans, deals, or products */}
         {/* Home Banner */}
         <HomeCarousel />
