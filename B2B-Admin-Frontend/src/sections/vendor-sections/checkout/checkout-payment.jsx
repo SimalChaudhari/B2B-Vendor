@@ -57,8 +57,7 @@ export function CheckoutPayment() {
   const checkout = useCheckoutContext();
   const dispatch = useDispatch();
   const mappedData = useCart();
-  console.log("🚀 ~ CheckoutPayment ~ mappedData:", mappedData)
-
+  
   const [payment, setPayment] = useState()
 
   const addressByData = useSelector((state) => state.address?.addressByID);

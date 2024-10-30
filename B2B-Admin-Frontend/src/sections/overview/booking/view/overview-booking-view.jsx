@@ -1,78 +1,112 @@
 import Grid from '@mui/material/Unstable_Grid2';
 import { DashboardContent } from 'src/layouts/dashboard';
-import { _bookings, _bookingNew, _bookingReview, _bookingsOverview } from 'src/_mock';
 import {
   TotalOrderIcon,
   CheckoutIllustration,
   SuccessOrderIcon,
+  PendingOrderIcon,
 } from 'src/assets/illustrations';
 import { BookingStatistics } from '../booking-statistics';
 import { BookingWidgetSummary } from '../booking-widget-summary';
+import { useFetchOrderData } from 'src/sections/order/components/fetch-order';
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { format } from 'date-fns';
+import { paths } from 'src/routes/paths';
+import { useNavigate } from 'react-router';
 
 // ----------------------------------------------------------------------
 
 export function OverviewBookingView() {
+
+  const widgetStyle = {
+    cursor: 'pointer', // Add pointer cursor
+  };
+  const navigate = useNavigate(); // Initialize useNavigate
+
+  const { fetchData } = useFetchOrderData();
+  const _orders = useSelector((state) => state.order?.order || []);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  // Get the current year dynamically
+  const currentYear = new Date().getFullYear();
+
+  // Generate months dynamically with the 'MMM-yyyy' format
+  const allMonths = Array.from({ length: 12 }, (_, i) =>
+    format(new Date(currentYear, i, 1), 'MMM-yyyy')
+  );
+
+  const monthlyData = _orders.monthlyData || [];
+  const monthLookup = Object.fromEntries(
+    monthlyData.map((item) => [format(new Date(item.month), 'MMM-yyyy'), item])
+  );
+
+  const totalOrders = allMonths.map((month) => monthLookup[month]?.total || 0);
+  const completedOrders = allMonths.map((month) => monthLookup[month]?.completed || 0);
+  const cancelledOrders = allMonths.map((month) => monthLookup[month]?.cancelled || 0);
+  const pendingOrders = allMonths.map((month) => monthLookup[month]?.pending || 0);
+
   return (
     <DashboardContent maxWidth="xl">
       <Grid container spacing={3} disableEqualOverflow>
-        <Grid xs={12} md={4}>
+        <Grid xs={12} md={3}>
           <BookingWidgetSummary
             title="Total Order"
-            total={714000}
+            total={_orders?.statusSummary?.totalOrders}
+            style={widgetStyle} // Apply style here
+            onClick={() => navigate(paths.orders.root)} // Navigate to products route
             icon={<TotalOrderIcon />}
           />
         </Grid>
 
-        <Grid xs={12} md={4}>
+        <Grid xs={12} md={3}>
           <BookingWidgetSummary
             title="Total Success"
-            total={311000}
-            icon={<SuccessOrderIcon/>}
+            total={_orders?.statusSummary?.completed}
+            style={widgetStyle} // Apply style here
+            onClick={() => navigate(paths.orders.root)} // Navigate to products route
+            icon={<SuccessOrderIcon />}
           />
         </Grid>
 
-        <Grid xs={12} md={4}>
+        <Grid xs={12} md={3}>
           <BookingWidgetSummary
-            title="Canceled"  
-            total={124000}
+            title="Pending"
+            total={_orders?.statusSummary?.pending}
+            style={widgetStyle} // Apply style here
+            onClick={() => navigate(paths.orders.root)} // Navigate to products route
+            icon={<PendingOrderIcon />}
+          />
+        </Grid>
+
+        <Grid xs={12} md={3}>
+          <BookingWidgetSummary
+            title="Canceled"
+            total={_orders?.statusSummary?.cancelled}
+            style={widgetStyle} // Apply style here
+            onClick={() => navigate(paths.orders.root)} // Navigate to products route
             icon={<CheckoutIllustration />}
           />
+        </Grid>
 
+        <Grid xs={12} md={12} lg={12}>
+          <BookingStatistics
+            title="Monthly Orders Statistics"
+            chart={{
+              series: [
+                { name: 'Total Orders', data: totalOrders },
+                { name: 'Completed Orders', data: completedOrders },
+                { name: 'Canceled Orders', data: cancelledOrders },
+                { name: 'Pending Orders', data: pendingOrders },
+              ],
+              categories: allMonths,
+            }}
+          />
         </Grid>
-          <Grid xs={12} md={12} lg={12}>
-            <BookingStatistics
-              title="Statistics"
-              chart={{
-                series: [
-                  {
-                    name: 'Weekly',
-                    categories: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5'],
-                    data: [
-                      { name: 'Sold', data: [24, 41, 35, 151, 49] },
-                      { name: 'Canceled', data: [20, 56, 77, 88, 99] },
-                    ],
-                  },
-                  {
-                    name: 'Monthly',
-                    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
-                    data: [
-                      { name: 'Sold', data: [83, 112, 119, 88, 103, 112, 114, 108, 93] },
-                      { name: 'Canceled', data: [46, 46, 43, 58, 40, 59, 54, 42, 51] },
-                    ],
-                  },
-                  {
-                    name: 'Yearly',
-                    categories: ['2018', '2019', '2020', '2021', '2022', '2023'],
-                    data: [
-                      { name: 'Sold', data: [76, 42, 29, 41, 27, 96] },
-                      { name: 'Canceled', data: [46, 44, 24, 43, 44, 43] },
-                    ],
-                  },
-                ],
-              }}
-            />
-          </Grid> 
-        </Grid>
+      </Grid>
     </DashboardContent>
   );
 }

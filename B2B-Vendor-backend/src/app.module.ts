@@ -3,16 +3,13 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module'; // Adjust the path as necessary
 import { AddressesModule } from 'users/address/addresses/addresses.module';
-import { CategoryModule } from 'admin/products/categories/categories.module';
-import { SubcategoryModule } from 'admin/products/sub-categories/subcategories.module';
-import { ProductModule } from 'admin/products/products/products.module';
-import { OfferModule } from 'admin/products/offers/offers.module';
 import { UserModule } from 'users/user/users.module';
 import { SettingModule } from 'settings/setting.module';
 import { ItemModule } from 'fetch-products/item.module';
 import { VendorModule } from 'users/vendors/vendor.module';
 import { CartModule } from 'cart/cart.module';
 import { OrderModule } from 'order/order.module';
+import { DashboardModule } from 'dashboard/dashboard.module';
 
 
 
@@ -32,15 +29,12 @@ import { OrderModule } from 'order/order.module';
     AuthModule,
     UserModule,
     AddressesModule,
-    CategoryModule,
-    SubcategoryModule,
-    ProductModule,
     ItemModule,
-    OfferModule,
     SettingModule,
     VendorModule,
     CartModule,
-    OrderModule
+    OrderModule,
+    DashboardModule,
     // FileModule
   ],
 })

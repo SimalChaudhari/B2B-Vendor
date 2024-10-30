@@ -8,7 +8,7 @@ import { Chart, useChart, ChartSelect, ChartLegends } from 'src/components/chart
 
 // ----------------------------------------------------------------------
 
-export function BookingStatistics({ title, chart, ...other }) {
+export function OrderStatistics({ title, chart, ...other }) {
   const theme = useTheme();
 
   const chartColors = [
@@ -31,12 +31,9 @@ export function BookingStatistics({ title, chart, ...other }) {
 
       <ChartLegends
         colors={chartOptions.colors}
-        labels={['Total Orders', 'Completed Orders', 'Canceled Orders', 'Pending Orders']}
+        labels={['Total Orders']}
         values={[
-          fShortenNumber(chart.series[0].data?.reduce((a, b) => a + b, 0)),
-          fShortenNumber(chart.series[1].data?.reduce((a, b) => a + b, 0)),
-          fShortenNumber(chart.series[2].data?.reduce((a, b) => a + b, 0)),
-          fShortenNumber(chart.series[3].data?.reduce((a, b) => a + b, 0)), // Pending Orders value
+          fShortenNumber(chart.series[0].data?.reduce((a, b) => a + b, 0))
         ]}
         sx={{ px: 3, gap: 3 }}
       />

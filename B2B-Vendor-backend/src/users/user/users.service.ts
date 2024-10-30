@@ -1,6 +1,6 @@
 //users.service.ts
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
-import { User } from './users.entity';
+import { User, UserRole } from './users.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as fs from 'fs';
@@ -19,10 +19,15 @@ export class UserService {
 
     async getAll(): Promise<User[]> {
         return await this.userRepository.find({
-          where: { isDeleted: false },
-          relations: ['addresses'], // Ensure addresses are loaded
+            where: { isDeleted: false },
+            relations: ['addresses'], // Ensure addresses are loaded
         });
-      }
+    }
+
+    async findAllVendors(): Promise<User[]> {
+        return this.userRepository.find({ where: { role: UserRole.Vendor } });
+    }
+
 
 
     async getById(id: string): Promise<User> {

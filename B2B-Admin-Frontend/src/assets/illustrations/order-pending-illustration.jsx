@@ -1,18 +1,16 @@
-
-
 import { memo } from 'react';
 import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material/styles';
 
 // ----------------------------------------------------------------------
 
-function SuccessOrderIcon({ sx, ...other }) {
+function PendingOrderIcon({ sx, ...other }) {
   const theme = useTheme();
 
   const PRIMARY_LIGHT = theme.vars.palette.primary.light;
   const PRIMARY_MAIN = theme.vars.palette.primary.main;
   const PRIMARY_DARK = theme.vars.palette.primary.dark;
-  const SUCCESS_COLOR = theme.vars.palette.success.main;
+  const PRIMARY_DARKER = theme.vars.palette.primary.darker;
 
   return (
     <Box
@@ -24,31 +22,28 @@ function SuccessOrderIcon({ sx, ...other }) {
       sx={{ width: 120, maxWidth: 1, flexShrink: 0, height: 'auto', ...sx }}
       {...other}
     >
-      {/* Person Icon with Raised Arms */}
-      <circle cx="100" cy="60" r="10" fill={SUCCESS_COLOR} />
+      {/* Person Icon */}
+      <circle cx="100" cy="60" r="10" fill={PRIMARY_MAIN} />
       <path
-        d="M90 75c10 0 20 0 20 15s-10 15-10 15h-5c0 0-10 0-10-15s5-15 5-15z"
+        d="M95 70c5 0 10 0 10 20s-10 10-10 10h-2c0 0-10 0-10-10s5-20 10-20z"
         fill={PRIMARY_LIGHT}
       />
-      
-      {/* Tick Mark for Success */}
+      {/* Clock Icon to Represent Waiting */}
+      <circle cx="150" cy="150" r="20" fill={PRIMARY_DARK} />
       <path
-        d="M150 150l10 10 20-30"
-        stroke={SUCCESS_COLOR}
-        strokeWidth="6"
+        d="M150 140v10h10"
+        stroke={PRIMARY_LIGHT}
+        strokeWidth="2"
         strokeLinecap="round"
-        fill="none"
       />
-
-      {/* Shopping Bag Element */}
-      <rect x="85" y="90" width="30" height="35" fill={PRIMARY_MAIN} />
-      <line x1="85" y1="90" x2="115" y2="90" stroke={PRIMARY_LIGHT} strokeWidth="2" />
-      <line x1="95" y1="90" x2="95" y2="75" stroke={PRIMARY_LIGHT} strokeWidth="2" />
-      <line x1="105" y1="90" x2="105" y2="75" stroke={PRIMARY_LIGHT} strokeWidth="2" />
+      {/* Chair for Person Sitting */}
+      <rect x="85" y="90" width="30" height="10" fill={PRIMARY_DARKER} />
+      <rect x="85" y="100" width="5" height="20" fill={PRIMARY_DARKER} />
+      <rect x="110" y="100" width="5" height="20" fill={PRIMARY_DARKER} />
 
       <defs>
         <linearGradient
-          id="successGradient"
+          id="a"
           x1="25.9"
           x2="25.9"
           y1="122.338"
@@ -63,4 +58,4 @@ function SuccessOrderIcon({ sx, ...other }) {
   );
 }
 
-export default memo(SuccessOrderIcon);
+export default memo(PendingOrderIcon);

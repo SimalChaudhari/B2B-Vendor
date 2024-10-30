@@ -58,9 +58,12 @@ export function OrderListView() {
   const confirm = useBoolean();
   const userRole = useUserRole();
   const { fetchData, fetchDeleteData } = useFetchOrderData(); // Destructure fetchData from the custom hook
-  const _orders = useSelector((state) => state.order?.order || []);
-  const [tableData, setTableData] = useState(_orders);
 
+  const _orders = useSelector((state) => 
+    userRole === 'Admin' ? state.order?.order || [] : state.order?.order?.orders || []
+  );
+
+  const [tableData, setTableData] = useState(_orders);
   const filters = useSetState({
     name: '',
     status: 'all',

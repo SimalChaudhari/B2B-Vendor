@@ -28,4 +28,9 @@ export { default as SuccessOrderIcon } from './order-success-illustration'
 
 export { default as TotalOrderIcon } from './order-total-illustration'
 
+export { default as PendingOrderIcon } from './order-pending-illustration'
+
+
+
+
 

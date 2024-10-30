@@ -23,6 +23,7 @@ import { useMockedUser } from 'src/auth/hooks';
 
 import { AccountButton } from './account-button';
 import { SignOutButton } from './sign-out-button';
+import { useSelector } from 'react-redux';
 
 export function AccountDrawer({ data = [], sx, ...other }) {
   const theme = useTheme();
@@ -32,6 +33,8 @@ export function AccountDrawer({ data = [], sx, ...other }) {
   const pathname = usePathname();
 
   const { user } = useMockedUser();
+
+  const { authUser } = useSelector((state) => state.auth);
 
   const [open, setOpen] = useState(false);
 
@@ -55,7 +58,7 @@ export function AccountDrawer({ data = [], sx, ...other }) {
     <AnimateAvatar
       width={96}
       slotProps={{
-        avatar: { src: user?.photoURL, alt: user?.displayName },
+        avatar: { src: authUser?.profile, alt: authUser?.profile },
         overlay: {
           border: 2,
           spacing: 3,
@@ -63,7 +66,7 @@ export function AccountDrawer({ data = [], sx, ...other }) {
         },
       }}
     >
-      {user?.displayName?.charAt(0).toUpperCase()}
+      {authUser?.name.charAt(0).toUpperCase()}
     </AnimateAvatar>
   );
 
@@ -72,8 +75,8 @@ export function AccountDrawer({ data = [], sx, ...other }) {
       <AccountButton
         open={open}
         onClick={handleOpenDrawer}
-        photoURL={user?.photoURL}
-        displayName={user?.displayName}
+        photoURL={authUser?.profile}
+        displayName={authUser?.name}
         sx={sx}
         {...other}
       />
@@ -97,14 +100,13 @@ export function AccountDrawer({ data = [], sx, ...other }) {
             {renderAvatar}
 
             <Typography variant="subtitle1" noWrap sx={{ mt: 2 }}>
-              {user?.displayName}
+              {authUser?.name}
             </Typography>
 
             <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }} noWrap>
-              {user?.email}
+              {authUser?.email}
             </Typography>
           </Stack>
-
 
           <Stack
             sx={{
@@ -113,39 +115,7 @@ export function AccountDrawer({ data = [], sx, ...other }) {
               borderTop: `dashed 1px ${theme.vars.palette.divider}`,
               borderBottom: `dashed 1px ${theme.vars.palette.divider}`,
             }}
-          >
-            {data.map((option) => {
-              const rootLabel = pathname.includes('/dashboard') ? 'Home' : 'Dashboard';
-
-              const rootHref = pathname.includes('/dashboard') ? '/' : paths.dashboard.root;
-
-              return (
-                <MenuItem
-                  key={option.label}
-                  onClick={() => handleClickItem(option.label === 'Home' ? rootHref : option.href)}
-                  sx={{
-                    py: 1,
-                    color: 'text.secondary',
-                    '& svg': { width: 24, height: 24 },
-                    '&:hover': { color: 'text.primary' },
-                  }}
-                >
-                  {option.icon}
-
-                  <Box component="span" sx={{ ml: 2 }}>
-                    {option.label === 'Home' ? rootLabel : option.label}
-                  </Box>
-
-                  {option.info && (
-                    <Label color="error" sx={{ ml: 1 }}>
-                      {option.info}
-                    </Label>
-                  )}
-                </MenuItem>
-              );
-            })}
-          </Stack>
-
+          />
         </Scrollbar>
 
         <Box sx={{ p: 2.5 }}>

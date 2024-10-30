@@ -20,5 +20,6 @@ import { CartItemEntity } from 'cart/cart.entity';
   ],
   controllers: [OrderController],
   providers: [OrderService],
+  exports: [OrderService], // Exporting ItemService
 })
 export class OrderModule {}
