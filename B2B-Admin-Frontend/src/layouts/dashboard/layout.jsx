@@ -60,7 +60,12 @@ export function DashboardLayout({ sx, children, data }) {
             layoutQuery={layoutQuery}
             disableElevation={isNavVertical}
             onOpenNav={mobileNavOpen.onTrue}
-           
+            data={{
+              nav: navData,
+              langs: allLangs,
+              account: _account,
+              workspaces: _workspaces,
+            }}
             slotsDisplay={{
               signIn: false,
               purchase: false,
