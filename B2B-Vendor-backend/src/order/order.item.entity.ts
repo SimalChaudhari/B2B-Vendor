@@ -1,7 +1,5 @@
 import { ItemEntity } from 'fetch-products/item.entity';
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
-import { Address } from 'users/address/addresses/addresses.entity';
-import { User } from 'users/user/users.entity';
 import { OrderEntity } from './order.entity';
 
 

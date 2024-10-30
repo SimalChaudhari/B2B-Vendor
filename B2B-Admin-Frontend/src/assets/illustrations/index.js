@@ -23,3 +23,9 @@ export { default as ServerErrorIllustration } from './server-error-illustration'
 export { default as PageNotFoundIllustration } from './page-not-found-illustration';
 
 export { default as OrderCompleteIllustration } from './order-complete-illustration';
+
+export { default as SuccessOrderIcon } from './order-success-illustration'
+
+export { default as TotalOrderIcon } from './order-total-illustration'
+
+

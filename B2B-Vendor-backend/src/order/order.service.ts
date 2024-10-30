@@ -82,12 +82,38 @@ export class OrderService {
     }
 
 
-    async getOrdersByUserId(userId: string): Promise<OrderEntity[]> {
-        return this.orderRepository.find({
-            where: { user: { id: userId } },
-            relations: ['address', 'user', 'orderItems.product'],
-        });
-    }
+ async getOrdersWithStatusCounts(userId: string): Promise<any> {
+    // Retrieve all orders with necessary relations
+    const orders = await this.orderRepository.find({
+        where: { user: { id: userId } },
+        relations: ['address', 'user', 'orderItems.product'],
+    });
+
+    // Aggregate counts of orders by status using QueryBuilder
+    const statusCounts = await this.orderRepository
+        .createQueryBuilder('order')
+        .select('order.status', 'status')
+        .addSelect('COUNT(order.id)', 'count')
+        .where('order.userId = :userId', { userId })
+        .groupBy('order.status')
+        .getRawMany();
+
+    // Convert query result into an easy-to-use object
+    const statusSummary = statusCounts.reduce((acc, { status, count }) => {
+        acc[status] = parseInt(count, 10);
+        return acc;
+    }, {});
+
+    return {
+        orders,
+        statusSummary: {
+            pending: statusSummary[OrderStatus.PENDING] || 0,
+            success: statusSummary[OrderStatus.SUCCESS] || 0,
+            cancelled: statusSummary[OrderStatus.Cancelled] || 0,
+        },
+    };
+}
+
 
     async getOrderById(orderId: string): Promise<OrderEntity> {
         try {
