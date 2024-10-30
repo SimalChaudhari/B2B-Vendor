@@ -23,7 +23,6 @@ const VendorPage = lazy(() => import('src/pages/vendors'));
 const FAQPage = lazy(() => import('src/pages/settings/faq'));
 const ContactPage = lazy(() => import('src/pages/settings/contact-us'));
 const TermsPage = lazy(() => import('src/pages/settings/terms-conditions'));
-const GeneralPage = lazy(() => import('src/pages/vendor-page/settings/general'));
 const ProfilePage = lazy(() => import('src/pages/vendor-page/settings/profile'));
 
 
@@ -115,7 +114,6 @@ export const dashboardRoutes = [
       { path: 'terms-conditions/edit/:id', element: <TermEditView /> },
       { path: 'terms-conditions/view/:id', element: <TermView /> },
 
-      { path: 'general-settings', element: <GeneralPage /> },
       { path: 'profile-settings', element: <ProfilePage /> },
 
     ],
