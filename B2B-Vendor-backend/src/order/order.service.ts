@@ -35,6 +35,8 @@ export class OrderService {
         });
     }
 
+
+
     async createOrder(userId: string, createOrderDto: CreateOrderDto): Promise<OrderEntity> {
         const { addressId, totalPrice, totalQuantity, delivery, paymentMethod } = createOrderDto;
 
@@ -48,7 +50,11 @@ export class OrderService {
             throw new NotFoundException('Address not found');
         }
 
+        // Generate a unique order number (e.g., #12345)
+        const orderNo = await this.generateUniqueOrderNumber();
+
         const order = this.orderRepository.create({
+            orderNo,
             user,
             address,
             totalPrice,
@@ -59,6 +65,22 @@ export class OrderService {
 
         return this.orderRepository.save(order);
     }
+    // Helper function to generate a unique order number
+    private async generateUniqueOrderNumber(): Promise<string> {
+        while (true) {
+            // Generate a random number between 10000 and 99999
+            const randomNo = Math.floor(10000 + Math.random() * 90000);
+            const orderNo = `#${randomNo}`;
+
+            // Check if the generated order number already exists in the database
+            const existingOrder = await this.orderRepository.findOne({ where: { orderNo } });
+
+            if (!existingOrder) {
+                return orderNo; // Return the order number if unique
+            }
+        }
+    }
+
 
     async getOrdersByUserId(userId: string): Promise<OrderEntity[]> {
         return this.orderRepository.find({

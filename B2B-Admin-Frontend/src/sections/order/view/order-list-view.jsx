@@ -45,20 +45,11 @@ import { OrderTableFiltersResult } from './table/order-table-filters-result';
 import { ORDER_STATUS_OPTIONS } from 'src/_mock/_order';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFetchOrderData } from '../components/fetch-order';
+import useUserRole from 'src/layouts/components/user-role';
 
 // ----------------------------------------------------------------------
 
 const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...ORDER_STATUS_OPTIONS];
-
-const TABLE_HEAD = [
-  { id: 'Customer', label: 'customer' },
-  { id: 'Mobile', label: 'mobile', align: "center" },
-  { id: 'Quantity', label: 'Quantity', align: "center" },
-  { id: 'Amount', label: 'Total Price' },
-  { id: 'createdAt', label: 'Order Date' },
-  // { id: 'status', label: 'Status' },
-  { id: '', width: 88 },
-];
 
 // ----------------------------------------------------------------------
 
@@ -67,6 +58,8 @@ export function OrderListView() {
   const router = useRouter();
   const confirm = useBoolean();
   const dispatch = useDispatch();
+
+  const userRole = useUserRole();
 
   const [loading, setLoading] = useState(false);
   const { fetchData, fetchDeleteData } = useFetchOrderData(); // Destructure fetchData from the custom hook
@@ -83,6 +76,23 @@ export function OrderListView() {
   });
 
   const dateError = fIsAfter(filters.state.startDate, filters.state.endDate);
+  //-----------------------------------------------------------------------------------------------------
+
+  const TABLE_HEAD = [
+    { id: 'OrderNo', label: 'Order No', align: 'center' }, // Always present
+    ...(userRole === "Admin"
+      ? [
+        { id: 'Customer', label: 'Customer' },
+        { id: 'Mobile', label: 'Mobile', align: 'center' },
+      ]
+      : []),
+    { id: 'Quantity', label: 'Total Quantity', align: 'center' },
+    { id: 'Amount', label: 'Total Price' },
+    { id: 'createdAt', label: 'Order Date' },
+    { id: 'status', label: 'Status' },
+    { id: '', width: 88 },
+  ];
+
 
   //----------------------------------------------------------------------------------------------------
   useEffect(() => {
@@ -100,6 +110,7 @@ export function OrderListView() {
     comparator: getComparator(table.order, table.orderBy),
     filters: filters.state,
     dateError,
+    userRole, // Add userRole here
   });
 
   const dataInPage = rowInPage(dataFiltered, table.page, table.rowsPerPage);
@@ -297,8 +308,8 @@ export function OrderListView() {
   );
 }
 
-function applyFilter({ inputData, comparator, filters, dateError }) {
-  const { status, name, email, mobile, totalPrice, startDate, endDate } = filters;
+function applyFilter({ inputData, comparator, filters, dateError, userRole }) {
+  const { status, name, startDate, endDate } = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index]);
 
@@ -309,13 +320,17 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
   });
 
   inputData = stabilizedThis.map((el) => el[0]);
-  if (name) {
-    inputData = inputData.filter(
-      (order) =>
-        order.user.name.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.user.email.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.user.mobile.toLowerCase().indexOf(name.toLowerCase()) !== -1
 
+  if (name) {
+    inputData = inputData.filter((order) =>
+      userRole === "Admin"
+        ? order.user.name.toLowerCase().includes(name.toLowerCase()) ||
+        order.user.email.toLowerCase().includes(name.toLowerCase()) ||
+        order.user.mobile.toLowerCase().includes(name.toLowerCase()) ||
+        order.totalPrice.toString().includes(name.toLowerCase()) ||
+        order.totalQuantity.toString().includes(name.toLowerCase())
+        : order.totalPrice.toString().includes(name.toLowerCase()) ||
+        order.totalQuantity.toString().includes(name.toLowerCase())
     );
   }
 
@@ -323,10 +338,10 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
     inputData = inputData.filter((order) => order.status === status);
   }
 
-  if (!dateError) {
-    if (startDate && endDate) {
-      inputData = inputData.filter((order) => fIsBetween(order.createdAt, startDate, endDate));
-    }
+  if (!dateError && startDate && endDate) {
+    inputData = inputData.filter((order) =>
+      fIsBetween(order.createdAt, startDate, endDate)
+    );
   }
 
   return inputData;

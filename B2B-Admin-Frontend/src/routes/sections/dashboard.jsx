@@ -81,13 +81,12 @@ export const dashboardRoutes = [
   },
 
   {
-    path: 'Orders',
+    path: 'orders',
     element: CONFIG.auth.skip ? <>{layoutContent}</> : <AuthGuard>{layoutContent}</AuthGuard>,
     children: [
       { element: <OrderPage />, index: true },
-      { path: 'edit/:id', element: <ProductEditView /> },
       { path: 'details/:id', element: <OrderDetailsView /> },
-
+  
     ],
   },
 

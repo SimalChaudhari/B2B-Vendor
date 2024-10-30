@@ -12,6 +12,7 @@ import { ItemCardList } from './item-card-list';
 import { useRouter } from 'src/routes/hooks';
 import { useNavigate } from 'react-router';
 import useCart from '../../checkout/components/useCart';
+import { CheckoutListView } from '../../checkout/view/checkout-list';
 
 // ----------------------------------------------------------------------
 
@@ -20,7 +21,6 @@ export function ItemListView() {
   const { fetchData } = useFetchProductData(); // Destructure fetchData from the custom hook
   const router = useRouter(); // Initialize the router
   const mappedData = useCart();
-  const productData = useSelector((state) => state.product?.product || []);
 
   //----------------------------------------------------------------------------------------------------
   useEffect(() => {
@@ -71,7 +71,7 @@ export function ItemListView() {
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <ItemCardList products={productData} />
+      <CheckoutListView />
     </DashboardContent>
   );
 }

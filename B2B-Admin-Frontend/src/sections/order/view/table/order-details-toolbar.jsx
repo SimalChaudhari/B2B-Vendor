@@ -12,6 +12,7 @@ import { fDateTime } from 'src/utils/format-time';
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 import { usePopover, CustomPopover } from 'src/components/custom-popover';
+import { Box } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -26,7 +27,7 @@ export function OrderDetailsToolbar({
   const popover = usePopover();
 
   return (
-    <>
+    <Box>
       <Stack spacing={3} direction={{ xs: 'column', md: 'row' }} sx={{ mb: { xs: 3, md: 5 } }}>
         <Stack spacing={1} direction="row" alignItems="flex-start">
           <IconButton component={RouterLink} href={backLink}>
@@ -107,6 +108,6 @@ export function OrderDetailsToolbar({
           ))}
         </MenuList>
       </CustomPopover>
-    </>
+    </Box>
   );
 }

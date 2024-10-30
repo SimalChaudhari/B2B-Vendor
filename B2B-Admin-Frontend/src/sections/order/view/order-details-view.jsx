@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Unstable_Grid2';
@@ -12,23 +12,49 @@ import { OrderDetailsInfo } from '../order-details-info';
 import { OrderDetailsItems } from '../order-details-item';
 import { OrderDetailsToolbar } from './table/order-details-toolbar';
 import { OrderDetailsHistory } from '../order-details-history';
+import { useFetchOrderData } from '../components/fetch-order';
+import { useSelector } from 'react-redux';
+import { useParams } from 'react-router';
+import { _orders } from 'src/_mock/_order';
 
 // ----------------------------------------------------------------------
 
-export function OrderDetailsView({ order }) {
+export function OrderDetailsView() {
+
+
+  const { fetchByIdData } = useFetchOrderData()
+  const { id } = useParams(); // Get the vendor ID from URL
+
+  const order = useSelector((state) => state.order?.orderByID || []);
+
+
   const [status, setStatus] = useState(order?.status);
 
   const handleChangeStatus = useCallback((newValue) => {
     setStatus(newValue);
   }, []);
 
+  useEffect(() => {
+    fetchByIdData(id)
+  }, [])
+
+
+  const timeline = [
+    { title: 'Delivery successful', time: order?.createdAt },
+    { title: 'Transporting to [2]', time: order?.createdAt },
+    { title: 'Transporting to [1]', time: order?.createdAt },
+    { title: 'The shipping unit has picked up the goods', time: order?.createdAt },
+    { title: 'Order has been created', time: order?.createdAt },
+  ]
+
+
   return (
-    <DashboardContent>
+    <DashboardContent maxWidth="2xl">
       <OrderDetailsToolbar
         backLink={paths?.dashboard?.orders?.root}
-        orderNumber={order?.orderNumber}
+        orderNumber={order?.orderNo}
         createdAt={order?.createdAt}
-        status={status}
+        status={order?.status}
         onChangeStatus={handleChangeStatus}
         statusOptions={ORDER_STATUS_OPTIONS}
       />
@@ -37,24 +63,20 @@ export function OrderDetailsView({ order }) {
         <Grid xs={12} md={8}>
           <Stack spacing={3} direction={{ xs: 'column-reverse', md: 'column' }}>
             <OrderDetailsItems
-              items={order?.items}
-              taxes={order?.taxes}
-              shipping={order?.shipping}
-              discount={order?.discount}
-              subtotal={order?.subtotal}
-              totalAmount={order?.totalAmount}
+              items={order?.orderItems}
+              shipping={order?.address}
+              subtotal={order?.totalPrice}
+              totalAmount={order?.totalPrice}
             />
 
-            <OrderDetailsHistory history={order?.history} />
+            <OrderDetailsHistory orderDate={order?.createdAt} history={timeline} />
           </Stack>
         </Grid>
 
         <Grid xs={12} md={4}>
           <OrderDetailsInfo
-            customer={order?.customer}
-            delivery={order?.delivery}
-            payment={order?.payment}
-            shippingAddress={order?.shippingAddress}
+            customer={order?.user}
+            shippingAddress={order?.address}
           />
         </Grid>
       </Grid>

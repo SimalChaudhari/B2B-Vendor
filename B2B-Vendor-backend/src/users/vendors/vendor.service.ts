@@ -5,7 +5,7 @@ import axios from 'axios';
 import { parseStringPromise } from 'xml2js'; // Library for parsing XML to JSON
 import { VendorEntity } from './vendor.entity'; // Make sure to import your Vendor Entity
 import { Vendors } from 'tally/vendors';
-import { User } from 'users/user/users.entity';
+import { User, UserRole } from 'users/user/users.entity';
 import { VendorDto } from './../user/users.dto';
 import { AddressesService } from 'users/address/addresses/addresses.service';
 import { CreateAddressDto } from 'users/address/addresses/addresses.dto';
@@ -150,7 +150,9 @@ export class VendorService {
     }
 
     async findAll(): Promise<User[]> {
-        return this.vendorRepository.find(); // Load files for all vendors
+        return this.vendorRepository.find({
+            where: { role: UserRole.Vendor }, // Use UserRole enum to match the role correctly
+        });
     }
 
     async findById(id: string): Promise<User | null> {

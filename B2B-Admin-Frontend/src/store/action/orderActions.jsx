@@ -64,4 +64,20 @@ export const createOrderItem = (data) => async (dispatch) => {
     return false; // Return false for any errors
 };
 
-export const deleteOrder = (data) => async (dispatch) => { } 
+export const deleteOrder = (id) => async (dispatch) => { 
+
+    try {
+        const response = await axiosInstance.delete(`/order/delete/${id}`);
+
+        if (response && response.status >= 200 && response.status < 300) {
+            toast.success('Order Has been Deleted successfully!');
+            return true;
+        }
+        return true;
+    } catch (error) {
+        // Check if error response exists and handle error message
+        const errorMessage = error?.response?.data?.message || 'An unexpected error occurred. Please try again.';
+        toast.error(errorMessage);
+    }
+    return false; // Return false for any errors
+};
