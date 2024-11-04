@@ -10,7 +10,7 @@ import { VendorModule } from 'users/vendors/vendor.module';
 import { CartModule } from 'cart/cart.module';
 import { OrderModule } from 'order/order.module';
 import { DashboardModule } from 'dashboard/dashboard.module';
-
+import { InvoiceModule } from 'invoice/invoice.module';
 
 
 @Module({
@@ -35,6 +35,7 @@ import { DashboardModule } from 'dashboard/dashboard.module';
     CartModule,
     OrderModule,
     DashboardModule,
+    InvoiceModule
     // FileModule
   ],
 })

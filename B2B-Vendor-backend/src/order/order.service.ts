@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { OrderEntity, OrderStatus } from './order.entity';
 import { User } from 'users/user/users.entity';
 import { Address } from 'users/address/addresses/addresses.entity';
@@ -8,8 +7,10 @@ import { CreateItemOrderDto, CreateOrderDto } from './order.dto';
 import { ItemEntity } from 'fetch-products/item.entity';
 import { OrderItemEntity } from './order.item.entity';
 import { CartItemEntity } from 'cart/cart.entity';
-
-
+import { DataSource, Repository } from 'typeorm';
+import { generateInvoiceXML } from 'tally/invoice-xml-generator';
+import axios from 'axios';
+import { Invoice, InvoiceStatus } from 'invoice/invoice.entity';
 
 @Injectable()
 export class OrderService {
@@ -29,6 +30,9 @@ export class OrderService {
 
         @InjectRepository(CartItemEntity)
         private readonly cartRepository: Repository<CartItemEntity>,
+
+        @InjectRepository(Invoice)
+        private readonly invoiceRepository: Repository<Invoice>,
     ) { }
 
     async getAllOrders(): Promise<OrderEntity[]> {
@@ -231,14 +235,13 @@ export class OrderService {
 
     // order item
 
-    // Updated logic for adding items to an order
     async addItemToOrder(createItemOrderDto: CreateItemOrderDto): Promise<OrderItemEntity[]> {
         const { orderId, products } = createItemOrderDto;
 
         // Find the order by orderId and load relations for User and Address
         const order = await this.orderRepository.findOne({
             where: { id: orderId },
-            relations: ['user', 'address'], // Include relations for user and address
+            relations: ['user', 'address'],
         });
 
         if (!order) {
@@ -247,7 +250,7 @@ export class OrderService {
 
         const savedOrderItems: OrderItemEntity[] = [];
 
-        // Loop through each product in the list
+        // Loop through each product in the list and add them to the order
         for (const productOrder of products) {
             const { productId, quantity } = productOrder;
 
@@ -257,25 +260,55 @@ export class OrderService {
                 throw new NotFoundException(`Product with ID ${productId} not found`);
             }
 
-            // Create a new OrderItem entity for each product
+            // Create and save each OrderItem
             const orderItem = this.orderItemRepository.create({
-                order, // Same order for each item
+                order,
                 product,
                 quantity,
             });
-
-            // Save each OrderItem in the database
             const savedOrderItem = await this.orderItemRepository.save(orderItem);
-            savedOrderItems.push(savedOrderItem); // Collect saved items
-            // Option 1: Delete cart items for this product after adding to the order
-            await this.cartRepository.delete({ userId: order.user.id });
-
+            savedOrderItems.push(savedOrderItem);
         }
 
-        // Return the array of saved OrderItem entities
+        // Clear the cart for this user once all items are added
+        await this.cartRepository.delete({ userId: order.user.id });
+        // Attempt to post the invoice to Tally
+        try {
+            await this.postToTally(order, savedOrderItems);
+            console.log('Invoice posted to Tally successfully');
+        } catch (error) {
+            console.error('Failed to post invoice to Tally:', error);
+            // Log error and continue without blocking order creation
+        }
+
         return savedOrderItems;
     }
 
+    async postToTally(order: OrderEntity, savedOrderItems: OrderItemEntity[]): Promise<void> {
+        const xml = generateInvoiceXML(order, savedOrderItems);
+
+        try {
+            const response = await axios.post('http://localhost:9000', xml, {
+                headers: {
+                    'Content-Type': 'application/xml',
+                },
+            });
+            console.log('Tally Response:', response.data);
+
+        } catch (error) {
+            console.error('Error posting to Tally:', error);
+
+            // Save the unsent invoice in the database for retry
+            const unsentInvoice = new Invoice();
+            unsentInvoice.orderId = order.id;
+            unsentInvoice.xmlContent = xml;
+            unsentInvoice.userId = order?.user?.id;
+            unsentInvoice.status = InvoiceStatus.PENDING;
+            await this.invoiceRepository.save(unsentInvoice);
+
+            throw new Error('Failed to post invoice to Tally. It will be retried later.');
+        }
+    }
 
     async getAll(): Promise<OrderItemEntity[]> {
         const address = await this.orderItemRepository.find();

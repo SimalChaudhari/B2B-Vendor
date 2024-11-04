@@ -1,0 +1,175 @@
+// invoice-xml-generator.ts
+
+import { OrderEntity } from "order/order.entity";
+import { OrderItemEntity } from "order/order.item.entity";
+
+export function generateInvoiceXML(order: OrderEntity, orderItems: OrderItemEntity[]): string {
+    const { user, address, totalPrice, orderNo } = order;
+
+    // Generate XML for each product in the order
+    const inventoryEntriesXML = orderItems.map(orderItem => `
+        <ALLINVENTORYENTRIES.LIST>
+            <STOCKITEMNAME>${orderItem.product.itemName}</STOCKITEMNAME>
+            <GSTOVRDNISREVCHARGEAPPL>&#4; Not Applicable</GSTOVRDNISREVCHARGEAPPL>
+            <GSTOVRDNTAXABILITY>Taxable</GSTOVRDNTAXABILITY>
+            <GSTSOURCETYPE>Stock Item</GSTSOURCETYPE>
+            <GSTITEMSOURCE>${orderItem.product.itemName}</GSTITEMSOURCE>
+            <GSTOVRDNSTOREDNATURE/>
+            <GSTOVRDNTYPEOFSUPPLY>Goods</GSTOVRDNTYPEOFSUPPLY>
+            <ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>
+            <RATE>${orderItem.product.sellingPrice}/PCS</RATE>
+            <AMOUNT>${orderItem.product.sellingPrice * orderItem.quantity}</AMOUNT>
+            <ACTUALQTY>${orderItem.quantity} PCS</ACTUALQTY>
+            <BILLEDQTY>${orderItem.quantity} PCS</BILLEDQTY>
+            <BATCHALLOCATIONS.LIST>
+                <BATCHNAME>Primary Batch</BATCHNAME>
+                <INDENTNO>&#4; Not Applicable</INDENTNO>
+                <ORDERNO>${orderNo}</ORDERNO>
+                <TRACKINGNUMBER>&#4; Not Applicable</TRACKINGNUMBER>
+                <AMOUNT>${orderItem.product.sellingPrice * orderItem.quantity}</AMOUNT>
+                <ACTUALQTY>${orderItem.quantity}</ACTUALQTY>
+                <BILLEDQTY>${orderItem.quantity}</BILLEDQTY>
+                 <ORDERDUEDATE P="31-Mar-25">31-Mar-25</ORDERDUEDATE>
+            </BATCHALLOCATIONS.LIST>
+            <ACCOUNTINGALLOCATIONS.LIST>
+                <LEDGERNAME>GST Sales</LEDGERNAME>
+                <GSTCLASS>&#4; Not Applicable</GSTCLASS>
+                <ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>
+                <AMOUNT>${orderItem.product.sellingPrice * orderItem.quantity}</AMOUNT>
+            </ACCOUNTINGALLOCATIONS.LIST>
+            <DUTYHEADDETAILS.LIST></DUTYHEADDETAILS.LIST>
+            ${generateRateDetails()}
+        </ALLINVENTORYENTRIES.LIST>
+    `).join('');
+
+    return `
+<ENVELOPE>
+    <HEADER>
+        <TALLYREQUEST>Import Data</TALLYREQUEST>
+    </HEADER>
+    <BODY>
+        <IMPORTDATA>
+            <REQUESTDESC>
+                <REPORTNAME>Vouchers</REPORTNAME>
+                 <STATICVARIABLES>
+                   <SVCURRENTCOMPANY>Sandbox Data</SVCURRENTCOMPANY>
+                 </STATICVARIABLES>
+            </REQUESTDESC>
+            <REQUESTDATA>
+                <TALLYMESSAGE xmlns:UDF="TallyUDF">
+                    <VOUCHER VCHTYPE="Sales Order" ACTION="Create" OBJVIEW="Invoice Voucher View">
+                        <ADDRESS.LIST TYPE="String">
+                            <ADDRESS>${address.street_address}</ADDRESS>
+                            <ADDRESS>${address.state}</ADDRESS>
+                            <ADDRESS>${address.country}</ADDRESS>
+                        </ADDRESS.LIST>
+                        <BASICBUYERADDRESS.LIST TYPE="String">
+                            <BASICBUYERADDRESS>${address.street_address}</BASICBUYERADDRESS>
+                            <BASICBUYERADDRESS>${address.state}</BASICBUYERADDRESS>
+                            <BASICBUYERADDRESS>${address.country}</BASICBUYERADDRESS>
+                        </BASICBUYERADDRESS.LIST>
+                        <DATE>20250331</DATE>
+                        <GUID>${orderNo}</GUID> 
+                        <GSTREGISTRATIONTYPE>Regular</GSTREGISTRATIONTYPE>
+                        <VATDEALERTYPE>Regular</VATDEALERTYPE>
+                        <STATENAME>${address.state}</STATENAME>
+                        <COUNTRYOFRESIDENCE>${address.country}</COUNTRYOFRESIDENCE>
+                        <PLACEOFSUPPLY>${address.state}</PLACEOFSUPPLY>
+                        <PARTYNAME>${user.name}</PARTYNAME>
+                        <CMPGSTIN>${user.gstNo}</CMPGSTIN>
+                        <VOUCHERTYPENAME>Sales Order</VOUCHERTYPENAME>
+                        <PARTYLEDGERNAME>${user.name}</PARTYLEDGERNAME>
+                        <BASICBUYERNAME>${user.name}</BASICBUYERNAME>
+                        <CMPGSTREGISTRATIONTYPE>Regular</CMPGSTREGISTRATIONTYPE>
+                        <REFERENCE>${orderNo}</REFERENCE>
+                        <PARTYMAILINGNAME>${user.email}</PARTYMAILINGNAME>
+                        <CONSIGNEEMAILINGNAME>${user.email}</CONSIGNEEMAILINGNAME>
+                        <CONSIGNEESTATENAME>${address.state}</CONSIGNEESTATENAME>
+                        <CMPGSTSTATE>${address.state}</CMPGSTSTATE>
+                        <CONSIGNEECOUNTRYNAME>${address.country}</CONSIGNEECOUNTRYNAME>
+                        <BASICBASEPARTYNAME>${user.name}</BASICBASEPARTYNAME>
+                        <PERSISTEDVIEW>Invoice Voucher View</PERSISTEDVIEW>
+                        <BUYERPINNUMBER>${address.zip_code}</BUYERPINNUMBER>
+                        <CONSIGNEEPINNUMBER>${address.zip_code}</CONSIGNEEPINNUMBER>
+                        <EFFECTIVEDATE>20250331</EFFECTIVEDATE>
+                        <ISELIGIBLEFORITC>Yes</ISELIGIBLEFORITC>
+                        <ISVATDUTYPAID>Yes</ISVATDUTYPAID>
+                                 ${inventoryEntriesXML}
+                        <LEDGERENTRIES.LIST>
+                            <LEDGERNAME>${user.name}</LEDGERNAME>
+                            <GSTCLASS>&#4; Not Applicable</GSTCLASS>
+                            <ISDEEMEDPOSITIVE>Yes</ISDEEMEDPOSITIVE>
+                            <LEDGERFROMITEM>No</LEDGERFROMITEM>
+                            <REMOVEZEROENTRIES>No</REMOVEZEROENTRIES>
+                            <ISPARTYLEDGER>Yes</ISPARTYLEDGER>
+                            <ISLASTDEEMEDPOSITIVE>Yes</ISLASTDEEMEDPOSITIVE>
+                            <AMOUNT>-${totalPrice}</AMOUNT>
+                        </LEDGERENTRIES.LIST>
+                        <LEDGERENTRIES.LIST>
+                            <APPROPRIATEFOR>&#4; Not Applicable</APPROPRIATEFOR>
+                            <ROUNDTYPE>&#4; Not Applicable</ROUNDTYPE>
+                            <LEDGERNAME>CGST</LEDGERNAME>
+                            <GSTCLASS>&#4; Not Applicable</GSTCLASS>
+                            <ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>
+                            <AMOUNT>${(totalPrice * 0.09).toFixed(2)}</AMOUNT>
+                            <VATEXPAMOUNT>${(totalPrice * 0.09).toFixed(2)}</VATEXPAMOUNT>
+                        </LEDGERENTRIES.LIST>
+                        <LEDGERENTRIES.LIST>
+                            <APPROPRIATEFOR>&#4; Not Applicable</APPROPRIATEFOR>
+                            <ROUNDTYPE>&#4; Not Applicable</ROUNDTYPE>
+                            <LEDGERNAME>SGST</LEDGERNAME>
+                            <GSTCLASS>&#4; Not Applicable</GSTCLASS>
+                            <ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>
+                            <AMOUNT>${(totalPrice * 0.09).toFixed(2)}</AMOUNT>
+                            <VATEXPAMOUNT>${(totalPrice * 0.09).toFixed(2)}</VATEXPAMOUNT>
+                        </LEDGERENTRIES.LIST>
+                    </VOUCHER>
+                </TALLYMESSAGE>
+            </REQUESTDATA>
+        </IMPORTDATA>
+    </BODY>
+</ENVELOPE>
+`;
+}
+
+// Helper function to generate RATEDETAILS.LIST for GST rates
+function generateRateDetails(): string {
+    return `
+        <RATEDETAILS.LIST>
+            <GSTRATEDUTYHEAD>CGST</GSTRATEDUTYHEAD>
+            <GSTRATEVALUATIONTYPE>Based on Value</GSTRATEVALUATIONTYPE>
+            <GSTRATE>9</GSTRATE>
+        </RATEDETAILS.LIST>
+        <RATEDETAILS.LIST>
+            <GSTRATEDUTYHEAD>SGST/UTGST</GSTRATEDUTYHEAD>
+            <GSTRATEVALUATIONTYPE>Based on Value</GSTRATEVALUATIONTYPE>
+            <GSTRATE>9</GSTRATE>
+        </RATEDETAILS.LIST>
+        <RATEDETAILS.LIST>
+            <GSTRATEDUTYHEAD>IGST</GSTRATEDUTYHEAD>
+            <GSTRATEVALUATIONTYPE>Based on Value</GSTRATEVALUATIONTYPE>
+            <GSTRATE>18</GSTRATE>
+        </RATEDETAILS.LIST>
+        <RATEDETAILS.LIST>
+            <GSTRATEDUTYHEAD>Cess</GSTRATEDUTYHEAD>
+            <GSTRATEVALUATIONTYPE>&#4; Not Applicable</GSTRATEVALUATIONTYPE>
+        </RATEDETAILS.LIST>
+        <RATEDETAILS.LIST>
+            <GSTRATEDUTYHEAD>State Cess</GSTRATEDUTYHEAD>
+            <GSTRATEVALUATIONTYPE>Based on Value</GSTRATEVALUATIONTYPE>
+        </RATEDETAILS.LIST>
+    `;
+}
+
+// Helper function to format date to YYYYMMDD
+function formatDate(date: Date): string {
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = date.toLocaleString('en-US', { month: 'short' });
+    const year = date.getFullYear().toString().slice(-2);
+    return `${day}-${month}-${year}`;
+}
+
+function EffectiveDate(date: Date): string {
+    return date.toISOString().slice(0, 10).replace(/-/g, '').substring(0, 8);
+}
+

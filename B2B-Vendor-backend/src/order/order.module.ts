@@ -9,17 +9,20 @@ import { User } from 'users/user/users.entity';
 import { Address } from 'users/address/addresses/addresses.entity';
 import { OrderItemEntity } from './order.item.entity';
 import { CartItemEntity } from 'cart/cart.entity';
+import { InvoiceService } from 'invoice/invoice.service';
+import { InvoiceRetryService } from 'invoice/invoice-retry.service';
+import { Invoice } from 'invoice/invoice.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([OrderEntity,ItemEntity,User,Address,OrderItemEntity,CartItemEntity]),
+    TypeOrmModule.forFeature([OrderEntity,ItemEntity,User,Address,OrderItemEntity,CartItemEntity,Invoice]),
     JwtModule.register({
       secret: process.env.JWT_SECRET,  // Use JWT secret from .env file
       signOptions: { expiresIn: '1d' },  // Set token expiration
     }),
   ],
   controllers: [OrderController],
-  providers: [OrderService],
+  providers: [OrderService,InvoiceService,InvoiceRetryService],
   exports: [OrderService], // Exporting ItemService
 })
 export class OrderModule {}
