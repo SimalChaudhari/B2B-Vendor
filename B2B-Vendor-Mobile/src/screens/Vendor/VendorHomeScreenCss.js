@@ -2,7 +2,9 @@ import { StyleSheet } from 'react-native';
 
 // Color Constants
 const colors = {
-    background: '#f3f3f3',
+    // background: '#eb282d',
+    background: '#fe0002',
+    // background: '#f3f3f3',
     logoColor: '#007ACC',
     buttonColor: '#ff9900',
     linkColor: '#007185',
@@ -31,7 +33,7 @@ const styles = StyleSheet.create({
         left: 0,
         width: "100%",
         height: '100%',
-        backgroundColor: colors.lightGray,
+        backgroundColor: colors.background,
         padding: 20,
         elevation: 4,
         zIndex: 10,
@@ -39,17 +41,20 @@ const styles = StyleSheet.create({
     sidebarText: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: colors.darkGray,
+        color: colors.white,
         marginBottom: 20,
     },
     sidebarItem: {
         fontSize: 16,
-        color: colors.darkGray,
+        color: colors.white,
         marginVertical: 10,
         paddingVertical: 10,
         paddingHorizontal: 5,
         borderRadius: 5,
-        backgroundColor: 'rgba(255, 255, 255, 0.2)', // Slightly shaded background
+        // backgroundColor: 'rgba(255, 255, 255, 0.2)', // Slightly shaded background
+        fontWeight: 'bold',
+        borderBottomColor: colors.white,
+        borderBottomWidth: 2,
     },
     closeButton: {
         // alignSelf: 'flex-end',
@@ -61,12 +66,12 @@ const styles = StyleSheet.create({
     },
     closeButtonLogoText: {
         fontSize: 28,
-        color: colors.darkGray,
+        color: colors.white,
         fontWeight:"700",
     },
     closeButtonText: {
         fontSize: 20,
-        color: colors.darkGray,
+        color: colors.white,
     },
     headerContainer: {
         flexDirection: 'row',

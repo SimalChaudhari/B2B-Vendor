@@ -30,7 +30,10 @@ import { ProductFilters } from '../product-filters';
 import { useCheckoutContext } from '../../checkout/context';
 import { ProductFiltersResult } from '../product-filters-result';
 
-export function ProductShopView({ products, loading }) {
+export function ProductShopView({ products = [], loading }) {
+  
+  // Extract unique item names
+  const uniqueItemNames = Array.from(new Set(products.map(product => product.group)));
 
   const items = useSelector((state) => state.product.items.data);
 
@@ -57,20 +60,20 @@ export function ProductShopView({ products, loading }) {
     colors: [],
     rating: '',
     category: 'all',
-    priceRange: [0, 200],
+    priceRange: [0, 200000],
   });
 
   const { searchResults, searchLoading } = useSearchProducts(debouncedQuery);
 
   const dataFiltered = applyFilter({ inputData: products, filters: filters.state, sortBy });
-
+  
   const canReset =
     filters.state.gender.length > 0 ||
     filters.state.colors.length > 0 ||
     filters.state.rating !== '' ||
     filters.state.category !== 'all' ||
     filters.state.priceRange[0] !== 0 ||
-    filters.state.priceRange[1] !== 200;
+    filters.state.priceRange[1] !== 200000;
 
   const notFound = !dataFiltered.length && canReset;
 
@@ -82,7 +85,7 @@ export function ProductShopView({ products, loading }) {
     setSearchQuery(inputValue);
   }, []);
 
-  const productsEmpty = !loading && !products.length;
+  const productsEmpty = !loading && !products?.length;
 
   const renderFilters = (
     <Stack
@@ -109,7 +112,7 @@ export function ProductShopView({ products, loading }) {
             colors: PRODUCT_COLOR_OPTIONS,
             ratings: PRODUCT_RATING_OPTIONS,
             genders: PRODUCT_GENDER_OPTIONS,
-            categories: ['all', ...PRODUCT_CATEGORY_OPTIONS],
+            categories: ['all', ...uniqueItemNames],
           }}
         />
 
@@ -128,9 +131,11 @@ export function ProductShopView({ products, loading }) {
     <Container sx={{ mb: 15 }}>
       <CartIcon totalItems={checkout.totalItems} />
 
-      <Typography variant="h4" sx={{ my: { xs: 3, md: 5 } }}>
-        Shop
-      </Typography>
+      {/* 
+        <Typography variant="h4" sx={{ my: { xs: 3, md: 5 } }}>
+          Shop
+        </Typography>
+        */}
 
       <Stack spacing={2.5} sx={{ mb: { xs: 3, md: 5 } }}>
         {renderFilters}
@@ -151,7 +156,7 @@ function applyFilter({ inputData, filters, sortBy }) {
   const min = priceRange[0];
 
   const max = priceRange[1];
-
+  
   // Sort by
   if (sortBy === 'featured') {
     inputData = orderBy(inputData, ['totalSold'], ['desc']);
@@ -175,7 +180,7 @@ function applyFilter({ inputData, filters, sortBy }) {
   }
 
   if (category !== 'all') {
-    inputData = inputData.filter((product) => product.category === category);
+    inputData = inputData.filter((products) => products.group === category);
   }
 
   if (colors.length) {
@@ -184,8 +189,8 @@ function applyFilter({ inputData, filters, sortBy }) {
     );
   }
 
-  if (min !== 0 || max !== 200) {
-    inputData = inputData.filter((product) => product.price >= min && product.price <= max);
+  if (min !== 0 || max !== 200000) {
+    inputData = inputData.filter((products) => products.sellingPrice >= min && products.sellingPrice <= max);
   }
 
   if (rating) {

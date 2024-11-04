@@ -1,35 +1,45 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import Radio from '@mui/material/Radio';
 import Stack from '@mui/material/Stack';
 import Badge from '@mui/material/Badge';
 import Drawer from '@mui/material/Drawer';
-import Rating from '@mui/material/Rating';
-import Button from '@mui/material/Button';
-import Slider from '@mui/material/Slider';
-import Divider from '@mui/material/Divider';
 import Tooltip from '@mui/material/Tooltip';
 import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import InputBase, { inputBaseClasses } from '@mui/material/InputBase';
+import Slider from '@mui/material/Slider';
+import Divider from '@mui/material/Divider';
 
 import { varAlpha } from 'src/theme/styles';
-
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 import { ColorPicker } from 'src/components/color-utils';
+import { Button } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
 export function ProductFilters({ open, onOpen, onClose, canReset, filters, options }) {
+  const location = useLocation();
+
+  // Extract query params and apply them to filters on component mount
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const category = queryParams.get('category') || 'all'; // Get 'category' param
+    const search = queryParams.get('search') || 'all'; // Get 'search' param
+    if (category) {
+      // filters.setState((prevState) => ({ ...prevState, category })); // Set it to the filters
+      filters.setState({ category }); // Set it to the filters
+    }
+  }, [location.search]); // Re-run this effect when query changes
+
   const marksLabel = [...Array(21)].map((_, index) => {
-    const value = index * 10;
-
+    const value = index * 10000;
     const firstValue = index === 0 ? `$${value}` : `${value}`;
-
     return { value, label: index % 4 ? '' : firstValue };
   });
 
@@ -73,7 +83,7 @@ export function ProductFilters({ open, onOpen, onClose, canReset, filters, optio
   );
 
   const renderHead = (
-    <>
+    <div>
       <Box display="flex" alignItems="center" sx={{ py: 2, pr: 1, pl: 2.5 }}>
         <Typography variant="h6" sx={{ flexGrow: 1 }}>
           Filters
@@ -93,7 +103,7 @@ export function ProductFilters({ open, onOpen, onClose, canReset, filters, optio
       </Box>
 
       <Divider sx={{ borderStyle: 'dashed' }} />
-    </>
+    </div>
   );
 
   const renderGender = (
@@ -127,7 +137,13 @@ export function ProductFilters({ open, onOpen, onClose, canReset, filters, optio
           control={
             <Radio
               checked={option === filters.state.category}
-              onClick={() => handleFilterCategory(option)}
+              onClick={() => {
+                handleFilterCategory(option);
+                // Update the URL here when a category is selected
+                const url = new URLSearchParams(location.search);
+                url.set('category', option);
+                window.history.replaceState({}, '', `${location.pathname}?${url}`); // Update the URL without reloading
+              }}
             />
           }
           label={option}
@@ -163,9 +179,9 @@ export function ProductFilters({ open, onOpen, onClose, canReset, filters, optio
       <Slider
         value={filters.state.priceRange}
         onChange={handleFilterPriceRange}
-        step={10}
+        step={1000}
         min={0}
-        max={200}
+        max={200000}
         marks={marksLabel}
         getAriaValueText={(value) => `$${value}`}
         valueLabelFormat={(value) => `$${value}`}
@@ -173,38 +189,6 @@ export function ProductFilters({ open, onOpen, onClose, canReset, filters, optio
       />
     </Box>
   );
-
-  // const renderRating = (
-  //   <Box display="flex" flexDirection="column">
-  //     <Typography variant="subtitle2" sx={{ mb: 2 }}>
-  //       Rating
-  //     </Typography>
-
-  //     {options.ratings.map((item, index) => (
-  //       <Box
-  //         key={item}
-  //         onClick={() => handleFilterRating(item)}
-  //         sx={{
-  //           mb: 1,
-  //           gap: 1,
-  //           ml: -1,
-  //           p: 0.5,
-  //           display: 'flex',
-  //           borderRadius: 1,
-  //           cursor: 'pointer',
-  //           typography: 'body2',
-  //           alignItems: 'center',
-  //           '&:hover': { opacity: 0.48 },
-  //           ...(filters.state.rating === item && {
-  //             bgcolor: 'action.selected',
-  //           }),
-  //         }}
-  //       >
-  //         <Rating readOnly value={4 - index} /> & Up
-  //       </Box>
-  //     ))}
-  //   </Box>
-  // );
 
   return (
     <>
@@ -232,11 +216,12 @@ export function ProductFilters({ open, onOpen, onClose, canReset, filters, optio
 
         <Scrollbar sx={{ px: 2.5, py: 3 }}>
           <Stack spacing={3}>
-            {/* {renderGender} */}
+          {/*
+            {renderGender}
+            {renderColor}
+            */}
             {renderCategory}
-            {/* {renderColor} */}
             {renderPrice}
-            {/* {renderRating} */}
           </Stack>
         </Scrollbar>
       </Drawer>
@@ -248,21 +233,20 @@ export function ProductFilters({ open, onOpen, onClose, canReset, filters, optio
 
 function InputRange({ type, value, onFilters }) {
   const min = value[0];
-
   const max = value[1];
 
   const handleBlurInputRange = useCallback(() => {
     if (min < 0) {
       onFilters({ priceRange: [0, max] });
     }
-    if (min > 200) {
-      onFilters({ priceRange: [200, max] });
+    if (min > 200000) {
+      onFilters({ priceRange: [200000, max] });
     }
     if (max < 0) {
       onFilters({ priceRange: [min, 0] });
     }
-    if (max > 200) {
-      onFilters({ priceRange: [min, 200] });
+    if (max > 200000) {
+      onFilters({ priceRange: [min, 200000] });
     }
   }, [max, min, onFilters]);
 
@@ -290,14 +274,15 @@ function InputRange({ type, value, onFilters }) {
         }
         onBlur={handleBlurInputRange}
         inputProps={{
-          step: 10,
+          step: 1000,
           min: 0,
-          max: 200,
+          max: 200000,
           type: 'number',
           'aria-labelledby': 'input-slider',
         }}
         sx={{
-          maxWidth: 48,
+          // maxWidth: 48,
+          maxWidth: 70,
           borderRadius: 0.75,
           bgcolor: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.08),
           [`& .${inputBaseClasses.input}`]: {

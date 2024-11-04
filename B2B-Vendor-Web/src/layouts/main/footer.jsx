@@ -84,7 +84,7 @@ export function Footer({ layoutQuery, sx }) {
                 [theme.breakpoints.up(layoutQuery)]: { mb: 0, justifyContent: 'flex-start' },
               }}
             >
-             {/* _socials */}
+              {/* _socials */}
             </Stack>
           </Grid>
 
@@ -127,9 +127,11 @@ export function Footer({ layoutQuery, sx }) {
           </Grid>
         </Grid>
 
-        <Typography variant="body2" sx={{ mt: 10 }}>
-          © All rights reserved.
-        </Typography>
+        {/*
+          <Typography variant="body2" sx={{ mt: 10 }}>
+            © All rights reserved.
+          </Typography>
+           */}
       </Container>
     </Box>
   );
@@ -151,11 +153,13 @@ export function HomeFooter({ sx }) {
     >
       <Container>
         <Logo />
-        <Box sx={{ mt: 1, typography: 'caption' }}>
-          © All rights reserved.
-          <br /> made by
-          <Link href="https://www.alovate.io/"> alovate.io </Link>
-        </Box>
+        {/*
+          <Box sx={{ mt: 1, typography: 'caption' }}>
+            © All rights reserved.
+            <br /> made by
+            <Link href="https://www.alovate.io/"> alovate.io </Link>
+          </Box>
+           */}
       </Container>
     </Box>
   );

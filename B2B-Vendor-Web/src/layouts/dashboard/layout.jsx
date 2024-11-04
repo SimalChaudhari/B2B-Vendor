@@ -41,7 +41,7 @@ export function DashboardLayout({ sx, children, data }) {
   const isNavVertical = isNavMini || settings.navLayout === 'vertical';
 
   return (
-    <>
+    <div>
       <NavMobile
         data={navData}
         open={mobileNavOpen.value}
@@ -177,7 +177,7 @@ export function DashboardLayout({ sx, children, data }) {
       >
         <Main isNavHorizontal={isNavHorizontal}>{children}</Main>
       </LayoutSection>
-    </>
+    </div>
   );
 }
 

@@ -53,59 +53,8 @@ export function ProductItem({ product }) {
   };
 
 
-  // const renderLabels = (newLabel.enabled || saleLabel.enabled) && (
-  //   <Stack
-  //     direction="row"
-  //     alignItems="center"
-  //     spacing={1}
-  //     sx={{
-  //       position: 'absolute',
-  //       zIndex: 9,
-  //       top: 16,
-  //       right: 16,
-  //     }}
-  //   >
-  //     {newLabel.enabled && (
-  //       <Label variant="filled" color="info">
-  //         {newLabel.content}
-  //       </Label>
-  //     )}
-  //     {saleLabel.enabled && (
-  //       <Label variant="filled" color="error">
-  //         {saleLabel.content}
-  //       </Label>
-  //     )}
-  //   </Stack>
-  // );
-
   const renderImg = (
     <Box sx={{ position: 'relative', p: 1 }}>
-      {!!available && (
-        <Fab
-          color="warning"
-          size="medium"
-          className="add-cart-btn"
-          onClick={handleAddCart}
-          sx={{
-            right: 16,
-            bottom: 16,
-            zIndex: 9,
-            opacity: 0,
-            position: 'absolute',
-            transition: (theme) =>
-              theme.transitions.create('all', {
-                easing: theme.transitions.easing.easeInOut,
-                duration: theme.transitions.duration.shorter,
-              }),
-          }}
-        >
-          <Iconify icon="solar:cart-plus-bold" width={24} />
-        </Fab>
-      )}
-
-      {/*
-        <Tooltip title={!available && 'Out of stock'} placement="bottom-end">
-        */}
       <Image
         alt={itemName}
         src={productImages?.[0] || dummyImage}
@@ -130,32 +79,34 @@ export function ProductItem({ product }) {
       <Box component="span" sx={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
         {description}
       </Box>
+      {/* 5-Star Rating */}
+      <Rating name="size-small" defaultValue={2} size="small" />
 
       <Stack direction="row" alignItems="center" justifyContent="space-between">
         <Stack direction="row" spacing={0.5} sx={{ typography: 'subtitle1' }}>
 
-          {/* 5-Star Rating */}
-          <Rating name="size-small" defaultValue={2} size="small" />
 
           {sellingPrice && (
             <Box component="span" sx={{ color: 'text.disabled', textDecoration: 'line-through' }}>
               {fCurrency(sellingPrice - 500)}
             </Box>
           )}
-          <Box component="span">{fCurrency(sellingPrice)}</Box>
+          <Box component="span">&nbsp; {fCurrency(sellingPrice)}</Box>
         </Stack>
       </Stack>
     </Stack >
   );
 
   return (
-    <Card sx={{ '&:hover .add-cart-btn': { opacity: 1 } }}>
-      {/* {renderLabels} */}
+    <div className="card">
+      <Card sx={{ '&:hover .add-cart-btn': { opacity: 1 } }}>
+        {/* {renderLabels} */}
 
 
-      {renderImg}
+        {renderImg}
 
-      {renderContent}
-    </Card>
+        {renderContent}
+      </Card>
+    </div>
   );
 }

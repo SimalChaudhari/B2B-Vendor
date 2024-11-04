@@ -5,12 +5,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { ProductShopView } from 'src/sections/product/view';
 import { fetchProductsFailure, fetchProductsStart, fetchProductsSuccess } from 'src/redux/ProductReducer';
 import { fetchItems } from 'src/services/productApi';
+import { AiOutlineWarning } from 'react-icons/ai'; // Import warning icon
+import { Box, Typography, Container } from '@mui/material'; // Import Material-UI components for styling
 
 // Metadata for the page title
 const metadata = { title: `Product shop - ${CONFIG.site.name}` };
-
-// Mock Login Component (replace with your actual Login component)
-const LoginScreen = () => <p>Please log in to view products.</p>;
 
 export default function Page() {
   const dispatch = useDispatch();
@@ -34,20 +33,46 @@ export default function Page() {
     getProducts();
   }, [dispatch]);
 
-
-  // Show login screen if no products are available
-  if (!products || products.length === 0) {
-    return <LoginScreen />;
+  // Check for loading state or no products
+  if (productsLoading) {
+    return <p>Loading products...</p>; // Optionally add a loading state message
   }
 
+  // Show "No Data" message if no products are available
+  if (!products || products.length === 0) {
+    return (
+      <Container style={{ textAlign: 'center', marginTop: '50px' }}>
+        <Box 
+          sx={{
+            backgroundColor: '#fff',
+            borderRadius: '8px',
+            padding: '30px',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+            transition: 'transform 0.3s ease',
+            color:"black",
+            marginBottom:"56px"
+          }}
+        >
+          <AiOutlineWarning style={{ fontSize: '48px', color: '#f44336' }} />
+          <Typography variant="h5" style={{ fontWeight: 'bold', marginTop: '15px' }}>
+            No products found.
+          </Typography>
+          <Typography variant="body1" style={{ marginTop: '10px' }}>
+            Please check back later or try refreshing the page.
+          </Typography>
+        </Box>
+      </Container>
+    );
+  }
+
+  // Render product view if products exist
   return (
-    <>
+    <div>
       <Helmet>
         <title>{metadata.title}</title>
       </Helmet>
-
-      {/* Render product view if products exist */}
+      
       <ProductShopView products={products.data} loading={productsLoading} />
-    </>
+    </div>
   );
 }

@@ -85,15 +85,22 @@ export function ProductDetailsSummary({
   }, [product]);
 
   const onSubmit = handleSubmit(async (data) => {
-    try {
-      if (!existProduct) {
-        onAddCart?.({ ...data, colors: [values.colors], subtotal: data.sellingPrice * data.quantity });
-      }
-      onGotoStep?.(0);
-      router.push(paths.product.checkout);
-    } catch (error) {
-      console.error(error);
+    if (data) {
+      onGotoStep?.(1); // Call to update the step in the context if necessary
+      router.push({ 
+          pathname: paths.product.checkout, 
+          query: { step: 1 } // Add step 1 to the query parameters
+      });
     }
+    // try {
+      // if (!existProduct) {
+    //     onAddCart?.({ ...data, colors: [values.colors], subtotal: data.sellingPrice * data.quantity });
+      // }
+      // onGotoStep?.(1);
+      // router.push(paths.product.checkout);
+    // } catch (error) {
+    //   console.error(error);
+    // }
   });
 
   const handleAddCart = useCallback(() => {
@@ -116,6 +123,7 @@ export function ProductDetailsSummary({
       <Link
         variant="subtitle2"
         sx={{ color: 'text.secondary', display: 'inline-flex', alignItems: 'center' }}
+        className='text-black'
       >
         <Iconify icon="mingcute:add-line" width={16} sx={{ mr: 1 }} />
         Compare
@@ -124,6 +132,7 @@ export function ProductDetailsSummary({
       <Link
         variant="subtitle2"
         sx={{ color: 'text.secondary', display: 'inline-flex', alignItems: 'center' }}
+        className='text-black'
       >
         <Iconify icon="solar:heart-bold" width={16} sx={{ mr: 1 }} />
         Favorite
@@ -132,6 +141,7 @@ export function ProductDetailsSummary({
       <Link
         variant="subtitle2"
         sx={{ color: 'text.secondary', display: 'inline-flex', alignItems: 'center' }}
+        className='text-black'
       >
         <Iconify icon="solar:share-bold" width={16} sx={{ mr: 1 }} />
         Share
@@ -213,6 +223,7 @@ export function ProductDetailsSummary({
 
   const renderActions = (
     <Stack direction="row" spacing={2}>
+    {/*
       <Button
         fullWidth
         // disabled={isMaxQuantity || disableActions}
@@ -225,6 +236,7 @@ export function ProductDetailsSummary({
       >
         Add to cart
       </Button>
+       */}
 
       <Button fullWidth size="large" type="submit" variant="contained"
       // disabled={disableActions}
@@ -235,9 +247,13 @@ export function ProductDetailsSummary({
   );
 
   const renderSubDescription = (
-    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+    <Typography variant="body2"  className='text-black font-lg'>
       {description}
     </Typography>
+  );
+
+  const renderRating = (
+    <Rating name="size-small" defaultValue={2} size="small" />
   );
 
   // const renderRating = (
@@ -290,15 +306,17 @@ export function ProductDetailsSummary({
           {renderPrice}
           
           {renderSubDescription}
+
+          {renderRating}
         </Stack>
 
-        <Divider sx={{ borderStyle: 'dashed' }} />
         {/*
+          <Divider sx={{ borderStyle: 'dashed' }} />
         {renderColorOptions}
         
         {renderSizeOptions}
-        */}
         {renderQuantity}
+        */}
 
 
         <Divider sx={{ borderStyle: 'dashed' }} />

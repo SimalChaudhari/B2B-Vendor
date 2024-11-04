@@ -3,7 +3,11 @@ import { StyleSheet } from 'react-native';
 
 // Color Constants
 const colors = {
-    background: '#f3f3f3',
+    // background: '#f3f3f3',
+    // background: '#ea2030',
+    // background: '#eb282d',
+    background: '#fe0002',
+    // background: 'red',
     logoColor: '#007ACC',
     buttonColor: '#ff9900',
     linkColor: '#007185',
@@ -23,6 +27,21 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         background: colors.white,
+    },
+    Logo_image: {
+        height: 50,
+        width: 150,
+    },
+    Main_Logo_image: {
+        height: 50,
+        width: 150,
+        marginHorizontal: 10,
+    },
+    Verticalline: {
+        height: 1,
+        borderColor: colors.white,
+        borderWidth: 1,
+        marginVertical: 5,
     },
     logo: {
         fontSize: 30,
@@ -94,7 +113,8 @@ const styles = StyleSheet.create({
         backgroundColor: colors.background,
         marginTop: 30,
         // paddingTop: 20,
-        backgroundColor: colors.white,
+        // backgroundColor: colors.white,
+        backgroundColor: colors.background,
     },
     heroLogo: {
         fontSize: 20,
@@ -109,7 +129,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
         backgroundColor: colors.white, // White background
         elevation: 3, // Android shadow
-        shadowColor: '#000', // iOS shadow
+        shadowColor: colors.white, // iOS shadow
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 2,
@@ -135,7 +155,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 10,
     },
     heroTopSearch: {
-        backgroundColor: '#fff', // White background
+        backgroundColor: colors.white, // White background
         paddingVertical: 8,
         flexDirection: 'row',
         alignItems: 'center',
@@ -150,10 +170,11 @@ const styles = StyleSheet.create({
         marginLeft: 173,
     },
     DropdownStyle: {
+        backgroundColor: colors.white,
         paddingLeft: 10,
         paddingRight: 10,
         height: 50,
-        borderColor: '#EAECEE',
+        borderColor: colors.white,
         borderWidth: 1,
         borderRadius: 5,
         marginBottom: 12,
@@ -209,18 +230,18 @@ const styles = StyleSheet.create({
     },
     filterText: {
         fontSize: 18,
-        color: '#000', // Adjust color for filters
+        color: colors.white, // Adjust color for filters
         fontWeight: 'bold',
     },
     sortText: {
         fontSize: 18,
-        color: '#000', // Adjust color for sort options
+        color: colors.white, // Adjust color for sort options
         fontWeight: 'bold',
     },
     sortByText: {
 
         fontSize: 18,
-        color: '#000', // Adjust color for sort options
+        color: colors.white, // Adjust color for sort options
         fontWeight: 'medium',
     },
 
@@ -240,7 +261,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.white, // White background for categories
         borderRadius: 10,
         elevation: 5,
-        shadowColor: '#000',
+        shadowColor: colors.white,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.3,
         shadowRadius: 4,
@@ -267,7 +288,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.white, // White background for featured section
         borderRadius: 10,
         elevation: 3,
-        shadowColor: '#000',
+        shadowColor: colors.white,
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.2,
         shadowRadius: 2,
@@ -313,14 +334,14 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         paddingHorizontal: 6,
         marginBottom: 10,
-         marginTop: 5,
+        marginTop: 5,
         // justifyContent: 'center',
         alignItems: 'center',
     },
     heroProductTitle: {
         marginLeft: 14,
         marginTop: 5,
-        color:"#1C252E",
+        color: "#1C252E",
         fontSize: 13,
         fontWeight: "bold",
     },
@@ -388,7 +409,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         alignItems: "center",
     },
-    
+
     addButtonDisabled: {
         backgroundColor: "#B0BEC5", // Disabled state background
     },

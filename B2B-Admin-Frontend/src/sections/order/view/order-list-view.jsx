@@ -46,6 +46,7 @@ import { ORDER_STATUS_OPTIONS } from 'src/_mock/_order';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFetchOrderData } from '../components/fetch-order';
 import useUserRole from 'src/layouts/components/user-role';
+import { syncOrder } from 'src/store/action/orderActions';
 
 // ----------------------------------------------------------------------
 
@@ -58,8 +59,9 @@ export function OrderListView() {
   const confirm = useBoolean();
   const userRole = useUserRole();
   const { fetchData, fetchDeleteData } = useFetchOrderData(); // Destructure fetchData from the custom hook
-
-  const _orders = useSelector((state) => 
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
+  const _orders = useSelector((state) =>
     userRole === 'Admin' ? state.order?.order || [] : state.order?.order?.orders || []
   );
 
@@ -130,6 +132,19 @@ export function OrderListView() {
     [filters, table]
   );
 
+  const handleSyncAPI = async () => {
+    setLoading(true); // Set loading to true
+    try {
+      await dispatch(syncOrder());
+      fetchData(); // Fetch data after syncing
+    } catch (error) {
+      console.error('Error syncing order invoice:', error);
+    } finally {
+      setLoading(false); // Set loading to false after the API call completes
+    }
+  };
+
+
   //--------------------------------------------------
   return (
     <div>
@@ -142,6 +157,18 @@ export function OrderListView() {
             { name: 'List' },
           ]}
           sx={{ mb: { xs: 3, md: 5 } }}
+
+          action={
+            <Button
+              // href={paths?.dashboard?.user?.new}
+              onClick={handleSyncAPI} // Open the dialog on click
+              variant="contained"
+              startIcon={<Iconify icon="eva:sync-fill" />} // Changed icon
+              disabled={loading} // Disable button while loading
+            >
+              {loading ? 'Syncing...' : 'Sync Invoices'}
+            </Button>
+          }
         />
 
         <Card>

@@ -75,7 +75,7 @@ export function FormView() {
     
 
     return (
-        <div>
+        <div className='formContainer'>
             <Container sx={{ mb: 10 }}>
                 <Typography variant="h4" sx={{ my: { xs: 3, md: 5 } }}>
                     Form

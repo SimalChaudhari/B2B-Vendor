@@ -51,9 +51,6 @@ const SUMMARY = [
 
 export function ProductShopDetailsView({ product }) {
 
-  // console.log('====================================');
-  // console.log("product 22222222222", product);
-  // console.log('====================================');
   const checkout = useCheckoutContext();
 
   const tabs = useTabs('description');
@@ -105,13 +102,13 @@ export function ProductShopDetailsView({ product }) {
       >
         {SUMMARY.map((item) => (
           <Box key={item.title} sx={{ textAlign: 'center', px: 5 }}>
-            <Iconify icon={item.icon} width={32} sx={{ color: 'primary.main' }} />
+            <Iconify icon={item.icon} width={32}  className='text-primary' />
 
-            <Typography variant="subtitle1" sx={{ mb: 1, mt: 2 }}>
+            <Typography variant="subtitle1" sx={{ mb: 1, mt: 2 }} >
               {item.title}
             </Typography>
 
-            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+            <Typography variant="body2"  className='text-black'>
               {item.description}
             </Typography>
           </Box>

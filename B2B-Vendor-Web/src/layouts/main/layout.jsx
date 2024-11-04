@@ -29,7 +29,7 @@ export function MainLayout({ sx, data, children }) {
   const navData = data?.nav ?? mainNavData;
 
   return (
-    <>
+    <div>
       <NavMobile data={navData} open={mobileNavOpen.value} onClose={mobileNavOpen.onFalse} />
 
       <LayoutSection
@@ -73,7 +73,12 @@ export function MainLayout({ sx, data, children }) {
         /** **************************************
          * Footer
          *************************************** */
+        
+        /** ************************************** 
         footerSection={homePage ? <HomeFooter /> : <Footer layoutQuery={layoutQuery} />}
+         *************************************** */
+
+        footerSection={homePage ? <Footer layoutQuery={layoutQuery} /> : <Footer layoutQuery={layoutQuery} />}
         /** **************************************
          * Style
          *************************************** */
@@ -81,6 +86,6 @@ export function MainLayout({ sx, data, children }) {
       >
         <Main>{children}</Main>
       </LayoutSection>
-    </>
+    </div>
   );
 }
