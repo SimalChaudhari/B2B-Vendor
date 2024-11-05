@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+
+    "types": [ "node"], // add 'firebase' here if it's missing  
     "module": "commonjs",
     "moduleResolution": "node",
     "target": "es2017",
