@@ -14,7 +14,7 @@ export class InvoiceService {
 
     async postToTally(xmlContent: string, orderId: string): Promise<void> {
         try {
-            const response = await axios.post('http://localhost:9000', xmlContent, {
+            const response = await axios.post(process.env.TALLY_URL as string, xmlContent, {
                 headers: {
                     'Content-Type': 'application/xml',
                 },

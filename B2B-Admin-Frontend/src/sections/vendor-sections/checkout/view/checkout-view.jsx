@@ -22,7 +22,7 @@ export function CheckoutView() {
   const checkout = useCheckoutContext();
 
   const addressByData = useSelector((state) => state.address?.addressByID);
- 
+
   useEffect(() => {
     checkout.initialStep();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -50,7 +50,13 @@ export function CheckoutView() {
       <Box mt={3}>
         {handleCheckoutStep()} {/* Render dynamic step components */}
 
-        {checkout.activeStep === 2 && addressByData && <CheckoutPayment />}
+        {checkout.activeStep === 2 && addressByData &&
+          <div>
+            <CheckoutBillingAddress />
+            <CheckoutPayment />
+          </div>
+        }
+
 
         {checkout.completed && (
           <CheckoutOrderComplete

@@ -1,5 +1,4 @@
 // invoice-retry.service.ts
-
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -22,7 +21,7 @@ export class InvoiceRetryService {
                 userId: userId,
             },
         });
-    
+
         // If no pending invoices, return a "data up-to-date" message
         if (pendingInvoices.length === 0) {
             return {
@@ -30,16 +29,16 @@ export class InvoiceRetryService {
                 message: 'All data is up to date.',
             };
         }
-    
+
         // Process each pending invoice
         for (const invoice of pendingInvoices) {
             try {
-                const response = await axios.post('http://localhost:9000', invoice.xmlContent, {
+                const response = await axios.post(process.env.TALLY_URL as string, invoice.xmlContent, {
                     headers: { 'Content-Type': 'application/xml' },
                 });
-               // Delete the invoice from the database after successful posting
+                // Delete the invoice from the database after successful posting
                 await this.invoiceRepository.delete(invoice.id);
-    
+
             } catch (error) {
                 return {
                     status: 'error',
@@ -53,10 +52,11 @@ export class InvoiceRetryService {
             message: 'All pending invoices have been successfully posted to Tally.',
         };
     }
-    
 
+    // @Cron('*/5 * * * *') // Run every 5 minutes
+    @Cron('0 * * * *') // Run every hour
+    // @Cron('0 */2 * * *') // Run every 2 hours
 
-    @Cron('*/1 * * * *') // Run every 5 minutes
     async retryPendingInvoices() {
         // Fetch all pending invoices
         const pendingInvoices = await this.invoiceRepository.find({
@@ -65,11 +65,9 @@ export class InvoiceRetryService {
 
         for (const invoice of pendingInvoices) {
             try {
-                const response = await axios.post('http://localhost:9000', invoice.xmlContent, {
+                await axios.post(process.env.TALLY_URL as string, invoice.xmlContent, {
                     headers: { 'Content-Type': 'application/xml' },
                 });
-                console.log(`Successfully resent invoice for order ${invoice.orderId}:`, response.data);
-                // Update the invoice status to SENT on successful post
                 invoice.status = InvoiceStatus.SENT;
                 // Delete the invoice from the database after successful posting
                 await this.invoiceRepository.delete(invoice.id);

@@ -3,14 +3,8 @@ import { ArrayMinSize, IsEnum, IsNotEmpty, IsNumber, IsOptional, ValidateNested 
 
 export enum DeliveryType {
     FREE = 'free',
-    PAID = 'paid',
+    PAID = 'transport',
 }
-
-export enum PaymentMethod {
-    CASH_ON_DELIVERY = 'cash_on_delivery',
-    DEBIT_CARD = 'debit_card',
-}
-
 export class CreateOrderDto {
 
     @IsNotEmpty()
@@ -29,10 +23,6 @@ export class CreateOrderDto {
     @IsEnum(DeliveryType)
     @IsOptional()
     delivery: DeliveryType = DeliveryType.FREE; // Default value is 'free'
-
-    @IsEnum(PaymentMethod)
-    @IsOptional()
-    paymentMethod: PaymentMethod = PaymentMethod.CASH_ON_DELIVERY; // Default value is 
 }
 
 export class ProductOrderDto {

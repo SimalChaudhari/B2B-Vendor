@@ -1,23 +1,20 @@
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
-import Divider from '@mui/material/Divider';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-
 import { fCurrency } from 'src/utils/format-number';
-
-import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
-import { ColorPreview } from 'src/components/color-utils';
 import { IncrementerButton } from '../product/components/incrementer-button';
+import { Tooltip } from '@mui/material';
 
 
 // ----------------------------------------------------------------------
 
-export function CheckoutCartProduct({ row, onDelete, onDecrease, onIncrease }) {
+export function CheckoutCartProduct({ row, onDownload,onDelete, onDecrease, onIncrease }) {
+  const isDownloadable = !!row.dimensionalFiles; // Check if pdfPath is available
 
   return (
     <TableRow>
@@ -39,10 +36,10 @@ export function CheckoutCartProduct({ row, onDelete, onDecrease, onIncrease }) {
         </Stack>
       </TableCell>
 
-      <TableCell>{fCurrency(row.price)}</TableCell>
+      <TableCell >{fCurrency(row.price)}</TableCell>
 
       <TableCell>
-        <Box sx={{ width: 88, textAlign: 'right' }}>
+        <Box align="center">
           <IncrementerButton
             quantity={row.quantity}
             onDecrease={onDecrease}
@@ -51,19 +48,30 @@ export function CheckoutCartProduct({ row, onDelete, onDecrease, onIncrease }) {
             disabledIncrease={row.quantity >= row.available}
           />
 
-          <Typography variant="caption" component="div" sx={{ color: 'text.secondary', mt: 1 }}>
-            available: {row.available}
-          </Typography>
         </Box>
       </TableCell>
 
-      <TableCell align="right">{fCurrency(row.price * row.quantity)}</TableCell>
+      <TableCell align="center">{fCurrency(row.price * row.quantity)}</TableCell>
+      <TableCell align="center" sx={{ px: 6 }}>
+        <Tooltip title={isDownloadable ? "Download File" : "File not available"}>
+          <span> {/* Wrap in span to allow tooltip on disabled button */}
+            <IconButton
+              onClick={() => isDownloadable && onDownload(row.id)}
+              sx={{ color: 'primary.main' }}
+              disabled={!isDownloadable} // Disable if no pdfPath
+            >
+              <Iconify icon="eva:download-outline" />
+            </IconButton>
+          </span>
+        </Tooltip>
+      </TableCell>
 
-      <TableCell align="right" sx={{ px: 1 }}>
-        <IconButton onClick={onDelete}>
+      <TableCell align="center" sx={{ px: 1 }}>
+        <IconButton onClick={onDelete} sx={{ color: 'error.main' }}> {/* Use error color */}
           <Iconify icon="solar:trash-bin-trash-bold" />
         </IconButton>
       </TableCell>
+
     </TableRow>
   );
 }

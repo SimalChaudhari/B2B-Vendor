@@ -8,6 +8,7 @@ import CardHeader from '@mui/material/CardHeader';
 import ListItemText from '@mui/material/ListItemText';
 
 import { Iconify } from 'src/components/iconify';
+import { fCurrency } from 'src/utils/format-number';
 
 // ----------------------------------------------------------------------
 
@@ -63,9 +64,8 @@ function OptionItem({ option, selected, ...other }) {
       {...other}
     >
       {label === 'Free' && <Iconify icon="carbon:bicycle" width={32} />}
-      {/* {label === 'Standard' && <Iconify icon="carbon:delivery" width={32} />}
-      {label === 'Express' && <Iconify icon="carbon:rocket" width={32} />}
-      */}
+      {label === 'Transportation' && <Iconify icon="carbon:delivery" width={32} />}
+   
 
       <ListItemText
         sx={{ ml: 2 }}
@@ -74,7 +74,7 @@ function OptionItem({ option, selected, ...other }) {
             <Box component="span" sx={{ flexGrow: 1 }}>
               {label}
             </Box>
-            <Box component="span" sx={{ typography: 'h6' }}>{`$${value}`}</Box>
+            <Box component="span" sx={{ typography: 'h6' }}>{fCurrency(value)}</Box>
           </Stack>
         }
         secondary={description}

@@ -9,10 +9,11 @@ import { CheckoutCartProduct } from './checkout-cart-product';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'product', label: 'Product' },
+  { id: 'product', label: 'Product',align: 'center' },
   { id: 'price', label: 'Price' },
-  { id: 'quantity', label: 'Quantity' },
-  { id: 'totalAmount', label: 'Total Price', align: 'right' },
+  { id: 'quantity', label: 'Quantity', align: 'center'  },
+  { id: 'totalAmount', label: 'Total Price', align: 'center' },
+  { id: 'dimensional', label: 'Dimensional', align: 'center' },
   { id: '' },
 ];
 
@@ -20,6 +21,7 @@ const TABLE_HEAD = [
 
 export function CheckoutCartProductList({
   products,
+  onDownload,
   onDelete,
   onIncreaseQuantity,
   onDecreaseQuantity,
@@ -34,6 +36,7 @@ export function CheckoutCartProductList({
             <CheckoutCartProduct
               key={row.id}
               row={row}
+              onDownload={() => onDownload(row.id)}
               onDelete={() => onDelete(row.id)}
               onDecrease={() => onDecreaseQuantity(row.id)}
               onIncrease={() => onIncreaseQuantity(row.id)}

@@ -159,15 +159,16 @@ export function OrderListView() {
           sx={{ mb: { xs: 3, md: 5 } }}
 
           action={
-            <Button
-              // href={paths?.dashboard?.user?.new}
-              onClick={handleSyncAPI} // Open the dialog on click
-              variant="contained"
-              startIcon={<Iconify icon="eva:sync-fill" />} // Changed icon
-              disabled={loading} // Disable button while loading
-            >
-              {loading ? 'Syncing...' : 'Sync Invoices'}
-            </Button>
+            userRole === 'Vendor' && ( // Only show the button for Vendor role
+              <Button
+                onClick={handleSyncAPI}
+                variant="contained"
+                startIcon={<Iconify icon="eva:sync-fill" />}
+                disabled={loading}
+              >
+                {loading ? 'Syncing...' : 'Sync Invoices'}
+              </Button>
+            )
           }
         />
 

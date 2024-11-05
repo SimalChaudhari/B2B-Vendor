@@ -50,7 +50,7 @@ export function ProductListView() {
     const confirm = useBoolean();
     const [loading, setLoading] = useState(false);
 
-    const { fetchData, fetchDeleteData ,fetchDeleteItem } = useFetchProductData(); // Destructure fetchData from the custom hook
+    const { fetchData, fetchDeleteData, fetchDeleteItem } = useFetchProductData(); // Destructure fetchData from the custom hook
 
     const dispatch = useDispatch();
 
@@ -111,14 +111,12 @@ export function ProductListView() {
 
     const handleSyncAPI = async () => {
         setLoading(true); // Set loading to true
-        try {
-            await dispatch(syncProduct());
+        const res = await dispatch(syncProduct());
+        if (res) {
             fetchData(); // Fetch data after syncing
-        } catch (error) {
-            console.error('Error syncing product:', error);
-        } finally {
-            setLoading(false); // Set loading to false after the API call completes
+
         }
+        setLoading(false); // Set loading to false after the API call completes
     };
 
     //----------------------------------------------------------------------------------------------------

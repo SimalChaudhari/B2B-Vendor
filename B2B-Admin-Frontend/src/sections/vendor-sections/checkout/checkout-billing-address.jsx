@@ -11,6 +11,8 @@ import useCart from './components/useCart';
 import useAddress from './components/userAddress';
 import { addressGetByList, addressList } from 'src/store/action/addressActions';
 import { useEffect } from 'react';
+import { CheckoutPayment } from './checkout-payment';
+import { LoadingButton } from '@mui/lab';
 
 // ----------------------------------------------------------------------
 
@@ -44,27 +46,24 @@ export function CheckoutBillingAddress() {
     <>
       <Grid container spacing={3}>
         <Grid xs={12} md={8}>
+          <Stack direction="row" justifyContent="space-between">
+
+
+            <Button
+              size="small"
+              color="primary"
+              onClick={addressForm.onTrue}
+              startIcon={<Iconify icon="mingcute:add-line" />}
+            >
+              New address
+            </Button>
+          </Stack>
+
           {/* Display the single user address */}
           {Object.keys(userAddress).length > 0 ? (
             <AddressItem
               address={userAddress}
-              action={
-                <Stack flexDirection="row" flexWrap="wrap" flexShrink={0}>
-                  {/* Optionally display "Delete" if the address is not primary */}
-                  {!userAddress.primary && (
-                    <Button size="small" color="error" sx={{ mr: 1 }}>
-                      Delete
-                    </Button>
-                  )}
-                  <Button
-                    variant="outlined"
-                    size="small"
-                    onClick={(id) => handleAddressByID(userAddress.id)}
-                  >
-                    Deliver to this address
-                  </Button>
-                </Stack>
-              }
+             
               sx={{
                 p: 3,
                 mb: 3,
@@ -76,25 +75,9 @@ export function CheckoutBillingAddress() {
             <p>No address available</p> // Show a message if there's no address
           )}
 
-          <Stack direction="row" justifyContent="space-between">
-            <Button
-              size="small"
-              color="inherit"
-              onClick={checkout.onBackStep}
-              startIcon={<Iconify icon="eva:arrow-ios-back-fill" />}
-            >
-              Back
-            </Button>
 
-            <Button
-              size="small"
-              color="primary"
-              onClick={addressForm.onTrue}
-              startIcon={<Iconify icon="mingcute:add-line" />}
-            >
-              New address
-            </Button>
-          </Stack>
+
+          <CheckoutPayment />
         </Grid>
 
         <Grid xs={12} md={4}>
@@ -103,6 +86,19 @@ export function CheckoutBillingAddress() {
             subtotal={subtotal}
             discount={discount}
           />
+
+
+
+          <LoadingButton
+            fullWidth
+            size="large"
+            type="submit"
+            variant="contained"
+          // disabled={empty}
+          // loading={isSubmitting}
+          >
+            Complete order
+          </LoadingButton>
         </Grid>
       </Grid>
 

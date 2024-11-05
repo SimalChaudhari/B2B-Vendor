@@ -2,7 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'ty
 import { Address } from 'users/address/addresses/addresses.entity';
 import { User } from 'users/user/users.entity';
 import { OrderItemEntity } from './order.item.entity';
-import { DeliveryType, PaymentMethod } from './order.dto'; // Import enums from DTO
+import { DeliveryType } from './order.dto'; // Import enums from DTO
 
 export enum OrderStatus {
     PENDING = 'pending',
@@ -10,7 +10,6 @@ export enum OrderStatus {
     Cancelled = 'cancelled',
 
 }
-
 
 @Entity('orders')
 export class OrderEntity {
@@ -37,10 +36,6 @@ export class OrderEntity {
 
     @Column({ type: 'enum', enum: DeliveryType, default: DeliveryType.FREE })
     delivery!: DeliveryType; // Delivery type, default is 'free'
-
-    @Column({ type: 'enum', enum: PaymentMethod, default: PaymentMethod.CASH_ON_DELIVERY })
-    paymentMethod!: PaymentMethod; // Payment method, default is 'cash_on_delivery'
-
 
     // Add status column with enum and default value
     @Column({ type: 'enum', enum: OrderStatus, default: OrderStatus.PENDING })

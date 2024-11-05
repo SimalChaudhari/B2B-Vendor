@@ -55,8 +55,7 @@ export class VendorService {
             }
 
         } catch (error) {
-            console.log("🚀 ~ VendorService ~ fetchAndStoreVendors ~ error:", error)
-            throw new InternalServerErrorException('Failed to fetch vendors');
+          throw new InternalServerErrorException('Open Tally to fetch vendors.');
         }
     }
 

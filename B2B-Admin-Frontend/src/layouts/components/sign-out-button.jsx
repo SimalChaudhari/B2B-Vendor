@@ -2,7 +2,6 @@
 import Button from '@mui/material/Button';
 import { useDispatch } from 'react-redux';
 import { Navigate } from 'react-router';
-import { useRouter } from 'src/routes/hooks';
 import { logout } from 'src/store/action/authActions';
 
 export function SignOutButton() {

@@ -20,7 +20,7 @@ const useCart = () => {
     totalAmount: item.product.sellingPrice * item.quantity,
     name: item.product.itemName,
     productID: item.product.id,
-
+    dimensionalFiles: item.product.dimensionalFiles,
   }));
 
   return mappedData;

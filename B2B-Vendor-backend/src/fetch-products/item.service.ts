@@ -50,7 +50,8 @@ export class ItemService {
       }
 
     } catch (error) {
-      throw new Error('Failed to fetch items');
+      throw new InternalServerErrorException('Open Tally to fetch items');
+      // throw new Error('Failed to fetch items.please ensure Tally is open and try again.');
     }
   }
 

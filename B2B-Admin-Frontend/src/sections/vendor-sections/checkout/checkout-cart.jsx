@@ -3,22 +3,18 @@ import Button from '@mui/material/Button';
 import Grid from '@mui/material/Unstable_Grid2';
 import CardHeader from '@mui/material/CardHeader';
 import Typography from '@mui/material/Typography';
-
 import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
-
 import { CONFIG } from 'src/config-global';
-
 import { Iconify } from 'src/components/iconify';
 import { EmptyContent } from 'src/components/empty-content';
-
 import { useCheckoutContext } from './context';
 import { CheckoutSummary } from './checkout-summary';
 import { CheckoutCartProductList } from './checkout-cart-product-list';
 import { useDispatch, useSelector } from 'react-redux';
 import { cartList, decreaseQuantity, deleteCartItem, increaseQuantity } from 'src/store/action/cartActions';
-import { useEffect } from 'react';
 import useCart from './components/useCart';
+import { toast } from 'sonner';
 
 // ----------------------------------------------------------------------
 
@@ -60,6 +56,20 @@ export function CheckoutCart() {
 
   };
 
+  const handleDownload = async (id) => {
+    const item = mappedData.find((data) => data.id === id);
+
+    if (item && item.dimensionalFiles?.[0]) {
+      window.open(item.dimensionalFiles?.[0], '_blank'); // Opens the PDF in a new tab
+      
+    } else {
+      toast.warning('File Not found for this item', id);
+    }
+  };
+
+
+
+
   return (
     <Grid container spacing={3}>
       <Grid xs={12} md={8}>
@@ -87,6 +97,7 @@ export function CheckoutCart() {
             <CheckoutCartProductList
               products={mappedData}
               onDelete={handleDeleteCart}
+              onDownload={handleDownload}
               onIncreaseQuantity={handleIncreaseQuantity}
               onDecreaseQuantity={handleDecreaseQuantity}
             />
@@ -105,10 +116,10 @@ export function CheckoutCart() {
 
       <Grid xs={12} md={4}>
         <CheckoutSummary
-           total={subtotal}
+          total={subtotal}
           discount={discount}
           subtotal={subtotal}
-          onApplyDiscount={() => {}} // Optional: handle discount application
+          onApplyDiscount={() => { }} // Optional: handle discount application
         />
 
         <Button

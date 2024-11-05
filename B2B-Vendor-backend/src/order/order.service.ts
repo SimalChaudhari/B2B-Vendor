@@ -67,7 +67,7 @@ export class OrderService {
     }
 
     async createOrder(userId: string, createOrderDto: CreateOrderDto): Promise<OrderEntity> {
-        const { addressId, totalPrice, totalQuantity, delivery, paymentMethod } = createOrderDto;
+        const { addressId, totalPrice, totalQuantity, delivery } = createOrderDto;
 
         const user = await this.userRepository.findOne({ where: { id: userId } });
         if (!user) {
@@ -88,8 +88,7 @@ export class OrderService {
             address,
             totalPrice,
             totalQuantity,
-            delivery,
-            paymentMethod,
+            delivery
         });
 
         return this.orderRepository.save(order);
