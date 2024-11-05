@@ -5,9 +5,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as Network from 'expo-network';
-import { useSelector } from 'react-redux';
+// import { useSelector } from 'react-redux';
 import HomeScreen from '../src/screens/Home/HomeScreen';
-import CartScreen from '../src/screens/products/CartScreen';
+// import CartScreen from '../src/screens/products/CartScreen';
 import AddressScreen from '../src/screens/auth/AddressScreen';
 import AddAddressScreen from '../src/screens/auth/AddAddressScreen';
 import ConfirmationScreen from '../src/screens/auth/ConfirmationScreen';
@@ -20,45 +20,19 @@ import OTPVerification from '../src/screens/auth/OTPVerification';
 import NoInternetScreen from '../src/screens/NoInternet/NoInternetScreen';
 import VendorHomeScreen from '../src/screens/Vendor/VendorHomeScreen';
 import { fetchCart } from '../src/BackendApis/cartApi';
-import useAuthToken from '../src/components/AuthToken/useAuthToken';
+import ShopScreen from '../src/screens/products/ShopScreen';
+import ContactUsScree from '../src/screens/ContactUs/ContactUsScree';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import OrderConfirmScreen from '../src/screens/Order/OrderConfirmScreen';
+// import useAuthToken from '../src/components/AuthToken/useAuthToken';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const StackNavigator = () => {
 
-    const { token } = useAuthToken();
-    const [isConnected, setIsConnected] = useState(true); // Track network status    
-    const [cartData, setCartData] = useState([]); // Store the fetched items
+    const [isConnected, setIsConnected] = useState(true); // Track network status   
     
-    const cart = useSelector((state) => state.cart.cart); // Access the cart state
-    const cartQuantity = useSelector((state) => state.cart.cartQuantity); // Access the cart state
-    // Assuming the cart is an array with one object
-
-    // const totalQuantity = cartData.reduce((acc, item) => {
-    //     return acc + item.quantity; // Summing the quantity of each item
-    // }, 0);
-
-    useEffect(() => {
-        if (token) {
-            getCartData();
-        }
-    }, [token]);
-    
-    const getCartData = async () => {
-        // setLoading(true);
-        try {
-
-            const data = await fetchCart(); // API call
-            setCartData(data);
-
-            setError(null);
-        } catch (err) {
-            setError('Failed to fetch items');
-            setLoading(false);
-        }
-    };
-
 
     // Check network status
     useEffect(() => {
@@ -92,60 +66,55 @@ const StackNavigator = () => {
                     component={HomeScreen}
                     options={{
                         tabBarLabel: "Home",
-                        tabBarLabelStyle: { color: "#008E97" },
+                        tabBarLabelStyle: { color: "#000", fontWeight:700, marginBottom:7  },
                         headerShown: false,
                         tabBarIcon: ({ focused }) => (
                             focused ? (
-                                <Ionicons name="home" size={26} color="black" />
+                                <Ionicons name="home" size={26} color="#fe0002" />
                             ) : (
-                                <Ionicons name="home-outline" size={26} color="black" />
+                                <Ionicons name="home-outline" size={26} color="#fe0002" />
                             )
                         ),
                     }}
                 />
 
                 <Tab.Screen
-                    name="Profile"
-                    component={ProfileScreen}
+                    name="Shop"
+                    component={ShopScreen}
                     options={{
                         tabBarLabel: "Shop",
-                        tabBarLabelStyle: { color: "#008E97" },
+                        tabBarLabelStyle: { color: "#000", fontWeight:700, marginBottom:7  },
                         headerShown: false,
                         tabBarIcon: ({ focused }) => (
                             focused ? (
-                                <Ionicons name="storefront-sharp" size={26} color="black" />
+                                <Ionicons name="storefront-sharp" size={26} color="#fe0002" />
                             ) : (
-                                <Ionicons name="storefront-outline" size={26} color="black" />
+                                <Ionicons name="storefront-outline" size={26} color="#fe0002" />
                             )
                         ),
                     }}
                 />
 
+
+
                 <Tab.Screen
-                    name="Cart"
-                    component={CartScreen}
+                    name="ContactUs"
+                    component={ContactUsScree}
                     options={{
-                        tabBarLabel: "Cart",
-                        tabBarLabelStyle: { color: "#008E97" },
+                        tabBarLabel: "Contact Us",
+                        tabBarLabelStyle: { color: "#000", fontWeight:700, marginBottom:7  },
                         headerShown: false,
                         tabBarIcon: ({ focused }) => (
-                            <View style={{ position: 'relative' }}>
-                                <Ionicons
-                                    name={focused ? "cart" : "cart-outline"}
-                                    size={32}
-                                    color="black"
-                                />
-                                {/*
-                                    {totalQuantity > 0 && (
-                                        <View style={styles.badge}>
-                                            <Text style={styles.badgeText}>{totalQuantity}</Text>
-                                        </View>
-                                    )}
-                                    */}
-                            </View>
+                            focused ? (
+                                <MaterialCommunityIcons name="message-question" size={26} color="#fe0002" />
+                            ) : (
+                                <MaterialCommunityIcons name="message-question-outline" size={26} color="#fe0002" />
+                            )
                         ),
                     }}
                 />
+                
+
             </Tab.Navigator>
         );
     }
@@ -201,6 +170,11 @@ const StackNavigator = () => {
                 <Stack.Screen
                     name="Order"
                     component={OrderScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="OrderConfirm"
+                    component={OrderConfirmScreen}
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>

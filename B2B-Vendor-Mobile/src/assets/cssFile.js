@@ -114,7 +114,6 @@ const styles = StyleSheet.create({
         marginTop: 30,
         // paddingTop: 20,
         // backgroundColor: colors.white,
-        backgroundColor: colors.background,
     },
     heroLogo: {
         fontSize: 20,
@@ -301,7 +300,12 @@ const styles = StyleSheet.create({
     },
 
     heroTreanding: {
-        flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between", paddingHorizontal: 10, backgroundColor: colors.background,
+        flexDirection: "row",
+        flexWrap: "wrap",
+        justifyContent: "space-between",
+        paddingHorizontal: 10,
+        backgroundColor: colors.background,
+        marginVertical: 20,
     },
 
     ResendButtonText: {
@@ -312,7 +316,7 @@ const styles = StyleSheet.create({
     heroTopImage: {
         width: '90%',
         height: 175,
-        // resizeMode: "contain",
+        resizeMode: "cover",
         marginLeft: 8,
         marginTop: 8,
 

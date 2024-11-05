@@ -11,16 +11,12 @@ import { TextInput } from 'react-native-paper';
 import { Feather } from "@expo/vector-icons";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { updateUserAddresses } from "../../../redux/authReducer"; // Adjust the import path as necessary
-import Entypo from "react-native-vector-icons/Entypo";
 import Toast from "react-native-toast-message";
 import styles from "../../assets/cssFile";
+import { addAddress } from "../../../redux/productAndAddressReducer";
 
 const AddAddressScreen = () => {
-  const user = useSelector((state) => state.auth.user);
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
-  const userId = user?._id;
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [addresses, setAddresses] = useState([]);
@@ -54,10 +50,11 @@ const AddAddressScreen = () => {
     setTimeout(() => {
       console.log('Address Data: ', newAddress);
       setLoading(false); // Reset loading state
-      navigation.navigate('Confirm');
+      // navigation.navigate('Confirm');
     }, 2000); // Refresh indicator stops after 2 seconds
 
     try {
+      dispatch(addAddress(newAddress));
       setNewAddress({
         name: '',
         houseNo: '',
@@ -78,7 +75,7 @@ const AddAddressScreen = () => {
 
       // Navigate back after a delay to allow the toast to show
       setTimeout(() => {
-        navigation.navigate('Confirm');
+        navigation.navigate('OrderConfirm');
       }, 1000); // Delay for 1 second (optional)
 
     } catch (error) {
@@ -119,12 +116,14 @@ const AddAddressScreen = () => {
       <View style={{ padding: 10 }}>
         <Text style={styles.heading}>Add Your Address</Text>
 
-        <Pressable style={styles.emptyLastBox}
-          onPress={() => navigation.navigate("Cart")}
-        >
-          <Feather name="chevron-left" size={20} color="#1C252E" />
-          <Text style={styles.emptyLastText}>Back</Text>
-        </Pressable>
+        {/*
+          <Pressable style={styles.emptyLastBox}
+            onPress={() => navigation.navigate("Cart")}
+          >
+            <Feather name="chevron-left" size={20} color="#1C252E" />
+            <Text style={styles.emptyLastText}>Back</Text>
+          </Pressable>
+        */}
         {/* Add Address Form */}
         <View style={styles.form}>
           <TextInput

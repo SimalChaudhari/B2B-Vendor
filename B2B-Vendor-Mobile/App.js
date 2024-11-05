@@ -1,4 +1,4 @@
-// import { StatusBar } from 'expo-status-bar';
+import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import StackNavigator from './navigation/StackNavigator';
 import { Provider } from "react-redux";
@@ -6,7 +6,7 @@ import store from "./store";
 import Toast from 'react-native-toast-message';
 import { UserContext } from './UserContext';
 
-export default function App() {
+const App = () => {
   return (
     <Provider store={store}>
       <UserContext>
@@ -17,7 +17,7 @@ export default function App() {
       </UserContext>
     </Provider>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -25,3 +25,5 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
 });
+
+export default App;
