@@ -85,9 +85,7 @@ export function CheckoutSummary({ total, onEdit, discount, subtotal, shipping, o
             >
               {fCurrency(total)}
             </Typography>
-            <Typography variant="caption" sx={{ fontStyle: 'italic' }}>
-              (VAT included if applicable)
-            </Typography>
+           
           </Box>
         </Box>
 
@@ -95,7 +93,7 @@ export function CheckoutSummary({ total, onEdit, discount, subtotal, shipping, o
           <TextField
             fullWidth
             placeholder="Discount codes / Gifts"
-            value="DISCOUNT5"
+            value=""
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">

@@ -4,16 +4,28 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
+import { useEffect } from 'react';
 
 import { OrderCompleteIllustration } from 'src/assets/illustrations';
-
 import { Iconify } from 'src/components/iconify';
 import { RouterLink } from 'src/routes/components';
 import { paths } from 'src/routes/paths';
 
-// ----------------------------------------------------------------------
+export function CheckoutOrderComplete({ open, onReset }) {
+  
+  // Prevent user from going back with browser back button
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      event.preventDefault();
+      event.returnValue = ''; // This triggers a confirmation dialog
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
 
-export function CheckoutOrderComplete({ open, onReset, onDownloadPDF }) {
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
+
   return (
     <Dialog
       fullWidth
@@ -24,6 +36,11 @@ export function CheckoutOrderComplete({ open, onReset, onDownloadPDF }) {
           width: { md: `calc(100% - 48px)` },
           height: { md: `calc(100% - 48px)` },
         },
+      }}
+      onClose={(event, reason) => {
+        if (reason !== 'backdropClick' && reason !== 'escapeKeyDown') {
+          onReset();
+        }
       }}
     >
       <Box
@@ -44,14 +61,14 @@ export function CheckoutOrderComplete({ open, onReset, onDownloadPDF }) {
         <OrderCompleteIllustration />
 
         <Typography>
-          Thanks for placing order
+          Thanks for placing your order
           <br />
           <br />
           <Link>01dc1370-3df6-11eb-b378-0242ac130002</Link>
           <br />
           <br />
           We will send you a notification within 5 days when it ships.
-          <br /> If you have any question or queries then fell to get in contact us. <br />
+          <br /> If you have any questions, feel free to contact us. <br />
           All the best,
         </Typography>
 
@@ -66,7 +83,6 @@ export function CheckoutOrderComplete({ open, onReset, onDownloadPDF }) {
             startIcon={<Iconify icon="eva:arrow-ios-back-fill" />}
             component={RouterLink}
             href={paths.items.root}
-         
           >
             Continue shopping
           </Button>

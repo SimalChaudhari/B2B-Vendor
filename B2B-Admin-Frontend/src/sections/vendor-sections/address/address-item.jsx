@@ -1,9 +1,8 @@
-import Box from '@mui/material/Box';
+
 import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 
-import { Label } from 'src/components/label';
 
 // ----------------------------------------------------------------------
 
@@ -21,27 +20,21 @@ export function AddressItem({ address, action, sx, ...other }) {
       {...other}
     >
       <Stack flexGrow={1} spacing={1}>
-        <Stack direction="row" alignItems="center">
-          <Typography variant="subtitle2">
-            {address.address}
-            <Box component="span" sx={{ ml: 0.5, typography: 'body2', color: 'text.secondary' }}>
-              ({address.country})
-            </Box>
-          </Typography>
-
-          {address.primary && (
-            <Label color="info" sx={{ ml: 1 }}>
-              Default
-            </Label>
-          )}
-        </Stack>
 
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          {address.state}
+          <strong>Address:</strong> {address.street_address}
+        </Typography>
+        
+        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+          <strong>State:</strong> {address.state}
         </Typography>
 
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          {address.mobile || "Not Available"}
+          <strong>Mobile:</strong> {address.mobile || "Not Available"}
+        </Typography>
+
+        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+          <strong>Country:</strong> {address.country}
         </Typography>
       </Stack>
 

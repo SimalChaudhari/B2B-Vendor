@@ -27,8 +27,7 @@ export function CheckoutDelivery({ options, onApplyShipping, ...other }) {
             columnGap={2}
             rowGap={2.5}
             display="grid"
-            gridTemplateColumns={{ xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' }}
-            sx={{ p: 3 }}
+             sx={{ p: 3 }}
           >
             {options.map((option) => (
               <OptionItem
@@ -63,8 +62,7 @@ function OptionItem({ option, selected, ...other }) {
       }}
       {...other}
     >
-      {label === 'Free' && <Iconify icon="carbon:bicycle" width={32} />}
-      {label === 'Transportation' && <Iconify icon="carbon:delivery" width={32} />}
+      {label === 'Transportation' && <Iconify icon="carbon:delivery" width={80} />}
    
 
       <ListItemText

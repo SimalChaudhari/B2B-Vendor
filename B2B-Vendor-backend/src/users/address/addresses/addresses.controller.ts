@@ -34,16 +34,16 @@ export class AddressesController {
     async getAllAddresses(@Req() request: Request, @Res() response: Response) {
         const userId = request.user?.id; // Assuming you store the logged-in user's ID in request.user
         try {
-            const addresses = await this.addressesService.findByUserIds(userId); // Pass userId directly
+            const addresses = await this.addressesService.findByUserAll(userId); // Pass userId directly
             return response.status(HttpStatus.OK).json(addresses);
-        } catch (error : any) {
+        } catch (error: any) {
             return response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
                 message: 'Error retrieving addresses.',
                 error: error.message,
             });
         }
     }
-    
+
 
     @Post('create')
     async createAddress(
@@ -55,10 +55,10 @@ export class AddressesController {
         if (!request.user) {
             throw new UnauthorizedException('User is not authenticated');
         }
-
+        const userId = createAddressDto.userId || request.user.id;
         try {
             // Assuming create method takes the createAddressDto and userId as arguments
-            const address = await this.addressesService.create(createAddressDto, createAddressDto.userId);
+            const address = await this.addressesService.create(createAddressDto, userId);
             return response.status(HttpStatus.CREATED).json(address);
         } catch (err: unknown) {
             if (err instanceof Error) {
@@ -67,7 +67,7 @@ export class AddressesController {
             throw err;
         }
     }
-    
+
     @Get('get/:id')
     async getAddressById(@Param('id') id: string, @Res() response: Response) {
         const address = await this.addressesService.getById(id);

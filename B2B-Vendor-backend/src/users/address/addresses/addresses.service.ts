@@ -21,6 +21,8 @@ export class AddressesService {
     }
 
     async create(createAddressDto: CreateAddressDto, userId: string): Promise<Address> {
+
+
         // Step 1: Fetch the user entity by userId
         const user = await this.userRepository.findOne({ where: { id: userId } });
 
@@ -46,13 +48,25 @@ export class AddressesService {
     }
 
     async findByUserIds(userId: string): Promise<Address | null> {
-        const res = await this.addressesRepository.findOne({where: { user: {id: userId } }});
+        const res = await this.addressesRepository.findOne({ where: { user: { id: userId } } });
         if (!res) {
             throw new NotFoundException('Address not found');
         }
         return res;
     }
 
+    // Service method to fetch all addresses for a user
+    async findByUserAll(userId: string): Promise<Address[]> {
+        const res = await this.addressesRepository.find({
+            where: { user: { id: userId } }
+        });
+
+        if (res.length === 0) {
+            throw new NotFoundException('No addresses found for this user');
+        }
+
+        return res;
+    }
 
     async getById(id: string): Promise<Address> {
         const address = await this.addressesRepository.findOne({ where: { id } }); // Correct way to find by ID

@@ -18,7 +18,7 @@ export function CheckoutListView() {
           { name: 'List' },
         ]}
 
-        sx={{ mb: { xs: 3, md: 5 } }}
+        sx={{ mb: { xs: 3, md: 4 } }}
       />
 
       <CheckoutView />

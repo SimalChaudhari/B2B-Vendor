@@ -2,8 +2,7 @@ import { Type } from 'class-transformer';
 import { ArrayMinSize, IsEnum, IsNotEmpty, IsNumber, IsOptional, ValidateNested } from 'class-validator';
 
 export enum DeliveryType {
-    FREE = 'free',
-    PAID = 'transport',
+    FREE = 'free'
 }
 export class CreateOrderDto {
 

@@ -1,14 +1,5 @@
 import { useEffect } from 'react';
-
-import Container from '@mui/material/Container';
-import Grid from '@mui/material/Unstable_Grid2';
-import Typography from '@mui/material/Typography';
-
-import { PRODUCT_CHECKOUT_STEPS } from 'src/_mock/_product';
-
 import { useCheckoutContext } from '../context';
-import { CheckoutSteps } from '../checkout-steps';
-import { CheckoutPayment } from '../checkout-payment';
 import { CheckoutOrderComplete } from '../checkout-order-complete';
 import { CheckoutBillingAddress } from '../checkout-billing-address';
 import { Box } from '@mui/material';
@@ -30,10 +21,7 @@ export function CheckoutView() {
 
   const handleCheckoutStep = () =>
     checkout.activeStep === 1 && !addressByData
-      ? <CheckoutBillingAddress />
-      : checkout.activeStep === 2 && !addressByData
-        ? (checkout.onBackStep(), <CheckoutBillingAddress />)
-        : null;
+    && <CheckoutBillingAddress />
 
 
 
@@ -47,24 +35,14 @@ export function CheckoutView() {
           </Box>
         </Box>
       )}
-      <Box mt={3}>
+      <Box>
         {handleCheckoutStep()} {/* Render dynamic step components */}
-
-        {checkout.activeStep === 2 && addressByData &&
-          <div>
-            <CheckoutBillingAddress />
-            <CheckoutPayment />
-          </div>
-        }
-
-
-        {checkout.completed && (
+        {checkout.activeStep === 2 &&
           <CheckoutOrderComplete
             open
             onReset={checkout.onReset}
-            onDownloadPDF={() => { }}
           />
-        )}
+        }
       </Box>
     </Box>
 
