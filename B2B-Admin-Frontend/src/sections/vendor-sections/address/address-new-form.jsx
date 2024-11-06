@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { z as zod } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -14,78 +15,68 @@ import DialogContent from '@mui/material/DialogContent';
 
 import { Form, Field, schemaHelper } from 'src/components/hook-form';
 
-// ----------------------------------------------------------------------
-
 export const NewAddressSchema = zod.object({
-  city: zod.string().min(1, { message: 'City is required!' }),
   state: zod.string().min(1, { message: 'State is required!' }),
-  name: zod.string().min(1, { message: 'Name is required!' }),
-  address: zod.string().min(1, { message: 'Address is required!' }),
-  zipCode: zod.string().min(1, { message: 'Zip code is required!' }),
-  phoneNumber: schemaHelper.phoneNumber({ isValidPhoneNumber }),
+  street_address: zod.string().min(1, { message: 'Address is required!' }),
+  zip_code: zod.string().min(1, { message: 'Zip code is required!' }),
+  mobile: schemaHelper.phoneNumber({ isValidPhoneNumber }),
   country: schemaHelper.objectOrNull({
     message: { required_error: 'Country is required!' },
   }),
-  // Not required
-  primary: zod.boolean(),
-  addressType: zod.string(),
 });
 
-export function AddressNewForm({ open, onClose, onCreate }) {
-  const defaultValues = {
-    name: '',
-    city: '',
-    state: '',
-    address: '',
-    zipCode: '',
-    country: '',
-    primary: true,
-    phoneNumber: '',
-    addressType: 'Home',
-  };
-
+export function AddressNewForm({ open, onClose, onCreate, onEdit, editData }) {
   const methods = useForm({
     mode: 'all',
     resolver: zodResolver(NewAddressSchema),
-    defaultValues,
+    defaultValues: {
+      state: '',
+      street_address: '',
+      zip_code: '',
+      country: '',
+      mobile: '',
+    },
   });
 
-  const {
-    handleSubmit,
-    formState: { isSubmitting },
-  } = methods;
+  const { reset, handleSubmit, formState: { isSubmitting } } = methods;
+
+  useEffect(() => {
+    if (editData) {
+      reset(editData); // Update form values when editData changes
+    }
+  }, [editData, reset]);
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      onCreate({
-        name: data.name,
-        phoneNumber: data.phoneNumber,
-        fullAddress: `${data.address}, ${data.city}, ${data.state}, ${data.country}, ${data.zipCode}`,
-        addressType: data.addressType,
-        primary: data.primary,
-      });
+      if (editData) {
+        onEdit(editData.id, data);
+      } else {
+        onCreate(data);
+      }
       onClose();
     } catch (error) {
-      console.error(error);
+      console.error('Failed to submit address:', error);
     }
   });
 
   return (
     <Dialog fullWidth maxWidth="sm" open={open} onClose={onClose}>
       <Form methods={methods} onSubmit={onSubmit}>
-        <DialogTitle>New address</DialogTitle>
-
-        <DialogContent dividers>
-          <Stack spacing={3}>
-            <Field.RadioGroup
-              row
-              name="addressType"
-              options={[
-                { label: 'Home', value: 'Home' },
-                { label: 'Office', value: 'Office' },
-              ]}
-            />
-
+        <DialogTitle>{editData ? 'Edit Address' : 'New Address'}</DialogTitle>
+        <DialogContent>
+          <Stack spacing={3} mt={1}>
+            <Box
+              rowGap={3}
+              columnGap={2}
+              display="grid"
+              gridTemplateColumns={{
+                xs: 'repeat(1, 1fr)',
+                sm: 'repeat(1, 1fr)',
+              }}
+            >
+              <Field.Phone name="mobile" label="Mobile" />
+            </Box>
+            <Field.Text name="street_address" label="Address" />
             <Box
               rowGap={3}
               columnGap={2}
@@ -95,42 +86,18 @@ export function AddressNewForm({ open, onClose, onCreate }) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <Field.Text name="name" label="Full name" />
-
-              <Field.Phone name="phoneNumber" label="Phone number" />
-            </Box>
-
-            <Field.Text name="address" label="Address" />
-
-            <Box
-              rowGap={3}
-              columnGap={2}
-              display="grid"
-              gridTemplateColumns={{
-                xs: 'repeat(1, 1fr)',
-                sm: 'repeat(3, 1fr)',
-              }}
-            >
-              <Field.Text name="city" label="Town/city" />
-
               <Field.Text name="state" label="State" />
-
-              <Field.Text name="zipCode" label="Zip/code" />
+              <Field.Text name="zip_code" label="Zip Code" />
             </Box>
-
             <Field.CountrySelect name="country" label="Country" placeholder="Choose a country" />
-
-            <Field.Checkbox name="primary" label="Use this address as default." />
           </Stack>
         </DialogContent>
-
         <DialogActions>
           <Button color="inherit" variant="outlined" onClick={onClose}>
             Cancel
           </Button>
-
           <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-            Deliver to this address
+            {editData ? 'Update Address' : 'Deliver to this address'}
           </LoadingButton>
         </DialogActions>
       </Form>

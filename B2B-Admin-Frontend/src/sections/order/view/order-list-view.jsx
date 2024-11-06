@@ -159,7 +159,7 @@ export function OrderListView() {
           sx={{ mb: { xs: 3, md: 5 } }}
 
           action={
-            userRole === 'Vendor' && ( // Only show the button for Vendor role
+            userRole === 'Admin' && ( // Only show the button for Vendor role
               <Button
                 onClick={handleSyncAPI}
                 variant="contained"

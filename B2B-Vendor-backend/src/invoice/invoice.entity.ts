@@ -4,7 +4,6 @@ import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from 'typeor
 
 export enum InvoiceStatus {
     PENDING = 'pending',
-    SENT = 'sent',
     FAILED = 'failed',
 }
 

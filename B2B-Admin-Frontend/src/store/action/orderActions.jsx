@@ -5,24 +5,26 @@ import { Order_LIST, ORDER_BY_LIST } from "../constants/actionTypes";
 export const syncOrder = () => async (dispatch) => {
     try {
         const { data } = await axiosInstance.post('/retry-invoice/post-pending');
-    
+
         if (data) {
             const { message, status } = data;
-    
+          
             if (status === 'success') {
                 toast.success(message);
             } else if (status === 'error') {
                 toast.error(message);
+            } else if (status === 'partial_success') {
+                toast.warning(message);
             }
         }
-    
+
         return true;
     } catch (error) {
         const errorMessage = error.response?.data?.message || 'An error occurred';
         toast.error(errorMessage);
         return false;
     }
-}    
+}
 
 export const orderList = () => async (dispatch) => {
     try {

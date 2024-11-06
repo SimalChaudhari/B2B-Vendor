@@ -283,31 +283,43 @@ export class OrderService {
         return savedOrderItems;
     }
 
+    private async savePendingInvoice(order: OrderEntity, xmlContent: string): Promise<void> {
+        const unsentInvoice = new Invoice();
+        unsentInvoice.orderId = order.id;
+        unsentInvoice.xmlContent = xmlContent;
+        unsentInvoice.userId = order?.user?.id;
+        unsentInvoice.status = InvoiceStatus.PENDING;
+        await this.invoiceRepository.save(unsentInvoice);
+    }
+    
     async postToTally(order: OrderEntity, savedOrderItems: OrderItemEntity[]): Promise<void> {
         const xml = generateInvoiceXML(order, savedOrderItems);
-
+        let isInvoiceSaved = false;
+    
         try {
-            const response = await axios.post('http://localhost:9000', xml, {
+            const response = await axios.post(process.env.TALLY_URL as string, xml, {
                 headers: {
                     'Content-Type': 'application/xml',
                 },
             });
-            console.log('Tally Response:', response.data);
-
+    
+            if (response.data.includes('<LINEERROR>')) {
+                console.log("Detected LINE-ERROR in response");
+                await this.savePendingInvoice(order, xml);
+                isInvoiceSaved = true;
+                throw new Error(`Failed to post invoice to Tally due to line error.`);
+            }
+    
         } catch (error) {
-            console.error('Error posting to Tally:', error);
-
-            // Save the unsent invoice in the database for retry
-            const unsentInvoice = new Invoice();
-            unsentInvoice.orderId = order.id;
-            unsentInvoice.xmlContent = xml;
-            unsentInvoice.userId = order?.user?.id;
-            unsentInvoice.status = InvoiceStatus.PENDING;
-            await this.invoiceRepository.save(unsentInvoice);
-
+            console.log("General error during Tally posting");
+            if (!isInvoiceSaved) {
+                await this.savePendingInvoice(order, xml);
+            }
+    
             throw new Error('Failed to post invoice to Tally. It will be retried later.');
         }
     }
+    
 
     async getAll(): Promise<OrderItemEntity[]> {
         const address = await this.orderItemRepository.find();

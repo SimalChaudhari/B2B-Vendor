@@ -11,6 +11,7 @@ import { CartModule } from 'cart/cart.module';
 import { OrderModule } from 'order/order.module';
 import { DashboardModule } from 'dashboard/dashboard.module';
 import { InvoiceModule } from 'invoice/invoice.module';
+import { SyncLogModule } from 'sync-log/sync-log.module';
 
 
 @Module({
@@ -35,7 +36,8 @@ import { InvoiceModule } from 'invoice/invoice.module';
     CartModule,
     OrderModule,
     DashboardModule,
-    InvoiceModule
+    InvoiceModule,
+    SyncLogModule
     // FileModule
   ],
 })

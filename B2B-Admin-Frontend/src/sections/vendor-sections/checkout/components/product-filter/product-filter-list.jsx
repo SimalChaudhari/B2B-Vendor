@@ -19,6 +19,7 @@ export function ProductFilterView() {
     const { fetchData } = useFetchProductData(); // Destructure fetchData from the custom hook
     const _productList = useSelector((state) => state.product?.product || []);
     const [tableData, setTableData] = useState(_productList);
+    const [autocompleteOpen, setAutocompleteOpen] = useState(false);
 
     const options = _productList.map((opt) => ({
         group: opt.group,
@@ -65,10 +66,9 @@ export function ProductFilterView() {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        // Build productsToAdd array from selectedProducts with default quantity 1
         const productsToAdd = selectedProducts.map((product) => ({
             productId: product.id,
-            quantity: 100, // Default quantity is 1
+            quantity: 100, // Default quantity is 100
         }));
         const data = { items: productsToAdd };
         try {
@@ -81,12 +81,22 @@ export function ProductFilterView() {
         }
     };
 
+    const handleKeyDown = (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            handleSubmit(event);
+            setAutocompleteOpen(false); // Close the Autocomplete dropdown on Enter
+        }
+    };
+
+
     return (
         <div>
             <ProductToolbar options={options} filters={filters} />
             <Box
                 component="form"
                 onSubmit={handleSubmit}
+                onKeyDown={handleKeyDown} // Add this line
                 sx={{
                     display: 'flex',
                     flexWrap: 'wrap',
@@ -102,6 +112,9 @@ export function ProductFilterView() {
                         options={dataFiltered}
                         getOptionLabel={(option) => option.itemName}
                         value={selectedProducts}
+                        open={autocompleteOpen}
+                        onOpen={() => setAutocompleteOpen(true)}
+                        onClose={() => setAutocompleteOpen(false)}
                         onChange={handleProductChange}
                         disableCloseOnSelect // Keep the dropdown open after selecting an option
                         renderOption={(props, option, { selected }) => (
