@@ -2,13 +2,14 @@
 
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { FaqController, PrivacyPolicyController, TermsConditionsController, ContactUsController } from './setting.controller';
-import { FaqService, LogoService, PrivacyPolicyService, TermsConditionsService, ContactUsService } from './setting.service';
-import { Faq, Logo, PrivacyPolicy, TermsConditions, ContactUs } from './setting.entity';
+import { FaqController, PrivacyPolicyController, TermsConditionsController, ContactUsController, BannerController } from './setting.controller';
+import { FaqService, PrivacyPolicyService, TermsConditionsService, ContactUsService, BannerService } from './setting.service';
+import { Faq, PrivacyPolicy, TermsConditions, ContactUs, Banner } from './setting.entity';
+import { FirebaseService } from 'service/firebase.service';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Faq, Logo, PrivacyPolicy, TermsConditions, ContactUs])],
-    controllers: [FaqController, PrivacyPolicyController, TermsConditionsController, ContactUsController],
-    providers: [FaqService, LogoService, PrivacyPolicyService, TermsConditionsService, ContactUsService],
+    imports: [TypeOrmModule.forFeature([Faq, PrivacyPolicy, TermsConditions, ContactUs,Banner])],
+    controllers: [FaqController, PrivacyPolicyController, TermsConditionsController, ContactUsController,BannerController],
+    providers: [FaqService, PrivacyPolicyService, TermsConditionsService, ContactUsService,BannerService,FirebaseService],
 })
 export class SettingModule { }

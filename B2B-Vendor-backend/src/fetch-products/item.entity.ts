@@ -63,7 +63,7 @@ export class ItemEntity {
 
   @Column('simple-array', { nullable: true }) // For storing dimensional file paths
   dimensionalFiles!: string[];
-    orderItems: any;
+  orderItems: any;
 
 
   @OneToMany(() => OrderItemEntity, (order) => order.product)

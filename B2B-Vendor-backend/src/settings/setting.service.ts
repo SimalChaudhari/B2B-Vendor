@@ -2,11 +2,12 @@
 
 import { Injectable, NotFoundException, InternalServerErrorException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { ContactUs, Faq, Logo, PrivacyPolicy, TermsConditions } from './setting.entity';
-import { CreateContactDto, CreateFaqDto, CreateLogoDto, CreatePrivacyPolicyDto, CreateTermsConditionsDto, UpdateFaqDto, UpdateLogoDto } from './setting.dto';
+import { DeepPartial, Repository } from 'typeorm';
+import { Banner, ContactUs, Faq, PrivacyPolicy, TermsConditions } from './setting.entity';
+import { CreateBannerDto, CreateContactDto, CreateFaqDto, CreateLogoDto, CreatePrivacyPolicyDto, CreateTermsConditionsDto, UpdateFaqDto, UpdateLogoDto } from './setting.dto';
 // import { bucket } from '../firebase/firebase.config'; // Import the bucket configuration
 import * as admin from 'firebase-admin';
+import { FirebaseService } from 'service/firebase.service';
 
 @Injectable()
 export class FaqService {
@@ -74,104 +75,6 @@ export class FaqService {
         }
     }
 }
-
-@Injectable()
-export class LogoService {
-    constructor(
-        @InjectRepository(Logo)
-        private logoRepository: Repository<Logo>
-    ) { }
-
-    // async create(createLogoDto: { logoImage: string }): Promise<{ message: string; data: Logo }> {
-    //     try {
-    //         const { logoImage } = createLogoDto;
-    //         if (!logoImage) {
-    //             throw new Error('Logo image is required.');
-    //         }
-    //         // Convert base64 string to buffer
-    //         const buffer = Buffer.from(logoImage, 'base64');
-    //         // Upload the image to Firebase Storage
-    //         const blob = bucket.file(`logos/${Date.now()}.png`); // Use Date.now() for a unique file name
-    //         await blob.save(buffer, {
-    //             metadata: { contentType: 'image/png' }, // Adjust the content type as needed
-    //         });
-    //         // Get the public URL for the uploaded image
-    //         const publicUrl = `${process.env.STORAGE_URL}/${bucket.name}/${blob.name}`;
-    //         // Create the logo entry in the database
-    //         const logo = this.logoRepository.create({ logoImage: publicUrl });
-    //         const savedLogo = await this.logoRepository.save(logo);
-    //         return { message: 'Logo created successfully', data: savedLogo };
-    //     } catch (error: any) {
-    //         throw new InternalServerErrorException('Error creating logo', error.message);
-    //     }
-    // }
-
-    // async update(id: string, updateLogoDto: UpdateLogoDto): Promise<{ message: string; data: Logo }> {
-    //     try {
-    //         const logo = await this.findOne(id); // Fetch the existing logo
-    //         let logoImage = logo.logoImage;
-    //         const fileName = logoImage.split('/').pop();
-    //         if (updateLogoDto.logoImage) {
-    //             const blob = bucket.file(`logos/${fileName}`); // Use the same file name to overwrite
-    //             const buffer = Buffer.from(updateLogoDto.logoImage, 'base64'); // Convert base64 string to buffer
-    //             await blob.save(buffer, {
-    //                 metadata: { contentType: 'image/png' },
-    //             });
-    //         }
-    //         const updatedLogo = this.logoRepository.merge(logo, { logoImage });
-    //         const result = await this.logoRepository.save(updatedLogo);
-    //         return { message: 'Logo updated successfully', data: result };
-    //     } catch (error: any) {
-    //         if (error instanceof NotFoundException) {
-    //             throw error; // Re-throw not found error
-    //         }
-    //         throw new InternalServerErrorException('Error updating logo', error.message);
-    //     }
-    // }
-    async findAll(): Promise<Logo[]> {
-        try {
-            return await this.logoRepository.find();
-        } catch (error: any) {
-            throw new InternalServerErrorException('Error retrieving logos', error.message);
-        }
-    }
-
-    async findOne(id: string): Promise<Logo> {
-        try {
-            const logo = await this.logoRepository.findOneBy({ id });
-            if (!logo) {
-                throw new NotFoundException(`Logo with ID ${id} not found`);
-            }
-            return logo;
-        } catch (error: any) {
-            throw error
-        }
-    }
-
-    async remove(id: string): Promise<{ message: string }> {
-        try {
-            const logo = await this.findOne(id); // This will throw if not found
-            if (!logo) {
-                throw new Error('Logo not found.');
-            }
-            // Delete the image from Firebase Storage
-            const fileName = logo.logoImage.split('/').pop(); // Extract the file name from the URL
-            const bucket = admin.storage().bucket(); // Get the storage bucket
-            const file = bucket.file(`logos/${fileName}`);
-            await file.delete();
-            // Delete the logo entry from the database
-            await this.logoRepository.delete(id);
-            return { message: 'Logo deleted successfully' };
-        } catch (error: any) {
-            if (error instanceof NotFoundException) {
-                throw error; // Re-throw the not found exception
-            }
-            throw new InternalServerErrorException('Error deleting logo', error.message);
-        }
-    }
-}
-
-
 // Privacy policy
 
 @Injectable()
@@ -371,4 +274,107 @@ export class ContactUsService {
             throw new InternalServerErrorException('Error deleting contact message', error.message);
         }
     }
+}
+
+
+@Injectable()
+export class BannerService {
+    constructor(
+        @InjectRepository(Banner)
+        private bannerRepository: Repository<Banner>,
+        private firebaseService: FirebaseService
+    ) { }
+
+    async createBannerWithImages(
+        bannerImages: Express.Multer.File[]
+    ): Promise<Banner> {
+        const imageUrls: string[] = []; // Array to hold uploaded image URLs
+
+        for (const file of bannerImages) {
+            const filePath = `banners/${Date.now()}-${file.originalname}`;
+            const imageUrl = await this.firebaseService.uploadFile(filePath, file.buffer);
+            imageUrls.push(imageUrl); // Collect the uploaded image URL
+        }
+
+        const newBanner = this.bannerRepository.create({
+            BannerImages: imageUrls, // Store all uploaded image URLs in the banner
+        });
+
+        return await this.bannerRepository.save(newBanner); // Save the new banner entity
+    }
+
+    async updateBannerImages(
+        bannerId: string,
+        newBannerImages: Express.Multer.File[]
+    ): Promise<Banner> {
+        // Find the existing banner
+        const banner = await this.bannerRepository.findOne({ where: { id: bannerId } });
+        if (!banner) {
+            throw new NotFoundException('Banner not found');
+        }
+
+        // Delete all old images from Firebase if they exist
+        if (banner.BannerImages && banner.BannerImages.length > 0) {
+            await this.firebaseService.deleteImage(banner.BannerImages);
+        }
+
+        // Upload new BannerImages if provided, otherwise clear the BannerImages array
+        let newImageUrls: string[] = [];
+        if (newBannerImages && newBannerImages.length > 0) {
+            newImageUrls = await Promise.all(
+                newBannerImages.map(async (file) => {
+                    const filePath = `banners/${Date.now()}-${file.originalname}`;
+                    return await this.firebaseService.uploadFile(filePath, file.buffer);
+                })
+            );
+        }
+
+        // Update the banner entity with the new image URLs (or empty array)
+        banner.BannerImages = newImageUrls;
+
+        // Save the updated banner entity
+        return await this.bannerRepository.save(banner);
+    }
+
+    // Get all banners
+    async getAllBanners(): Promise<Banner[]> {
+        return await this.bannerRepository.find();
+    }
+
+    // Get a specific banner by ID
+    async getBannerById(bannerId: string): Promise<Banner> {
+        const banner = await this.bannerRepository.findOne({ where: { id: bannerId } });
+        if (!banner) {
+            throw new NotFoundException('Banner not found');
+        }
+        return banner;
+    }
+
+    async deleteBanner(bannerId: string): Promise<{ message: string }> {
+        // Find the banner by ID
+        const banner = await this.bannerRepository.findOne({ where: { id: bannerId } });
+        if (!banner) {
+            throw new NotFoundException('Banner not found');
+        }
+
+        // Check if the banner has associated images and delete them from Firebase Storage
+        if (banner.BannerImages && banner.BannerImages.length > 0) {
+            try {
+                await this.firebaseService.deleteImage(banner.BannerImages);
+                console.log('All associated images deleted from Firebase.');
+            } catch (error) {
+                console.error('Error deleting images from Firebase:', error);
+                throw new Error('Failed to delete associated images from Firebase');
+            }
+        }
+
+        // Finally, delete the banner from the database
+        await this.bannerRepository.delete(bannerId);
+        // Return a success message
+        return { message: `Banner image has been deleted successfully.` }
+
+
+    }
+
+
 }

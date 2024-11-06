@@ -11,12 +11,14 @@ const serviceAccount: ServiceAccount = {
 @Injectable()
 export class FirebaseService {
   constructor() {
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount),
-      storageBucket: 'gs://b2b-vendor-76300.appspot.com', // Replace with your actual bucket name
-    });
+    // Initialize Firebase app only if not already initialized
+    if (!admin.apps.length) {
+      admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+        storageBucket: 'gs://b2b-vendor-76300.appspot.com',
+      });
+    }
   }
-
   // Upload file to Firebase Storage and return the public URL
   async uploadFile(filePath: string, fileBuffer: Buffer): Promise<string> {
     const bucket = admin.storage().bucket(); // Get the storage bucket
@@ -55,4 +57,35 @@ export class FirebaseService {
 
     await Promise.all(deletionPromises); // Wait for all deletions to complete
   }
+
+
+  async deleteImage(fileUrls: string[]): Promise<void> {
+    const bucket = admin.storage().bucket();
+
+    const deletionPromises = fileUrls.map(async (url) => {
+      // Extract the full path from the URL after the bucket name
+      const filePath = url.split(`${bucket.name}/`)[1];
+
+      if (!filePath) {
+        console.warn(`Invalid URL format, cannot extract file path: ${url}`);
+        return;
+      }
+
+      const file = bucket.file(filePath);
+
+      try {
+        await file.delete();
+        console.log(`Successfully deleted file: ${filePath}`);
+      } catch (error :any) {
+        if (error.code === 404) {
+          console.warn(`File not found in Firebase Storage: ${filePath}`);
+        } else {
+          console.error(`Failed to delete file ${filePath}:`, error);
+        }
+      }
+    });
+
+    await Promise.all(deletionPromises);
+  }
+
 }

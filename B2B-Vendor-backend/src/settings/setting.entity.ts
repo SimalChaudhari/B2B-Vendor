@@ -29,22 +29,6 @@ export class Faq {
     updated_at!: Date;
 }
 
-@Entity('logos')
-export class Logo {
-    @PrimaryGeneratedColumn('uuid')
-    id!: string;
-
-    @Column()
-    logoImage!: string; // This will hold the URL/path to the logo image
-
-    @CreateDateColumn()
-    createdAt!: Date;
-
-    @UpdateDateColumn()
-    updatedAt!: Date;
-}
-
-
 @Entity('privacy_policies')
 export class PrivacyPolicy {
     @PrimaryGeneratedColumn('uuid')
@@ -95,4 +79,20 @@ export class ContactUs {
 
     @UpdateDateColumn()
     updatedAt!: Date;
+}
+
+@Entity('banner')
+export class Banner {
+    @PrimaryGeneratedColumn('uuid')
+    id!: string;
+
+    @Column('text', { array: true })
+    BannerImages!: string[];
+
+    @CreateDateColumn()
+    createdAt!: Date;
+
+    @UpdateDateColumn()
+    updatedAt!: Date;
+  
 }

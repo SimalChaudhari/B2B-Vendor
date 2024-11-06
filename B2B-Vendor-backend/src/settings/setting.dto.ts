@@ -56,3 +56,10 @@ export class CreateContactDto {
     message!: string; // The message sent by the user
 
 }
+
+export class CreateBannerDto {
+    @IsNotEmpty()
+    @IsString()
+    BannerImages!: string; // URL/path to the logo image
+}
+export class UpdateBannerDto extends PartialType(CreateBannerDto) { }

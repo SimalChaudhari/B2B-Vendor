@@ -1,15 +1,14 @@
 // src/faq/faq.controller.ts
 
-import { Controller, Post, Get, Delete, Param, Body, InternalServerErrorException, Put, HttpStatus, Res, UseInterceptors, UploadedFile } from '@nestjs/common';
-import { ContactUsService, FaqService, LogoService, PrivacyPolicyService, TermsConditionsService } from './setting.service';
-import { CreateContactDto, CreateFaqDto, CreateLogoDto, CreatePrivacyPolicyDto, CreateTermsConditionsDto, UpdateFaqDto } from './setting.dto';
-import { ContactUs, Faq, Logo, PrivacyPolicy, TermsConditions } from './setting.entity';
+import { Controller, Post, Get, Delete, Param, Body, Put, HttpStatus, Res, UseInterceptors, UploadedFile, UploadedFiles } from '@nestjs/common';
+import { BannerService, ContactUsService, FaqService,  PrivacyPolicyService, TermsConditionsService } from './setting.service';
+import { CreateBannerDto, CreateContactDto, CreateFaqDto, CreatePrivacyPolicyDto, CreateTermsConditionsDto, UpdateFaqDto } from './setting.dto';
+import { ContactUs, PrivacyPolicy, TermsConditions } from './setting.entity';
 import { Response } from 'express';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
 
 
 // FAQ Controller
-
 @Controller('faq')
 export class FaqController {
     constructor(private readonly faqService: FaqService) { }
@@ -59,49 +58,6 @@ export class FaqController {
     }
 }
 
-// LOGO Controller
-// @Controller('logos')
-// export class LogoController {
-//     constructor(private readonly logoService: LogoService) { }
-
-//     @Post('create')
-//     @UseInterceptors(FileInterceptor('logoImage')) // 'logoImage' should match the FormData field name
-//     async create(@UploadedFile() logoImage: Express.Multer.File) {
-//         return this.logoService.create({ logoImage: logoImage.buffer.toString('base64') }); // Convert buffer to base64
-//     }
-
-//     @Put('update/:id')
-//     @UseInterceptors(FileInterceptor('logoImage')) // 'logoImage' should match the FormData field name
-//     async update(
-//         @Param('id') id: string,
-//         @UploadedFile() logoImage: Express.Multer.File,
-//         @Body() updateLogoDto: CreateLogoDto): Promise<{ message: string; data: Logo }> {
-//         if (logoImage) {
-//             updateLogoDto.logoImage = logoImage.buffer.toString('base64');
-//         }
-//         return this.logoService.update(id, updateLogoDto);
-//     }
-
-//     @Get()
-//     async findAll(): Promise<Logo[]> {
-//         return this.logoService.findAll();
-//     }
-
-//     @Get(':id')
-//     async findOne(@Param('id') id: string): Promise<Logo> {
-//         return this.logoService.findOne(id);
-//     }
-
-//     @Delete('delete/:id')
-//     async remove(@Param('id') id: string, @Res() response: Response) {
-//         const result = await this.logoService.remove(id);
-//         return response.status(HttpStatus.OK).json(result);
-
-//     }
-// }
-
-// Privacy Policy
-
 @Controller('privacy-policies')
 export class PrivacyPolicyController {
     constructor(private readonly privacyPolicyService: PrivacyPolicyService) { }
@@ -131,9 +87,7 @@ export class PrivacyPolicyController {
         return this.privacyPolicyService.remove(id);
     }
 }
-
 //terms-conditions
-
 @Controller('terms-conditions')
 export class TermsConditionsController {
     constructor(private readonly termsConditionsService: TermsConditionsService) {}
@@ -164,9 +118,7 @@ export class TermsConditionsController {
     }
 }
 
-
 // contact as Controller
-
 @Controller('contact')
 export class ContactUsController {
     constructor(private readonly contactService: ContactUsService) {}
@@ -196,3 +148,47 @@ export class ContactUsController {
         return this.contactService.remove(id);
     }
 }
+
+@Controller('banner')
+export class BannerController {
+  constructor(private readonly bannerService: BannerService) {}
+
+  @Post('/create')
+  @UseInterceptors(FileFieldsInterceptor([{ name: 'bannerImages', maxCount: 10 }])) // Allow up to 10 images
+  async createBanner(
+    @UploadedFiles() files: { bannerImages?: Express.Multer.File[] }
+  ) {
+    return this.bannerService.createBannerWithImages(files.bannerImages || []);
+  }
+
+  @Put('/update/:id')
+  @UseInterceptors(FileFieldsInterceptor([{ name: 'bannerImages', maxCount: 10 }]))
+  async updateBanner(
+    @Param('id') id: string,
+    @UploadedFiles() files: { bannerImages?: Express.Multer.File[] }
+  ) {
+    return this.bannerService.updateBannerImages(id, files.bannerImages || []);
+  }
+
+ // Retrieve all banners
+ @Get('/all')
+ async getAllBanners() {
+   return this.bannerService.getAllBanners();
+ }
+
+ // Retrieve a specific banner by ID
+ @Get('/:id')
+ async getBannerById(@Param('id') id: string) {
+   return this.bannerService.getBannerById(id);
+ }
+
+ // Delete a specific banner by ID
+ @Delete('/delete/:id')
+ async deleteBanner(@Param('id') id: string) {
+   return this.bannerService.deleteBanner(id);
+ }
+}
+
+
+
+
