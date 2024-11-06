@@ -2,9 +2,9 @@
 
 import { Injectable, NotFoundException, InternalServerErrorException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeepPartial, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Banner, ContactUs, Faq, PrivacyPolicy, TermsConditions } from './setting.entity';
-import { CreateBannerDto, CreateContactDto, CreateFaqDto, CreateLogoDto, CreatePrivacyPolicyDto, CreateTermsConditionsDto, UpdateFaqDto, UpdateLogoDto } from './setting.dto';
+import { CreateBannerDto, CreateContactDto, CreateFaqDto, CreateLogoDto, CreatePrivacyPolicyDto, CreateTermsConditionsDto, UpdateBannerDto, UpdateFaqDto, UpdateLogoDto } from './setting.dto';
 // import { bucket } from '../firebase/firebase.config'; // Import the bucket configuration
 import * as admin from 'firebase-admin';
 import { FirebaseService } from 'service/firebase.service';
@@ -286,7 +286,8 @@ export class BannerService {
     ) { }
 
     async createBannerWithImages(
-        bannerImages: Express.Multer.File[]
+        bannerImages: Express.Multer.File[],
+        createBannerDto: CreateBannerDto
     ): Promise<Banner> {
         const imageUrls: string[] = []; // Array to hold uploaded image URLs
 
@@ -297,6 +298,7 @@ export class BannerService {
         }
 
         const newBanner = this.bannerRepository.create({
+            name: createBannerDto.name,
             BannerImages: imageUrls, // Store all uploaded image URLs in the banner
         });
 
@@ -304,9 +306,7 @@ export class BannerService {
     }
 
     async updateBannerImages(
-        bannerId: string,
-        newBannerImages: Express.Multer.File[]
-    ): Promise<Banner> {
+        bannerId: string, newBannerImages: Express.Multer.File[], updateBannerDto: UpdateBannerDto): Promise<Banner> {
         // Find the existing banner
         const banner = await this.bannerRepository.findOne({ where: { id: bannerId } });
         if (!banner) {
@@ -329,6 +329,8 @@ export class BannerService {
             );
         }
 
+        // Update the name and BannerImages array
+        banner.name = updateBannerDto.name || banner.name;
         // Update the banner entity with the new image URLs (or empty array)
         banner.BannerImages = newImageUrls;
 
@@ -361,9 +363,9 @@ export class BannerService {
         if (banner.BannerImages && banner.BannerImages.length > 0) {
             try {
                 await this.firebaseService.deleteImage(banner.BannerImages);
-                console.log('All associated images deleted from Firebase.');
+
             } catch (error) {
-                console.error('Error deleting images from Firebase:', error);
+
                 throw new Error('Failed to delete associated images from Firebase');
             }
         }

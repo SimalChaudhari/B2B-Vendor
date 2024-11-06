@@ -86,6 +86,10 @@ export class Banner {
     @PrimaryGeneratedColumn('uuid')
     id!: string;
 
+    
+    @Column()
+    name!: string;
+
     @Column('text', { array: true })
     BannerImages!: string[];
 

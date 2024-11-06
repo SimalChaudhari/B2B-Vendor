@@ -64,6 +64,8 @@ export const paths = {
     viewTerm: (id) => `/view/${id}`,
     profile: `/settings/profile-settings`,
 
+    banner: `/settings/banner`,
+
   },
 
   // Vendor  Panel 
@@ -88,5 +90,6 @@ export const paths = {
   // DASHBOARD
   dashboard: {
     root: ROOTS.DASHBOARD,
+    
   },
 };

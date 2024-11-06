@@ -60,6 +60,6 @@ export class CreateContactDto {
 export class CreateBannerDto {
     @IsNotEmpty()
     @IsString()
-    BannerImages!: string; // URL/path to the logo image
+    name!: string; // URL/path to the logo image
 }
 export class UpdateBannerDto extends PartialType(CreateBannerDto) { }

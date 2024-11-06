@@ -2,7 +2,7 @@
 
 import { Controller, Post, Get, Delete, Param, Body, Put, HttpStatus, Res, UseInterceptors, UploadedFile, UploadedFiles } from '@nestjs/common';
 import { BannerService, ContactUsService, FaqService,  PrivacyPolicyService, TermsConditionsService } from './setting.service';
-import { CreateBannerDto, CreateContactDto, CreateFaqDto, CreatePrivacyPolicyDto, CreateTermsConditionsDto, UpdateFaqDto } from './setting.dto';
+import {  CreateBannerDto, CreateContactDto, CreateFaqDto, CreatePrivacyPolicyDto, CreateTermsConditionsDto, UpdateBannerDto, UpdateFaqDto } from './setting.dto';
 import { ContactUs, PrivacyPolicy, TermsConditions } from './setting.entity';
 import { Response } from 'express';
 import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
@@ -156,18 +156,21 @@ export class BannerController {
   @Post('/create')
   @UseInterceptors(FileFieldsInterceptor([{ name: 'bannerImages', maxCount: 10 }])) // Allow up to 10 images
   async createBanner(
-    @UploadedFiles() files: { bannerImages?: Express.Multer.File[] }
+    @UploadedFiles() files: { bannerImages?: Express.Multer.File[] },
+    @Body() createBannerDto: CreateBannerDto
   ) {
-    return this.bannerService.createBannerWithImages(files.bannerImages || []);
-  }
+    return this.bannerService.createBannerWithImages(files.bannerImages || [], createBannerDto);
+ }
 
   @Put('/update/:id')
   @UseInterceptors(FileFieldsInterceptor([{ name: 'bannerImages', maxCount: 10 }]))
   async updateBanner(
     @Param('id') id: string,
-    @UploadedFiles() files: { bannerImages?: Express.Multer.File[] }
+    @UploadedFiles() files: { bannerImages?: Express.Multer.File[] },
+    @Body() updateBannerDto: UpdateBannerDto
   ) {
-    return this.bannerService.updateBannerImages(id, files.bannerImages || []);
+    return this.bannerService.updateBannerImages(id, files.bannerImages || [], updateBannerDto);
+ 
   }
 
  // Retrieve all banners
