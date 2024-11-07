@@ -19,6 +19,7 @@ import { useState } from 'react';
 import { useFetchProductData } from '../../components/fetch-product';
 import { Link as RouterLink } from 'react-router-dom'; // Import Link from react-router-dom
 import { Typography } from '@mui/material';
+import { paths } from 'src/routes/paths';
 
 
 export function ProductTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
@@ -44,9 +45,15 @@ export function ProductTableRow({ row, selected, onEditRow, onSelectRow, onDelet
                             sx={{ width: 60, height: 60, mr: 2 }}
                         />
                         <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
-                            <Link component={RouterLink} to={`/edit/${row.id}`} color="inherit" sx={{ cursor: 'pointer' }}>
+                            <Link
+                                component={RouterLink}
+                                to={`/products/edit/${row.id}`}
+                                color="inherit"
+                                sx={{ cursor: 'pointer' }}
+                            >
                                 {row.itemName}
                             </Link>
+
                             <Box component="span" sx={{ color: 'text.disabled' }}>
                                 {row.group}
                             </Box>

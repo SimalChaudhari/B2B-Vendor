@@ -21,48 +21,49 @@ export function ProductTableToolbar({ options, filters, onResetPage }) {
     const [availableSubGroup2, setAvailableSubGroup2] = useState([]);
     const [selectedSubGroup2, setSelectedSubGroup2] = useState(filters.state.subGroup2 || []);
 
+
+
     const uniqueGroups = Array.from(
         new Set(options.map(option => option.group.toLowerCase()))
     ).map(group => options.find(option => option.group.toLowerCase() === group).group);
 
     useEffect(() => {
-        // Update available subgroups and filter products
+        // Filtered options based on selected groups only
         const filteredOptions = options.filter(option => {
             const matchesGroup = selectedGroups.length === 0 || selectedGroups.includes(option.group);
-            const matchesSubGroup1 = selectedSubGroup1.length === 0 || selectedSubGroup1.includes(option.subGroup1);
-            const matchesSubGroup2 = selectedSubGroup2.length === 0 || selectedSubGroup2.includes(option.subGroup2);
-            return matchesGroup && matchesSubGroup1 && matchesSubGroup2;
+            return matchesGroup;
         });
-
-        // Update available SubGroup1 based on selected Groups
+    
+        // Update available SubGroup1 based on selected Groups only
         const availableSubGroup1Set = new Set();
         const availableSubGroup2Set = new Set();
-
+    
         filteredOptions.forEach(option => {
             if (selectedGroups.includes(option.group)) {
                 availableSubGroup1Set.add(option.subGroup1);
             }
         });
-
+    
+        // Update available SubGroup1 without removing options based on SubGroup2
         setAvailableSubGroup1(Array.from(availableSubGroup1Set));
-
-        // Update available SubGroup2 based on selected SubGroup1
-        filteredOptions.forEach(option => {
-            if (selectedSubGroup1.includes(option.subGroup1)) {
+    
+        // Update available SubGroup2 based on selected groups and subgroup1 without restriction from each other
+        options.forEach(option => {
+            if (selectedGroups.includes(option.group) || selectedSubGroup1.includes(option.subGroup1)) {
                 availableSubGroup2Set.add(option.subGroup2);
             }
         });
-
+    
         setAvailableSubGroup2(Array.from(availableSubGroup2Set));
-
-        // Filter selected subgroups to ensure they are valid
+    
+        // Filter selected subgroups to ensure they are valid with the new available options
         filters.setState(prev => ({
             ...prev,
             subGroup1: prev.subGroup1.filter(sub => availableSubGroup1Set.has(sub)),
-            subGroup2: prev.subGroup2.filter(sub => availableSubGroup2Set.has(sub))
+            subGroup2: prev.subGroup2.filter(sub => availableSubGroup2Set.has(sub)),
         }));
-    }, [selectedGroups, options, selectedSubGroup1, selectedSubGroup2, filters]);
-
+    }, [selectedGroups, options, selectedSubGroup1, filters]);
+    
     // Handle filter changes
     const handleFilterGroup = useCallback(
         (event) => {
@@ -99,11 +100,18 @@ export function ProductTableToolbar({ options, filters, onResetPage }) {
 
     const handleFilterName = useCallback(
         (event) => {
-            onResetPage();
             filters.setState({ searchTerm: event.target.value });
+            onResetPage();
+
         },
         [filters, onResetPage]
     );
+    // Sync state with filters
+    useEffect(() => {
+        setSelectedGroups(filters.state.group || []); // Ensure it's always an array
+        setSelectedSubGroup1(filters.state.subGroup1 || []); // Ensure it's always an array
+        setSelectedSubGroup2(filters.state.subGroup2 || []); // Ensure it's always an array
+    }, [filters.state.group, filters.state.subGroup1, filters.state.subGroup2]);
 
     return (
 
@@ -203,10 +211,6 @@ export function ProductTableToolbar({ options, filters, onResetPage }) {
                         ),
                     }}
                 />
-
-                <IconButton onClick={popover.onOpen}>
-                    <Iconify icon="eva:more-vertical-fill" />
-                </IconButton>
             </Stack>
         </Stack>
 

@@ -16,7 +16,6 @@ import { useSetState } from 'src/hooks/use-set-state';
 import { varAlpha } from 'src/theme/styles';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { Label } from 'src/components/label';
-import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 import { ConfirmDialog } from 'src/components/custom-dialog';
@@ -34,7 +33,7 @@ import {
 } from 'src/components/table';
 import { ProductTableFiltersResult } from './table/product-table-filters-result';
 import { useDispatch, useSelector } from 'react-redux';
-import { productList, syncProduct } from 'src/store/action/productActions';
+import { syncProduct } from 'src/store/action/productActions';
 import { Typography } from '@mui/material';
 import { getProductStatusOptions, TABLE_PRODUCT_HEAD } from '../../../components/constants';
 
@@ -49,11 +48,8 @@ export function ProductListView() {
     const router = useRouter();
     const confirm = useBoolean();
     const [loading, setLoading] = useState(false);
-
     const { fetchData, fetchDeleteData, fetchDeleteItem } = useFetchProductData(); // Destructure fetchData from the custom hook
-
     const dispatch = useDispatch();
-
     const _productList = useSelector((state) => state.product?.product || []);
 
     const options = _productList.map(opt => ({
@@ -64,13 +60,10 @@ export function ProductListView() {
     }));
 
     const [tableData, setTableData] = useState(_productList);
-
     const STATUS_OPTIONS = getProductStatusOptions(tableData);
-
-    const [openDialog, setOpenDialog] = useState(false);
-
     // Update the initial state to include lastName, email, and mobile
-    const filters = useSetState({ itemName: '', group: '', subGroup1: '', subGroup2: '', status: 'all' });
+    const filters = useSetState({ searchTerm: '', itemName: '', group: '', subGroup1: '', subGroup2: '', status: 'all' });
+
     //----------------------------------------------------------------------------------------------------
     useEffect(() => {
         fetchData(); // Call fetchData when the component mounts
@@ -80,6 +73,36 @@ export function ProductListView() {
         setTableData(_productList);
     }, [_productList]);
     //----------------------------------------------------------------------------------------------------
+
+    // Clear specific group
+    const onClearGroup = useCallback((group) => {
+        filters.setState((prevState) => ({
+            ...prevState,
+            group: prevState.group.filter((g) => g !== group)
+        }));
+    }, [filters]);
+
+    // Clear specific subGroup1
+    const onClearSubGroup1 = useCallback((subGroup1) => {
+        filters.setState((prevState) => ({
+            ...prevState,
+            subGroup1: prevState.subGroup1.filter((sub1) => sub1 !== subGroup1)
+        }));
+    }, [filters]);
+
+    // Clear specific subGroup2
+    const onClearSubGroup2 = useCallback((subGroup2) => {
+        filters.setState((prevState) => ({
+            ...prevState,
+            subGroup2: prevState.subGroup2.filter((sub2) => sub2 !== subGroup2)
+        }));
+    }, [filters]);
+
+
+
+
+
+    //-----------------------------------------------------------------
 
     const dataFiltered = applyFilter({
         inputData: tableData,
@@ -174,12 +197,21 @@ export function ProductListView() {
                             />
                         ))}
                     </Tabs>
-                    <ProductTableToolbar options={options} filters={filters} onResetPage={table.onResetPage} />
+                    <ProductTableToolbar
+                        options={options}
+                        filters={filters}
+                        onResetPage={table.onResetPage}
+
+                    />
                     {canReset && (
                         <ProductTableFiltersResult
                             filters={filters}
                             totalResults={dataFiltered.length}
                             onResetPage={table.onResetPage}
+                            onClearGroup={onClearGroup} // Pass clear group callback
+                            onClearSubGroup1={onClearSubGroup1} // Pass clear subGroup1 callback
+                            onClearSubGroup2={onClearSubGroup2} // Pass clear subGroup2 callback
+
                             sx={{ p: 2.5, pt: 0 }}
                         />
                     )}

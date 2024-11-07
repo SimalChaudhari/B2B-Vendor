@@ -61,7 +61,7 @@ export function VendorListView() {
     const STATUS_OPTIONS = getVendorStatusOptions(tableData);
 
     // Update the initial state to include lastName, email, and mobile
-    const filters = useSetState({ name: '', email: '', status: 'all' });
+    const filters = useSetState({ searchTerm: '' ,name: '', email: '', status: 'all' });
     //----------------------------------------------------------------------------------------------------
     useEffect(() => {
         fetchData(); // Call fetchData when the component mounts

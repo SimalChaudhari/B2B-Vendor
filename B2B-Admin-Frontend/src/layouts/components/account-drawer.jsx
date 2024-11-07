@@ -65,7 +65,7 @@ export function AccountDrawer({ data = [], sx, ...other }) {
         open={open}
         onClick={handleOpenDrawer}
         photoURL={user?.photoURL}
-        displayName={authUser.name}
+        displayName={authUser?.name}
         sx={sx}
         {...other}
       />

@@ -10,26 +10,11 @@ import { ProductDetailsCarousel } from '../components/product-details-carousel';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router';
 import { itemGetByList } from 'src/store/action/productActions';
+import { paths } from 'src/routes/paths';
+import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
 // ----------------------------------------------------------------------
 
-const SUMMARY = [
-  {
-    title: '100% original',
-    description: 'Chocolate bar candy canes ice cream toffee cookie halvah.',
-    icon: 'solar:verified-check-bold',
-  },
-  {
-    title: '10 days replacement',
-    description: 'Marshmallow biscuit donut dragée fruitcake wafer.',
-    icon: 'solar:clock-circle-bold',
-  },
-  {
-    title: 'Year warranty',
-    description: 'Cotton candy gingerbread cake I love sugar sweet.',
-    icon: 'solar:shield-check-bold',
-  },
-];
 
 // ----------------------------------------------------------------------
 
@@ -47,36 +32,22 @@ export function ProductView() {
 
 
   return (
-    <DashboardContent>
-      <Grid container spacing={{ xs: 3, md: 5, lg: 8 }}>
-        <Grid xs={12} md={6} lg={7}>
-          <ProductDetailsCarousel images={products?.productImages ?? []} />
-        </Grid>
-        <Grid xs={12} md={6} lg={5}>
-          {products && <ProductDetailsSummary disableActions products={products} />}
-        </Grid>
-      </Grid>
-
-      <Box
-        gap={5}
-        display="grid"
-        gridTemplateColumns={{ xs: 'repeat(1, 1fr)', md: 'repeat(3, 1fr)' }}
-        sx={{ my: 10 }}
-      >
-        {SUMMARY.map((item) => (
-          <Box key={item.title} sx={{ textAlign: 'center', px: 5 }}>
-            <Iconify icon={item.icon} width={32} sx={{ color: 'primary.main' }} />
-
-            <Typography variant="subtitle1" sx={{ mb: 1, mt: 2 }}>
-              {item.title}
-            </Typography>
-
-            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              {item.description}
-            </Typography>
+    <DashboardContent maxWidth='2xl'>
+      <CustomBreadcrumbs
+        heading="View"
+        links={[
+          { name: 'Dashboard', href: paths.dashboard.root },
+          { name: 'Products', href: paths?.products.root },
+          { name: 'View' },
+        ]}
+        sx={{ mb: { xs: 3, md: 5 } }}
+      />
+     <Grid item xs={12} md={12} lg={12}>
+          <Box>
+            {products && <ProductDetailsSummary disableActions products={products} />}
           </Box>
-        ))}
-      </Box>
+        </Grid>
+  
     </DashboardContent>
   );
 }

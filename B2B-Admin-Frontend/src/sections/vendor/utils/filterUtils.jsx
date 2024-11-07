@@ -17,12 +17,12 @@ export function applyFilter({ inputData, comparator, filters }) {
     filteredData = filteredData.filter((vendor) =>
       vendor.name.toLowerCase().includes(lowerSearchTerm) ||
       vendor.alias.toLowerCase().includes(lowerSearchTerm) ||
-      vendor.parent.toLowerCase().includes(lowerSearchTerm) ||
+    
       vendor.address.toLowerCase().includes(lowerSearchTerm) ||
       vendor.country.toLowerCase().includes(lowerSearchTerm) ||
       vendor.state.toLowerCase().includes(lowerSearchTerm) ||
       vendor.pincode.toString().includes(lowerSearchTerm) || // Convert number to string for search
-      vendor.phone.includes(lowerSearchTerm) || // You can adjust this if you want a case-sensitive match
+      vendor.mobile.includes(lowerSearchTerm) || // You can adjust this if you want a case-sensitive match
       vendor.email.toLowerCase().includes(lowerSearchTerm) 
     );
   }

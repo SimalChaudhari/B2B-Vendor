@@ -45,7 +45,7 @@ export function VendorTableRow({ row, selected, onEditRow, onSelectRow, onDelete
                     </Stack>
                 </TableCell>
                 <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.alias || 'not available'}</TableCell>
-                <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.phone || 'not available'}</TableCell>
+                <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.mobile || 'not available'}</TableCell>
                 <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.address || 'not available'}</TableCell>
                 <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.country || 'not available'}</TableCell>
                 <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.state || 'not available'}</TableCell>

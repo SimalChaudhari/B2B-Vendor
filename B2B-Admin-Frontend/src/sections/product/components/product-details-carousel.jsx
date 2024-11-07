@@ -1,7 +1,5 @@
 import { useEffect } from 'react';
-
 import Box from '@mui/material/Box';
-
 import { Image } from 'src/components/image';
 import { Lightbox, useLightBox } from 'src/components/lightbox';
 import {
@@ -15,6 +13,7 @@ import {
 // ----------------------------------------------------------------------
 
 export function ProductDetailsCarousel({ images }) {
+  
   const carousel = useCarousel({
     thumbs: {
       slidesToShow: 'auto',
@@ -43,7 +42,7 @@ export function ProductDetailsCarousel({ images }) {
             sx={{ right: 16, bottom: 16, position: 'absolute' }}
           />
 
-          <Carousel carousel={carousel} sx={{ borderRadius: 2 }}>
+          <Carousel carousel={carousel} sx={{ borderRadius: 2, maxWidth: 200, mx: 'auto' }}>
             {slides.map((slide) => (
               <Image
                 key={slide.src}
@@ -51,7 +50,7 @@ export function ProductDetailsCarousel({ images }) {
                 src={slide.src}
                 ratio="1/1"
                 onClick={() => lightbox.onOpen(slide.src)}
-                sx={{ cursor: 'zoom-in', minWidth: 320 }}
+                sx={{ cursor: 'zoom-in', width: 200, height: 200 }}
               />
             ))}
           </Carousel>
@@ -61,7 +60,7 @@ export function ProductDetailsCarousel({ images }) {
           ref={carousel.thumbs.thumbsRef}
           options={carousel.options?.thumbs}
           slotProps={{ disableMask: true }}
-          sx={{ width: 360 }}
+          sx={{ width: 260, mx: 'auto' }}
         >
           {slides.map((item, index) => (
             <CarouselThumb
@@ -70,6 +69,14 @@ export function ProductDetailsCarousel({ images }) {
               src={item.src}
               selected={index === carousel.thumbs.selectedIndex}
               onClick={() => carousel.thumbs.onClickThumb(index)}
+              sx={{
+                width: 50,
+                height: 50,
+                borderRadius: 1,
+                border: '1px solid',
+                borderColor: index === carousel.thumbs.selectedIndex ? 'primary.main' : 'grey.300',
+                cursor: 'pointer',
+              }}
             />
           ))}
         </CarouselThumbs>
