@@ -120,7 +120,7 @@ export function VendorListView() {
                     heading="List"
                     links={[
                         { name: 'Dashboard', href: paths.dashboard.root },
-                        { name: 'Vendor', href: paths?.dashboard?.vendor?.root },
+                        { name: 'Vendor', href: paths?.vendors?.root },
                         { name: 'List' },
                     ]}
                     action={

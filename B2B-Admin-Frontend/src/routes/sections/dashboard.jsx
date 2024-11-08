@@ -13,6 +13,7 @@ import { VendorEditView } from 'src/sections/vendor/view/vendor-edit';
 import { ItemView } from 'src/sections/vendor-sections/product/view';
 import { CheckoutListView } from 'src/sections/vendor-sections/checkout/view/checkout-list';
 import { OrderDetailsView } from 'src/sections/order/view';
+import { BannerCreateView, BannerEditView, BannerView } from 'src/sections/setting/banner/view';
 
 // Overview
 const IndexPage = lazy(() => import('src/pages/dashboard'));
@@ -118,6 +119,9 @@ export const dashboardRoutes = [
       { path: 'profile-settings', element: <ProfilePage /> },
 
       { path: 'banner', element: <BannerPage /> },
+      { path: 'banner/create', element: <BannerCreateView/> },
+      { path: 'banner/edit/:id', element: <BannerEditView/> },
+      { path: 'banner/view/:id', element: <BannerView/> },
 
 
     ],

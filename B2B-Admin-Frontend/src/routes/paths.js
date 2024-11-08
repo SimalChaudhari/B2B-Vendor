@@ -65,6 +65,9 @@ export const paths = {
     profile: `/settings/profile-settings`,
 
     banner: `/settings/banner`,
+    createBanner: `/create`,
+    editBanner: (id) => `/edit/${id}`,
+    viewBanner: (id) => `/view/${id}`,
 
   },
 

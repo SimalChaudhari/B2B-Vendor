@@ -1,4 +1,4 @@
-import { FAQ_LIST, FAQ_GET_BY_LIST, CONTACT_GET_BY_LIST, CONTACT_LIST, TERM_LIST, TERM_GET_BY_LIST } from "../constants/actionTypes";
+import { FAQ_LIST, FAQ_GET_BY_LIST, CONTACT_GET_BY_LIST, CONTACT_LIST, TERM_LIST, TERM_GET_BY_LIST, BANNER_LIST, BANNER_GET_BY_LIST } from "../constants/actionTypes";
 
 const initialState = {
     faq: [],
@@ -6,7 +6,9 @@ const initialState = {
     termCondition: [],
     getByFAQ: '',
     getByContact: '',
-    getByTermCondition: ''
+    getByTermCondition: '',
+    banner: [],
+    getByBanner: ''
 
 };
 const settingReducer = (state = initialState, { type, payload } = {}) => {
@@ -43,6 +45,20 @@ const settingReducer = (state = initialState, { type, payload } = {}) => {
                 ...state,
                 getByTermCondition: payload,
             };
+
+        case BANNER_LIST:
+            return {
+                ...state,
+                banner: payload,
+            };
+
+        case BANNER_GET_BY_LIST:
+            return {
+                ...state,
+                getByBanner: payload,
+            };
+
+
         default:
             return state;
     }

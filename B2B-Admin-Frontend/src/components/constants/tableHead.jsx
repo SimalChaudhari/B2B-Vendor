@@ -53,8 +53,6 @@ export const TABLE_VENDOR_HEAD = [
   { id: 'action', label: 'Actions' }
 ];
 
-
-
 export const TABLE_FAQ_HEAD = [
   { id: 'question', label: 'Question' },
   { id: 'answer', label: 'Answer' },
@@ -74,3 +72,10 @@ export const TABLE_TERM_HEAD = [
   { id: 'content', label: 'Term & Conditions' },
   { id: 'action', label: 'Actions' },
 ];
+
+export const TABLE_BANNER_HEAD = [
+  { id: 'bannerImage', label: 'Banner Image' },
+  { id: 'name', label: 'name' },
+  { id: 'action', label: 'Actions' },
+];
+

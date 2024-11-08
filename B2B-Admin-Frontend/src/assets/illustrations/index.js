@@ -30,6 +30,16 @@ export { default as TotalOrderIcon } from './order-total-illustration'
 
 export { default as PendingOrderIcon } from './order-pending-illustration'
 
+export { default as TotalVendorsIcon } from './vendor-total-illustration'
+
+export { default as TotalProductsIcon } from './products-total-illustration'
+export { default as CompleteOrderIcon } from './complete-order-illustration'
+
+
+
+
+
+
 
 
 

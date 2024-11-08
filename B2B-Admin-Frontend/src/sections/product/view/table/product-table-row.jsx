@@ -11,15 +11,11 @@ import Checkbox from '@mui/material/Checkbox';
 import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
 import { useBoolean } from 'src/hooks/use-boolean';
-import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { usePopover, CustomPopover } from 'src/components/custom-popover';
-import { useState } from 'react';
 import { useFetchProductData } from '../../components/fetch-product';
 import { Link as RouterLink } from 'react-router-dom'; // Import Link from react-router-dom
-import { Typography } from '@mui/material';
-import { paths } from 'src/routes/paths';
 
 
 export function ProductTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
@@ -95,8 +91,6 @@ export function ProductTableRow({ row, selected, onEditRow, onSelectRow, onDelet
                                 </IconButton>
                             </Link>
                         </Tooltip>
-
-
 
                         <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
                             <Iconify icon="eva:more-vertical-fill" />

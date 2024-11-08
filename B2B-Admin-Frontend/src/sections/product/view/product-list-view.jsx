@@ -48,6 +48,8 @@ export function ProductListView() {
     const router = useRouter();
     const confirm = useBoolean();
     const [loading, setLoading] = useState(false);
+    const confirmSync = useBoolean(); // Separate confirmation state for syncing
+
     const { fetchData, fetchDeleteData, fetchDeleteItem } = useFetchProductData(); // Destructure fetchData from the custom hook
     const dispatch = useDispatch();
     const _productList = useSelector((state) => state.product?.product || []);
@@ -132,15 +134,21 @@ export function ProductListView() {
         [filters, table]
     );
 
-    const handleSyncAPI = async () => {
-        setLoading(true); // Set loading to true
-        const res = await dispatch(syncProduct());
-        if (res) {
-            fetchData(); // Fetch data after syncing
-
+    // Function to trigger sync API after confirmation
+    const handleSyncAPI = useCallback(async () => {
+        setLoading(true); // Set loading to true while syncing
+        try {
+            const res = await dispatch(syncProduct()); // Call the sync API
+            if (res) {
+                fetchData(); // Fetch data after syncing
+            }
+        } catch (error) {
+            console.error("Failed to sync products", error);
+        } finally {
+            setLoading(false); // Reset loading state
+            confirmSync.onFalse(); // Close the confirmation dialog
         }
-        setLoading(false); // Set loading to false after the API call completes
-    };
+    }, [dispatch, fetchData, confirmSync]);
 
     //----------------------------------------------------------------------------------------------------
 
@@ -157,10 +165,10 @@ export function ProductListView() {
                     action={
                         <Button
                             // href={paths?.dashboard?.user?.new}
-                            onClick={handleSyncAPI} // Open the dialog on click
+                            onClick={confirmSync.onTrue} // Open the sync confirmation dialog
                             variant="contained"
-                            startIcon={<Iconify icon="eva:sync-fill" />} // Changed icon
-                            disabled={loading} // Disable button while loading
+                            startIcon={<Iconify icon="eva:sync-fill" />}
+                            disabled={loading}
                         >
                             {loading ? 'Syncing...' : 'Sync product'}
                         </Button>
@@ -292,6 +300,30 @@ export function ProductListView() {
                     />
                 </Card>
             </DashboardContent>
+
+            {/* Sync Confirmation Dialog */}
+            <ConfirmDialog
+                open={confirmSync.value}
+                onClose={confirmSync.onFalse}
+                content={
+                    <Box>
+                        <Typography gutterBottom>Are you sure you want to sync the products?</Typography>
+                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                            This action will update the product data and may take a few moments.
+                        </Typography>
+                    </Box>
+                }
+                action={
+                    <Button
+                        onClick={handleSyncAPI} // Trigger sync API call on confirmation
+                        variant="contained"
+                        color="primary"
+                        disabled={loading} // Disable button while loading
+                    >
+                        {loading ? 'Syncing...' : 'Confirm Sync'}
+                    </Button>
+                }
+            />
 
             <ConfirmDialog
                 open={confirm.value}

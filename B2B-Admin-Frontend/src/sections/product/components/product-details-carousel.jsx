@@ -10,17 +10,20 @@ import {
   CarouselArrowNumberButtons,
 } from 'src/components/carousel';
 
+// Dummy image URL for fallback
+const DUMMY_IMAGE = 'https://media.istockphoto.com/id/1409329028/vector/no-picture-available-placeholder-thumbnail-icon-illustration-design.jpg?s=612x612&w=0&k=20&c=_zOuJu755g2eEUioiOUdz_mHKJQJn-tDgIAhQzyeKUQ='; // Replace with your own placeholder image if needed
+
 // ----------------------------------------------------------------------
 
 export function ProductDetailsCarousel({ images }) {
-  
   const carousel = useCarousel({
     thumbs: {
       slidesToShow: 'auto',
     },
   });
 
-  const slides = images?.map((img) => ({ src: img })) || [];
+  // Use the dummy image if no images are provided
+  const slides = (images && images.length > 0 ? images : [DUMMY_IMAGE]).map((img) => ({ src: img }));
 
   const lightbox = useLightBox(slides);
 
@@ -46,10 +49,10 @@ export function ProductDetailsCarousel({ images }) {
             {slides.map((slide) => (
               <Image
                 key={slide.src}
-                alt={slide.src}
-                src={slide.src}
+                alt="Product Image"
+                src={slide.src || DUMMY_IMAGE} // Use DUMMY_IMAGE if src is not available
                 ratio="1/1"
-                onClick={() => lightbox.onOpen(slide.src)}
+                onClick={() => lightbox.onOpen(slide.src || DUMMY_IMAGE)}
                 sx={{ cursor: 'zoom-in', width: 200, height: 200 }}
               />
             ))}
@@ -66,7 +69,7 @@ export function ProductDetailsCarousel({ images }) {
             <CarouselThumb
               key={item.src}
               index={index}
-              src={item.src}
+              src={item.src || DUMMY_IMAGE} // Use DUMMY_IMAGE for thumbnail if src is missing
               selected={index === carousel.thumbs.selectedIndex}
               onClick={() => carousel.thumbs.onClickThumb(index)}
               sx={{

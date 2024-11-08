@@ -263,6 +263,7 @@ export default function ProductNewEditForm({ currentProduct }) {
                             maxSize={3145728}
                             onRemove={(file) => handleRemoveFile(file, 'dimensionalFiles')}
                             onRemoveAll={() => handleRemoveAllFiles('dimensionalFiles')}
+                            
                         // onUpload={() => console.info('ON UPLOAD')}
                         // onUpload={() => onSubmit()}
                         />

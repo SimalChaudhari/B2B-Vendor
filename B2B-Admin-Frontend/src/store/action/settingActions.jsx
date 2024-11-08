@@ -1,6 +1,6 @@
 import { toast } from "sonner";
 import axiosInstance from "src/configs/axiosInstance";
-import {CONTACT_GET_BY_LIST, CONTACT_LIST, FAQ_GET_BY_LIST, FAQ_LIST, TERM_GET_BY_LIST, TERM_LIST } from "../constants/actionTypes";
+import {BANNER_GET_BY_LIST, BANNER_LIST, CONTACT_GET_BY_LIST, CONTACT_LIST, FAQ_GET_BY_LIST, FAQ_LIST, TERM_GET_BY_LIST, TERM_LIST } from "../constants/actionTypes";
 
 // FAQ Settings
 export const FAQList = () => async (dispatch) => {
@@ -242,6 +242,92 @@ export const deleteTerm = (termId) => async (dispatch) => {
         // Check if the response is successful
         if (response && response.status >= 200 && response.status < 300) {
             toast.success(response.data.message || 'terms-conditions deleted successfully!');
+            return true; // Indicate successful deletion
+        }
+    } catch (error) {
+        // Handle errors appropriately
+        const errorMessage = error?.response?.data?.message || 'An unexpected error occurred. Please try again.';
+        toast.error(errorMessage);
+    }
+    return false; // Return false for any errors or unsuccessful attempts
+};
+
+
+
+// Banner
+
+export const bannerList = () => async (dispatch) => {
+    try {
+        const response = await axiosInstance.get('/banner/all');
+         dispatch({
+            type: BANNER_LIST,
+            payload: response.data, // Assuming response contains the customers data
+        });
+        return true;
+    } catch (error) {
+        // Check if error response exists and handle error message
+        const errorMessage = error?.response?.data?.message || 'An unexpected error occurred. Please try again.';
+        toast.error(errorMessage);
+    }
+    return false; // Return false for any errors
+};
+
+export const bannerGetByList = (id) => async (dispatch) => {
+    try {
+        const response = await axiosInstance.get(`/banner/${id}`);
+        console.log("🚀 ~ bannerGetByList ~ response:", response)
+        dispatch({
+            type: BANNER_GET_BY_LIST,
+            payload: response.data, // Assuming response contains the customers data
+        });
+        return true;
+    } catch (error) {
+        // Check if error response exists and handle error message
+        const errorMessage = error?.response?.data?.message || 'An unexpected error occurred. Please try again.';
+        toast.error(errorMessage);
+    }
+    return false; // Return false for any errors
+};
+
+export const createBanner = (bannerData) => async (dispatch) => {
+    try {
+        const response = await axiosInstance.post('/banner/create', bannerData);
+        if (response && response.status >= 200 && response.status < 300) {
+            toast.success(response.data.message || 'banner created successfully!');
+            return true;
+        }
+        return true;
+    } catch (error) {
+        // Check if error response exists and handle error message
+        const errorMessage = error?.response?.data?.message || 'An unexpected error occurred. Please try again.';
+        toast.error(errorMessage);
+    }
+    return false; // Return false for any errors
+};
+
+export const editBanner = (bannerId, bannerData) => async (dispatch) => {
+    try {
+        const response = await axiosInstance.put(`/banner/update/${bannerId}`, bannerData);
+
+        // Check if the response is successful
+        if (response && response.status >= 200 && response.status < 300) {
+            toast.success(response.data.message || 'banner updated successfully!');
+            return true; // Indicate successful update
+        }
+    } catch (error) {
+        // Handle errors appropriately
+        const errorMessage = error?.response?.data?.message || 'An unexpected error occurred. Please try again.';
+        toast.error(errorMessage);
+    }
+    return false; // Return false for any errors or unsuccessful attempts
+};
+
+export const deleteBanner = (bannerId) => async (dispatch) => {
+    try {
+        const response = await axiosInstance.delete(`/banner/delete/${bannerId}`);
+        // Check if the response is successful
+        if (response && response.status >= 200 && response.status < 300) {
+            toast.success(response.data.message || 'banner deleted successfully!');
             return true; // Indicate successful deletion
         }
     } catch (error) {

@@ -28,7 +28,7 @@ export function ProductEditView() {
                 heading="List"
                 links={[
                     { name: 'Dashboard', href: paths.dashboard.root },
-                    { name: 'Products', href: paths?.dashboard?.product?.root },
+                    { name: 'Products', href: paths?.products.root },
                     { name: 'List' },
                 ]}
                 sx={{ mb: { xs: 3, md: 5 } }}

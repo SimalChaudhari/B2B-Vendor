@@ -27,6 +27,9 @@ export const CART_LIST = "CART_LIST"
 export const ORDER_BY_LIST = "ORDER_BY_LIST"
 export const Order_LIST = "Order_LIST"
 
+export const BANNER_GET_BY_LIST = "BANNER_GET_BY_LIST"
+export const BANNER_LIST = "BANNER_LIST"
+
 
 
 
