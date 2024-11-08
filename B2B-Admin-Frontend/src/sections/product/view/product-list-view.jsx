@@ -36,7 +36,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { syncProduct } from 'src/store/action/productActions';
 import { Typography } from '@mui/material';
 import { getProductStatusOptions, TABLE_PRODUCT_HEAD } from '../../../components/constants';
-
 import { applyFilter } from '../utils';
 import { ProductTableRow } from './table/product-table-row';
 import { ProductTableToolbar } from './table/product-table-toolbar';
@@ -45,14 +44,16 @@ import { useFetchProductData } from '../components/fetch-product';
 // ----------------------------------------------------------------------
 export function ProductListView() {
     const table = useTable();
-    const router = useRouter();
     const confirm = useBoolean();
-    const [loading, setLoading] = useState(false);
     const confirmSync = useBoolean(); // Separate confirmation state for syncing
+    const [loading, setLoading] = useState(false);
+    const [selectedRows, setSelectedRows] = useState([]); // Store selected row IDs
 
     const { fetchData, fetchDeleteData, fetchDeleteItem } = useFetchProductData(); // Destructure fetchData from the custom hook
     const dispatch = useDispatch();
     const _productList = useSelector((state) => state.product?.product || []);
+    const [tableData, setTableData] = useState(_productList);
+    const STATUS_OPTIONS = getProductStatusOptions(tableData);
 
     const options = _productList.map(opt => ({
         group: opt.group,
@@ -60,9 +61,6 @@ export function ProductListView() {
         subGroup2: opt.subGroup2,
 
     }));
-
-    const [tableData, setTableData] = useState(_productList);
-    const STATUS_OPTIONS = getProductStatusOptions(tableData);
     // Update the initial state to include lastName, email, and mobile
     const filters = useSetState({ searchTerm: '', itemName: '', group: '', subGroup1: '', subGroup2: '', status: 'all' });
 
@@ -76,6 +74,20 @@ export function ProductListView() {
     }, [_productList]);
     //----------------------------------------------------------------------------------------------------
 
+    const handleSelectRow = useCallback((id) => {
+        setSelectedRows((prev) =>
+            prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
+        );
+    }, []);
+
+    const handleDeleteSelectedRows = useCallback(() => {
+        selectedRows.forEach((id) => fetchDeleteItem(id));
+        setSelectedRows([]);
+        fetchData(); // Refresh data after deletion
+        confirm.onFalse();
+    }, [selectedRows, fetchDeleteItem, fetchData]);
+
+    //----------------------------------------------------------------------------------------------------
     // Clear specific group
     const onClearGroup = useCallback((group) => {
         filters.setState((prevState) => ({
@@ -227,16 +239,11 @@ export function ProductListView() {
                     <Box sx={{ position: 'relative' }}>
                         <TableSelectedAction
                             dense={table.dense}
-                            numSelected={table.selected.length}
+                            numSelected={selectedRows.length}
                             rowCount={dataFiltered.length}
-                            onSelectAllRows={(checked) =>
-                                table.onSelectAllRows(
-                                    checked,
-                                    dataFiltered.map((row) => row.id)
-                                )
-                            }
+                            onSelectAllRows={(checked) => setSelectedRows(checked ? dataFiltered.map(row => row.id) : [])}
                             action={
-                                <Tooltip title="Delete">
+                                <Tooltip title="Delete Selected">
                                     <IconButton color="primary" onClick={confirm.onTrue}>
                                         <Iconify icon="solar:trash-bin-trash-bold" />
                                     </IconButton>
@@ -250,14 +257,12 @@ export function ProductListView() {
                                     orderBy={table.orderBy}
                                     headLabel={TABLE_PRODUCT_HEAD}
                                     rowCount={dataFiltered.length}
-                                    numSelected={table.selected.length}
+                                    numSelected={selectedRows.length}
                                     onSort={table.onSort}
                                     onSelectAllRows={(checked) =>
-                                        table.onSelectAllRows(
-                                            checked,
-                                            dataFiltered.map((row) => row.id)
-                                        )
+                                        setSelectedRows(checked ? dataFiltered.map((row) => row.id) : [])
                                     }
+
                                 />
 
                                 <TableBody>
@@ -268,8 +273,8 @@ export function ProductListView() {
                                         <ProductTableRow
                                             key={row.id}
                                             row={row}
-                                            selected={table.selected.includes(row.id)}
-                                            onSelectRow={() => table.onSelectRow(row.id)}
+                                            selected={selectedRows.includes(row.id)}
+                                            onSelectRow={() => handleSelectRow(row.id)}
                                             onDeleteRow={() => handleDeleteRow(row.id)}
                                             onEditRow={() => handleEditRow(row.id)}
                                             onViewRow={() => handleViewRow(row.id)}
@@ -338,7 +343,7 @@ export function ProductListView() {
                     </Box>
                 }
                 action={
-                    <Button onClick={handleDeleteRows} variant="contained" color="error">
+                    <Button variant="contained" color="error" onClick={handleDeleteSelectedRows}>
                         Delete
                     </Button>
                 }

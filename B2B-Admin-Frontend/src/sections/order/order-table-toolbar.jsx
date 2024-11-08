@@ -92,9 +92,7 @@ export function OrderTableToolbar({ filters, onResetPage, dateError }) {
             }}
           />
 
-          <IconButton onClick={popover.onOpen}>
-            <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
+         
         </Stack>
       </Stack>
 

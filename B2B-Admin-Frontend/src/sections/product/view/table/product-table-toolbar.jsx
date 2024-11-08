@@ -21,7 +21,8 @@ export function ProductTableToolbar({ options, filters, onResetPage }) {
     const [availableSubGroup2, setAvailableSubGroup2] = useState([]);
     const [selectedSubGroup2, setSelectedSubGroup2] = useState(filters.state.subGroup2 || []);
 
-
+    // const [triggerUpdate, setTriggerUpdate] = useState(false); // State to trigger useEffect manually
+    // setTriggerUpdate(!triggerUpdate)
 
     const uniqueGroups = Array.from(
         new Set(options.map(option => option.group.toLowerCase()))
@@ -62,7 +63,9 @@ export function ProductTableToolbar({ options, filters, onResetPage }) {
             subGroup1: prev.subGroup1.filter(sub => availableSubGroup1Set.has(sub)),
             subGroup2: prev.subGroup2.filter(sub => availableSubGroup2Set.has(sub)),
         }));
-    }, [selectedGroups, options, selectedSubGroup1, filters]);
+    // }, [selectedGroups, options, selectedSubGroup1, filters]);
+    }, [selectedGroups, selectedSubGroup1]);
+
     
     // Handle filter changes
     const handleFilterGroup = useCallback(

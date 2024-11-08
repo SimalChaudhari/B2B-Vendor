@@ -16,7 +16,6 @@ import { useSetState } from 'src/hooks/use-set-state';
 import { varAlpha } from 'src/theme/styles';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { Label } from 'src/components/label';
-import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 import { ConfirmDialog } from 'src/components/custom-dialog';
@@ -44,9 +43,10 @@ import { FAQTableRow } from './table/faqs-table-row';
 // ----------------------------------------------------------------------
 export function FAQsListView() {
     const table = useTable();
-    const router = useRouter();
     const confirm = useBoolean();
     const [loading, setLoading] = useState(false);
+    const [selectedRows, setSelectedRows] = useState([]); // Store selected row IDs
+
 
     const { fetchFAQData, fetchDeleteFAQData } = useFetchFAQData(); // Destructure fetchData from the custom hook
 
@@ -59,7 +59,7 @@ export function FAQsListView() {
     const STATUS_OPTIONS = getFAQStatusOptions(tableData);
 
     // Update the initial state to include 
-    const filters = useSetState({ question: '', answer: '', status: 'all' });
+    const filters = useSetState({ searchTerm : '' ,question: '', answer: '', status: 'all' });
     //----------------------------------------------------------------------------------------------------
     useEffect(() => {
         fetchFAQData(); // Call fetchData when the component mounts
@@ -68,6 +68,22 @@ export function FAQsListView() {
     useEffect(() => {
         setTableData(_FAQList);
     }, [_FAQList]);
+    //----------------------------------------------------------------------------------------------------
+
+
+    const handleSelectRow = useCallback((id) => {
+        setSelectedRows((prev) =>
+            prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
+        );
+    }, []);
+
+    const handleDeleteSelectedRows = useCallback(() => {
+        selectedRows.forEach((id) => fetchDeleteFAQData(id));
+        setSelectedRows([]);
+        fetchFAQData(); // Refresh data after deletion
+        confirm.onFalse();
+    }, [selectedRows, fetchDeleteFAQData, fetchFAQData]);
+
     //----------------------------------------------------------------------------------------------------
 
     const dataFiltered = applyFilter({
@@ -80,7 +96,6 @@ export function FAQsListView() {
 
     //----------------------------------------------------------------------------------------------------
 
-    const handleDeleteRows = useCallback((id) => { fetchDeleteFAQData(id) }, []);
 
     const handleDeleteRow = useCallback((id) => { fetchDeleteFAQData(id) }, []);
 
@@ -167,14 +182,9 @@ export function FAQsListView() {
                     <Box sx={{ position: 'relative' }}>
                         <TableSelectedAction
                             dense={table.dense}
-                            numSelected={table.selected.length}
+                            numSelected={selectedRows.length}
                             rowCount={dataFiltered.length}
-                            onSelectAllRows={(checked) =>
-                                table.onSelectAllRows(
-                                    checked,
-                                    dataFiltered.map((row) => row.id)
-                                )
-                            }
+                            onSelectAllRows={(checked) => setSelectedRows(checked ? dataFiltered.map(row => row.id) : [])}
                             action={
                                 <Tooltip title="Delete">
                                     <IconButton color="primary" onClick={confirm.onTrue}>
@@ -190,13 +200,10 @@ export function FAQsListView() {
                                     orderBy={table.orderBy}
                                     headLabel={TABLE_FAQ_HEAD}
                                     rowCount={dataFiltered.length}
-                                    numSelected={table.selected.length}
+                                    numSelected={selectedRows.length}
                                     onSort={table.onSort}
                                     onSelectAllRows={(checked) =>
-                                        table.onSelectAllRows(
-                                            checked,
-                                            dataFiltered.map((row) => row.id)
-                                        )
+                                      setSelectedRows(checked ? dataFiltered.map((row) => row.id) : [])
                                     }
                                 />
 
@@ -208,8 +215,8 @@ export function FAQsListView() {
                                         <FAQTableRow
                                             key={row.id}
                                             row={row}
-                                            selected={table.selected.includes(row.id)}
-                                            onSelectRow={() => table.onSelectRow(row.id)}
+                                            selected={selectedRows.includes(row.id)}
+                                            onSelectRow={() => handleSelectRow(row.id)}
                                             onDeleteRow={() => handleDeleteRow(row.id)}
                                             onEditRow={() => handleEditRow(row.id)}
                                             onViewRow={() => handleViewRow(row.id)}
@@ -254,7 +261,7 @@ export function FAQsListView() {
                     </Box>
                 }
                 action={
-                    <Button onClick={handleDeleteRows} variant="contained" color="error">
+                    <Button onClick={handleDeleteSelectedRows} variant="contained" color="error">
                         Delete
                     </Button>
                 }

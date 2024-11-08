@@ -21,22 +21,11 @@ import { useFetchFAQData } from '../../components/fetch-FAQ';
 
 
 export function FAQTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
-    // console.log("🚀 ~ FAQTableRow ~ row:", row)
     const confirm = useBoolean();
     const { fetchFAQData } = useFetchFAQData();
 
     const popover = usePopover();
-    const quickEdit = useBoolean();
-    const quickView = useBoolean();
-    const [openDialog, setOpenDialog] = useState(false);
-
-    const handleOpenDialog = () => {
-        setOpenDialog(true);
-    };
-
-    const handleCloseDialog = () => {
-        setOpenDialog(false);
-    };
+  
 
     return (
         <>

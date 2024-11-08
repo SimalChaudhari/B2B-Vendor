@@ -34,21 +34,11 @@ export function ContactTableRow({ row, selected, onEditRow, onSelectRow, onDelet
                     <Checkbox id={row.id} checked={selected} onClick={onSelectRow} />
                 </TableCell>
 
-                <TableCell sx={{
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    maxWidth: '200px', // Set a width that fits your layout
-                }}>
+                <TableCell >
                     {row.name || 'not available'}
                 </TableCell>
 
-                <TableCell sx={{
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    maxWidth: '200px', // Set a width that fits your layout
-                }}>
+                <TableCell>
                     {row.email || 'not available'}
                 </TableCell>
 

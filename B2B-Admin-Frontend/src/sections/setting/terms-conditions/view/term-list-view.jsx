@@ -46,6 +46,8 @@ export function TermsListView() {
     const router = useRouter();
     const confirm = useBoolean();
     const [loading, setLoading] = useState(false);
+    const [selectedRows, setSelectedRows] = useState([]); // Store selected row IDs
+
 
     const { fetchTermData, fetchDeleteTermData } = useFetchTermData(); // Destructure fetchData from the custom hook
 
@@ -56,7 +58,7 @@ export function TermsListView() {
     const [tableData, setTableData] = useState(_termList);
 
     // Update the initial state to include 
-    const filters = useSetState({ content: '' });
+    const filters = useSetState({ searchTerm : '' ,content: '' });
     //----------------------------------------------------------------------------------------------------
     useEffect(() => {
         fetchTermData(); // Call fetchData when the component mounts
@@ -65,6 +67,20 @@ export function TermsListView() {
     useEffect(() => {
         setTableData(_termList);
     }, [_termList]);
+    //----------------------------------------------------------------------------------------------------
+    const handleSelectRow = useCallback((id) => {
+        setSelectedRows((prev) =>
+            prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
+        );
+    }, []);
+
+    const handleDeleteSelectedRows = useCallback(() => {
+        selectedRows.forEach((id) => fetchDeleteTermData(id));
+        setSelectedRows([]);
+        fetchTermData(); // Refresh data after deletion
+        confirm.onFalse();
+    }, [selectedRows, fetchDeleteTermData, fetchTermData]);
+
     //----------------------------------------------------------------------------------------------------
 
     const dataFiltered = applyFilter({
@@ -77,8 +93,7 @@ export function TermsListView() {
 
     //----------------------------------------------------------------------------------------------------
 
-    const handleDeleteRows = useCallback((id) => { fetchDeleteTermData(id) }, []);
-
+ 
     const handleDeleteRow = useCallback((id) => { fetchDeleteTermData(id) }, []);
 
     const handleEditRow = useCallback((id) => id, []);
@@ -128,14 +143,9 @@ export function TermsListView() {
                     <Box sx={{ position: 'relative' }}>
                         <TableSelectedAction
                             dense={table.dense}
-                            numSelected={table.selected.length}
+                            numSelected={selectedRows.length}
                             rowCount={dataFiltered.length}
-                            onSelectAllRows={(checked) =>
-                                table.onSelectAllRows(
-                                    checked,
-                                    dataFiltered.map((row) => row.id)
-                                )
-                            }
+                            onSelectAllRows={(checked) => setSelectedRows(checked ? dataFiltered.map(row => row.id) : [])}
                             action={
                                 <Tooltip title="Delete">
                                     <IconButton color="primary" onClick={confirm.onTrue}>
@@ -151,16 +161,12 @@ export function TermsListView() {
                                     orderBy={table.orderBy}
                                     headLabel={TABLE_TERM_HEAD}
                                     rowCount={dataFiltered.length}
-                                    numSelected={table.selected.length}
+                                    numSelected={selectedRows.length}
                                     onSort={table.onSort}
                                     onSelectAllRows={(checked) =>
-                                        table.onSelectAllRows(
-                                            checked,
-                                            dataFiltered.map((row) => row.id)
-                                        )
+                                      setSelectedRows(checked ? dataFiltered.map((row) => row.id) : [])
                                     }
                                 />
-
                                 <TableBody>
                                     {dataFiltered.slice(
                                         table.page * table.rowsPerPage,
@@ -169,8 +175,8 @@ export function TermsListView() {
                                         <TermTableRow
                                             key={row.id}
                                             row={row}
-                                            selected={table.selected.includes(row.id)}
-                                            onSelectRow={() => table.onSelectRow(row.id)}
+                                            selected={selectedRows.includes(row.id)}
+                                            onSelectRow={() => handleSelectRow(row.id)}
                                             onDeleteRow={() => handleDeleteRow(row.id)}
                                             onEditRow={() => handleEditRow(row.id)}
                                             onViewRow={() => handleViewRow(row.id)}
@@ -215,7 +221,7 @@ export function TermsListView() {
                     </Box>
                 }
                 action={
-                    <Button onClick={handleDeleteRows} variant="contained" color="error">
+                    <Button onClick={handleDeleteSelectedRows} variant="contained" color="error">
                         Delete
                     </Button>
                 }

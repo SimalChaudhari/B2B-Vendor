@@ -1,6 +1,5 @@
 import { useDispatch } from 'react-redux';
-import { addressList, deleteAddress } from 'src/store/action/addressActions';
-import { deleteProduct, itemList, productList ,deleteItem } from 'src/store/action/productActions';
+import { deleteProduct, itemList ,deleteItem } from 'src/store/action/productActions';
 
 
 export const useFetchProductData = () => {

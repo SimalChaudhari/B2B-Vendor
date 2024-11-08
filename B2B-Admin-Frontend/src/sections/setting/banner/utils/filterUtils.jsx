@@ -9,9 +9,7 @@ export function applyFilter({ inputData, comparator, filters }) {
       const lowerSearchTerm = searchTerm.toLowerCase();
   
       filteredData = filteredData.filter((item) =>
-        item.name.toLowerCase().includes(lowerSearchTerm) ||
-        item.email.toLowerCase().includes(lowerSearchTerm) ||
-        item.message.toLowerCase().includes(lowerSearchTerm) 
+        item.name.toLowerCase().includes(lowerSearchTerm) 
 
       )
     }

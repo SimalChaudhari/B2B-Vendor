@@ -47,6 +47,8 @@ export function ContactListView() {
     const router = useRouter();
     const confirm = useBoolean();
     const [loading, setLoading] = useState(false);
+    const [selectedRows, setSelectedRows] = useState([]); // Store selected row IDs
+
 
     const { fetchContactData, fetchDeleteContactData } = useFetchContactData(); // Destructure fetchData from the custom hook
 
@@ -58,7 +60,7 @@ export function ContactListView() {
     const [tableData, setTableData] = useState(_contactList);
 
     // Update the initial state to include 
-    const filters = useSetState({ question: '', answer: '', message: '' });
+    const filters = useSetState({ searchTerm : '',question: '', answer: '', message: '' });
     //----------------------------------------------------------------------------------------------------
     useEffect(() => {
         fetchContactData(); // Call fetchData when the component mounts
@@ -67,6 +69,21 @@ export function ContactListView() {
     useEffect(() => {
         setTableData(_contactList);
     }, [_contactList]);
+    //----------------------------------------------------------------------------------------------------
+
+    const handleSelectRow = useCallback((id) => {
+        setSelectedRows((prev) =>
+            prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
+        );
+    }, []);
+
+    const handleDeleteSelectedRows = useCallback(() => {
+        selectedRows.forEach((id) => fetchDeleteContactData(id));
+        setSelectedRows([]);
+        fetchContactData(); // Refresh data after deletion
+        confirm.onFalse();
+    }, [selectedRows, fetchDeleteContactData, fetchContactData]);
+
     //----------------------------------------------------------------------------------------------------
 
     const dataFiltered = applyFilter({
@@ -79,7 +96,6 @@ export function ContactListView() {
 
     //----------------------------------------------------------------------------------------------------
 
-    const handleDeleteRows = useCallback((id) => { fetchDeleteContactData(id) }, []);
 
     const handleDeleteRow = useCallback((id) => { fetchDeleteContactData(id) }, []);
 
@@ -130,14 +146,9 @@ export function ContactListView() {
                     <Box sx={{ position: 'relative' }}>
                         <TableSelectedAction
                             dense={table.dense}
-                            numSelected={table.selected.length}
+                            numSelected={selectedRows.length}
                             rowCount={dataFiltered.length}
-                            onSelectAllRows={(checked) =>
-                                table.onSelectAllRows(
-                                    checked,
-                                    dataFiltered.map((row) => row.id)
-                                )
-                            }
+                            onSelectAllRows={(checked) => setSelectedRows(checked ? dataFiltered.map(row => row.id) : [])}
                             action={
                                 <Tooltip title="Delete">
                                     <IconButton color="primary" onClick={confirm.onTrue}>
@@ -153,15 +164,13 @@ export function ContactListView() {
                                     orderBy={table.orderBy}
                                     headLabel={TABLE_CONTACT_HEAD}
                                     rowCount={dataFiltered.length}
-                                    numSelected={table.selected.length}
+                                    numSelected={selectedRows.length}
                                     onSort={table.onSort}
                                     onSelectAllRows={(checked) =>
-                                        table.onSelectAllRows(
-                                            checked,
-                                            dataFiltered.map((row) => row.id)
-                                        )
+                                      setSelectedRows(checked ? dataFiltered.map((row) => row.id) : [])
                                     }
                                 />
+                          
 
                                 <TableBody>
                                     {dataFiltered.slice(
@@ -171,8 +180,8 @@ export function ContactListView() {
                                         <ContactTableRow
                                             key={row.id}
                                             row={row}
-                                            selected={table.selected.includes(row.id)}
-                                            onSelectRow={() => table.onSelectRow(row.id)}
+                                            selected={selectedRows.includes(row.id)}
+                                            onSelectRow={() => handleSelectRow(row.id)}
                                             onDeleteRow={() => handleDeleteRow(row.id)}
                                             onEditRow={() => handleEditRow(row.id)}
                                             onViewRow={() => handleViewRow(row.id)}
@@ -217,7 +226,7 @@ export function ContactListView() {
                     </Box>
                 }
                 action={
-                    <Button onClick={handleDeleteRows} variant="contained" color="error">
+                    <Button onClick={handleDeleteSelectedRows} variant="contained" color="error">
                         Delete
                     </Button>
                 }

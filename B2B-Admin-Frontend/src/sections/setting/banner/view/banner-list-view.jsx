@@ -45,6 +45,8 @@ export function BannerListView() {
     const router = useRouter();
     const confirm = useBoolean();
     const [loading, setLoading] = useState(false);
+    const [selectedRows, setSelectedRows] = useState([]); // Store selected row IDs
+
 
     const { fetchBannerData, fetchDeleteBannerData } = useFetchBannerData();
 
@@ -55,7 +57,7 @@ export function BannerListView() {
     const [tableData, setTableData] = useState(bannerList);
 
     // Initialize filters state
-    const filters = useSetState({ searchTerm: '' });
+    const filters = useSetState({ searchTerm: '' ,name:''});
 
     useEffect(() => {
         fetchBannerData(); // Fetch banners when the component mounts
@@ -65,6 +67,23 @@ export function BannerListView() {
         setTableData(bannerList);
     }, [bannerList]);
 
+    //----------------------------------------------------------------------------------------------------
+
+    const handleSelectRow = useCallback((id) => {
+        setSelectedRows((prev) =>
+            prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
+        );
+    }, []);
+
+    const handleDeleteSelectedRows = useCallback(() => {
+        selectedRows.forEach((id) => fetchDeleteBannerData(id));
+        setSelectedRows([]);
+        fetchBannerData(); // Refresh data after deletion
+        confirm.onFalse();
+    }, [selectedRows, fetchDeleteBannerData, fetchBannerData]);
+
+    //----------------------------------------------------------------------------------------------------
+
     const dataFiltered = applyFilter({
         inputData: tableData,
         comparator: getComparator(table.order, table.orderBy),
@@ -73,7 +92,6 @@ export function BannerListView() {
     const canReset = !!filters.state.searchTerm;
     const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
 
-    const handleDeleteRows = useCallback((id) => { fetchDeleteBannerData(id) }, []);
 
     const handleDeleteRow = useCallback((id) => { fetchDeleteBannerData(id) }, []);
 
@@ -122,14 +140,9 @@ export function BannerListView() {
                     <Box sx={{ position: 'relative' }}>
                         <TableSelectedAction
                             dense={table.dense}
-                            numSelected={table.selected.length}
+                            numSelected={selectedRows.length}
                             rowCount={dataFiltered.length}
-                            onSelectAllRows={(checked) =>
-                                table.onSelectAllRows(
-                                    checked,
-                                    dataFiltered.map((row) => row.id)
-                                )
-                            }
+                            onSelectAllRows={(checked) => setSelectedRows(checked ? dataFiltered.map(row => row.id) : [])}
                             action={
                                 <Tooltip title="Delete">
                                     <IconButton color="primary" onClick={confirm.onTrue}>
@@ -145,13 +158,10 @@ export function BannerListView() {
                                     orderBy={table.orderBy}
                                     headLabel={TABLE_BANNER_HEAD}
                                     rowCount={dataFiltered.length}
-                                    numSelected={table.selected.length}
+                                    numSelected={selectedRows.length}
                                     onSort={table.onSort}
                                     onSelectAllRows={(checked) =>
-                                        table.onSelectAllRows(
-                                            checked,
-                                            dataFiltered.map((row) => row.id)
-                                        )
+                                      setSelectedRows(checked ? dataFiltered.map((row) => row.id) : [])
                                     }
                                 />
 
@@ -163,8 +173,8 @@ export function BannerListView() {
                                         <BannerTableRow
                                             key={row.id}
                                             row={row}
-                                            selected={table.selected.includes(row.id)}
-                                            onSelectRow={() => table.onSelectRow(row.id)}
+                                            selected={selectedRows.includes(row.id)}
+                                            onSelectRow={() => handleSelectRow(row.id)}
                                             onDeleteRow={() => handleDeleteRow(row.id)}
                                             onEditRow={() => handleEditRow(row.id)}
                                             onViewRow={() => handleViewRow(row.id)}
@@ -207,7 +217,7 @@ export function BannerListView() {
                     </Box>
                 }
                 action={
-                    <Button onClick={handleDeleteRows} variant="contained" color="error">
+                    <Button onClick={handleDeleteSelectedRows} variant="contained" color="error">
                         Delete
                     </Button>
                 }

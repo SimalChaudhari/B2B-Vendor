@@ -47,6 +47,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useFetchOrderData } from '../components/fetch-order';
 import useUserRole from 'src/layouts/components/user-role';
 import { syncOrder } from 'src/store/action/orderActions';
+import { Typography } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -58,13 +59,16 @@ export function OrderListView() {
   const table = useTable();
   const confirm = useBoolean();
   const userRole = useUserRole();
+  const [selectedRows, setSelectedRows] = useState([]); // Store selected row IDs
+
+
+
   const { fetchData, fetchDeleteData } = useFetchOrderData(); // Destructure fetchData from the custom hook
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const _orders = useSelector((state) =>
     userRole === 'Admin' ? state.order?.order || [] : state.order?.order?.orders || []
   );
-
   const [tableData, setTableData] = useState(_orders);
   const filters = useSetState({
     name: '',
@@ -103,6 +107,21 @@ export function OrderListView() {
   //----------------------------------------------------------------------------------------------------
 
 
+
+    const handleSelectRow = useCallback((id) => {
+        setSelectedRows((prev) =>
+            prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
+        );
+    }, []);
+
+    const handleDeleteSelectedRows = useCallback(() => {
+        selectedRows.forEach((id) => fetchDeleteData(id));
+        setSelectedRows([]);
+        fetchData(); // Refresh data after deletion
+        confirm.onFalse();
+    }, [selectedRows, fetchDeleteData, fetchData]);
+
+    //----------------------------------------------------------------------------------------------------
   const dataFiltered = applyFilter({
     inputData: tableData,
     comparator: getComparator(table.order, table.orderBy),
@@ -228,14 +247,10 @@ export function OrderListView() {
           <Box sx={{ position: 'relative' }}>
             <TableSelectedAction
               dense={table.dense}
-              numSelected={table.selected.length}
+              numSelected={selectedRows.length}
               rowCount={dataFiltered.length}
-              onSelectAllRows={(checked) =>
-                table.onSelectAllRows(
-                  checked,
-                  dataFiltered.map((row) => row.id)
-                )
-              }
+              onSelectAllRows={(checked) => setSelectedRows(checked ? dataFiltered.map(row => row.id) : [])}
+                         
               action={
                 <Tooltip title="Delete">
                   <IconButton color="primary" onClick={confirm.onTrue}>
@@ -252,13 +267,11 @@ export function OrderListView() {
                   orderBy={table.orderBy}
                   headLabel={TABLE_HEAD}
                   rowCount={dataFiltered.length}
-                  numSelected={table.selected.length}
+                  numSelected={selectedRows.length}
+                                  
                   onSort={table.onSort}
                   onSelectAllRows={(checked) =>
-                    table.onSelectAllRows(
-                      checked,
-                      dataFiltered.map((row) => row.id)
-                    )
+                      setSelectedRows(checked ? dataFiltered.map((row) => row.id) : [])
                   }
                 />
 
@@ -272,8 +285,8 @@ export function OrderListView() {
                       <OrderTableRow
                         key={row.id}
                         row={row}
-                        selected={table.selected.includes(row.id)}
-                        onSelectRow={() => table.onSelectRow(row.id)}
+                        selected={selectedRows.includes(row.id)}
+                        onSelectRow={() => handleSelectRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.id)}
                         onViewRow={() => handleViewRow(row.id)}
                       />
@@ -305,18 +318,21 @@ export function OrderListView() {
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Delete"
+        title="Delete Orders?"
         content={
-          <div>
-            Are you sure want to delete <strong> {table.selected.length} </strong> items?
-          </div>
+            <Box>
+                <Typography gutterBottom>Are you sure you want to delete the selected Orders?</Typography>
+                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                    This action cannot be undone.
+                </Typography>
+            </Box>
         }
         action={
           <Button
             variant="contained"
             color="error"
             onClick={() => {
-              handleDeleteRows();
+              handleDeleteSelectedRows();
               confirm.onFalse();
             }}
           >
