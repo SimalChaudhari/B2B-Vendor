@@ -14,7 +14,7 @@ export function TermCreateView() {
                 heading="Create"
                 links={[
                     { name: 'Dashboard', href: paths.dashboard.root },
-                    { name: 'Term', href: paths?.dashboard?.term?.root },
+                    { name: 'Term & Conditions', href: paths?.settings.terms_conditions },
                     { name: 'Create' },
                 ]}
                 sx={{ mb: { xs: 3, md: 5 } }}

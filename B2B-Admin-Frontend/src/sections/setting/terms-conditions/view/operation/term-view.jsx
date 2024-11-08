@@ -36,7 +36,7 @@ export function TermView() {
                     value: term.content ? (
                         <span
                             // eslint-disable-next-line react/no-danger
-                            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize( term.content) }} />
+                            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(term.content) }} />
                     ) : 'not available',
                     icon: <Iconify icon="mdi:message-text-outline" />, // Message icon
                 },
@@ -98,7 +98,7 @@ export function TermView() {
                 heading="List"
                 links={[
                     { name: 'Dashboard', href: paths.dashboard.root },
-                    { name: 'Term', href: paths?.dashboard?.term?.root },
+                    { name: 'Term & Conditions', href: paths?.settings.terms_conditions },
                     { name: 'List' },
                 ]}
                 sx={{ mb: { xs: 3, md: 5 } }}

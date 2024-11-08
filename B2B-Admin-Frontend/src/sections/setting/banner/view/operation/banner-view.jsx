@@ -32,7 +32,7 @@ export function BannerView() {
                 heading="Banner Details"
                 links={[
                     { name: 'Dashboard', href: paths.dashboard.root },
-                    { name: 'Banners', href: paths.settings.banner },
+                    { name: 'Banner', href: paths?.settings?.banner },
                     { name: 'Details' },
                 ]}
                 sx={{ mb: { xs: 3, md: 5 } }}

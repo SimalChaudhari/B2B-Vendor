@@ -29,7 +29,7 @@ export function TermEditView() {
                 heading="Edit"
                 links={[
                     { name: 'Dashboard', href: paths.dashboard.root },
-                    { name: 'Term', href: paths?.dashboard?.term?.root },
+                    { name: 'Term & Conditions', href: paths?.settings.terms_conditions },
                     { name: 'Edit' },
                 ]}
                 sx={{ mb: { xs: 3, md: 5 } }}

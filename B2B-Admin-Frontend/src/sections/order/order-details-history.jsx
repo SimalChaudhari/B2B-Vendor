@@ -37,14 +37,7 @@ export function OrderDetailsHistory({ orderDate, history }) {
         <Box sx={{ color: 'text.disabled' }}>Order time</Box>
         {fDateTime(orderDate)}
       </Stack>
-      <Stack spacing={0.5}>
-        <Box sx={{ color: 'text.disabled' }}>Payment time</Box>
-        {fDateTime(orderDate)}
-      </Stack>
-      <Stack spacing={0.5}>
-        <Box sx={{ color: 'text.disabled' }}>Delivery time for the carrier</Box>
-        {fDateTime(orderDate)}
-      </Stack>
+   
       <Stack spacing={0.5}>
         <Box sx={{ color: 'text.disabled' }}>Completion time</Box>
         {fDateTime(orderDate)}
@@ -57,7 +50,7 @@ export function OrderDetailsHistory({ orderDate, history }) {
       sx={{ p: 0, m: 0, [`& .${timelineItemClasses.root}:before`]: { flex: 0, padding: 0 } }}
     >
       {history?.map((item, index) => {
-        console.log("🚀 ~ {history?.timeline.map ~ item:", item)
+       
         const firstTimeline = index === 0;
 
         const lastTimeline = index === history.length - 1;

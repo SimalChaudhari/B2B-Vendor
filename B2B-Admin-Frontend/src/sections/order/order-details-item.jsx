@@ -32,11 +32,7 @@ export function OrderDetailsItems({
     <Card>
       <CardHeader
         title="Details"
-        action={
-          <IconButton>
-            <Iconify icon="solar:pen-bold" />
-          </IconButton>
-        }
+       
       />
 
       <Scrollbar>

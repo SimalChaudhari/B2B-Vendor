@@ -28,7 +28,7 @@ export function FAQEditView() {
                 heading="Edit"
                 links={[
                     { name: 'Dashboard', href: paths.dashboard.root },
-                    { name: 'FAQs', href: paths?.dashboard?.faq?.root },
+                    { name: 'FAQ', href: paths?.settings.faq },
                     { name: 'Edit' },
                 ]}
                 sx={{ mb: { xs: 3, md: 5 } }}

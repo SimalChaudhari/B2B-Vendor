@@ -45,9 +45,7 @@ export function ContactTableToolbar({  filters, onResetPage }) {
                         }}
                     />
 
-                    <IconButton onClick={popover.onOpen}>
-                        <Iconify icon="eva:more-vertical-fill" />
-                    </IconButton>
+                  
                 </Stack>
             </Stack>
 

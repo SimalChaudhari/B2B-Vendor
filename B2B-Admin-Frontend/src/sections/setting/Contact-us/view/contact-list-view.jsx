@@ -111,7 +111,7 @@ export function ContactListView() {
                     heading="List"
                     links={[
                         { name: 'Dashboard', href: paths.dashboard.root },
-                        { name: 'Contact', href: paths?.dashboard?.contact?.root },
+                        { name: 'Contact', href: paths?.settings.contact_us },
                         { name: 'List' },
                     ]}
                     action={

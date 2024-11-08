@@ -108,7 +108,7 @@ export function TermsListView() {
                     heading="List"
                     links={[
                         { name: 'Dashboard', href: paths.dashboard.root },
-                        { name: 'Term & Conditions', href: paths?.dashboard?.term?.root },
+                        { name: 'Term & Conditions', href: paths?.settings.terms_conditions },
                         { name: 'List' },
                     ]}
                     action={

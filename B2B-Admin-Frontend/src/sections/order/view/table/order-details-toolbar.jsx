@@ -56,35 +56,7 @@ export function OrderDetailsToolbar({
           </Stack>
         </Stack>
 
-        <Stack
-          flexGrow={1}
-          spacing={1.5}
-          direction="row"
-          alignItems="center"
-          justifyContent="flex-end"
-        >
-          <Button
-            color="inherit"
-            variant="outlined"
-            endIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}
-            onClick={popover.onOpen}
-            sx={{ textTransform: 'capitalize' }}
-          >
-            {status}
-          </Button>
-
-          <Button
-            color="inherit"
-            variant="outlined"
-            startIcon={<Iconify icon="solar:printer-minimalistic-bold" />}
-          >
-            Print
-          </Button>
-
-          <Button color="inherit" variant="contained" startIcon={<Iconify icon="solar:pen-bold" />}>
-            Edit
-          </Button>
-        </Stack>
+      
       </Stack>
 
       <CustomPopover

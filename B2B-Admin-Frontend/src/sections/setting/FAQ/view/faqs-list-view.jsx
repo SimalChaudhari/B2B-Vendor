@@ -119,7 +119,7 @@ export function FAQsListView() {
                     heading="List"
                     links={[
                         { name: 'Dashboard', href: paths.dashboard.root },
-                        { name: 'FAQ', href: paths?.dashboard?.product?.root },
+                        { name: 'FAQs', href: paths?.settings.faq },
                         { name: 'List' },
                     ]}
                     action={

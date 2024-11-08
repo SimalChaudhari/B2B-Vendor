@@ -39,7 +39,6 @@ export function OrderDetailsView() {
     { title: 'Delivery successful', time: order?.createdAt },
     { title: 'Transporting to [2]', time: order?.createdAt },
     { title: 'Transporting to [1]', time: order?.createdAt },
-    { title: 'The shipping unit has picked up the goods', time: order?.createdAt },
     { title: 'Order has been created', time: order?.createdAt },
   ]
 

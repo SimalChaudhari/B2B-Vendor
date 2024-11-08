@@ -30,7 +30,7 @@ export function BannerEditView() {
                 heading="Edit"
                 links={[
                     { name: 'Dashboard', href: paths.dashboard.root },
-                    { name: 'Banner', href: paths?.dashboard?.banner?.root },
+                    { name: 'Banner', href: paths?.settings?.banner },
                     { name: 'Edit' },
                 ]}
                 sx={{ mb: { xs: 3, md: 5 } }}

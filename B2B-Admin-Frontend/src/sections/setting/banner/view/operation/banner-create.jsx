@@ -14,7 +14,7 @@ export function BannerCreateView() {
                 heading="Create"
                 links={[
                     { name: 'Dashboard', href: paths.dashboard.root },
-                    { name: 'Banner', href: paths?.dashboard?.contact?.root },
+                    { name: 'Banner', href: paths?.settings?.banner },
                     { name: 'Create' },
                 ]}
                 sx={{ mb: { xs: 3, md: 5 } }}

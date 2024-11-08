@@ -14,7 +14,7 @@ export function ContactCreateView() {
                 heading="Create"
                 links={[
                     { name: 'Dashboard', href: paths.dashboard.root },
-                    { name: 'FAQs', href: paths?.dashboard?.contact?.root },
+                    { name: 'Contact', href: paths?.settings.contact_us },
                     { name: 'Create' },
                 ]}
                 sx={{ mb: { xs: 3, md: 5 } }}

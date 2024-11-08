@@ -14,7 +14,7 @@ export function FAQCreateView() {
                 heading="Create"
                 links={[
                     { name: 'Dashboard', href: paths.dashboard.root },
-                    { name: 'FAQs', href: paths?.dashboard?.faq?.root },
+                    { name: 'FAQ', href: paths?.settings.faq },
                     { name: 'Create' },
                 ]}
                 sx={{ mb: { xs: 3, md: 5 } }}

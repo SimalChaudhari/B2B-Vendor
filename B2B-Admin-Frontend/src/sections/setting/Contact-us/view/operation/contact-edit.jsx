@@ -28,7 +28,7 @@ export function ContactEditView() {
                 heading="Edit"
                 links={[
                     { name: 'Dashboard', href: paths.dashboard.root },
-                    { name: 'Contact', href: paths?.dashboard?.contact?.root },
+                    { name: 'Contact', href: paths?.settings.contact_us },
                     { name: 'Edit' },
                 ]}
                 sx={{ mb: { xs: 3, md: 5 } }}

@@ -106,7 +106,7 @@ export function BannerListView() {
                     heading="Banner List"
                     links={[
                         { name: 'Dashboard', href: paths.dashboard.root },
-                        { name: 'Banner', href: paths?.dashboard?.banner?.root },
+                        { name: 'Banner', href: paths?.settings?.banner },
                         { name: 'List' },
                     ]}
                     action={

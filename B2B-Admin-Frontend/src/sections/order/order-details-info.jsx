@@ -18,11 +18,7 @@ export function OrderDetailsInfo({ customer, shippingAddress }) {
     <>
       <CardHeader
         title="Customer info"
-        action={
-          <IconButton>
-            <Iconify icon="solar:pen-bold" />
-          </IconButton>
-        }
+      
       />
       <Stack direction="row" sx={{ p: 3 }}>
         <Avatar
@@ -46,11 +42,7 @@ export function OrderDetailsInfo({ customer, shippingAddress }) {
     <>
       <CardHeader
         title="Shipping"
-        action={
-          <IconButton>
-            <Iconify icon="solar:pen-bold" />
-          </IconButton>
-        }
+       
       />
       <Stack spacing={1.5} sx={{ p: 3, typography: 'body2' }}>
       <Stack direction="row">

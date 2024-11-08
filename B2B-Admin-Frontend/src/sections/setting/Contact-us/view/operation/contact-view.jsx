@@ -109,7 +109,7 @@ export function ContactView() {
                 heading="List"
                 links={[
                     { name: 'Dashboard', href: paths.dashboard.root },
-                    { name: 'contacts', href: paths?.dashboard?.contact?.root },
+                     { name: 'Contact', href: paths?.settings.contact_us },
                     { name: 'List' },
                 ]}
                 sx={{ mb: { xs: 3, md: 5 } }}
