@@ -42,6 +42,14 @@ export const TABLE_PRODUCT_HEAD = [
   { id: 'action', label: 'Actions' },
 ];
 
+export const TABLE_STOCK_HEAD = [
+  { id: 'item', label: 'Item Name' },
+  { id: 'subGroup1', label: 'Sub-Group' },
+  { id: 'subGroup2', label: 'Sub-Group 2' },
+  { id: 'quantity', label: 'Quantity' },
+  { id: 'gstRate', label: 'GST Rate' }
+];
+
 export const TABLE_VENDOR_HEAD = [
   { id: 'name', label: 'Name' },
   { id: 'alias', label: 'Alias' },

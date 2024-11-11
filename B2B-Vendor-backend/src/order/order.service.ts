@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OrderEntity, OrderStatus } from './order.entity';
 import { User } from 'users/user/users.entity';
@@ -95,19 +95,32 @@ export class OrderService {
     }
     // Helper function to generate a unique order number
     private async generateUniqueOrderNumber(): Promise<string> {
-        while (true) {
-            // Generate a random number between 10000 and 99999
-            const randomNo = Math.floor(10000 + Math.random() * 90000);
-            const orderNo = `#${randomNo}`;
-
-            // Check if the generated order number already exists in the database
-            const existingOrder = await this.orderRepository.findOne({ where: { orderNo } });
-
-            if (!existingOrder) {
-                return orderNo; // Return the order number if unique
+        try {
+            // Retrieve the highest order number from the database
+            const lastOrder = await this.orderRepository.find({
+                select: ['orderNo'],
+                order: { orderNo: 'DESC' },
+                take: 1,
+            });
+    
+            let nextOrderNo: number;
+    
+            if (lastOrder.length > 0) {
+                // Parse the highest order number as an integer and increment it
+                nextOrderNo = parseInt(lastOrder[0].orderNo, 10) + 1;
+            } else {
+                // If no orders exist, start from 1
+                nextOrderNo = 1;
             }
+    
+            // Return the incremented order number as a string
+            return nextOrderNo.toString();
+        } catch (error) {
+            throw new InternalServerErrorException('Error generating unique order number');
         }
     }
+    
+    
 
 
     async getOrdersByUserId(userId: string): Promise<any> {

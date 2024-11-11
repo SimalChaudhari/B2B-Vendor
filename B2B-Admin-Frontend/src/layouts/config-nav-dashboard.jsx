@@ -13,6 +13,7 @@ const ICONS = {
   vendors: icon('ic-kanban'),
   orders: icon('ic-order'),
   settings: icon('ic-lock'),
+  stocks: icon('ic-job'),
 };
 
 export const useNavData = () => {
@@ -50,6 +51,8 @@ export const useNavData = () => {
             { title: 'Products', path: paths.products.root, icon: ICONS.products },
             { title: 'Vendors', path: paths.vendors.root, icon: ICONS.vendors },
             { title: 'Orders', path: paths.orders.root, icon: ICONS.orders },
+            { title: 'Stocks Summary', path: paths.stocks.root, icon: ICONS.stocks },
+
             {
               title: 'Settings',
               path: paths.settings.root,

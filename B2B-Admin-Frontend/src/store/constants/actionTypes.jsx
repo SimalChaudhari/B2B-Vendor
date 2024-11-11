@@ -30,6 +30,7 @@ export const Order_LIST = "Order_LIST"
 export const BANNER_GET_BY_LIST = "BANNER_GET_BY_LIST"
 export const BANNER_LIST = "BANNER_LIST"
 
+export const STOCK_LIST = "STOCK_LIST"
 
 
 

@@ -89,8 +89,8 @@ import {
   
       cartItem.quantity += quantityChange;
   
-      if (cartItem.quantity < 1) {
-        throw new HttpException('Quantity cannot be less than 1', HttpStatus.BAD_REQUEST);
+      if (cartItem.quantity < 100) {
+        throw new HttpException('Quantity cannot be less than 100', HttpStatus.BAD_REQUEST);
       }
   
       return this.cartRepository.save(cartItem);

@@ -24,13 +24,13 @@ import {
     @Patch('/increment/:cartItemId')
     async incrementQuantity(@Req() req: Request, @Param('cartItemId') cartItemId: string) {
       const userId = req.user.id;
-      return this.cartService.updateCartItemQuantity(userId, cartItemId, 1); // Increment by 1
+      return this.cartService.updateCartItemQuantity(userId, cartItemId, 100); // Increment by 1
     }
   
     @Patch('/decrement/:cartItemId')
     async decrementQuantity(@Req() req: Request, @Param('cartItemId') cartItemId: string) {
       const userId = req.user.id;
-      return this.cartService.updateCartItemQuantity(userId, cartItemId, -1); // Decrement by 1
+      return this.cartService.updateCartItemQuantity(userId, cartItemId, -100); // Decrement by 1
     }
   
     @Post('/add')

@@ -17,6 +17,8 @@ import { BannerCreateView, BannerEditView, BannerView } from 'src/sections/setti
 const IndexPage = lazy(() => import('src/pages/dashboard'));
 const UsersPage = lazy(() => import('src/pages/users'));
 const ProductPage = lazy(() => import('src/pages/products'));
+const StockPage = lazy(() => import('src/pages/stock-summary'));
+
 const OrderPage = lazy(() => import('src/pages/orders'));
 const VendorPage = lazy(() => import('src/pages/vendors'));
 const FAQPage = lazy(() => import('src/pages/settings/faq'));
@@ -86,6 +88,16 @@ export const dashboardRoutes = [
       { element: <OrderPage />, index: true },
       { path: 'details/:id', element: <OrderDetailsView /> },
   
+    ],
+  },
+
+  {
+    path: 'stocks',
+    element: CONFIG.auth.skip ? <>{layoutContent}</> : <AuthGuard>{layoutContent}</AuthGuard>,
+    children: [
+   
+      { element: <StockPage />, index: true }
+
     ],
   },
 

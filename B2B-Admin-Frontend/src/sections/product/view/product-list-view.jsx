@@ -182,7 +182,7 @@ export function ProductListView() {
                             startIcon={<Iconify icon="eva:sync-fill" />}
                             disabled={loading}
                         >
-                            {loading ? 'Syncing...' : 'Sync product'}
+                            {loading ? 'Syncing...' : 'Sync Products'}
                         </Button>
                     }
                     sx={{ mb: { xs: 3, md: 5 } }}

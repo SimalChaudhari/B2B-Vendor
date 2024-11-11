@@ -26,7 +26,14 @@ export const paths = {
     root: `/products`,
     list: `/products/list`,
     details: (id) => `/products/${id}`,
-    // edit: (id) => `/products/${id}/edit`,
+    edit: (id) => `/edit/${id}`,
+    view: (id) => `/view/${id}`,
+  },
+
+  stocks: {
+    root: `/stocks`,
+    list: `/stocks/list`,
+    details: (id) => `/stocks/${id}`,
     edit: (id) => `/edit/${id}`,
     view: (id) => `/view/${id}`,
   },
@@ -53,12 +60,8 @@ export const paths = {
     view: (id) => `/view/${id}`,
 
     contact_us: `/settings/contact-us`,
-
-    // privacy_policy: `/settings/privacy-policy`,
     terms_conditions: `/settings/terms-conditions`,
-  
     profile: `/settings/profile-settings`,
-
     banner: `/settings/banner`,
     createBanner: `/create`,
     editBanner: (id) => `/edit/${id}`,
@@ -75,7 +78,6 @@ export const paths = {
     edit: (id) => `/edit/${id}`,
     view: (id) => `/view/${id}`,
   },
-
 
   // AUTH
   auth: {

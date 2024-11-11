@@ -12,6 +12,7 @@ import vendorReducer from './reducer/vendorReducer';
 import cartReducer from './reducer/cartReducer';
 import orderReducer from './reducer/orderReducer';
 import dashboardReducer from './reducer/dashboardReducer';
+import stockReducer from './reducer/stockSummaryReducer';
 
 // Combine your reducers
 const rootReducer = combineReducers({
@@ -25,7 +26,8 @@ const rootReducer = combineReducers({
   vendor: vendorReducer,
   cart: cartReducer,
   order: orderReducer,
-  dash: dashboardReducer
+  dash: dashboardReducer,
+  stock : stockReducer
 
 
 
