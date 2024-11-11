@@ -16,6 +16,7 @@ import { ConfirmDialog } from 'src/components/custom-dialog';
 import { usePopover, CustomPopover } from 'src/components/custom-popover';
 import { Link as RouterLink } from 'react-router-dom'; // Import Link from react-router-dom
 import { useFetchFAQData } from '../../components/fetch-FAQ';
+import { useState } from 'react';
 
 
 export function FAQTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
@@ -23,7 +24,15 @@ export function FAQTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow
     const { fetchFAQData } = useFetchFAQData();
 
     const popover = usePopover();
-  
+
+    // State for managing the popover
+    const [anchorEl, setAnchorEl] = useState(null);
+
+    // Handle opening and closing of the popover
+    const handlePopoverOpen = (event) => setAnchorEl(event.currentTarget);
+
+    // Strip HTML tags from the answer for display
+    const strippedAnswer = row.answer ? row.answer.replace(/<\/?[^>]+(>|$)/g, "") : 'not available';
 
     return (
         <>
@@ -36,20 +45,25 @@ export function FAQTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
-                    maxWidth: '200px', // Set a width that fits your layout
+                    maxWidth: '140px', // Set a width that fits your layout
                 }}>
                     {row.question || 'not available'}
                 </TableCell>
+
+                {/* Answer Cell with ellipsis for overflow */}
                 <TableCell
                     sx={{
                         whiteSpace: 'nowrap',
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
-                        maxWidth: '200px', // Set a width that fits your layout
+                        maxWidth: '200px',
+                        cursor: 'pointer', // Indicate that it's clickable
                     }}
-                    dangerouslySetInnerHTML={{ __html: row.answer || 'not available' }} // Render HTML content
-                />
-
+                    title={strippedAnswer}
+                    onClick={handlePopoverOpen} // Open popover on click
+                >
+                    {strippedAnswer}
+                </TableCell>
 
                 <TableCell>
                     <Label

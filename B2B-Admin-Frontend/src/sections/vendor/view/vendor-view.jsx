@@ -37,7 +37,7 @@ export function VendorView() {
         heading="View"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Vendors', href: paths?.dashboard?.vendor?.root },
+          { name: 'Vendors', href: paths?.vendors?.root },
           { name: 'View' },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}

@@ -143,6 +143,7 @@ export class PrivacyPolicyService {
 }
 
 // term And Condition
+
 @Injectable()
 export class TermsConditionsService {
     constructor(
@@ -150,61 +151,42 @@ export class TermsConditionsService {
         private termsConditionsRepository: Repository<TermsConditions>
     ) { }
 
-    async create(createTermsConditionsDto: CreateTermsConditionsDto): Promise<{ message: string; data: TermsConditions }> {
+    async getOrShow(): Promise<TermsConditions | null> {
         try {
-            const termsConditions = this.termsConditionsRepository.create(createTermsConditionsDto);
-            const savedTerms = await this.termsConditionsRepository.save(termsConditions);
-            return { message: 'Terms and Conditions created successfully', data: savedTerms };
-        } catch (error: any) {
-            throw new InternalServerErrorException('Error creating terms and conditions', error.message);
-        }
-    }
+            // Use `find` with `take: 1` to get the first Terms and Conditions entry
+            const [termsConditions] = await this.termsConditionsRepository.find({
+                take: 1,
+                order: { id: 'ASC' } // Adjust ordering if necessary
+            });
 
-    async findAll(): Promise<TermsConditions[]> {
-        try {
-            return await this.termsConditionsRepository.find();
+            return termsConditions || null; // Return null if no entry is found
         } catch (error: any) {
             throw new InternalServerErrorException('Error retrieving terms and conditions', error.message);
         }
     }
 
-    async findOne(id: string): Promise<TermsConditions> {
+
+    async createOrUpdate(createTermsConditionsDto: CreateTermsConditionsDto): Promise<{ message: string; data: TermsConditions }> {
         try {
-            const termsConditions = await this.termsConditionsRepository.findOneBy({ id });
-            if (!termsConditions) {
-                throw new NotFoundException(`Terms and Conditions with ID ${id} not found`);
+            // Use `find` with `take: 1` to get the first Terms and Conditions entry
+            const [termsConditions] = await this.termsConditionsRepository.find({
+                take: 1,
+                order: { id: 'ASC' } // Adjust ordering if necessary
+            });
+
+            if (termsConditions) {
+                // Update existing Terms and Conditions
+                const updatedTerms = this.termsConditionsRepository.merge(termsConditions, createTermsConditionsDto);
+                const result = await this.termsConditionsRepository.save(updatedTerms);
+                return { message: 'Terms and Conditions updated successfully', data: result };
+            } else {
+                // Create new Terms and Conditions if none exists
+                const newTerms = this.termsConditionsRepository.create(createTermsConditionsDto);
+                const result = await this.termsConditionsRepository.save(newTerms);
+                return { message: 'Terms and Conditions created successfully', data: result };
             }
-            return termsConditions;
         } catch (error: any) {
-            throw new InternalServerErrorException('Error retrieving the terms and conditions', error.message);
-        }
-    }
-
-    async update(id: string, updateTermsConditionsDto: CreateTermsConditionsDto): Promise<{ message: string; data: TermsConditions }> {
-        try {
-            const termsConditions = await this.findOne(id); // This will throw if not found
-
-            // Merge and save updated terms and conditions
-            const updatedTerms = this.termsConditionsRepository.merge(termsConditions, updateTermsConditionsDto);
-            const result = await this.termsConditionsRepository.save(updatedTerms);
-
-            return { message: 'Terms and Conditions updated successfully', data: result };
-        } catch (error: any) {
-            if (error instanceof NotFoundException) {
-                throw error; // Re-throw the not found exception
-            }
-            throw new InternalServerErrorException('Error updating terms and conditions', error.message);
-        }
-    }
-
-    async remove(id: string): Promise<{ message: string }> {
-        try {
-            const termsConditions = await this.findOne(id); // This will throw if not found
-            await this.termsConditionsRepository.delete(termsConditions.id);
-            return { message: 'Conditions deleted successfully' };
-
-        } catch (error: any) {
-            throw new InternalServerErrorException('Error deleting terms and conditions', error.message);
+            throw new InternalServerErrorException('Error creating or updating terms and conditions', error.message);
         }
     }
 }
@@ -218,60 +200,42 @@ export class ContactUsService {
         private contactRepository: Repository<ContactUs>
     ) { }
 
-    async create(createContactDto: CreateContactDto): Promise<{ message: string; data: ContactUs }> {
+    async getOrShow(): Promise<ContactUs | null> {
         try {
-            const contact = this.contactRepository.create(createContactDto);
-            const savedContact = await this.contactRepository.save(contact);
-            return { message: 'Contact message created successfully', data: savedContact };
+            // Use `find` with `take: 1` to get the first Terms and Conditions entry
+            const [contactUs] = await this.contactRepository.find({
+                take: 1,
+                order: { id: 'ASC' } // Adjust ordering if necessary
+            });
+
+            return contactUs || null; // Return null if no entry is found
         } catch (error: any) {
-            throw new InternalServerErrorException('Error creating contact message', error.message);
+            throw new InternalServerErrorException('Error retrieving contact', error.message);
         }
     }
 
-    async findAll(): Promise<ContactUs[]> {
-        try {
-            return await this.contactRepository.find();
-        } catch (error: any) {
-            throw new InternalServerErrorException('Error retrieving contact messages', error.message);
-        }
-    }
 
-    async findOne(id: string): Promise<ContactUs> {
+    async createOrUpdate(createContactDto: CreateContactDto): Promise<{ message: string; data: ContactUs }> {
         try {
-            const contact = await this.contactRepository.findOneBy({ id });
-            if (!contact) {
-                throw new NotFoundException(`Contact message with ID ${id} not found`);
+            // Use `find` with `take: 1` to get the first contact entry
+            const [contactUs] = await this.contactRepository.find({
+                take: 1,
+                order: { id: 'ASC' } // Adjust ordering if necessary
+            });
+
+            if (contactUs) {
+                // Update existing contact
+                const update = this.contactRepository.merge(contactUs, createContactDto);
+                const result = await this.contactRepository.save(update);
+                return { message: 'contact updated successfully', data: result };
+            } else {
+                // Create new contact if none exists
+                const newContact = this.contactRepository.create(createContactDto);
+                const result = await this.contactRepository.save(newContact);
+                return { message: 'contact created successfully', data: result };
             }
-            return contact;
         } catch (error: any) {
-            throw new InternalServerErrorException('Error retrieving the contact message', error.message);
-        }
-    }
-
-    async update(id: string, updateContactDto: CreateContactDto): Promise<{ message: string; data: ContactUs }> {
-        try {
-            const contact = await this.findOne(id); // This will throw if not found
-
-            // Merge and save updated contact message
-            const updatedContact = this.contactRepository.merge(contact, updateContactDto);
-            const result = await this.contactRepository.save(updatedContact);
-
-            return { message: 'Contact message updated successfully', data: result };
-        } catch (error: any) {
-            if (error instanceof NotFoundException) {
-                throw error; // Re-throw the not found exception
-            }
-            throw new InternalServerErrorException('Error updating contact message', error.message);
-        }
-    }
-
-    async remove(id: string): Promise<{ message: string }> {
-        try {
-            const contact = await this.findOne(id); // This will throw if not found
-            await this.contactRepository.delete(contact.id);
-            return { message: 'contact as deleted successfully' };
-        } catch (error: any) {
-            throw new InternalServerErrorException('Error deleting contact message', error.message);
+            throw new InternalServerErrorException('Error creating or updating contact', error.message);
         }
     }
 }
@@ -369,7 +333,6 @@ export class BannerService {
                 throw new Error('Failed to delete associated images from Firebase');
             }
         }
-
         // Finally, delete the banner from the database
         await this.bannerRepository.delete(bannerId);
         // Return a success message

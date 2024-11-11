@@ -65,6 +65,8 @@ export function OrderListView() {
 
   const { fetchData, fetchDeleteData } = useFetchOrderData(); // Destructure fetchData from the custom hook
   const dispatch = useDispatch();
+  const confirmSync = useBoolean(); // Separate confirmation state for syncing
+
   const [loading, setLoading] = useState(false);
   const _orders = useSelector((state) =>
     userRole === 'Admin' ? state.order?.order || [] : state.order?.order?.orders || []
@@ -108,20 +110,20 @@ export function OrderListView() {
 
 
 
-    const handleSelectRow = useCallback((id) => {
-        setSelectedRows((prev) =>
-            prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
-        );
-    }, []);
+  const handleSelectRow = useCallback((id) => {
+    setSelectedRows((prev) =>
+      prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
+    );
+  }, []);
 
-    const handleDeleteSelectedRows = useCallback(() => {
-        selectedRows.forEach((id) => fetchDeleteData(id));
-        setSelectedRows([]);
-        fetchData(); // Refresh data after deletion
-        confirm.onFalse();
-    }, [selectedRows, fetchDeleteData, fetchData]);
+  const handleDeleteSelectedRows = useCallback(() => {
+    selectedRows.forEach((id) => fetchDeleteData(id));
+    setSelectedRows([]);
+    fetchData(); // Refresh data after deletion
+    confirm.onFalse();
+  }, [selectedRows, fetchDeleteData, fetchData]);
 
-    //----------------------------------------------------------------------------------------------------
+  //----------------------------------------------------------------------------------------------------
   const dataFiltered = applyFilter({
     inputData: tableData,
     comparator: getComparator(table.order, table.orderBy),
@@ -137,8 +139,6 @@ export function OrderListView() {
 
   const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
   //----------------------------------------------------
-  const handleDeleteRows = useCallback((id) => { fetchDeleteData(id) }, []);
-
   const handleDeleteRow = useCallback((id) => { fetchDeleteData(id) }, []);
 
   const handleViewRow = useCallback((id) => id, []);
@@ -160,6 +160,8 @@ export function OrderListView() {
       console.error('Error syncing order invoice:', error);
     } finally {
       setLoading(false); // Set loading to false after the API call completes
+      confirmSync.onFalse(); // Close the confirmation dialog
+
     }
   };
 
@@ -180,7 +182,7 @@ export function OrderListView() {
           action={
             userRole === 'Admin' && ( // Only show the button for Vendor role
               <Button
-                onClick={handleSyncAPI}
+                onClick={confirmSync.onTrue} // Open the sync confirmation dialog
                 variant="contained"
                 startIcon={<Iconify icon="eva:sync-fill" />}
                 disabled={loading}
@@ -250,7 +252,7 @@ export function OrderListView() {
               numSelected={selectedRows.length}
               rowCount={dataFiltered.length}
               onSelectAllRows={(checked) => setSelectedRows(checked ? dataFiltered.map(row => row.id) : [])}
-                         
+
               action={
                 <Tooltip title="Delete">
                   <IconButton color="primary" onClick={confirm.onTrue}>
@@ -268,10 +270,10 @@ export function OrderListView() {
                   headLabel={TABLE_HEAD}
                   rowCount={dataFiltered.length}
                   numSelected={selectedRows.length}
-                                  
+
                   onSort={table.onSort}
                   onSelectAllRows={(checked) =>
-                      setSelectedRows(checked ? dataFiltered.map((row) => row.id) : [])
+                    setSelectedRows(checked ? dataFiltered.map((row) => row.id) : [])
                   }
                 />
 
@@ -315,17 +317,41 @@ export function OrderListView() {
         </Card>
       </DashboardContent>
 
+      {/* Sync Confirmation Dialog */}
+      <ConfirmDialog
+        open={confirmSync.value}
+        onClose={confirmSync.onFalse}
+        content={
+          <Box>
+            <Typography gutterBottom>Are you sure you want to sync the Invoices?</Typography>
+            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+              This action will update the Invoices data and may take a few moments.
+            </Typography>
+          </Box>
+        }
+        action={
+          <Button
+            onClick={handleSyncAPI} // Trigger sync API call on confirmation
+            variant="contained"
+            color="primary"
+            disabled={loading} // Disable button while loading
+          >
+            {loading ? 'Syncing...' : 'Confirm Sync'}
+          </Button>
+        }
+      />
+
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
         title="Delete Orders?"
         content={
-            <Box>
-                <Typography gutterBottom>Are you sure you want to delete the selected Orders?</Typography>
-                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                    This action cannot be undone.
-                </Typography>
-            </Box>
+          <Box>
+            <Typography gutterBottom>Are you sure you want to delete the selected Orders?</Typography>
+            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+              This action cannot be undone.
+            </Typography>
+          </Box>
         }
         action={
           <Button

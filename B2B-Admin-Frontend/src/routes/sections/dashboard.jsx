@@ -6,8 +6,6 @@ import { LoadingScreen } from 'src/components/loading-screen';
 import { AuthGuard } from 'src/auth/guard';
 import { ProductEditView, ProductView } from 'src/sections/product/view';
 import { FAQCreateView, FAQEditView, FAQView } from 'src/sections/setting/FAQ/view';
-import { ContactCreateView, ContactEditView, ContactView } from 'src/sections/setting/Contact-us/view';
-import { TermCreateView, TermEditView, TermView } from 'src/sections/setting/terms-conditions/view';
 import { VendorView } from 'src/sections/vendor/view/vendor-view';
 import { VendorEditView } from 'src/sections/vendor/view/vendor-edit';
 import { ItemView } from 'src/sections/vendor-sections/product/view';
@@ -104,17 +102,10 @@ export const dashboardRoutes = [
       { path: 'faq/view/:id', element: <FAQView /> },
 
       { path: 'contact-us', element: <ContactPage /> },
-      { path: 'contact-us/create', element: <ContactCreateView /> },
-      { path: 'contact-us/edit/:id', element: <ContactEditView /> },
-      { path: 'contact-us/view/:id', element: <ContactView /> },
-
-
+  
       // { path: 'privacy-policy', element: <PrivacyPage /> },
 
       { path: 'terms-conditions', element: <TermsPage /> },
-      { path: 'terms-conditions/create', element: <TermCreateView /> },
-      { path: 'terms-conditions/edit/:id', element: <TermEditView /> },
-      { path: 'terms-conditions/view/:id', element: <TermView /> },
 
       { path: 'profile-settings', element: <ProfilePage /> },
 

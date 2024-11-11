@@ -88,64 +88,42 @@ export class PrivacyPolicyController {
     }
 }
 //terms-conditions
+
 @Controller('terms-conditions')
 export class TermsConditionsController {
     constructor(private readonly termsConditionsService: TermsConditionsService) {}
 
-    @Post('create')
-    async create(@Body() createTermsConditionsDto: CreateTermsConditionsDto): Promise<{ message: string; data: TermsConditions }> {
-        return this.termsConditionsService.create(createTermsConditionsDto);
+    @Get()
+    async getOrShow(): Promise<TermsConditions | { message: string }> {
+        const termsConditions = await this.termsConditionsService.getOrShow();
+        if (!termsConditions) {
+            return { message: 'No terms and conditions found' };
+        }
+        return termsConditions;
     }
 
-    @Get('')
-    async findAll(): Promise<TermsConditions[]> {
-        return this.termsConditionsService.findAll();
-    }
-
-    @Get('get/:id')
-    async findOne(@Param('id') id: string): Promise<TermsConditions> {
-        return this.termsConditionsService.findOne(id);
-    }
-
-    @Put('update/:id')
-    async update(@Param('id') id: string, @Body() updateTermsConditionsDto: CreateTermsConditionsDto): Promise<{ message: string; data: TermsConditions }> {
-        return this.termsConditionsService.update(id, updateTermsConditionsDto);
-    }
-
-    @Delete('delete/:id')
-    async remove(@Param('id') id: string): Promise<{ message: string }> {
-        return this.termsConditionsService.remove(id);
+    @Post()
+    async createOrUpdate(@Body() createTermsConditionsDto: CreateTermsConditionsDto): Promise<{ message: string; data: TermsConditions }> {
+        return this.termsConditionsService.createOrUpdate(createTermsConditionsDto);
     }
 }
-
 // contact as Controller
 @Controller('contact')
 export class ContactUsController {
     constructor(private readonly contactService: ContactUsService) {}
 
-    @Post('create')
-    async create(@Body() createContactDto: CreateContactDto): Promise<{ message: string; data: ContactUs }> {
-        return this.contactService.create(createContactDto);
-    }
-
     @Get()
-    async findAll(): Promise<ContactUs[]> {
-        return this.contactService.findAll();
+    async getOrShow(): Promise<ContactUs | { message: string }> {
+        const contact = await this.contactService.getOrShow();
+        if (!contact) {
+            return { message: 'No contact found' };
+        }
+        return contact;
     }
 
-    @Get('get/:id')
-    async findOne(@Param('id') id: string): Promise<ContactUs> {
-        return this.contactService.findOne(id);
-    }
-
-    @Put('update/:id')
-    async update(@Param('id') id: string, @Body() updateContactDto: CreateContactDto): Promise<{ message: string; data: ContactUs }> {
-        return this.contactService.update(id, updateContactDto);
-    }
-
-    @Delete('delete/:id')
-    async remove(@Param('id') id: string):  Promise<{ message: string }> {
-        return this.contactService.remove(id);
+    @Post()
+    async createOrUpdate(@Body() createContactDto: CreateContactDto): Promise<{ message: string; data: ContactUs }> {
+        return this.contactService.createOrUpdate(createContactDto);
     }
 }
 

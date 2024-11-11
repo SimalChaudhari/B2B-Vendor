@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
     FormControl,
     Button,
@@ -20,6 +20,7 @@ export function ProductFilterView() {
     const _productList = useSelector((state) => state.product?.product || []);
     const [tableData, setTableData] = useState(_productList);
     const [autocompleteOpen, setAutocompleteOpen] = useState(false);
+    const clearFiltersRef = useRef(null);
 
     const options = _productList.map((opt) => ({
         group: opt.group,
@@ -75,6 +76,10 @@ export function ProductFilterView() {
             await dispatch(addToCart(data)); // Dispatch the addToCart action
             fetchCartData()
             setSelectedProducts([]);
+            // Clear filters
+            if (clearFiltersRef.current) {
+                clearFiltersRef.current();
+            }
 
         } catch (error) {
             console.error('Submission failed', error);
@@ -92,7 +97,11 @@ export function ProductFilterView() {
 
     return (
         <div>
-            <ProductToolbar options={options} filters={filters} />
+            <ProductToolbar 
+            options={options} 
+            filters={filters}
+            clearFilters={clearFiltersRef}
+            />
             <Box
                 component="form"
                 onSubmit={handleSubmit}

@@ -84,6 +84,7 @@ export function CheckoutBillingAddress() {
       };
 
       const orderResponse = await dispatch(createOrder(orderData));
+      console.log("🚀 ~ handleSubmit ~ orderResponse:", orderResponse)
 
       if (orderResponse) {
         const itemData = {
@@ -94,6 +95,7 @@ export function CheckoutBillingAddress() {
           })),
         };
         const itemResponse = await dispatch(createOrderItem(itemData));
+        console.log("🚀 ~ handleSubmit ~ itemResponse:", itemResponse)
 
         if (itemResponse) {
           checkout.onNextStep();

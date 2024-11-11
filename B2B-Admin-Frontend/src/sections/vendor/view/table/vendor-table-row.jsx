@@ -53,7 +53,8 @@ export function VendorTableRow({ row, selected, onEditRow, onSelectRow, onDelete
 
                 <TableCell>
                     <Stack direction="row" alignItems="center">
-                        <Tooltip title="Quick Edit" placement="top" arrow>
+                        {/* 
+                          <Tooltip title="Quick Edit" placement="top" arrow>
                             <Link
                                 component={RouterLink}
                                 to={`/vendors/edit/${row.id}`} // Ensure this route exists
@@ -74,7 +75,7 @@ export function VendorTableRow({ row, selected, onEditRow, onSelectRow, onDelete
                                 </IconButton>
                             </Link>
                         </Tooltip>
-
+*/}
                         <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
                             <Iconify icon="eva:more-vertical-fill" />
                         </IconButton>

@@ -65,12 +65,6 @@ export class ContactUs {
     @PrimaryGeneratedColumn('uuid')
     id!: string;
 
-    @Column()
-    name!: string; // Sender's name
-
-    @Column()
-    email!: string; // Sender's email address
-
     @Column('text')
     message!: string; // The message sent by the user
 

@@ -1,19 +1,14 @@
 import { useCallback, useState, useEffect } from 'react';
 import Stack from '@mui/material/Stack';
 import Select from '@mui/material/Select';
-import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import Checkbox from '@mui/material/Checkbox';
-import TextField from '@mui/material/TextField';
 import InputLabel from '@mui/material/InputLabel';
-import IconButton from '@mui/material/IconButton';
 import FormControl from '@mui/material/FormControl';
 import OutlinedInput from '@mui/material/OutlinedInput';
-import InputAdornment from '@mui/material/InputAdornment';
-import { Iconify } from 'src/components/iconify';
-import { usePopover, CustomPopover } from 'src/components/custom-popover';
+import { usePopover } from 'src/components/custom-popover';
 
-export function ProductToolbar({ options, filters }) {
+export function ProductToolbar({ options, filters,clearFilters }) {
     const popover = usePopover();
     const [selectedGroups, setSelectedGroups] = useState(filters.state.group || []);
     const [availableSubGroup1, setAvailableSubGroup1] = useState([]);
@@ -26,48 +21,49 @@ export function ProductToolbar({ options, filters }) {
     ).map(group => options.find(option => option.group.toLowerCase() === group).group);
 
     useEffect(() => {
-        // Update available subgroups and filter products
+        // Filtered options based on selected groups only
         const filteredOptions = options.filter(option => {
             const matchesGroup = selectedGroups.length === 0 || selectedGroups.includes(option.group);
-            const matchesSubGroup1 = selectedSubGroup1.length === 0 || selectedSubGroup1.includes(option.subGroup1);
-            const matchesSubGroup2 = selectedSubGroup2.length === 0 || selectedSubGroup2.includes(option.subGroup2);
-            return matchesGroup && matchesSubGroup1 && matchesSubGroup2;
+            return matchesGroup;
         });
-
-        // Update available SubGroup1 based on selected Groups
+    
+        // Update available SubGroup1 based on selected Groups only
         const availableSubGroup1Set = new Set();
         const availableSubGroup2Set = new Set();
-
+    
         filteredOptions.forEach(option => {
             if (selectedGroups.includes(option.group)) {
                 availableSubGroup1Set.add(option.subGroup1);
             }
         });
-
+    
+        // Update available SubGroup1 without removing options based on SubGroup2
         setAvailableSubGroup1(Array.from(availableSubGroup1Set));
-
-        // Update available SubGroup2 based on selected SubGroup1
-        filteredOptions.forEach(option => {
-            if (selectedSubGroup1.includes(option.subGroup1)) {
+    
+        // Update available SubGroup2 based on selected groups and subgroup1 without restriction from each other
+        options.forEach(option => {
+            if (selectedGroups.includes(option.group) || selectedSubGroup1.includes(option.subGroup1)) {
                 availableSubGroup2Set.add(option.subGroup2);
             }
         });
-
+    
         setAvailableSubGroup2(Array.from(availableSubGroup2Set));
-
-        // Filter selected subgroups to ensure they are valid
+    
+        // Filter selected subgroups to ensure they are valid with the new available options
         filters.setState(prev => ({
             ...prev,
             subGroup1: prev.subGroup1.filter(sub => availableSubGroup1Set.has(sub)),
-            subGroup2: prev.subGroup2.filter(sub => availableSubGroup2Set.has(sub))
+            subGroup2: prev.subGroup2.filter(sub => availableSubGroup2Set.has(sub)),
         }));
-    }, [selectedGroups, selectedSubGroup1, selectedSubGroup2]);
+    // }, [selectedGroups, options, selectedSubGroup1, filters]);
+    }, [selectedGroups, selectedSubGroup1]);
 
+    
     // Handle filter changes
     const handleFilterGroup = useCallback(
         (event) => {
             const newValue = typeof event.target.value === 'string' ? event.target.value.split(',') : event.target.value;
-
+           
             setSelectedGroups(newValue);
             filters.setState({ group: newValue });
             setSelectedSubGroup1([]); // Reset SubGroup1 on group change
@@ -79,7 +75,7 @@ export function ProductToolbar({ options, filters }) {
     const handleFilterSubGroup1 = useCallback(
         (event) => {
             const newValue = typeof event.target.value === 'string' ? event.target.value.split(',') : event.target.value;
-
+           
             setSelectedSubGroup1(newValue);
             filters.setState({ subGroup1: newValue });
             setSelectedSubGroup2([]); // Reset SubGroup2 on SubGroup1 change
@@ -90,15 +86,24 @@ export function ProductToolbar({ options, filters }) {
     const handleFilterSubGroup2 = useCallback(
         (event) => {
             const newValue = typeof event.target.value === 'string' ? event.target.value.split(',') : event.target.value;
+           
             setSelectedSubGroup2(newValue);
             filters.setState({ subGroup2: newValue });
         },
         [filters]
     );
+//------------------------------------------------------------------------------------------------------------------
+
+useEffect(() => {
+    clearFilters.current = () => {
+        setSelectedGroups([]);
+        setSelectedSubGroup1([]);
+        setSelectedSubGroup2([]);
+        filters.setState({ group: [], subGroup1: [], subGroup2: [] });
+    };
+}, [clearFilters, filters]);
 
     
-
-
     return (
 
         <Stack

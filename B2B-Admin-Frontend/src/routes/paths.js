@@ -53,15 +53,10 @@ export const paths = {
     view: (id) => `/view/${id}`,
 
     contact_us: `/settings/contact-us`,
-    createContact: `/create`,
-    editContact: (id) => `/edit/${id}`,
-    viewContact: (id) => `/view/${id}`,
 
     // privacy_policy: `/settings/privacy-policy`,
     terms_conditions: `/settings/terms-conditions`,
-    createTerm: `/create`,
-    editTerm: (id) => `/edit/${id}`,
-    viewTerm: (id) => `/view/${id}`,
+  
     profile: `/settings/profile-settings`,
 
     banner: `/settings/banner`,

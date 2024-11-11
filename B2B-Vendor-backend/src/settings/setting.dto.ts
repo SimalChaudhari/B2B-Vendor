@@ -37,23 +37,22 @@ export class CreatePrivacyPolicyDto {
 }
 
 export class CreateTermsConditionsDto {
+    @IsString()
+    readonly id?: string; // Optional for creation, required for updates
+
     @IsNotEmpty()
     @IsString()
-    content!: string; // Content of the terms and conditions
+    readonly content?: string;
 }
 
 export class CreateContactDto {
-    @IsNotEmpty()
-    @IsString()
-    name!: string; // Sender's name
 
-    @IsNotEmpty()
-    @IsEmail()
-    email!: string; // Sender's email address
+    @IsString()
+    readonly id?: string; // Optional for creation, required for updates
 
     @IsNotEmpty()
     @IsString()
-    message!: string; // The message sent by the user
+    readonly message?: string;
 
 }
 

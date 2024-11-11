@@ -55,7 +55,7 @@ export const useNavData = () => {
               path: paths.settings.root,
               icon: ICONS.settings,
               children: [
-                { title: 'FAQ', path: paths.settings.faq },
+                { title: 'FAQs', path: paths.settings.faq },
                 { title: 'Contact us', path: paths.settings.contact_us },
                 { title: 'Terms Conditions', path: paths.settings.terms_conditions },
                 { title: 'Banner', path: paths.settings.banner },

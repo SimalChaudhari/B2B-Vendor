@@ -47,6 +47,8 @@ import { VendorTableRow } from './table/vendor-table-row';
 export function VendorListView() {
     const table = useTable();
     const confirm = useBoolean();
+    const confirmSync = useBoolean(); // Separate confirmation state for syncing
+
     const [loading, setLoading] = useState(false);
     const [selectedRows, setSelectedRows] = useState([]); // Store selected row IDs
 
@@ -123,6 +125,7 @@ export function VendorListView() {
             console.error('Error syncing vendor:', error);
         } finally {
             setLoading(false); // Set loading to false after the API call completes
+            confirmSync.onFalse(); // Close the confirmation dialog
         }
     };
 
@@ -135,13 +138,13 @@ export function VendorListView() {
                     heading="List"
                     links={[
                         { name: 'Dashboard', href: paths.dashboard.root },
-                        { name: 'Vendor', href: paths?.vendors?.root },
+                        { name: 'Vendors', href: paths?.vendors?.root },
                         { name: 'List' },
                     ]}
                     action={
                         <Button
-                            // href={paths?.dashboard?.user?.new}
-                            onClick={handleSyncAPI} // Open the dialog on click
+                        
+                            onClick={confirmSync.onTrue} // Open the sync confirmation dialog
                             variant="contained"
                             startIcon={<Iconify icon="eva:sync-fill" />} // Changed icon
                             disabled={loading} // Disable button while loading
@@ -261,6 +264,30 @@ export function VendorListView() {
                     />
                 </Card>
             </DashboardContent>
+
+              {/* Sync Confirmation Dialog */}
+              <ConfirmDialog
+              open={confirmSync.value}
+              onClose={confirmSync.onFalse}
+              content={
+                  <Box>
+                      <Typography gutterBottom>Are you sure you want to sync the Vendors?</Typography>
+                      <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                          This action will update the vendors data and may take a few moments.
+                      </Typography>
+                  </Box>
+              }
+              action={
+                  <Button
+                      onClick={handleSyncAPI} // Trigger sync API call on confirmation
+                      variant="contained"
+                      color="primary"
+                      disabled={loading} // Disable button while loading
+                  >
+                      {loading ? 'Syncing...' : 'Confirm Sync'}
+                  </Button>
+              }
+          />
 
             <ConfirmDialog
                 open={confirm.value}
