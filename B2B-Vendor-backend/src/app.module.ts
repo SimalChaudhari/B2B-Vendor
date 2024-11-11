@@ -12,6 +12,7 @@ import { OrderModule } from 'order/order.module';
 import { DashboardModule } from 'dashboard/dashboard.module';
 import { InvoiceModule } from 'invoice/invoice.module';
 import { SyncLogModule } from 'sync-log/sync-log.module';
+import { StockModule } from 'stock/stock.module';
 
 
 @Module({
@@ -37,7 +38,8 @@ import { SyncLogModule } from 'sync-log/sync-log.module';
     OrderModule,
     DashboardModule,
     InvoiceModule,
-    SyncLogModule
+    SyncLogModule,
+    StockModule
     // FileModule
   ],
 })

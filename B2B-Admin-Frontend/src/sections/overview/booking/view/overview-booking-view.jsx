@@ -9,7 +9,7 @@ import {
 import { BookingStatistics } from '../booking-statistics';
 import { BookingWidgetSummary } from '../booking-widget-summary';
 import { useFetchOrderData } from 'src/sections/order/components/fetch-order';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { format } from 'date-fns';
 import { paths } from 'src/routes/paths';
@@ -19,24 +19,20 @@ import { useNavigate } from 'react-router';
 
 export function OverviewBookingView() {
 
-  const widgetStyle = {
-    cursor: 'pointer', // Add pointer cursor
-  };
-  const navigate = useNavigate(); // Initialize useNavigate
+  const widgetStyle = { cursor: 'pointer' };
+  const navigate = useNavigate();
 
   const { fetchData } = useFetchOrderData();
   const _orders = useSelector((state) => state.order?.order || []);
+  
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
   useEffect(() => {
     fetchData();
   }, []);
 
-  // Get the current year dynamically
-  const currentYear = new Date().getFullYear();
-
-  // Generate months dynamically with the 'MMM-yyyy' format
   const allMonths = Array.from({ length: 12 }, (_, i) =>
-    format(new Date(currentYear, i, 1), 'MMM-yyyy')
+    format(new Date(selectedYear, i, 1), 'MMM-yyyy')
   );
 
   const monthlyData = _orders.monthlyData || [];
@@ -56,8 +52,8 @@ export function OverviewBookingView() {
           <BookingWidgetSummary
             title="Total Order"
             total={_orders?.statusSummary?.totalOrders}
-            style={widgetStyle} // Apply style here
-            onClick={() => navigate(paths.orders.root)} // Navigate to products route
+            style={widgetStyle}
+            onClick={() => navigate(paths.orders.root)}
             icon={<TotalOrderIcon />}
           />
         </Grid>
@@ -66,8 +62,8 @@ export function OverviewBookingView() {
           <BookingWidgetSummary
             title="Total Success"
             total={_orders?.statusSummary?.completed}
-            style={widgetStyle} // Apply style here
-            onClick={() => navigate(paths.orders.root)} // Navigate to products route
+            style={widgetStyle}
+            onClick={() => navigate(paths.orders.root)}
             icon={<SuccessOrderIcon />}
           />
         </Grid>
@@ -76,8 +72,8 @@ export function OverviewBookingView() {
           <BookingWidgetSummary
             title="Pending"
             total={_orders?.statusSummary?.pending}
-            style={widgetStyle} // Apply style here
-            onClick={() => navigate(paths.orders.root)} // Navigate to products route
+            style={widgetStyle}
+            onClick={() => navigate(paths.orders.root)}
             icon={<PendingOrderIcon />}
           />
         </Grid>
@@ -86,8 +82,8 @@ export function OverviewBookingView() {
           <BookingWidgetSummary
             title="Canceled"
             total={_orders?.statusSummary?.cancelled}
-            style={widgetStyle} // Apply style here
-            onClick={() => navigate(paths.orders.root)} // Navigate to products route
+            style={widgetStyle}
+            onClick={() => navigate(paths.orders.root)}
             icon={<CheckoutIllustration />}
           />
         </Grid>
@@ -104,6 +100,8 @@ export function OverviewBookingView() {
               ],
               categories: allMonths,
             }}
+            selectedYear={selectedYear}
+            onYearChange={setSelectedYear}
           />
         </Grid>
       </Grid>

@@ -4,7 +4,7 @@ import {  STOCK_LIST } from "../constants/actionTypes";
 
 export const syncStock = () => async (dispatch) => {
     try {
-        await axiosInstance.post('/stocks/fetch');
+        await axiosInstance.post('/stocks/fetch-summary');
         return true;
     } catch (error) {
         // Check if error response exists and handle error message

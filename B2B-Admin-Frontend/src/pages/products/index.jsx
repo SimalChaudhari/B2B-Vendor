@@ -1,10 +1,13 @@
 import { ProductListView } from "src/sections/product/view";
 import { Helmet } from 'react-helmet-async';
 import { CONFIG } from 'src/config-global';
-
-const metadata = { title: `Products - ${CONFIG.site.name}` };
+import useUserRole from "src/layouts/components/user-role";
 
 export default function Page() {
+
+    const role = useUserRole()
+
+    const metadata = { title: `Products - ${role}` };
     return (
         <>
             <Helmet>

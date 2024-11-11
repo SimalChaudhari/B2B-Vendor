@@ -1,12 +1,15 @@
 
 import { Helmet } from 'react-helmet-async';
-import { CONFIG } from 'src/config-global';
+import useUserRole from 'src/layouts/components/user-role';
 import { OrderListView } from 'src/sections/order/view';
 
 
-const metadata = { title: `Orders - ${CONFIG.site.name}` };
-
 export default function Page() {
+
+    const role = useUserRole()
+
+    const metadata = { title: `Orders - ${role}` };
+
     return (
         <>
             <Helmet>
