@@ -13,7 +13,8 @@ export function getCountryCode(inputValue, countryCode) {
     }
   }
 
-  return countryCode ?? 'US';
+  // return countryCode ?? 'US';
+  return countryCode ?? 'IN';
 }
 
 // ----------------------------------------------------------------------

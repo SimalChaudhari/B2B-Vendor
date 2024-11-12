@@ -7,7 +7,7 @@ import { ProductItemSkeleton } from './product-skeleton';
 
 // ----------------------------------------------------------------------
 
-const PRODUCTS_PER_PAGE = 10; // Display 10 products per page
+const PRODUCTS_PER_PAGE = 14; // Display 10 products per page
 
 export function ProductList({ products, loading, ...other }) {
   const [page, setPage] = useState(1); // Track the current page number
@@ -41,7 +41,7 @@ export function ProductList({ products, loading, ...other }) {
           xs: 'repeat(1, 1fr)',
           sm: 'repeat(3, 1fr)',
           md: 'repeat(4, 1fr)',
-          lg: 'repeat(5, 1fr)',
+          lg: 'repeat(7, 1fr)',
         }}
         {...other}
       >

@@ -2,6 +2,7 @@ import { z as zod } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { isValidPhoneNumber } from 'react-phone-number-input/input';
+import { useDispatch } from 'react-redux';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -13,7 +14,8 @@ import { Container, Typography, TextField } from '@mui/material';
 
 import { Form, Field, schemaHelper } from 'src/components/hook-form';
 import { useCheckoutContext } from '../../context';
-import { authRegister } from 'src/actions/UserAction';
+import { addAddress } from 'src/redux/orderProductAndAddressReducer';
+// import { authRegister } from 'src/actions/UserAction';
 
 export const NewAddressSchema = zod.object({
     state: zod.string().min(1, { message: 'State is required!' }),
@@ -30,6 +32,7 @@ export const NewAddressSchema = zod.object({
 
 export function FormView() {
     const checkout = useCheckoutContext();
+    const dispatch = useDispatch();
     const defaultValues = {
         name: '',
         email: '',
@@ -63,10 +66,11 @@ export function FormView() {
             };
     
             // Send registration data to the server using the userDetails object
-            await authRegister(userDetails);
+            // await authRegister(userDetails);
+            dispatch(addAddress(userDetails));
     
             await checkout.onCreateBilling(data); // Wait for billing creation
-            checkout.onGotoStep(3); // Proceed to the next step
+            checkout.onGotoStep(2); // Proceed to the next step
             
         } catch (error) {
             console.error(error);
@@ -78,11 +82,13 @@ export function FormView() {
         <div className='formContainer'>
             <Container sx={{ mb: 10 }}>
                 <Typography variant="h4" sx={{ my: { xs: 3, md: 5 } }}>
-                    Form
+                Delivery Address
                 </Typography>
 
                 <Form methods={methods} onSubmit={onSubmit}>
-                    <DialogTitle>New address</DialogTitle>
+                {/*
+                    <DialogTitle>Delivery Address</DialogTitle>
+                */}
 
                     <DialogContent dividers>
                         &nbsp;
