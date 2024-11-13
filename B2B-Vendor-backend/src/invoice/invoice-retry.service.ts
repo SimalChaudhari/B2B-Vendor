@@ -25,52 +25,43 @@ export class InvoiceRetryService {
                 userId: userId,
             },
         });
-
+    
         if (pendingInvoices.length === 0) {
             return {
                 status: 'success',
                 message: 'All data is up to date.',
             };
         }
-
-        let allSuccess = true;
-
+    
+        let allSuccessful = true; // Assume all are successful unless an error is encountered
+    
         for (const invoice of pendingInvoices) {
             try {
                 const response = await axios.post(process.env.TALLY_URL as string, invoice.xmlContent, {
                     headers: { 'Content-Type': 'application/xml' },
                 });
-
+    
                 if (response.data.includes('<LINEERROR>')) {
-                    allSuccess = false; // Set the flag to false if any invoice fails
-                    continue; // Skip deletion for this invoice and move to the next
+                    allSuccessful = false; // Mark as not completely successful
+                    continue; // Skip to the next invoice
                 }
+    
                 // Delete the invoice from the database after successful posting
                 await this.invoiceRepository.delete(invoice.id);
-
+    
             } catch (error) {
-                allSuccess = false; // Set the flag to false if any invoice fails
-                return {
-                    status: 'error',
-                    message: 'Please ensure Tally is open and try again.',
-                };
+                console.error("🚀 ~ InvoiceRetryService ~ postPendingInvoices ~ error:", error);
+                allSuccessful = false; // Mark as not completely successful
             }
         }
-
-        // Return the appropriate message based on success or failure
-        if (allSuccess) {
-            return {
-                status: 'success',
-                message: 'All pending invoices have been successfully posted to Tally.',
-            };
-        } else {
-            return {
-                status: 'partial_success',
-                message: 'Please log in to Tally, or the data may not be available in Tally.'
-
-            };
-        }
+    
+        // Return the appropriate message based on the outcome
+        return allSuccessful
+            ? { status: 'success', message: 'All pending invoices have been successfully posted to Tally.' }
+            : { status: 'partial_success', message: 'Some invoices could not be posted. Please log in to Tally or check sync logs for more details.' };
     }
+    
+}
 
     // @Cron('*/1 * * * *') // Run every 10 minutes
 
@@ -158,4 +149,3 @@ export class InvoiceRetryService {
     // }
 
 
-}    

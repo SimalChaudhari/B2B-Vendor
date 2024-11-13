@@ -28,6 +28,10 @@ const ContactPage = lazy(() => import('src/pages/settings/contact-us'));
 const TermsPage = lazy(() => import('src/pages/settings/terms-conditions'));
 const ProfilePage = lazy(() => import('src/pages/vendor-page/settings/profile'));
 
+const LogoutPage = lazy(() => import('src/pages/settings/logout'));
+
+
+
 // Vendor
 const ItemPage = lazy(() => import('src/pages/vendor-page/items'));
 
@@ -125,8 +129,6 @@ export const dashboardRoutes = [
       { path: 'banner/create', element: <BannerCreateView/> },
       { path: 'banner/edit/:id', element: <BannerEditView/> },
       { path: 'banner/view/:id', element: <BannerView/> },
-
-
     ],
   },
 
@@ -140,6 +142,17 @@ export const dashboardRoutes = [
 
     ],
   },
+
+  
+  {
+    path: 'logout',
+    element: CONFIG.auth.skip ? <>{layoutContent}</> : <AuthGuard>{layoutContent}</AuthGuard>,
+    children: [
+      { element: <LogoutPage />, index: true },
+
+    ],
+  },
+
 
 
   { path: '500', element: <Page500 /> },

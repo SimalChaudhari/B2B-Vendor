@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux';
-import { deleteProduct, itemList ,deleteItem } from 'src/store/action/productActions';
+import { deleteProduct, itemList, deleteItem, deleteAllItem } from 'src/store/action/productActions';
 
 
 export const useFetchProductData = () => {
@@ -33,9 +33,21 @@ export const useFetchProductData = () => {
     }
   };
 
+  const deleteAllItems = async (id) => {
+
+    try {
+      const response = await dispatch(deleteAllItem(id));;
+      if (response) {
+        fetchData(); // Refetch product data only on successful deletion
+      }
+    } catch (error) {
+      console.error("Error deleting product:", error);
+    }
+  };
 
 
 
-  return { fetchData, fetchDeleteData, fetchDeleteItem };
+
+  return { fetchData, fetchDeleteData, deleteAllItems, fetchDeleteItem };
 };
 

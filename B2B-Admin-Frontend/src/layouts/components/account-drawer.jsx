@@ -55,7 +55,7 @@ export function AccountDrawer({ data = [], sx, ...other }) {
         },
       }}
     >
-      {authUser?.name.charAt(0).toUpperCase()}
+      {authUser?.name}
     </AnimateAvatar>
   );
 

@@ -13,8 +13,9 @@ import useCart from './components/useCart';
 import { addressList, createAddress, deleteAddress, updateAddress } from 'src/store/action/addressActions';
 import { CheckoutPayment } from './checkout-payment';
 import { LoadingButton } from '@mui/lab';
-import { Typography, Card, CardContent } from '@mui/material';
+import { Typography, Card, CardContent, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
 import { createOrder, createOrderItem } from 'src/store/action/orderActions';
+import { ConfirmDialog } from 'src/components/custom-dialog';
 
 export function CheckoutBillingAddress() {
   const checkout = useCheckoutContext();
@@ -31,6 +32,7 @@ export function CheckoutBillingAddress() {
   const [showAllAddresses, setShowAllAddresses] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [addressToEdit, setAddressToEdit] = useState(null); // State for address being edited
+  const [confirmDelete, setConfirmDelete] = useState(null); // State for delete confirmation
 
   useEffect(() => {
     dispatch(addressList());
@@ -63,8 +65,11 @@ export function CheckoutBillingAddress() {
 
   const handleDeleteAddress = async (id) => {
     try {
-      await dispatch(deleteAddress(id));
-      dispatch(addressList());
+      if (confirmDelete) {
+        await dispatch(deleteAddress(confirmDelete)); // Delete address with ID
+        dispatch(addressList());
+        setConfirmDelete(null); // Close the confirmation dialog
+      }
     } catch (error) {
       console.error('Failed to delete address:', error);
     }
@@ -84,7 +89,6 @@ export function CheckoutBillingAddress() {
       };
 
       const orderResponse = await dispatch(createOrder(orderData));
-      console.log("🚀 ~ handleSubmit ~ orderResponse:", orderResponse)
 
       if (orderResponse) {
         const itemData = {
@@ -94,8 +98,8 @@ export function CheckoutBillingAddress() {
             quantity: item.quantity,
           })),
         };
+       
         const itemResponse = await dispatch(createOrderItem(itemData));
-        console.log("🚀 ~ handleSubmit ~ itemResponse:", itemResponse)
 
         if (itemResponse) {
           checkout.onNextStep();
@@ -148,6 +152,8 @@ export function CheckoutBillingAddress() {
                             boxShadow: (theme) => theme.customShadows.card,
                             cursor: 'pointer',
                             border: selectedAddressId === address.id ? '2px solid black' : '1px solid grey',
+                            backgroundColor: selectedAddressId === address.id ? '#e3f2fd' : 'transparent', // Light background for selected address
+ 
                           }}
                         />
                         <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
@@ -164,7 +170,7 @@ export function CheckoutBillingAddress() {
                           <Button
                             size="small"
                             color="error"
-                            onClick={() => handleDeleteAddress(address.id)}
+                            onClick={() => setConfirmDelete(address.id)} // Open confirm dialog
                           >
                             Delete
                           </Button>
@@ -204,17 +210,25 @@ export function CheckoutBillingAddress() {
           />
 
           {subtotal > 0 && (
-            <LoadingButton
-              fullWidth
-              size="large"
-              type="submit"
-              variant="contained"
-              disabled={!selectedAddressId || isSubmitting}
-              loading={isSubmitting}
-              onClick={handleSubmit}
-            >
-              Complete order
-            </LoadingButton>
+            <>
+              {!selectedAddressId && !isSubmitting && (
+                <Typography variant='h6' color="error" sx={{ mb: 1 }}>
+                 Please select any address
+                </Typography>
+              )}
+
+              <LoadingButton
+                fullWidth
+                size="large"
+                type="submit"
+                variant="contained"
+                disabled={!selectedAddressId || isSubmitting}
+                loading={isSubmitting}
+                onClick={handleSubmit}
+              >
+                Complete order
+              </LoadingButton>
+            </>
           )}
         </Grid>
       </Grid>
@@ -229,6 +243,33 @@ export function CheckoutBillingAddress() {
         onEdit={handleEditAddress}
         editData={addressToEdit} // Pass address data for editing
       />
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDialog
+        open={Boolean(confirmDelete)}
+        onClose={() => setConfirmDelete(null)}
+        title="Delete Address?"
+        content={
+          <Box>
+            <Typography gutterBottom>Are you sure you want to delete this Address?</Typography>
+            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+              This action cannot be undone.
+            </Typography>
+          </Box>
+        }
+        action={
+          <Button
+            variant="contained"
+            color="error"
+            onClick={handleDeleteAddress}
+
+          >
+            Delete
+          </Button>
+        }
+      />
+
+
     </>
   );
 }

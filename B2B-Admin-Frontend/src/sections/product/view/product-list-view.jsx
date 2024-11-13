@@ -48,8 +48,10 @@ export function ProductListView() {
     const confirmSync = useBoolean(); // Separate confirmation state for syncing
     const [loading, setLoading] = useState(false);
     const [selectedRows, setSelectedRows] = useState([]); // Store selected row IDs
+    const [deleting, setDeleting] = useState(false); // Track delete operation
+   
 
-    const { fetchData, fetchDeleteData, fetchDeleteItem } = useFetchProductData(); // Destructure fetchData from the custom hook
+    const { fetchData, fetchDeleteData, fetchDeleteItem, deleteAllItems } = useFetchProductData(); // Destructure fetchData from the custom hook
     const dispatch = useDispatch();
     const _productList = useSelector((state) => state.product?.product || []);
     const [tableData, setTableData] = useState(_productList);
@@ -80,13 +82,20 @@ export function ProductListView() {
         );
     }, []);
 
-    const handleDeleteSelectedRows = useCallback(() => {
-        selectedRows.forEach((id) => fetchDeleteItem(id));
-        setSelectedRows([]);
-        fetchData(); // Refresh data after deletion
-        confirm.onFalse();
-    }, [selectedRows, fetchDeleteItem, fetchData]);
-
+    const handleDeleteSelectedRows = useCallback(async () => {
+        setDeleting(true); // Start loading for delete operation
+        try {
+            await deleteAllItems(selectedRows);
+            setSelectedRows([]);
+            fetchData(); // Refresh data after deletion
+            confirm.onFalse();
+        } catch (error) {
+            console.error("Error deleting selected rows:", error);
+            // Optionally, show an error message to the user here
+        } finally {
+            setDeleting(false); // Stop loading after delete operation
+        }
+    }, [selectedRows, fetchData, deleteAllItems, confirm]);
     //----------------------------------------------------------------------------------------------------
     // Clear specific group
     const onClearGroup = useCallback((group) => {
@@ -155,6 +164,8 @@ export function ProductListView() {
                 fetchData(); // Fetch data after syncing
             }
         } catch (error) {
+            setLoading(false); // Reset loading state
+
             console.error("Failed to sync products", error);
         } finally {
             setLoading(false); // Reset loading state
@@ -343,8 +354,13 @@ export function ProductListView() {
                     </Box>
                 }
                 action={
-                    <Button variant="contained" color="error" onClick={handleDeleteSelectedRows}>
-                        Delete
+                    <Button
+                        variant="contained"
+                        color="error"
+                        onClick={handleDeleteSelectedRows}
+                        disabled={deleting} // Disable while deleting
+                    >
+                        {deleting ? 'Deleting...' : 'Delete'}
                     </Button>
                 }
             />

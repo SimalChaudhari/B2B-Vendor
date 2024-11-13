@@ -35,7 +35,7 @@ export function BookingStatistics({ title, chart, selectedYear, onYearChange, ..
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', px: 3, mb: 2 }}>
         <ChartLegends
           colors={chartOptions.colors}
-          labels={['Total Orders', 'Completed Orders', 'Canceled Orders', 'Pending Orders']}
+          labels={['Orders', 'Completed Orders', 'Canceled Orders', 'Pending Orders']}
           values={[
             fShortenNumber(chart.series[0].data?.reduce((a, b) => a + b, 0)),
             fShortenNumber(chart.series[1].data?.reduce((a, b) => a + b, 0)),

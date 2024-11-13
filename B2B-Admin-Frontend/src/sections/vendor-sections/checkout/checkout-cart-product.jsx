@@ -13,8 +13,23 @@ import { Tooltip } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
-export function CheckoutCartProduct({ row, onDownload,onDelete, onDecrease, onIncrease }) {
+export function CheckoutCartProduct({ row, onDownload, onDelete, onDecrease, onIncrease }) {
   const isDownloadable = !!row.dimensionalFiles; // Check if pdfPath is available
+
+  const available = 500
+  const lessAvailable = 100
+  
+  const handleIncrease = () => {
+    if (row.quantity < available) {
+      onIncrease();
+    }
+  };
+
+  const handleDecrease = () => {
+    if (row.quantity > lessAvailable) {
+      onDecrease();
+    }
+  };
 
   return (
     <TableRow>
@@ -42,8 +57,8 @@ export function CheckoutCartProduct({ row, onDownload,onDelete, onDecrease, onIn
         <Box align="center">
           <IncrementerButton
             quantity={row.quantity}
-            onDecrease={onDecrease}
-            onIncrease={onIncrease}
+            onDecrease={handleDecrease}
+            onIncrease={handleIncrease} // Use handleIncrease to limit increment
             disabledDecrease={row.quantity <= 1}
             disabledIncrease={row.quantity >= row.available}
           />
@@ -51,6 +66,7 @@ export function CheckoutCartProduct({ row, onDownload,onDelete, onDecrease, onIn
         </Box>
       </TableCell>
 
+      <TableCell align="center">{available}</TableCell>
       <TableCell align="center">{fCurrency(row.price * row.quantity)}</TableCell>
       <TableCell align="center" sx={{ px: 6 }}>
         <Tooltip title={isDownloadable ? "Download File" : "File not available"}>

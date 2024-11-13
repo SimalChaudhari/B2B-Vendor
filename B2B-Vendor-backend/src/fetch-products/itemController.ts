@@ -74,4 +74,21 @@ async delete(@Param('id') id: string, @Res() response: Response) {
     }
 }
 
+  
+@Delete('delete/items/all')
+
+async deleteMultiple(@Body('ids') ids: string[], @Res() response: Response) {
+    try {
+        const result = await this.itemService.deleteMultiple(ids);
+        return response.status(HttpStatus.OK).json(result);
+    } catch (error) {
+         // Handle the error appropriately
+        if (error instanceof NotFoundException) {
+            console.log("🚀 ~ ItemController ~ deleteMultiple ~ error:", error)
+            return response.status(HttpStatus.NOT_FOUND).json({ message: error.message });
+        }
+        return response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: 'An error occurred while deleting the products.' });
+    }
 }
+}
+

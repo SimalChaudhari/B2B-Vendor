@@ -40,11 +40,13 @@ export function AddressNewForm({ open, onClose, onCreate, onEdit, editData }) {
 
   const { reset, handleSubmit, formState: { isSubmitting } } = methods;
 
-  useEffect(() => {
-    if (editData) {
-      reset(editData); // Update form values when editData changes
-    }
-  }, [editData, reset]);
+
+    // Reset the form whenever `open` is true for a new address or `editData` changes
+    useEffect(() => {
+      if (open) {
+        reset(editData || {}); // Reset form fields to empty for a new address, or prefill if editing
+      }
+    }, [open, editData, reset]);
 
   const onSubmit = handleSubmit(async (data) => {
     try {

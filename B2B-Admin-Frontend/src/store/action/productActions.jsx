@@ -131,3 +131,25 @@ export const deleteItem = (productId) => async (dispatch) => {
     }
     return false; // Return false for any errors or unsuccessful attempts
 };
+
+
+export const deleteAllItem = (ids) => async (dispatch) => {
+    try {
+        // Pass ids as the data property in the axios delete request
+        const response = await axiosInstance.delete(`/items/delete/items/all`, {
+            data: { ids }
+        });
+        console.log("🚀 ~ deleteAllItem ~ response:", response)
+
+        // Check if the response is successful
+        if (response && response.status >= 200 && response.status < 300) {
+            toast.success(response.data.message || 'Product deleted successfully!');
+            return true; // Indicate successful deletion
+        }
+    } catch (error) {
+        // Handle errors appropriately
+        const errorMessage = error?.response?.data?.message || 'An unexpected error occurred. Please try again.';
+        toast.error(errorMessage);
+    }
+    return false; // Return false for any errors or unsuccessful attempts
+};

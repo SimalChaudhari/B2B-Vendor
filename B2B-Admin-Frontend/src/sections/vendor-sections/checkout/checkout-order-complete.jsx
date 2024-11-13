@@ -12,7 +12,7 @@ import { RouterLink } from 'src/routes/components';
 import { paths } from 'src/routes/paths';
 
 export function CheckoutOrderComplete({ open, onReset }) {
-  
+
   // Prevent user from going back with browser back button
   useEffect(() => {
     const handleBeforeUnload = (event) => {
@@ -62,9 +62,6 @@ export function CheckoutOrderComplete({ open, onReset }) {
 
         <Typography>
           Thanks for placing your order
-          <br />
-          <br />
-          <Link>01dc1370-3df6-11eb-b378-0242ac130002</Link>
           <br />
           <br />
           We will send you a notification within 5 days when it ships.

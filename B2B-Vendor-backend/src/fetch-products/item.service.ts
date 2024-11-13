@@ -131,6 +131,8 @@ export class ItemService {
     return { message: 'Product deleted successfully' };
   }
 
+
+  
   async uploadFilesToFirebase(
     itemId: string,
     productImages: Express.Multer.File[],
@@ -200,6 +202,24 @@ export class ItemService {
     return await this.itemRepository.save(item); // Save the updated item entity
   }
 
+  async deleteMultiple(ids: string[]): Promise<{ message: string }> {
+    const notFoundIds: string[] = [];
+
+    for (const id of ids) {
+        const item = await this.findById(id);
+        if (!item) {
+            notFoundIds.push(id);
+            continue; // skip this ID if not found
+        }
+        await this.itemRepository.remove(item);
+    }
+
+    if (notFoundIds.length > 0) {
+        throw new NotFoundException(`Items with ids ${notFoundIds.join(', ')} not found`);
+    }
+
+    return { message: 'Products deleted successfully' };
+}
 
 
 

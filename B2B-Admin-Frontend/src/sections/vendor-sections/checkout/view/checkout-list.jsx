@@ -11,7 +11,7 @@ export function CheckoutListView() {
   return (
     <DashboardContent maxWidth="2xl">
       <CustomBreadcrumbs
-        heading="Checkout Page"
+        heading="Product Listing"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
           { name: 'Products', href: paths?.dashboard?.items?.root },

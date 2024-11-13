@@ -14,6 +14,8 @@ const ICONS = {
   orders: icon('ic-order'),
   settings: icon('ic-lock'),
   stocks: icon('ic-job'),
+  logout: icon('ic-external'),
+
 };
 
 export const useNavData = () => {
@@ -80,6 +82,9 @@ export const useNavData = () => {
             },
           ]
           : []),
+
+          { title: 'Logout', path: paths.logout.root, icon: ICONS.logout },
+
       ],
     },
   ];

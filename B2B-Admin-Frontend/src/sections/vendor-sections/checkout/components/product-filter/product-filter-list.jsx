@@ -53,7 +53,6 @@ export function ProductFilterView() {
 
     //-----------------------------------------------------------------------------------------------------------------------
     const [selectedProducts, setSelectedProducts] = useState([]);
-    const [totalQuantity, setTotalQuantity] = useState(0);
 
     const dispatch = useDispatch();
 
@@ -151,17 +150,7 @@ export function ProductFilterView() {
 
                 </FormControl>
 
-                {/* Quantity Display */}
-                <Typography
-                    variant="body1"
-                    sx={{
-                        ml: { xs: 0, sm: 5 },
-                        minWidth: { xs: '100%', sm: '150px' },
-                        textAlign: { xs: 'center', sm: 'left' },
-                    }}
-                >
-                    Total Quantity: {totalQuantity}
-                </Typography>
+             
 
                 {/* Apply Button */}
                 <Button

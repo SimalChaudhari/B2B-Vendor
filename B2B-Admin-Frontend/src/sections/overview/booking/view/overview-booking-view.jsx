@@ -50,7 +50,7 @@ export function OverviewBookingView() {
       <Grid container spacing={3} disableEqualOverflow>
         <Grid xs={12} md={3}>
           <BookingWidgetSummary
-            title="Total Order"
+            title="Orders"
             total={_orders?.statusSummary?.totalOrders}
             style={widgetStyle}
             onClick={() => navigate(paths.orders.root)}
@@ -60,7 +60,7 @@ export function OverviewBookingView() {
 
         <Grid xs={12} md={3}>
           <BookingWidgetSummary
-            title="Total Success"
+            title="Success Orders"
             total={_orders?.statusSummary?.completed}
             style={widgetStyle}
             onClick={() => navigate(paths.orders.root)}
@@ -70,7 +70,7 @@ export function OverviewBookingView() {
 
         <Grid xs={12} md={3}>
           <BookingWidgetSummary
-            title="Pending"
+            title="Pending Orders"
             total={_orders?.statusSummary?.pending}
             style={widgetStyle}
             onClick={() => navigate(paths.orders.root)}
@@ -80,7 +80,7 @@ export function OverviewBookingView() {
 
         <Grid xs={12} md={3}>
           <BookingWidgetSummary
-            title="Canceled"
+            title="Canceled Orders"
             total={_orders?.statusSummary?.cancelled}
             style={widgetStyle}
             onClick={() => navigate(paths.orders.root)}
@@ -93,8 +93,8 @@ export function OverviewBookingView() {
             title="Monthly Orders Statistics"
             chart={{
               series: [
-                { name: 'Total Orders', data: totalOrders },
-                { name: 'Completed Orders', data: completedOrders },
+                { name: 'Orders', data: totalOrders },
+                { name: 'Success Orders', data: completedOrders },
                 { name: 'Canceled Orders', data: cancelledOrders },
                 { name: 'Pending Orders', data: pendingOrders },
               ],

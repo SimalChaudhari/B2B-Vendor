@@ -79,6 +79,9 @@ export const paths = {
     view: (id) => `/view/${id}`,
   },
 
+  logout: {
+    root: `/logout`
+  },
   // AUTH
   auth: {
     jwt: {
@@ -90,6 +93,6 @@ export const paths = {
   // DASHBOARD
   dashboard: {
     root: ROOTS.DASHBOARD,
-    
+
   },
 };
