@@ -14,8 +14,7 @@ export function applyFilter({ inputData, comparator, filters }) {
           item.group?.toLowerCase().includes(lowerSearchTerm) ||
           item.subGroup1?.toLowerCase().includes(lowerSearchTerm) ||
           item.subGroup2?.toString().includes(lowerSearchTerm) ||
-          item.sellingPrice?.toString().includes(lowerSearchTerm) ||
-          item.description?.toString().includes(lowerSearchTerm)
+          item.quantity?.toString().includes(lowerSearchTerm) 
       );
   }
 

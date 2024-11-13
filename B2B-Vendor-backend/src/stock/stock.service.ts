@@ -6,13 +6,14 @@ import axios from 'axios';
 import { parseStringPromise } from 'xml2js';
 import { StockEntity } from './stock.entity';
 import { StockDto } from './stock.dto';
+import { summary } from 'tally/summary';
 
 @Injectable()
 export class StockService {
   constructor(
     @InjectRepository(StockEntity)
     private stockRepository: Repository<StockEntity>,
-  ) {}
+  ) { }
 
   async findAll(): Promise<StockEntity[]> {
     return this.stockRepository.find(); // Load files for all items
@@ -20,11 +21,15 @@ export class StockService {
 
 
   async fetchAndStoreStockSummary(): Promise<void> {
+    const REQUEST_TIMEOUT = 15000; // 15 seconds timeout
+
     try {
-      const response = await axios.get(process.env.TALLY_STOCK_SUMMARY_URL as string, {
+      const response = await axios.get(process.env.TALLY_URL as string, {
         headers: {
           'Content-Type': 'text/xml',
         },
+        data: summary, // Replace with your dynamic XML request
+        timeout: REQUEST_TIMEOUT, // Set a timeout for the request
       });
 
       const stockSummaries = await this.parseXmlToStockSummaries(response.data);
@@ -51,29 +56,34 @@ export class StockService {
   }
 
   async parseXmlToStockSummaries(xml: string): Promise<StockEntity[]> {
-    const parsedResult = await parseStringPromise(xml);
-    const stockSummaryItems = parsedResult.ENVELOPE.STOCKSUMMARYITEM || [];
+    // Wrap the XML with a root element
+    const wrappedXml = `<STOCKSUMMARIES>${xml}</STOCKSUMMARIES>`;
+    
+    const parsedResult = await parseStringPromise(wrappedXml);
+    console.log("🚀 ~ StockService ~ parseXmlToStockSummaries ~ parsedResult:", parsedResult);
+
+    // Access STOCKSUMMARIES.STOCKSUMMARY as an array
+    const stockSummaryItems = parsedResult.STOCKSUMMARIES?.STOCKSUMMARY || [];
 
     return stockSummaryItems.map((item: any) => {
-      const stockDto = new StockDto();
+        const stockDto = new StockDto();
 
-      stockDto.itemName = this.cleanString(item.ITEMNAME?.[0]);
-      stockDto.group = this.cleanString(item.GROUP?.[0]);
-      stockDto.subGroup1 = this.cleanString(item.SUBGROUP1?.[0]);
-      stockDto.subGroup2 = this.cleanString(item.SUBGROUP2?.[0]);
-      stockDto.quantity = this.cleanString(item.QUANTITY?.[0] || '0');
-      stockDto.rate = this.cleanString(item.RATE?.[0] || '0');
-      stockDto.amount = this.cleanString(item.AMOUNT?.[0] || '0');
+        stockDto.itemName = this.cleanString(item.ITEMNAME?.[0] || '');
+        stockDto.group = this.cleanString(item.GROUP?.[0] || '');
+        stockDto.subGroup1 = this.cleanString(item.SUBGROUP1?.[0] || '');
+        stockDto.subGroup2 = this.cleanString(item.SUBGROUP2?.[0] || '');
+        stockDto.quantity = (parseFloat(item.CLOSINGSTOCK?.[0] || '0')).toString();
 
-      return this.stockRepository.create(stockDto);
+        return this.stockRepository.create(stockDto);
     });
-  }
+}
+
+
+
 
   private hasStockSummaryChanges(existingStock: StockEntity, newStock: StockEntity): boolean {
     return (
-      existingStock.quantity !== newStock.quantity ||
-      existingStock.rate !== newStock.rate ||
-      existingStock.amount !== newStock.amount
+      existingStock.quantity !== newStock.quantity
     );
   }
 

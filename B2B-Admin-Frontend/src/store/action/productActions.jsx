@@ -38,7 +38,11 @@ export const itemGetByList = (id) => async (dispatch) => {
 
 export const syncProduct = () => async (dispatch) => {
     try {
-        await axiosInstance.post('/items/fetch');
+        const response = await axiosInstance.post('/items/fetch');
+        if (response) {
+            toast.success(response.data.message);
+
+        }
         return true;
     } catch (error) {
         // Check if error response exists and handle error message
@@ -139,7 +143,6 @@ export const deleteAllItem = (ids) => async (dispatch) => {
         const response = await axiosInstance.delete(`/items/delete/items/all`, {
             data: { ids }
         });
-        console.log("🚀 ~ deleteAllItem ~ response:", response)
 
         // Check if the response is successful
         if (response && response.status >= 200 && response.status < 300) {

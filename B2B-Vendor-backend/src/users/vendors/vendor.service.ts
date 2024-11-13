@@ -19,12 +19,14 @@ export class VendorService {
     ) { }
 
     async fetchAndStoreVendors(): Promise<void> {
+        const REQUEST_TIMEOUT = 20000; // 20 seconds timeout
         try {
             const response = await axios.get(process.env.TALLY_URL as string, {
                 headers: {
                     'Content-Type': 'text/xml',
                 },
                 data: Vendors, // Replace with your dynamic XML request
+                timeout: REQUEST_TIMEOUT, // Set a timeout for the request
             });
 
             const vendors = await this.parseXmlToVendors(response.data);
@@ -54,8 +56,18 @@ export class VendorService {
                 }
             }
 
-        } catch (error) {
-          throw new InternalServerErrorException('Open Tally to fetch vendors.');
+        } catch (error: any) {
+            // Handle timeout specifically for login error message
+            if (error.code === 'ECONNABORTED') {
+                throw new InternalServerErrorException(
+                    'Please log in to Tally and try again.'
+                );
+            }
+
+            // Handle general error if Tally is not accessible
+            throw new InternalServerErrorException(
+                'Please ensure Tally is open and accessible, then try again.'
+            );
         }
     }
 

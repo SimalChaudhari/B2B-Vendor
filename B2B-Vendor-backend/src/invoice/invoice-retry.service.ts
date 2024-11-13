@@ -25,127 +25,132 @@ export class InvoiceRetryService {
                 userId: userId,
             },
         });
-    
+
         if (pendingInvoices.length === 0) {
             return {
                 status: 'success',
                 message: 'All data is up to date.',
             };
         }
-    
-        let allSuccessful = true; // Assume all are successful unless an error is encountered
-    
+
         for (const invoice of pendingInvoices) {
             try {
                 const response = await axios.post(process.env.TALLY_URL as string, invoice.xmlContent, {
                     headers: { 'Content-Type': 'application/xml' },
                 });
-    
+               
                 if (response.data.includes('<LINEERROR>')) {
-                    allSuccessful = false; // Mark as not completely successful
-                    continue; // Skip to the next invoice
+                    // Immediately return partial success message if there’s a line error
+                    return {
+                        status: 'partial_success',
+                        message: 'Some invoices could not be posted. Please log in to Tally or check sync logs for more details.',
+                    };
                 }
-    
+
                 // Delete the invoice from the database after successful posting
                 await this.invoiceRepository.delete(invoice.id);
-    
+                
+
             } catch (error) {
-                console.error("🚀 ~ InvoiceRetryService ~ postPendingInvoices ~ error:", error);
-                allSuccessful = false; // Mark as not completely successful
+                return {
+                    status: 'error',
+                    message: 'Please ensure Tally is open and accessible, then try again.',
+                };
             }
         }
-    
-        // Return the appropriate message based on the outcome
-        return allSuccessful
-            ? { status: 'success', message: 'All pending invoices have been successfully posted to Tally.' }
-            : { status: 'partial_success', message: 'Some invoices could not be posted. Please log in to Tally or check sync logs for more details.' };
+
+        return {
+            status: 'success',
+            message: 'All pending invoices have been successfully posted to Tally.',
+        };
     }
-    
+
+
 }
 
-    // @Cron('*/1 * * * *') // Run every 10 minutes
+// @Cron('*/1 * * * *') // Run every 10 minutes
 
-    // async retryPendingInvoices() {
-    //     // Check if there are pending invoices
-    //     const pendingInvoices = await this.invoiceRepository.find({
-    //         where: { status: InvoiceStatus.PENDING },
-    //     });
+// async retryPendingInvoices() {
+//     // Check if there are pending invoices
+//     const pendingInvoices = await this.invoiceRepository.find({
+//         where: { status: InvoiceStatus.PENDING },
+//     });
 
-    //     // If no pending invoices, exit the function without logging
-    //     if (pendingInvoices.length === 0) {
-    //         console.log("No pending invoices. Sync not required.");
-    //         return;
-    //     }
+//     // If no pending invoices, exit the function without logging
+//     if (pendingInvoices.length === 0) {
+//         console.log("No pending invoices. Sync not required.");
+//         return;
+//     }
 
-    //     // // Proceed with sync log entry creation only if there are pending invoices
-    //     // const syncLog = new SyncLog();
-    //     // syncLog.timestamp = new Date();
-    //     // syncLog.attempt_count = 0;
-    //     // syncLog.status = 'IN_PROGRESS';
+//     // // Proceed with sync log entry creation only if there are pending invoices
+//     // const syncLog = new SyncLog();
+//     // syncLog.timestamp = new Date();
+//     // syncLog.attempt_count = 0;
+//     // syncLog.status = 'IN_PROGRESS';
 
-    //     // await this.syncLogRepository.save(syncLog);
+//     // await this.syncLogRepository.save(syncLog);
 
-    //     // let successCount = 0;
-    //     // let failureCount = 0;
+//     // let successCount = 0;
+//     // let failureCount = 0;
 
-    //     // for (const invoice of pendingInvoices) {
-    //     //     syncLog.attempt_count += 1;
+//     // for (const invoice of pendingInvoices) {
+//     //     syncLog.attempt_count += 1;
 
-    //     //     try {
-    //     //         const response = await axios.post(process.env.TALLY_URL as string, invoice.xmlContent, {
-    //     //             headers: { 'Content-Type': 'application/xml' },
-    //     //         });
+//     //     try {
+//     //         const response = await axios.post(process.env.TALLY_URL as string, invoice.xmlContent, {
+//     //             headers: { 'Content-Type': 'application/xml' },
+//     //         });
 
-    //     //         if (response.data.includes('<LINEERROR>')) {
-    //     //             failureCount += 1;
-    //     //             continue;
-    //     //         }
+//     //         if (response.data.includes('<LINEERROR>')) {
+//     //             failureCount += 1;
+//     //             continue;
+//     //         }
 
-    //     //         await this.invoiceRepository.delete(invoice.id);
-    //     //         successCount += 1;
+//     //         await this.invoiceRepository.delete(invoice.id);
+//     //         successCount += 1;
 
-    //     //     } catch (error) {
-    //     //         console.error(`Failed to resend invoice ${invoice.id}`);
-    //     //         failureCount += 1;
-    //     //     }
-    //     // }
+//     //     } catch (error) {
+//     //         console.error(`Failed to resend invoice ${invoice.id}`);
+//     //         failureCount += 1;
+//     //     }
+//     // }
 
-    //     // // Update status based on success/failure counts
-    //     // syncLog.status = failureCount === 0
-    //     //     ? 'SUCCESS'
-    //     //     : (successCount > 0 ? 'PARTIAL_SUCCESS' : 'FAILURE');
+//     // // Update status based on success/failure counts
+//     // syncLog.status = failureCount === 0
+//     //     ? 'SUCCESS'
+//     //     : (successCount > 0 ? 'PARTIAL_SUCCESS' : 'FAILURE');
 
 
-    //     // await this.syncLogRepository.save(syncLog);
-    // }
+//     // await this.syncLogRepository.save(syncLog);
+// }
 
-    // @Cron('*/1 * * * *') // Run every 1 minute
-    // async retryPendingInvoices() {
+// @Cron('*/1 * * * *') // Run every 1 minute
+// async retryPendingInvoices() {
 
-    //     let isRunning = false;
-    //     if (isRunning) {
-    //         console.log("Job already in progress. Skipping this run.");
-    //         return;
-    //     }
+//     let isRunning = false;
+//     if (isRunning) {
+//         console.log("Job already in progress. Skipping this run.");
+//         return;
+//     }
 
-    //     isRunning = true;
-    //     try {
-    //         // Check if there are pending invoices
-    //         const pendingInvoices = await this.invoiceRepository.find({
-    //             where: { status: InvoiceStatus.PENDING },
-    //         });
+//     isRunning = true;
+//     try {
+//         // Check if there are pending invoices
+//         const pendingInvoices = await this.invoiceRepository.find({
+//             where: { status: InvoiceStatus.PENDING },
+//         });
 
-    //         if (pendingInvoices.length === 0) {
-    //             console.log("No pending invoices. Sync not required.");
-    //             return;
-    //         }
+//         if (pendingInvoices.length === 0) {
+//             console.log("No pending invoices. Sync not required.");
+//             return;
+//         }
 
-    //         // Your sync logic here
-    //         console.log("Sync job running...");
+//         // Your sync logic here
+//         console.log("Sync job running...");
 
-    //     } finally {
-    //         isRunning = false; // Release the lock
-    //     }
-    // }
+//     } finally {
+//         isRunning = false; // Release the lock
+//     }
+// }
 
 

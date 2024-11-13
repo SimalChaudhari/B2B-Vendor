@@ -45,7 +45,6 @@ export const SignInSchema = zod.object({
 export function JwtSignInView() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const returnTo = searchParams.get('returnTo');
   const dispatch = useDispatch();
   const [errorMsg, setErrorMsg] = useState('');
   const [otpSent, setOtpSent] = useState(false);

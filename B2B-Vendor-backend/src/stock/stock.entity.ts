@@ -20,9 +20,4 @@ export class StockEntity {
     @Column()
     quantity?: string;
 
-    @Column()
-    rate?: string;
-
-    @Column()
-    amount?: string;
 }

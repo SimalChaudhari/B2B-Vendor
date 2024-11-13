@@ -19,14 +19,16 @@ export class ItemService {
   ) { }
 
   async fetchAndStoreItems(): Promise<void> {
+    const REQUEST_TIMEOUT = 15000; // 15 seconds timeout
     try {
       const response = await axios.get(process.env.TALLY_URL as string, {
         headers: {
           'Content-Type': 'text/xml',
         },
         data: products, // Replace with your dynamic XML request
+        timeout: REQUEST_TIMEOUT, // Set a timeout for the request
       });
-
+   
       const items = await this.parseXmlToItems(response.data);
       const existingItems = await this.itemRepository.find();
 
@@ -49,7 +51,13 @@ export class ItemService {
         }
       }
 
-    } catch (error) {
+    } catch (error:any) {
+       // Handle request timeout error specifically
+       if (error.code === 'ECONNABORTED') {
+        throw new InternalServerErrorException(
+            'Please log in to Tally and try again.'
+        );
+    }
       throw new InternalServerErrorException('Open Tally to fetch items');
       // throw new Error('Failed to fetch items.please ensure Tally is open and try again.');
     }

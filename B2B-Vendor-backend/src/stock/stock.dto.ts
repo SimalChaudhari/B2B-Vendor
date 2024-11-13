@@ -19,9 +19,4 @@ export class StockDto {
   @IsString()
   quantity?: string;
 
-  @IsString()
-  rate?: string;
-
-  @IsString()
-  amount?: string;
 }

@@ -42,8 +42,8 @@ export function StockTableRow({ row, selected, onSelectRow }) {
             </TableCell>
             <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.subGroup1 || 'not available'}</TableCell>
             <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.subGroup2 || 'not available'}</TableCell>
-            <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.gstRate || 'not available'}</TableCell>
-            <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.gstRate || 'not available'}</TableCell>
+            <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.quantity || 'not available'}</TableCell>
+          
         </TableRow >
 
     );

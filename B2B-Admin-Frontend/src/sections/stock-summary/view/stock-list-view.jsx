@@ -31,7 +31,6 @@ import {
 } from 'src/components/table';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { syncProduct } from 'src/store/action/productActions';
 import { Typography } from '@mui/material';
 import { getProductStatusOptions, TABLE_STOCK_HEAD } from '../../../components/constants';
 import { applyFilter } from '../utils';
@@ -39,6 +38,7 @@ import { useFetchStockData } from '../components/fetch-stock';
 import { StockTableFiltersResult } from './table/stock-table-filters-result';
 import { StockTableRow } from './table/stock-table-row';
 import { StockTableToolbar } from './table/stock-table-toolbar';
+import { syncStock } from 'src/store/action/stockSummaryActions';
 
 // ----------------------------------------------------------------------
 export function StockListView() {
@@ -50,11 +50,9 @@ export function StockListView() {
 
     const { fetchData} = useFetchStockData(); // Destructure fetchData from the custom hook
     const dispatch = useDispatch();
-    const _productList = useSelector((state) => state.product?.product || []);
-    const [tableData, setTableData] = useState(_productList);
-    const STATUS_OPTIONS = getProductStatusOptions(tableData);
-
-    const options = _productList.map(opt => ({
+    const _stock = useSelector((state) => state.stock?.stock || []);
+    const [tableData, setTableData] = useState(_stock);
+   const options = _stock.map(opt => ({
         group: opt.group,
         subGroup1: opt.subGroup1,
         subGroup2: opt.subGroup2,
@@ -69,8 +67,8 @@ export function StockListView() {
     }, []);
 
     useEffect(() => {
-        setTableData(_productList);
-    }, [_productList]);
+        setTableData(_stock);
+    }, [_stock]);
     //----------------------------------------------------------------------------------------------------
 
     const handleSelectRow = useCallback((id) => {
@@ -126,12 +124,12 @@ export function StockListView() {
     const handleSyncAPI = useCallback(async () => {
         setLoading(true); // Set loading to true while syncing
         try {
-            const res = await dispatch(syncProduct()); // Call the sync API
+            const res = await dispatch(syncStock()); // Call the sync API
             if (res) {
                 fetchData(); // Fetch data after syncing
             }
         } catch (error) {
-            console.error("Failed to sync products", error);
+            console.error("Failed to sync Stocks", error);
         } finally {
             setLoading(false); // Reset loading state
             confirmSync.onFalse(); // Close the confirmation dialog
@@ -246,9 +244,9 @@ export function StockListView() {
                 onClose={confirmSync.onFalse}
                 content={
                     <Box>
-                        <Typography gutterBottom>Are you sure you want to sync the products?</Typography>
+                        <Typography gutterBottom>Are you sure you want to sync the Stocks?</Typography>
                         <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                            This action will update the product data and may take a few moments.
+                            This action will update the stocks data and may take a few moments.
                         </Typography>
                     </Box>
                 }

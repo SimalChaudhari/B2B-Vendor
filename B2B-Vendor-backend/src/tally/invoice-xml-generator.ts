@@ -4,8 +4,13 @@ import { OrderEntity } from "order/order.entity";
 import { OrderItemEntity } from "order/order.item.entity";
 
 export function generateInvoiceXML(order: OrderEntity, orderItems: OrderItemEntity[]): string {
-    const { user, address, totalPrice, orderNo } = order;
+    const { user, address, totalPrice, orderNo, createdAt } = order;
+     // Check if createdAt is defined, or use the current date as fallback
+     const formattedDate = createdAt ? formatDate(new Date(createdAt)) : formatDate(new Date());
+     const formattedDateT = createdAt ? formatDateT(new Date(createdAt)) : formatDate(new Date());
 
+
+     
     // Generate XML for each product in the order
     const inventoryEntriesXML = orderItems.map(orderItem => `
         <ALLINVENTORYENTRIES.LIST>
@@ -29,7 +34,7 @@ export function generateInvoiceXML(order: OrderEntity, orderItems: OrderItemEnti
                 <AMOUNT>${orderItem.product.sellingPrice * orderItem.quantity}</AMOUNT>
                 <ACTUALQTY>${orderItem.quantity}</ACTUALQTY>
                 <BILLEDQTY>${orderItem.quantity}</BILLEDQTY>
-                 <ORDERDUEDATE P="31-Mar-25">31-Mar-25</ORDERDUEDATE>
+                 <ORDERDUEDATE P="01-Nov-2024">01-Nov-2024</ORDERDUEDATE>
             </BATCHALLOCATIONS.LIST>
             <ACCOUNTINGALLOCATIONS.LIST>
                 <LEDGERNAME>GST Sales</LEDGERNAME>
@@ -68,7 +73,7 @@ export function generateInvoiceXML(order: OrderEntity, orderItems: OrderItemEnti
                             <BASICBUYERADDRESS>${address.state}</BASICBUYERADDRESS>
                             <BASICBUYERADDRESS>${address.country}</BASICBUYERADDRESS>
                         </BASICBUYERADDRESS.LIST>
-                        <DATE>20250331</DATE>
+                        <DATE>20241101</DATE>
                         <GUID>${orderNo}</GUID> 
                         <GSTREGISTRATIONTYPE>Regular</GSTREGISTRATIONTYPE>
                         <VATDEALERTYPE>Regular</VATDEALERTYPE>
@@ -91,7 +96,7 @@ export function generateInvoiceXML(order: OrderEntity, orderItems: OrderItemEnti
                         <PERSISTEDVIEW>Invoice Voucher View</PERSISTEDVIEW>
                         <BUYERPINNUMBER>${address.zip_code}</BUYERPINNUMBER>
                         <CONSIGNEEPINNUMBER>${address.zip_code}</CONSIGNEEPINNUMBER>
-                        <EFFECTIVEDATE>20250331</EFFECTIVEDATE>
+                        <EFFECTIVEDATE>20241101</EFFECTIVEDATE>
                         <ISELIGIBLEFORITC>Yes</ISELIGIBLEFORITC>
                         <ISVATDUTYPAID>Yes</ISVATDUTYPAID>
                                  ${inventoryEntriesXML}
@@ -169,7 +174,13 @@ function formatDate(date: Date): string {
     return `${day}-${month}-${year}`;
 }
 
-function EffectiveDate(date: Date): string {
-    return date.toISOString().slice(0, 10).replace(/-/g, '').substring(0, 8);
+function formatDateT(date: Date): string {
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = date.toLocaleString('en-US', { month: 'short' });
+    const year = date.getFullYear().toString().slice(-2);
+    return `${year}${month}${day}`;
+
 }
+
+
 
