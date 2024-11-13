@@ -359,6 +359,7 @@
     }
     .css-181h50y-MuiContainer-root, .containerCss {
         max-width: 1350px !important;
+        max-width: 100vw !important;
     }
 }
 

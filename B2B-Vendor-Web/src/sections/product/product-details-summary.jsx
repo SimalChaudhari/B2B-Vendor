@@ -23,6 +23,10 @@ import { ColorPicker } from 'src/components/color-utils';
 
 import { IncrementerButton } from './components/incrementer-button';
 
+import { useDispatch } from 'react-redux';
+import { setProductDetails } from 'src/redux/orderProductAndAddressReducer';
+
+
 // ----------------------------------------------------------------------
 
 export function ProductDetailsSummary({
@@ -33,6 +37,7 @@ export function ProductDetailsSummary({
   disableActions,
   ...other
 }) {
+  const dispatch = useDispatch();
   const router = useRouter();
 
   const {
@@ -86,6 +91,7 @@ export function ProductDetailsSummary({
 
   const onSubmit = handleSubmit(async (data) => {
     if (data) {
+      dispatch(setProductDetails({ productDetails: data, quantity: data.quantity }));
       onGotoStep?.(1); // Call to update the step in the context if necessary
       router.push({ 
           pathname: paths.product.checkout, 

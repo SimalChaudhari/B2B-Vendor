@@ -32,6 +32,7 @@ export function ProductItem({ product }) {
     product;
   const available = 5;
   const linkTo = paths.product.details(id);
+  const limitedDescription = description.length > 17 ? `${description.slice(0, 17)}...` : description;
 
 
   const handleAddCart = async () => {
@@ -68,7 +69,7 @@ export function ProductItem({ product }) {
   );
 
   const renderContent = (
-    <Stack spacing={2.5} sx={{ p: 3, pt: 2 }}>
+    <Stack spacing={0.5} sx={{ p: 2, pt: 0, alignItems: 'flex-start' }}>
       <Link component={RouterLink} href={linkTo} color="inherit" variant="subtitle2" noWrap>
         {itemName}
       </Link>
@@ -76,8 +77,8 @@ export function ProductItem({ product }) {
       <Box component="span">
         {group}
       </Box>
-      <Box component="span" sx={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-        {description}
+      <Box component="span" sx={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight:'200', fontSize:'13px' }}>
+        {limitedDescription}
       </Box>
       {/* 5-Star Rating */}
       <Rating name="size-small" defaultValue={2} size="small" />
