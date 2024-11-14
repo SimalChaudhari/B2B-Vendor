@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import Radio from '@mui/material/Radio';
@@ -26,15 +26,25 @@ import { Button } from '@mui/material';
 export function ProductFilters({ open, onOpen, onClose, canReset, filters, options }) {
   const location = useLocation();
 
+  const navigate = useNavigate();
+    
+  const handleResetClick = () => {
+    filters.onResetState(); // First function to reset the filters
+    navigate('/product');   // Second function to navigate to /product
+  };
   // Extract query params and apply them to filters on component mount
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const category = queryParams.get('category') || 'all'; // Get 'category' param
+    const subGroup1 = queryParams.get('subGroup1') || 'all'; // Get 'category' param
+    const subGroup2 = queryParams.get('subGroup2') || 'all'; // Get 'category' param
     const search = queryParams.get('search') || 'all'; // Get 'search' param
-    if (category) {
-      // filters.setState((prevState) => ({ ...prevState, category })); // Set it to the filters
-      filters.setState({ category }); // Set it to the filters
-    }
+    filters.setState({
+      category,
+      subGroup1,
+      subGroup2,
+      // add any other necessary initial state here
+    });
   }, [location.search]); // Re-run this effect when query changes
 
   const marksLabel = [...Array(21)].map((_, index) => {
@@ -61,6 +71,20 @@ export function ProductFilters({ open, onOpen, onClose, canReset, filters, optio
     [filters]
   );
 
+  const handleFiltersubGroup1 = useCallback(
+    (newValue) => {
+      filters.setState({ subGroup1: newValue });
+    },
+    [filters]
+  );
+
+  const handleFiltersubGroup2 = useCallback(
+    (newValue) => {
+      filters.setState({ subGroup2: newValue });
+    },
+    [filters]
+  );
+
   const handleFilterColors = useCallback(
     (newValue) => {
       filters.setState({ colors: newValue });
@@ -82,6 +106,7 @@ export function ProductFilters({ open, onOpen, onClose, canReset, filters, optio
     [filters]
   );
 
+
   const renderHead = (
     <div>
       <Box display="flex" alignItems="center" sx={{ py: 2, pr: 1, pl: 2.5 }}>
@@ -90,7 +115,7 @@ export function ProductFilters({ open, onOpen, onClose, canReset, filters, optio
         </Typography>
 
         <Tooltip title="Reset">
-          <IconButton onClick={filters.onResetState}>
+          <IconButton onClick={handleResetClick}>
             <Badge color="error" variant="dot" invisible={!canReset}>
               <Iconify icon="solar:restart-bold" />
             </Badge>
@@ -142,6 +167,9 @@ export function ProductFilters({ open, onOpen, onClose, canReset, filters, optio
                 // Update the URL here when a category is selected
                 const url = new URLSearchParams(location.search);
                 url.set('category', option);
+                // Optionally reset subGroup1 and subGroup2 when category is changed
+                url.delete('subGroup1');
+                url.delete('subGroup2');
                 window.history.replaceState({}, '', `${location.pathname}?${url}`); // Update the URL without reloading
               }}
             />
@@ -152,6 +180,63 @@ export function ProductFilters({ open, onOpen, onClose, canReset, filters, optio
       ))}
     </Box>
   );
+
+
+  const rendersubGroup1 = (
+    <Box display="flex" flexDirection="column">
+      <Typography variant="subtitle2" sx={{ mb: 1 }}>
+        subGroup1
+      </Typography>
+      {options.subGroups1.map((option) => (
+        <FormControlLabel
+          key={option}
+          control={
+            <Radio
+              checked={option === filters.state.subGroup1}
+              onClick={() => {
+                handleFiltersubGroup1(option);
+                // Update the URL here when a category is selected
+                const url = new URLSearchParams(location.search);
+                url.set('subGroup1', option);
+                window.history.replaceState({}, '', `${location.pathname}?${url}`); // Update the URL without reloading
+              }}
+            />
+          }
+          label={option}
+          sx={{ ...(option === 'all' && { textTransform: 'capitalize' }) }}
+        />
+      ))}
+    </Box>
+  );
+
+
+  const rendersubGroup2 = (
+    <Box display="flex" flexDirection="column">
+      <Typography variant="subtitle2" sx={{ mb: 1 }}>
+        subGroup2
+      </Typography>
+      {options.subGroups2.map((option) => (
+        <FormControlLabel
+          key={option}
+          control={
+            <Radio
+              checked={option === filters.state.subGroup2}
+              onClick={() => {
+                handleFiltersubGroup2(option);
+                // Update the URL here when a category is selected
+                const url = new URLSearchParams(location.search);
+                url.set('subGroup2', option);
+                window.history.replaceState({}, '', `${location.pathname}?${url}`); // Update the URL without reloading
+              }}
+            />
+          }
+          label={option}
+          sx={{ ...(option === 'all' && { textTransform: 'capitalize' }) }}
+        />
+      ))}
+    </Box>
+  );
+
 
   const renderColor = (
     <Box display="flex" flexDirection="column">
@@ -216,11 +301,15 @@ export function ProductFilters({ open, onOpen, onClose, canReset, filters, optio
 
         <Scrollbar sx={{ px: 2.5, py: 3 }}>
           <Stack spacing={3}>
-          {/*
+            {/*
             {renderGender}
             {renderColor}
             */}
             {renderCategory}
+            {/*
+              {rendersubGroup1}
+              {rendersubGroup2}
+              */}
             {renderPrice}
           </Stack>
         </Scrollbar>
