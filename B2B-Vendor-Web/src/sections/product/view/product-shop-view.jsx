@@ -34,6 +34,8 @@ export function ProductShopView({ products = [], loading }) {
   
   // Extract unique item names
   const uniqueItemNames = Array.from(new Set(products.map(product => product.group)));
+  const uniqueItemsubGroup1 = Array.from(new Set(products.map(product => product.subGroup1)));
+  const uniqueItemsubGroup2 = Array.from(new Set(products.map(product => product.subGroup2)));
 
   const items = useSelector((state) => state.product.items.data);
 
@@ -60,6 +62,8 @@ export function ProductShopView({ products = [], loading }) {
     colors: [],
     rating: '',
     category: 'all',
+    subGroup1 : 'all',
+    subGroup2 : 'all',
     priceRange: [0, 200000],
   });
 
@@ -72,6 +76,8 @@ export function ProductShopView({ products = [], loading }) {
     filters.state.colors.length > 0 ||
     filters.state.rating !== '' ||
     filters.state.category !== 'all' ||
+    filters.state.subGroup1 !== 'all' ||
+    filters.state.subGroup2 !== 'all' ||
     filters.state.priceRange[0] !== 0 ||
     filters.state.priceRange[1] !== 200000;
 
@@ -113,6 +119,8 @@ export function ProductShopView({ products = [], loading }) {
             ratings: PRODUCT_RATING_OPTIONS,
             genders: PRODUCT_GENDER_OPTIONS,
             categories: ['all', ...uniqueItemNames],
+            subGroups1: ['all', ...uniqueItemsubGroup1],
+            subGroups2: ['all', ...uniqueItemsubGroup2],
           }}
         />
 
@@ -151,7 +159,7 @@ export function ProductShopView({ products = [], loading }) {
 }
 
 function applyFilter({ inputData, filters, sortBy }) {
-  const { gender, category, colors, priceRange, rating } = filters;
+  const { gender, category, colors, priceRange, rating, subGroup1, subGroup2 } = filters;
 
   const min = priceRange[0];
 
@@ -181,6 +189,14 @@ function applyFilter({ inputData, filters, sortBy }) {
 
   if (category !== 'all') {
     inputData = inputData.filter((products) => products.group === category);
+  }
+
+  if (subGroup1 !== 'all') {
+    inputData = inputData.filter((products) => products.subGroup1 === subGroup1);
+  }
+
+  if (subGroup2 !== 'all') {
+    inputData = inputData.filter((products) => products.subGroup2 === subGroup2);
   }
 
   if (colors.length) {

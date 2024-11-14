@@ -4,10 +4,20 @@ import Chip from '@mui/material/Chip';
 import { varAlpha } from 'src/theme/styles';
 
 import { chipProps, FiltersBlock, FiltersResult } from 'src/components/filters-result';
+import { useNavigate } from 'react-router';
 
 // ----------------------------------------------------------------------
 
 export function ProductFiltersResult({ filters, totalResults, sx }) {
+
+
+  const navigate = useNavigate();
+
+  const handleResetClick = () => {
+    filters.onResetState(); // First function to reset the filters
+    navigate('/product');   // Second function to navigate to /product
+  };
+
   const handleRemoveGender = (inputValue) => {
     const newValue = filters.state.gender.filter((item) => item !== inputValue);
 
@@ -16,6 +26,14 @@ export function ProductFiltersResult({ filters, totalResults, sx }) {
 
   const handleRemoveCategory = () => {
     filters.setState({ category: 'all' });
+  };
+
+  const handleRemovesubGroup1 = () => {
+    filters.setState({ subGroup1: 'all' });
+  };
+
+  const handleRemovesubGroup2 = () => {
+    filters.setState({ subGroup2: 'all' });
   };
 
   const handleRemoveColor = (inputValue) => {
@@ -33,7 +51,7 @@ export function ProductFiltersResult({ filters, totalResults, sx }) {
   };
 
   return (
-    <FiltersResult totalResults={totalResults} onReset={filters.onResetState} sx={sx}>
+    <FiltersResult totalResults={totalResults} onReset={handleResetClick} sx={sx}>
       <FiltersBlock label="Gender:" isShow={!!filters.state.gender.length}>
         {filters.state.gender.map((item) => (
           <Chip {...chipProps} key={item} label={item} onDelete={() => handleRemoveGender(item)} />
@@ -42,6 +60,14 @@ export function ProductFiltersResult({ filters, totalResults, sx }) {
 
       <FiltersBlock label="Category:" isShow={filters.state.category !== 'all'}>
         <Chip {...chipProps} label={filters.state.category} onDelete={handleRemoveCategory} />
+      </FiltersBlock>
+
+      <FiltersBlock label="subGroup1:" isShow={filters.state.subGroup1 !== 'all'}>
+        <Chip {...chipProps} label={filters.state.subGroup1} onDelete={handleRemovesubGroup1} />
+      </FiltersBlock>
+
+      <FiltersBlock label="subGroup2:" isShow={filters.state.subGroup2 !== 'all'}>
+        <Chip {...chipProps} label={filters.state.subGroup2} onDelete={handleRemovesubGroup2} />
       </FiltersBlock>
 
       <FiltersBlock label="Colors:" isShow={!!filters.state.colors.length}>

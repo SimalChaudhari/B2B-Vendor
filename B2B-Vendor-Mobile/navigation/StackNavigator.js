@@ -82,7 +82,7 @@ const StackNavigator = () => {
                     name="Shop"
                     component={ShopScreen}
                     options={{
-                        tabBarLabel: "Shop",
+                        tabBarLabel: "Products",
                         tabBarLabelStyle: { color: "#000", fontWeight:700, marginBottom:7  },
                         headerShown: false,
                         tabBarIcon: ({ focused }) => (
