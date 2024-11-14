@@ -43,15 +43,28 @@ export class ItemController {
   ]))
   async uploadFiles(
     @Param('id') id: string,
-    @UploadedFiles() files: { productImages?: Express.Multer.File[]; dimensionalFiles?: Express.Multer.File[] }
+    @UploadedFiles() files: { productImages?: Express.Multer.File[]; dimensionalFiles?: Express.Multer.File[] },
+    @Body('applyToAllProductImages') applyToAllProductImages: string, // Separate option for images
+    @Body('applyToAllDimensionalFiles') applyToAllDimensionalFiles: string // Separate option for dimensional files
   ) {
+    // Convert apply options to booleans
+    const shouldApplyToAllProductImages = applyToAllProductImages === 'true';
+    const shouldApplyToAllDimensionalFiles = applyToAllDimensionalFiles === 'true';
+  
     // Provide default empty arrays if undefined
     const productImages: Express.Multer.File[] = files.productImages || [];
     const dimensionalFiles: Express.Multer.File[] = files.dimensionalFiles || [];
-
-    return this.itemService.uploadFilesToFirebase(id, productImages, dimensionalFiles);
+  
+    return await this.itemService.uploadFilesToFirebase(
+      id, 
+      productImages, 
+      dimensionalFiles, 
+      shouldApplyToAllProductImages, 
+      shouldApplyToAllDimensionalFiles
+    );
   }
-
+  
+  
 @Delete('delete/:id')
 async deleteImages(
   @Param('id') itemId: string, 
@@ -61,7 +74,7 @@ async deleteImages(
 }
 
 @Delete('delete/item/:id')
-async delete(@Param('id') id: string, @Res() response: Response) {
+async delete(@Param('id') id: string,@Res() response: Response) {
     try {
         const result = await this.itemService.delete(id);
         return response.status(HttpStatus.OK).json(result);

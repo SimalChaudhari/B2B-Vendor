@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import {
-    Card, CardHeader, Divider, Stack, Box, Typography, InputAdornment, Switch,
+    Card, CardHeader, Divider, Stack, Typography, Switch,
     FormControlLabel, Grid
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
@@ -11,9 +11,13 @@ import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router';
 
 export default function ProductNewEditForm({ currentProduct }) {
-    const dispatch = useDispatch()
-    const navigate = useNavigate()
-    const [loading, setLoading] = useState(false); // State to manage the loader
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
+
+    // States for applyToAll flags
+    const [applyToAllProductImages, setApplyToAllProductImages] = useState(false);
+    const [applyToAllDimensionalFiles, setApplyToAllDimensionalFiles] = useState(false);
 
     const defaultValues = useMemo(() => ({
         id: currentProduct?.id || '',
@@ -21,10 +25,7 @@ export default function ProductNewEditForm({ currentProduct }) {
         dimensionalFiles: currentProduct?.dimensionalFiles || '',
     }), [currentProduct]);
 
-    const methods = useForm({
-        defaultValues,
-    });
-
+    const methods = useForm({ defaultValues });
     const { reset, handleSubmit, setValue, watch } = methods;
     const values = watch();
 
@@ -36,25 +37,31 @@ export default function ProductNewEditForm({ currentProduct }) {
 
     const onSubmit = handleSubmit(async (data) => {
         const formData = new FormData();
+
+        // Add applyToAll flags to form data
+        formData.append('applyToAllProductImages', applyToAllProductImages);
+        formData.append('applyToAllDimensionalFiles', applyToAllDimensionalFiles);
+
         const existingImages = values.productImages || [];
         existingImages.forEach((image) => {
-            formData.append('productImages', image); // Append existing image URLs
+            formData.append('productImages', image);
         });
+
         const existingDimensionalFiles = values.dimensionalFiles || [];
         existingDimensionalFiles.forEach((file) => {
-            formData.append('dimensionalFiles', file); // Append existing image URLs
+            formData.append('dimensionalFiles', file);
         });
 
         try {
-            setLoading(true); // Start loading
+            setLoading(true);
             const res = await dispatch(editProduct(currentProduct.id, formData));
             if (res) {
-                navigate('/products')
+                navigate('/products');
             }
-            setLoading(false); // Stop loading
+            setLoading(false);
         } catch (error) {
             console.error('Error updating product:', error);
-            setLoading(false); // Stop loading
+            setLoading(false);
         }
     });
 
@@ -79,34 +86,42 @@ export default function ProductNewEditForm({ currentProduct }) {
     const handleRemoveAllFiles = useCallback(async (fieldName) => {
         try {
             const imageField = fieldName === 'productImages' ? 'productImages' : 'dimensionalFiles';
-            const remoteFiles = values[fieldName].filter(file => !(file instanceof File)); // Remote files
+            const remoteFiles = values[fieldName].filter(file => !(file instanceof File));
 
-            // Only dispatch deleteProduct if there are remote files
             if (remoteFiles.length > 0) {
                 const result = await dispatch(deleteProduct(currentProduct.id, { [imageField]: remoteFiles }));
                 if (result) {
-                    setValue(fieldName, []); // Clear all files in state
+                    setValue(fieldName, []);
                 }
             } else {
-                // If there are only local files, just clear the state
                 setValue(fieldName, []);
             }
         } catch (error) {
             console.error('Error deleting all images:', error);
-            // Optionally, you can show a notification or alert to the user
         }
     }, [dispatch, currentProduct.id, setValue, values]);
 
     return (
         <Form methods={methods} onSubmit={onSubmit}>
             <Stack spacing={3}>
-                <Card>
-                <CardHeader
-                 title={`Item :  ${currentProduct?.itemName}`} sx={{ py: 2 }} />
-
-                    <Divider />
-                    <Stack spacing={2} sx={{ p: 3 }}>
-                        <Typography variant="subtitle2">Product Images</Typography>
+            <Card>
+            <Stack spacing={2} sx={{ p: 3 }}>
+                <Grid container spacing={4}>
+                    {/* Product Images Section */}
+                    <Grid item xs={12} md={6}>
+                        <Typography variant="h6">Product Images</Typography>
+                        <Divider sx={{ borderStyle: 'dashed', my: 1 }} />
+                        
+                        <FormControlLabel
+                            control={
+                                <Switch
+                                    checked={applyToAllProductImages}
+                                    onChange={(e) => setApplyToAllProductImages(e.target.checked)}
+                                />
+                            }
+                            label="Apply to all items with the same subGroup1"
+                        />
+        
                         <Field.Upload
                             multiple
                             thumbnail
@@ -115,8 +130,23 @@ export default function ProductNewEditForm({ currentProduct }) {
                             onRemove={(file) => handleRemoveFile(file, 'productImages')}
                             onRemoveAll={() => handleRemoveAllFiles('productImages')}
                         />
-
-                        <Typography variant="subtitle2">Dimensional Files</Typography>
+                    </Grid>
+        
+                    {/* Dimensional Files Section */}
+                    <Grid item xs={12} md={6}>
+                        <Typography variant="h6">Dimensional Files</Typography>
+                        <Divider sx={{ borderStyle: 'dashed', my: 1 }} />
+                        
+                        <FormControlLabel
+                            control={
+                                <Switch
+                                    checked={applyToAllDimensionalFiles}
+                                    onChange={(e) => setApplyToAllDimensionalFiles(e.target.checked)}
+                                />
+                            }
+                            label="Apply to all items with the same subGroup1"
+                        />
+        
                         <Field.SingleFile
                             multiple
                             thumbnail
@@ -124,19 +154,18 @@ export default function ProductNewEditForm({ currentProduct }) {
                             maxSize={3145728}
                             onRemove={(file) => handleRemoveFile(file, 'dimensionalFiles')}
                             onRemoveAll={() => handleRemoveAllFiles('dimensionalFiles')}
-
-                        // onUpload={() => console.info('ON UPLOAD')}
-                        // onUpload={() => onSubmit()}
                         />
-                    </Stack>
-                </Card>
+                    </Grid>
+                </Grid>
+            </Stack>
+        </Card>
+        
 
                 <Stack direction="row" justifyContent="flex-end" spacing={2}>
                     <LoadingButton type="submit" variant="contained" loading={loading}>
                         Submit
                     </LoadingButton>
                 </Stack>
-
             </Stack>
         </Form>
     );

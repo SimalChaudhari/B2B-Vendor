@@ -138,50 +138,88 @@ export class ItemService {
     await this.itemRepository.remove(items);
     return { message: 'Product deleted successfully' };
   }
-
-
   
+
   async uploadFilesToFirebase(
     itemId: string,
     productImages: Express.Multer.File[],
-    dimensionalFiles: Express.Multer.File[]
-  ): Promise<ItemEntity> {
+    dimensionalFiles: Express.Multer.File[],
+    applyToAllProductImages: boolean,
+    applyToAllDimensionalFiles: boolean
+  ): Promise<ItemEntity[]> {
+    // Find the specific item by ID
     const item = await this.itemRepository.findOne({ where: { id: itemId } });
-
     if (!item) {
       throw new NotFoundException('Item not found');
     }
-
-    // Update only product images if new files are provided
+  
+    // Initialize lists to store new image URLs
+    const newImageUrls: string[] = [];
+    const newDimensionalUrls: string[] = [];
+    
+    // Array to collect all updated items
+    const updatedItems: ItemEntity[] = [];
+  
+    // Upload product images if provided
     if (productImages && productImages.length > 0) {
-      const newImageUrls: string[] = []; // Array to hold newly uploaded image URLs
-
       for (const file of productImages) {
         const filePath = `images/${Date.now()}-${file.originalname}`;
         const imageUrl = await this.firebaseService.uploadFile(filePath, file.buffer);
-        newImageUrls.push(imageUrl); // Collect the uploaded image URL
+        newImageUrls.push(imageUrl);
       }
-
-      // Update the item entity with the new image URLs
-      item.productImages = [...(item.productImages || []), ...newImageUrls]; // Append new image URLs
     }
-
-    // Update only dimensional files if new files are provided
+  
+    // Upload dimensional files if provided
     if (dimensionalFiles && dimensionalFiles.length > 0) {
-      const newDimensionalUrls: string[] = []; // Array to hold newly uploaded dimensional URLs
-
       for (const file of dimensionalFiles) {
         const filePath = `documents/${Date.now()}-${file.originalname}`;
         const fileUrl = await this.firebaseService.uploadFile(filePath, file.buffer);
-        newDimensionalUrls.push(fileUrl); // Collect new dimensional URLs
+        newDimensionalUrls.push(fileUrl);
       }
-
-      // Update dimensionalFiles only if new dimensional files are uploaded
-      item.dimensionalFiles = newDimensionalUrls; // Set to only the newly uploaded dimensional files
     }
-
-    return await this.itemRepository.save(item); // Save the updated item entity
+  
+    // Define items to update
+    let itemsToUpdate: ItemEntity[];
+  
+    if (applyToAllProductImages || applyToAllDimensionalFiles) {
+      // Fetch all items with the same subGroup1 if any applyToAll flag is true
+      itemsToUpdate = await this.itemRepository.find({ where: { subGroup1: item.subGroup1 } });
+  
+      for (const currentItem of itemsToUpdate) {
+        // Apply new images to all items in the subgroup if applyToAllProductImages is true
+        if (applyToAllProductImages) {
+          currentItem.productImages = [...item.productImages, ...newImageUrls]; // Replace with combined images from specified item
+        }
+  
+        // Apply new dimensional files to all items in the subgroup if applyToAllDimensionalFiles is true
+        if (applyToAllDimensionalFiles) {
+          currentItem.dimensionalFiles = [...item.dimensionalFiles, ...newDimensionalUrls]; // Replace with combined dimensional files from specified item
+        }
+  
+        // Save each updated item
+        const savedItem = await this.itemRepository.save(currentItem);
+        updatedItems.push(savedItem);
+      }
+    } else {
+      // Only update the specified item if no applyToAll flag is true
+      if (newImageUrls.length > 0) {
+        item.productImages = [...(item.productImages || []), ...newImageUrls];
+      }
+  
+      if (newDimensionalUrls.length > 0) {
+        item.dimensionalFiles = [...(item.dimensionalFiles || []), ...newDimensionalUrls];
+      }
+  
+      // Save the specified item
+      const savedItem = await this.itemRepository.save(item);
+      updatedItems.push(savedItem);
+    }
+  
+    return updatedItems; // Return the list of updated items
   }
+  
+  
+  
 
   // Method to delete specific images from Firebase
   async deleteImages(itemId: string, imagesToDelete: { productImages?: string[]; dimensionalFiles?: string[] }): Promise<ItemEntity> {
@@ -194,7 +232,7 @@ export class ItemService {
     // Delete specified product images from Firebase if URLs are provided
     const productImages = imagesToDelete.productImages;
     if (productImages?.length) {
-      await this.firebaseService.deleteFiles(productImages);
+      // await this.firebaseService.deleteImage(productImages);
       // Remove deleted product image URLs from the item
       item.productImages = item.productImages.filter(url => !productImages.includes(url));
     }
@@ -202,7 +240,7 @@ export class ItemService {
     // Delete specified dimensional files from Firebase if URLs are provided
     const dimensionalFiles = imagesToDelete.dimensionalFiles;
     if (dimensionalFiles?.length) {
-      await this.firebaseService.deleteFiles(dimensionalFiles);
+      // await this.firebaseService.deleteImage(dimensionalFiles);
       // Remove deleted dimensional file URLs from the item
       item.dimensionalFiles = item.dimensionalFiles.filter(url => !dimensionalFiles.includes(url));
     }
