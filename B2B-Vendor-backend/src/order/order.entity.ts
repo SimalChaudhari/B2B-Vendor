@@ -34,7 +34,7 @@ export class OrderEntity {
     @Column()
     totalQuantity!: number;
 
-    @Column({ type: 'enum', enum: DeliveryType, default: DeliveryType.FREE })
+    @Column({ type: 'enum', enum: DeliveryType, default: DeliveryType.transportation })
     delivery!: DeliveryType; // Delivery type, default is 'free'
 
     // Add status column with enum and default value

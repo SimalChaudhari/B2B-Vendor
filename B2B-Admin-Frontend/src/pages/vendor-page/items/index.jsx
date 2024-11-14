@@ -1,9 +1,7 @@
 
 import { Helmet } from 'react-helmet-async';
-import { CONFIG } from 'src/config-global';
 import useUserRole from 'src/layouts/components/user-role';
-import { ItemListView } from 'src/sections/vendor-sections/product/view';
-
+import { CheckoutListView } from 'src/sections/vendor-sections/checkout/view/checkout-list';
 
 export default function Page() {
 
@@ -15,7 +13,7 @@ export default function Page() {
             <Helmet>
                 <title> {metadata.title}</title>
             </Helmet>
-            <ItemListView />
+            <CheckoutListView/> 
         </>
     );
 }

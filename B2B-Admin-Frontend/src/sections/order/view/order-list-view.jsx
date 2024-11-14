@@ -92,6 +92,7 @@ export function OrderListView() {
       : []),
     { id: 'Quantity', label: 'Total Quantity', align: 'center' },
     { id: 'Amount', label: 'Total Price' },
+    { id: 'Delivery', label: 'Delivery Type' },
     { id: 'createdAt', label: 'Order Date' },
     { id: 'status', label: 'Status' },
     { id: '', width: 88 },

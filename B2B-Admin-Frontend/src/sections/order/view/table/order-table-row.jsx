@@ -67,7 +67,7 @@ export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteR
       <TableCell align="center"> {row?.totalQuantity} </TableCell>
 
       <TableCell> {fCurrency(row.totalPrice)} </TableCell>
-
+      <TableCell> {row.delivery} </TableCell>
       <TableCell>
         <ListItemText
           primary={fDate(row.createdAt)}

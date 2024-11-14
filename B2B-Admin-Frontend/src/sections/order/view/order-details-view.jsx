@@ -70,6 +70,7 @@ export function OrderDetailsView() {
 
         <Grid xs={12} md={4}>
           <OrderDetailsInfo
+            delivery={order}
             customer={order?.user}
             shippingAddress={order?.address}
           />

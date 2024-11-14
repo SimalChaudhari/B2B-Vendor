@@ -13,12 +13,12 @@ import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
-export function OrderDetailsInfo({ customer, shippingAddress }) {
+export function OrderDetailsInfo({delivery, customer, shippingAddress }) {
   const renderCustomer = (
     <>
       <CardHeader
         title="Customer info"
-      
+
       />
       <Stack direction="row" sx={{ p: 3 }}>
         <Avatar
@@ -36,51 +36,68 @@ export function OrderDetailsInfo({ customer, shippingAddress }) {
     </>
   );
 
+  const renderDelivery = (
+    <>
+      <CardHeader
+        title="Delivery Info"
+      />
+      <Stack spacing={1.5} sx={{ p: 3, typography: 'body2' }}>
+        <Stack direction="row" alignItems="center">
+          <Box component="span" sx={{ color: 'text.secondary', width: 120, flexShrink: 0 }}>
+            Delivery
+          </Box>
+          {delivery?.delivery}
+        </Stack>
+       
+      </Stack>
+    </>
+  );
+
 
 
   const renderShipping = (
     <>
       <CardHeader
-        title="Shipping"
-       
+        title="Shipping Info"
+
       />
       <Stack spacing={1.5} sx={{ p: 3, typography: 'body2' }}>
-      <Stack direction="row">
-        <Box component="span" sx={{ color: 'text.secondary', width: 120, flexShrink: 0 }}>
-          Address
-        </Box>
-        <Box component="span">{shippingAddress?.street_address}</Box>
+        <Stack direction="row">
+          <Box component="span" sx={{ color: 'text.secondary', width: 120, flexShrink: 0 }}>
+            Address
+          </Box>
+          <Box component="span">{shippingAddress?.street_address}</Box>
+        </Stack>
+
+        <Stack direction="row">
+          <Box component="span" sx={{ color: 'text.secondary', width: 120, flexShrink: 0 }}>
+            State
+          </Box>
+          <Box component="span">{shippingAddress?.state}</Box>
+        </Stack>
+
+        <Stack direction="row">
+          <Box component="span" sx={{ color: 'text.secondary', width: 120, flexShrink: 0 }}>
+            Zip Code
+          </Box>
+          <Box component="span">{shippingAddress?.zip_code}</Box>
+        </Stack>
+
+        <Stack direction="row">
+          <Box component="span" sx={{ color: 'text.secondary', width: 120, flexShrink: 0 }}>
+            Country
+          </Box>
+          <Box component="span">{shippingAddress?.country}</Box>
+        </Stack>
+
+        <Stack direction="row">
+          <Box component="span" sx={{ color: 'text.secondary', width: 120, flexShrink: 0 }}>
+            Mobile
+          </Box>
+          <Box component="span">{shippingAddress?.mobile}</Box>
+        </Stack>
       </Stack>
-    
-      <Stack direction="row">
-        <Box component="span" sx={{ color: 'text.secondary', width: 120, flexShrink: 0 }}>
-          State
-        </Box>
-        <Box component="span">{shippingAddress?.state}</Box>
-      </Stack>
-    
-      <Stack direction="row">
-        <Box component="span" sx={{ color: 'text.secondary', width: 120, flexShrink: 0 }}>
-          Zip Code
-        </Box>
-        <Box component="span">{shippingAddress?.zip_code}</Box>
-      </Stack>
-    
-      <Stack direction="row">
-        <Box component="span" sx={{ color: 'text.secondary', width: 120, flexShrink: 0 }}>
-          Country
-        </Box>
-        <Box component="span">{shippingAddress?.country}</Box>
-      </Stack>
-    
-      <Stack direction="row">
-        <Box component="span" sx={{ color: 'text.secondary', width: 120, flexShrink: 0 }}>
-          Mobile
-        </Box>
-        <Box component="span">{shippingAddress?.mobile}</Box>
-      </Stack>
-    </Stack>
-    
+
     </>
   );
 
@@ -89,6 +106,12 @@ export function OrderDetailsInfo({ customer, shippingAddress }) {
   return (
     <Card>
       {renderCustomer}
+      <Divider sx={{ borderStyle: 'dashed' }} />
+
+      {renderDelivery}
+
+      <Divider sx={{ borderStyle: 'dashed' }} />
+
 
       <Divider sx={{ borderStyle: 'dashed' }} />
       {renderShipping}

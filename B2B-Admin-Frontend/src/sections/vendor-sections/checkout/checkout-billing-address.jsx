@@ -16,6 +16,12 @@ import { LoadingButton } from '@mui/lab';
 import { Typography, Card, CardContent, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
 import { createOrder, createOrderItem } from 'src/store/action/orderActions';
 import { ConfirmDialog } from 'src/components/custom-dialog';
+import { useForm } from 'react-hook-form';
+
+const DELIVERY_OPTIONS = [
+  { id: 'Transportation', value: 0, label: 'Transportation', description: '3-5 days delivery' },
+  { id: 'Sales Pickup', value: 0, label: 'Sales Pickup', description: '2-3 days delivery' },
+]
 
 export function CheckoutBillingAddress() {
   const checkout = useCheckoutContext();
@@ -33,6 +39,10 @@ export function CheckoutBillingAddress() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [addressToEdit, setAddressToEdit] = useState(null); // State for address being edited
   const [confirmDelete, setConfirmDelete] = useState(null); // State for delete confirmation
+
+
+  const defaultValues = { delivery: checkout.shipping };
+  const methods = useForm({ defaultValues });
 
   useEffect(() => {
     dispatch(addressList());
@@ -81,11 +91,16 @@ export function CheckoutBillingAddress() {
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
+
+    const selectedDeliveryId = methods.getValues('delivery'); // Get selected delivery ID
+    const selectedDeliveryOption = DELIVERY_OPTIONS.find(option => option.id === selectedDeliveryId);
+ 
     try {
       const orderData = {
         totalPrice: subtotal,
         totalQuantity: quantity,
         addressId: selectedAddressId,
+        delivery: selectedDeliveryOption.id
       };
 
       const orderResponse = await dispatch(createOrder(orderData));
@@ -98,7 +113,7 @@ export function CheckoutBillingAddress() {
             quantity: item.quantity,
           })),
         };
-       
+
         const itemResponse = await dispatch(createOrderItem(itemData));
 
         if (itemResponse) {
@@ -122,7 +137,7 @@ export function CheckoutBillingAddress() {
       <Grid container spacing={3}>
         <Grid xs={12} md={8}>
           <Card sx={{ mb: 1 }}>
-            <CheckoutPayment />
+            <CheckoutPayment deliveryOptions={DELIVERY_OPTIONS} methods={methods} /> {/* Pass delivery options and form methods */}
             <CardContent>
               <Stack direction="row" justifyContent="space-between">
                 <Button
@@ -153,7 +168,7 @@ export function CheckoutBillingAddress() {
                             cursor: 'pointer',
                             border: selectedAddressId === address.id ? '2px solid black' : '1px solid grey',
                             backgroundColor: selectedAddressId === address.id ? '#e3f2fd' : 'transparent', // Light background for selected address
- 
+
                           }}
                         />
                         <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
@@ -212,8 +227,8 @@ export function CheckoutBillingAddress() {
           {subtotal > 0 && (
             <>
               {!selectedAddressId && !isSubmitting && (
-                <Typography variant='h6' color="error" sx={{ mb: 1 }}>
-                 Please select any address
+                <Typography variant='body' color="error" sx={{ mb: 1 }}>
+                  Please select any address
                 </Typography>
               )}
 

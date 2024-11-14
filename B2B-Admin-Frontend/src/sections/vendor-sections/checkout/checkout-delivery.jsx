@@ -9,6 +9,7 @@ import ListItemText from '@mui/material/ListItemText';
 
 import { Iconify } from 'src/components/iconify';
 import { fCurrency } from 'src/utils/format-number';
+import { Typography } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -23,24 +24,34 @@ export function CheckoutDelivery({ options, onApplyShipping, ...other }) {
         name="delivery"
         control={control}
         render={({ field }) => (
-          <Box
-            columnGap={2}
-            rowGap={2.5}
-            display="grid"
-             sx={{ p: 3 }}
-          >
-            {options.map((option) => (
-              <OptionItem
-                key={option.label}
-                option={option}
-                selected={field.value === option.value}
-                onClick={() => {
-                  field.onChange(option.value);
-                  onApplyShipping(option.value);
-                }}
-              />
-            ))}
-          </Box>
+          <>
+            {!field.value && (
+              <Typography variant="body2" color="error" sx={{ px: 3, pt: 1 }}>
+                Please select a delivery option to proceed with your order.
+              </Typography>
+            )}
+            <Box
+              columnGap={2}
+              rowGap={2.5}
+              display="grid"
+              gridTemplateColumns={{ xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' }}
+              sx={{ p: 3 }}
+            >
+              {options.map((option) => (
+                <OptionItem
+                  key={option.id}
+                  option={option}
+                  selected={field.value === option.id}
+                  onClick={() => {
+                    field.onChange(option.id); // Use id for selection
+                    onApplyShipping(option.value);
+                    console.log(`Selected option: ${option.label}`);
+                  }}
+                />
+              ))}
+            </Box>
+
+          </>
         )}
       />
     </Card>
@@ -53,17 +64,21 @@ function OptionItem({ option, selected, ...other }) {
   return (
     <Paper
       variant="outlined"
-      key={value}
+      key={option.id}
       sx={{
         p: 2.5,
         cursor: 'pointer',
+        border: selected ? '2px solid black' : '1px solid grey',
+        backgroundColor: selected ? '#e3f2fd' : 'transparent', // Light background for selected address
         display: 'flex',
-        ...(selected && { boxShadow: (theme) => `0 0 0 2px ${theme.vars.palette.text.primary}` }),
+        boxShadow: selected ? (theme) => theme.customShadows.card : undefined,
+        transition: 'box-shadow 0.2s',
       }}
       {...other}
     >
-      {label === 'Transportation' && <Iconify icon="carbon:delivery" width={80} />}
-   
+      {label === 'Transportation' && <Iconify icon="carbon:delivery" width={40} />}
+      {label === 'Sales Pickup' && <Iconify icon="carbon:user" width={40} />}
+
 
       <ListItemText
         sx={{ ml: 2 }}

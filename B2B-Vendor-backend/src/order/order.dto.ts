@@ -2,7 +2,9 @@ import { Type } from 'class-transformer';
 import { ArrayMinSize, IsEnum, IsNotEmpty, IsNumber, IsOptional, ValidateNested } from 'class-validator';
 
 export enum DeliveryType {
-    FREE = 'free'
+    FREE = 'free',
+    transportation = "Transportation",
+    sales_pickup = "Sales Pickup"
 }
 export class CreateOrderDto {
 
@@ -21,7 +23,7 @@ export class CreateOrderDto {
 
     @IsEnum(DeliveryType)
     @IsOptional()
-    delivery: DeliveryType = DeliveryType.FREE; // Default value is 'free'
+    delivery: DeliveryType = DeliveryType.transportation; // Default value is 'free'
 }
 
 export class ProductOrderDto {
