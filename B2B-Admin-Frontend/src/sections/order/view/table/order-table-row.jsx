@@ -21,12 +21,16 @@ import { Iconify } from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { usePopover, CustomPopover } from 'src/components/custom-popover';
 import { RouterLink } from 'src/routes/components';
-import { Typography } from '@mui/material';
+import { Tooltip, Typography } from '@mui/material';
 import useUserRole from 'src/layouts/components/user-role';
 
 // ----------------------------------------------------------------------
 
 export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteRow }) {
+
+  // const isDownloadable = !!row.dimensionalFiles; // Check if pdfPath is available
+  const isDownloadable = !!null; // Check if pdfPath is available
+
 
   const confirm = useBoolean();
 
@@ -66,9 +70,9 @@ export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteR
       }
       <TableCell align="center"> {row?.totalQuantity} </TableCell>
 
-      <TableCell> {fCurrency(row.totalPrice)} </TableCell>
-      <TableCell> {`${row.discount}%`} </TableCell>
-      <TableCell> {fCurrency(row.finalAmount)} </TableCell>
+      <TableCell align="center"> {fCurrency(row.totalPrice)} </TableCell>
+      <TableCell align="center"> {`${row.discount}%`} </TableCell>
+      <TableCell align="center"> {fCurrency(row.finalAmount)} </TableCell>
 
       <TableCell> {row.delivery} </TableCell>
       <TableCell>
@@ -84,7 +88,6 @@ export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteR
         />
       </TableCell>
 
-
       <TableCell>
         <Label
           variant="soft"
@@ -98,6 +101,36 @@ export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteR
           {row?.status}
         </Label>
       </TableCell>
+
+      <TableCell align="center" sx={{cursor:"pointer" }}>
+        <Tooltip title={isDownloadable ? "Download File" : "File not available"}>
+          <span> {/* Wrap in span to allow tooltip on disabled button */}
+            <IconButton
+              // onClick={() => isDownloadable && onDownload(row.id)}
+              sx={{ color: 'primary.main' }}
+              disabled={!isDownloadable} // Disable if no pdfPath
+            >
+              <Iconify icon="eva:download-outline" />
+            </IconButton>
+          </span>
+        </Tooltip>
+      </TableCell>
+
+      <TableCell align="center" sx={{cursor:"pointer" }}>
+        <Tooltip title={isDownloadable ? "Download File" : "File not available"}>
+          <span> {/* Wrap in span to allow tooltip on disabled button */}
+            <IconButton
+              // onClick={() => isDownloadable && onDownload(row.id)}
+              sx={{ color: 'primary.main' }}
+              disabled={!isDownloadable} // Disable if no pdfPath
+            >
+              <Iconify icon="eva:download-outline" />
+            </IconButton>
+          </span>
+        </Tooltip>
+      </TableCell>
+
+
 
       <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
         <IconButton

@@ -34,7 +34,7 @@ export class OrderEntity {
     @Column()
     totalQuantity!: number;
 
-    @Column({ default: 0 }) // Set default value for discount
+    @Column('float', { default: 0 }) // Use 'float' or 'decimal' for fractional values
     discount!: number; // Ensure discount defaults to 0 if not provided
 
     @Column() // Set default value for discount

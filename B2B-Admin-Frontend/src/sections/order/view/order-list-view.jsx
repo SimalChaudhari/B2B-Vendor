@@ -83,7 +83,7 @@ export function OrderListView() {
   //-----------------------------------------------------------------------------------------------------
 
   const TABLE_HEAD = [
-    { id: 'OrderNo', label: 'Order No', align: 'center' }, // Always present
+    { id: 'OrderNo', label: 'Order No', align: 'center',width: 120 }, // Always present
     ...(userRole === "Admin"
       ? [
         { id: 'Customer', label: 'Customer' },
@@ -97,6 +97,8 @@ export function OrderListView() {
     { id: 'Delivery', label: 'Delivery Type' },
     { id: 'createdAt', label: 'Order Date' },
     { id: 'status', label: 'Status' },
+    { id: 'Ledger Statement', label: 'Ledger Statement' },
+    { id: 'Invoices ', label: 'Invoices' ,align: 'center' },
     { id: '', width: 88 },
   ];
 

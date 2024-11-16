@@ -7,7 +7,7 @@ import { CreateItemOrderDto, CreateOrderDto } from './order.dto';
 import { ItemEntity } from 'fetch-products/item.entity';
 import { OrderItemEntity } from './order.item.entity';
 import { CartItemEntity } from 'cart/cart.entity';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, Like, Repository } from 'typeorm';
 import { generateInvoiceXML } from 'tally/invoice-xml-generator';
 import axios from 'axios';
 import { Invoice, InvoiceStatus } from 'invoice/invoice.entity';
@@ -101,25 +101,31 @@ export class OrderService {
     // Helper function to generate a unique order number
     private async generateUniqueOrderNumber(): Promise<string> {
         try {
-            // Retrieve the highest order number from the database
+            // Get the current year
+            const currentYear = new Date().getFullYear();
+    
+            // Retrieve the highest order number for the current year
             const lastOrder = await this.orderRepository.find({
+                where: { orderNo: Like(`${currentYear}%`) },
                 select: ['orderNo'],
                 order: { orderNo: 'DESC' },
                 take: 1,
             });
     
-            let nextOrderNo: number;
+            let nextOrderNo: string;
     
             if (lastOrder.length > 0) {
-                // Parse the highest order number as an integer and increment it
-                nextOrderNo = parseInt(lastOrder[0].orderNo, 10) + 1;
+                // Extract the numeric part of the last order number and increment it
+                const lastSequentialNumber = parseInt(lastOrder[0].orderNo.slice(5), 10); // Extract the numeric part after the year and hyphen
+                const nextSequentialNumber = lastSequentialNumber + 1;
+                nextOrderNo = `${currentYear}-${nextSequentialNumber.toString().padStart(4, '0')}`; // Pad to 4 digits
             } else {
-                // If no orders exist, start from 1
-                nextOrderNo = 1;
+                // If no orders exist for the current year, start with 0001
+                nextOrderNo = `${currentYear}-0001`;
             }
     
-            // Return the incremented order number as a string
-            return nextOrderNo.toString();
+            // Return the formatted order number
+            return nextOrderNo;
         } catch (error) {
             throw new InternalServerErrorException('Error generating unique order number');
         }
