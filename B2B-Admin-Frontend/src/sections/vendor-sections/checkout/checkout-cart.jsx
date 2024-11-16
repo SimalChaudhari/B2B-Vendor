@@ -15,17 +15,26 @@ import { useDispatch, useSelector } from 'react-redux';
 import { cartList, decreaseQuantity, deleteCartItem, increaseQuantity } from 'src/store/action/cartActions';
 import useCart from './components/useCart';
 import { toast } from 'sonner';
+import { fCurrency } from 'src/utils/format-number';
+import { useEffect, useState } from 'react';
 
 // ----------------------------------------------------------------------
 
 export function CheckoutCart() {
   const dispatch = useDispatch();
+  const [discount, setDiscount] = useState(0); // State to store the discount amount
+  const [discountType, setDiscountType] = useState('fixed'); // 'fixed' or 'percentage'
 
   const mappedData = useCart();
 
   const totalItems = mappedData.reduce((acc, item) => acc + item.quantity, 0);
   const subtotal = mappedData.reduce((acc, item) => acc + item.totalAmount, 0);
-  const discount = 0;
+  // Calculate the total after applying the discount
+  const total =
+    discountType === 'percentage'
+      ? subtotal - (subtotal * discount) / 100 // Apply percentage discount
+      : subtotal - discount; // Apply fixed discount
+  // const discount = 0;
   //----------------------------------------------------------------------------------------------------
 
   const fetchData = async () => {
@@ -61,9 +70,30 @@ export function CheckoutCart() {
 
     if (item && item.dimensionalFiles?.[0]) {
       window.open(item.dimensionalFiles?.[0], '_blank'); // Opens the PDF in a new tab
-      
+
     } else {
       toast.warning('File Not found for this item', id);
+    }
+  };
+
+  const handleApplyDiscount = (discountValue, type = 'fixed') => {
+    if (subtotal > 0) {
+      if (type === 'percentage' && (discountValue < 0 || discountValue > 100)) {
+        toast.error('Enter a valid percentage between 0 and 100');
+        return;
+      }
+
+      setDiscount(discountValue);
+      sessionStorage.setItem('discountValue', discountValue);
+
+      setDiscountType(type);
+      toast.success(
+        type === 'percentage'
+          ? `Discount of ${discountValue}% applied!`
+          : `Discount of ${fCurrency(discountValue)} applied!`
+      );
+    } else {
+      toast.warning('Cannot apply discount to an empty cart');
     }
   };
 
@@ -104,22 +134,15 @@ export function CheckoutCart() {
           )}
         </Card>
 
-        <Button
-          component={RouterLink}
-          href={paths.items.root}
-          color="inherit"
-          startIcon={<Iconify icon="eva:arrow-ios-back-fill" />}
-        >
-          Continue shopping
-        </Button>
+
       </Grid>
 
       <Grid xs={12} md={4}>
         <CheckoutSummary
-          total={subtotal}
+          total={total}
           discount={discount}
           subtotal={subtotal}
-          onApplyDiscount={() => { }} // Optional: handle discount application
+          onApplyDiscount={handleApplyDiscount}
         />
 
         <Button

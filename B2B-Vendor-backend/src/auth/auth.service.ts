@@ -11,6 +11,7 @@ import * as path from 'path';
 import { Address } from 'users/address/addresses/addresses.entity';
 import { AddressesService } from 'users/address/addresses/addresses.service';
 import { CreateAddressDto } from 'users/address/addresses/addresses.dto';
+import { EmailService } from 'service/email/email.service';
 
 const generateOTP = (): string => {
   const otp = Math.floor(100000 + Math.random() * 900000).toString(); // Generate a 6-digit OTP
@@ -40,6 +41,7 @@ export class AuthService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
     private readonly JwtService: JwtService, // Inject JwtService
+    private readonly emailService: EmailService,
     // private readonly mailerService: MailerService, // If used
     private readonly addressesService: AddressesService,
   ) { }
@@ -132,7 +134,7 @@ export class AuthService {
       await this.userRepository.save(user); // Save the updated user
 
       // Send OTP
-      isEmail ? await sendOtpEmail(user.email, otp) : await sendOtpSms(user.mobile, otp);
+      isEmail ? await this.emailService.sendOTP(user.email, otp) : await sendOtpSms(user.mobile, otp);
 
       return { message: 'OTP sent successfully' };
 

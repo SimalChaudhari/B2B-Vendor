@@ -92,6 +92,9 @@ export class User {
     @Column({ default: false })
     isDeleted!: boolean;
 
+    @Column({ default: true })
+    isAllowPlaceOrder!: boolean; // Boolean to allow/disallow placing orders
+
     @OneToMany(() => Address, (address) => address.user)
     addresses?: Address[];
 

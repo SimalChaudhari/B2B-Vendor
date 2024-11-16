@@ -91,7 +91,9 @@ export function OrderListView() {
       ]
       : []),
     { id: 'Quantity', label: 'Total Quantity', align: 'center' },
-    { id: 'Amount', label: 'Total Price' },
+    { id: 'Amount', label: 'Sub Total' },
+    { id: 'Discount', label: 'Discount (%)' }, // New column for discount
+    { id: 'FinalAmount', label: 'Final Amount (With Discount)' }, // New column for amount after discount  
     { id: 'Delivery', label: 'Delivery Type' },
     { id: 'createdAt', label: 'Order Date' },
     { id: 'status', label: 'Status' },

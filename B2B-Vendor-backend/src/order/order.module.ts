@@ -12,6 +12,7 @@ import { CartItemEntity } from 'cart/cart.entity';
 import { InvoiceRetryService } from 'invoice/invoice-retry.service';
 import { Invoice } from 'invoice/invoice.entity';
 import { SyncLog } from 'sync-log/sync-log.entity';
+import { EmailService } from 'service/email/email.service';
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import { SyncLog } from 'sync-log/sync-log.entity';
     }),
   ],
   controllers: [OrderController],
-  providers: [OrderService,InvoiceRetryService],
+  providers: [OrderService,InvoiceRetryService,EmailService],
   exports: [OrderService], // Exporting ItemService
 })
 export class OrderModule {}

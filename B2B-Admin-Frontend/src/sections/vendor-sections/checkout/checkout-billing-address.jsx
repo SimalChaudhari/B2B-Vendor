@@ -24,13 +24,17 @@ const DELIVERY_OPTIONS = [
 ]
 
 export function CheckoutBillingAddress() {
+
+  const [discountData, setDiscountData] = useState(0); // State for discount value
   const checkout = useCheckoutContext();
   const dispatch = useDispatch();
   const mappedData = useCart();
 
   const subtotal = mappedData.reduce((acc, item) => acc + item.totalAmount, 0);
   const quantity = mappedData.reduce((acc, item) => acc + item.quantity, 0);
-  const discount = 0;
+
+  const total = (subtotal - discountData) // Apply percentage discount
+  const discountPercentage = ((discountData / subtotal) * 100)
 
   const addressForm = useBoolean();
   const userAddress = useSelector((state) => state.address?.address || []);
@@ -43,6 +47,23 @@ export function CheckoutBillingAddress() {
 
   const defaultValues = { delivery: checkout.shipping };
   const methods = useForm({ defaultValues });
+
+
+  useEffect(() => {
+    console.log("hi")
+    // Retrieve discount value from sessionStorage on component mount
+    const storedDiscount = sessionStorage.getItem('discountValue');
+    if (storedDiscount) {
+      setDiscountData(storedDiscount);
+    } else {
+      // If no discount value, initialize with 0
+      sessionStorage.setItem('discountValue', 0);
+    }
+    return () => {
+      // Clear discountValue when leaving the billing address page
+      sessionStorage.removeItem('discountValue');
+    };
+  }, []);
 
   useEffect(() => {
     dispatch(addressList());
@@ -94,13 +115,17 @@ export function CheckoutBillingAddress() {
 
     const selectedDeliveryId = methods.getValues('delivery'); // Get selected delivery ID
     const selectedDeliveryOption = DELIVERY_OPTIONS.find(option => option.id === selectedDeliveryId);
- 
+
     try {
       const orderData = {
         totalPrice: subtotal,
         totalQuantity: quantity,
         addressId: selectedAddressId,
-        delivery: selectedDeliveryOption.id
+        delivery: selectedDeliveryOption.id,
+        discount: discountPercentage,
+        finalAmount: total
+
+
       };
 
       const orderResponse = await dispatch(createOrder(orderData));
@@ -218,10 +243,10 @@ export function CheckoutBillingAddress() {
 
         <Grid xs={12} md={4}>
           <CheckoutSummary
-            total={subtotal}
+            total={total}
             subtotal={subtotal}
             shipping={checkout.shipping}
-            discount={discount}
+            discount={discountData}
           />
 
           {subtotal > 0 && (

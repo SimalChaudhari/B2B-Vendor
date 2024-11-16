@@ -62,6 +62,9 @@ export function OrderDetailsView() {
               shipping={order?.address}
               subtotal={order?.totalPrice}
               totalAmount={order?.totalPrice}
+              discount={order?.discount}
+              finalAmount={order?.finalAmount}
+
             />
 
             <OrderDetailsHistory orderDate={order?.createdAt} history={timeline} />

@@ -95,5 +95,28 @@ import {
   
       return this.cartRepository.save(cartItem);
     }
+
+
+    // Discount Apply 
+
+    async applyDiscount(cartId: string, userId: string, discount: number): Promise<any> {
+      // Fetch the cart by cartId and userId (to ensure the cart belongs to the user)
+      const cart = await this.cartRepository.findOne({ where: { id: cartId, userId } });
+  
+      if (!cart) {
+        throw new NotFoundException('Cart not found');
+      }
+  
+      // Validate the discount value
+      if (discount < 0 ) {
+        throw new HttpException(
+          'Invalid discount value. Discount must be between 0 and the cart subtotal.',
+          HttpStatus.BAD_REQUEST
+        );
+      }
+  
+      cart.discount = discount; // Apply the discount to the cart
+      return this.cartRepository.save(cart); // Save the updated cart
+    }
   }
   

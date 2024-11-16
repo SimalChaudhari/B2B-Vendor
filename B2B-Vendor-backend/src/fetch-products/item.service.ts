@@ -183,7 +183,7 @@ export class ItemService {
   
     if (applyToAllProductImages || applyToAllDimensionalFiles) {
       // Fetch all items with the same subGroup1 if any applyToAll flag is true
-      itemsToUpdate = await this.itemRepository.find({ where: { subGroup1: item.subGroup1 } });
+      itemsToUpdate = await this.itemRepository.find({ where: { subGroup2: item.subGroup2 } });
   
       for (const currentItem of itemsToUpdate) {
         // Apply new images to all items in the subgroup if applyToAllProductImages is true

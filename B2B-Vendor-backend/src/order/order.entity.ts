@@ -34,6 +34,12 @@ export class OrderEntity {
     @Column()
     totalQuantity!: number;
 
+    @Column({ default: 0 }) // Set default value for discount
+    discount!: number; // Ensure discount defaults to 0 if not provided
+
+    @Column() // Set default value for discount
+    finalAmount!: number; // Ensure discount defaults to 0 if not provided
+
     @Column({ type: 'enum', enum: DeliveryType, default: DeliveryType.transportation })
     delivery!: DeliveryType; // Delivery type, default is 'free'
 

@@ -94,6 +94,10 @@ export class VendorDto {
     isDeleted?: boolean;
 
     @IsOptional()
+    is_allow_place_order?: boolean; // Optional additional details
+
+
+    @IsOptional()
     createdAt?: Date;
 
     @IsOptional()

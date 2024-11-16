@@ -16,23 +16,48 @@ import { Scrollbar } from 'src/components/scrollbar';
 export function OrderDetailsItems({
   items = [],
   totalAmount,
+  discount,
+  finalAmount
 }) {
+
+  const discountPercentage = (totalAmount * discount) / 100
 
   const renderTotal = (
     <Stack spacing={2} alignItems="flex-end" sx={{ p: 3, textAlign: 'right', typography: 'body2' }}>
-  
+      <Stack direction="row">
+        <Box sx={{ color: 'text.secondary' }}>Subtotal</Box>
+        <Box sx={{ width: 160 }}>{fCurrency(totalAmount) || '-'}</Box>
+      </Stack>
+
+
+
+      <Stack direction="row">
+        <Box sx={{ color: 'text.secondary' }}>Discount</Box>
+        <Box sx={{ width: 160, ...(discountPercentage && { color: 'error.main' }) }}>
+          {discountPercentage ? `- ${fCurrency(discountPercentage)}` : '-'}
+        </Box>
+      </Stack>
+
+      <Stack direction="row">
+        <Box sx={{ color: 'text.secondary' }}>Shipping</Box>
+        <Box sx={{ width: 160}}>
+         Free
+        </Box>
+      </Stack>
+
       <Stack direction="row" sx={{ typography: 'subtitle1' }}>
         <div>Total</div>
-        <Box sx={{ width: 160 }}>{fCurrency(totalAmount) || '-'}</Box>
+        <Box sx={{ width: 160 }}>{fCurrency(finalAmount) || '-'}</Box>
       </Stack>
     </Stack>
   );
+
 
   return (
     <Card>
       <CardHeader
         title="Details"
-       
+
       />
 
       <Scrollbar>

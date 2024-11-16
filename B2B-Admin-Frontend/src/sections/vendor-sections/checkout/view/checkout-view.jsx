@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useCheckoutContext } from '../context';
 import { CheckoutOrderComplete } from '../checkout-order-complete';
 import { CheckoutBillingAddress } from '../checkout-billing-address';
@@ -11,7 +11,6 @@ import { CheckoutCart } from '../checkout-cart';
 
 export function CheckoutView() {
   const checkout = useCheckoutContext();
-
   const addressByData = useSelector((state) => state.address?.addressByID);
 
   useEffect(() => {
@@ -20,8 +19,8 @@ export function CheckoutView() {
   }, []);
 
   const handleCheckoutStep = () =>
-    checkout.activeStep === 1 && !addressByData
-    && <CheckoutBillingAddress />
+    checkout.activeStep === 1 && !addressByData && <CheckoutBillingAddress />;
+
 
 
 
@@ -31,7 +30,8 @@ export function CheckoutView() {
         <Box>
           <ProductFilterView />
           <Box mt={3}>
-            <CheckoutCart />
+          <CheckoutCart /> {/* Pass setDiscount function to CheckoutCart */}
+     
           </Box>
         </Box>
       )}

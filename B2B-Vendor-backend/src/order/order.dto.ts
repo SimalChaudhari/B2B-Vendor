@@ -11,7 +11,6 @@ export class CreateOrderDto {
     @IsNotEmpty()
     cartId?: string; // Address ID for the order
 
-
     @IsNotEmpty()
     addressId?: string; // Address ID for the order
 
@@ -20,6 +19,12 @@ export class CreateOrderDto {
 
     @IsNumber()
     totalQuantity?: number; // Total price of the order
+
+    @IsNumber()
+    discount?: number; // Optional discount, default to 0 if not provided
+    
+    @IsNumber()
+    finalAmount?: number; // Total price of the order
 
     @IsEnum(DeliveryType)
     @IsOptional()

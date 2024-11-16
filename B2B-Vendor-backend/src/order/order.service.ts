@@ -11,6 +11,7 @@ import { DataSource, Repository } from 'typeorm';
 import { generateInvoiceXML } from 'tally/invoice-xml-generator';
 import axios from 'axios';
 import { Invoice, InvoiceStatus } from 'invoice/invoice.entity';
+import { EmailService } from 'service/email/email.service';
 
 @Injectable()
 export class OrderService {
@@ -33,6 +34,8 @@ export class OrderService {
 
         @InjectRepository(Invoice)
         private readonly invoiceRepository: Repository<Invoice>,
+
+        private readonly emailService: EmailService
     ) { }
 
     async getAllOrders(): Promise<OrderEntity[]> {
@@ -67,7 +70,7 @@ export class OrderService {
     }
 
     async createOrder(userId: string, createOrderDto: CreateOrderDto): Promise<OrderEntity> {
-        const { addressId, totalPrice, totalQuantity, delivery } = createOrderDto;
+        const { addressId, totalPrice, totalQuantity,finalAmount,discount, delivery } = createOrderDto;
 
         const user = await this.userRepository.findOne({ where: { id: userId } });
         if (!user) {
@@ -87,6 +90,8 @@ export class OrderService {
             user,
             address,
             totalPrice,
+            discount,
+            finalAmount,
             totalQuantity,
             delivery
         });
@@ -281,7 +286,6 @@ export class OrderService {
             const savedOrderItem = await this.orderItemRepository.save(orderItem);
             savedOrderItems.push(savedOrderItem);
         }
-
         // Clear the cart for this user once all items are added
         await this.cartRepository.delete({ userId: order.user.id });
         // Attempt to post the invoice to Tally
@@ -293,6 +297,8 @@ export class OrderService {
             // Log error and continue without blocking order creation
         }
 
+     
+        
         return savedOrderItems;
     }
 

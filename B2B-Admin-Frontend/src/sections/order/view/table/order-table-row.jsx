@@ -67,6 +67,9 @@ export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteR
       <TableCell align="center"> {row?.totalQuantity} </TableCell>
 
       <TableCell> {fCurrency(row.totalPrice)} </TableCell>
+      <TableCell> {`${row.discount}%`} </TableCell>
+      <TableCell> {fCurrency(row.finalAmount)} </TableCell>
+
       <TableCell> {row.delivery} </TableCell>
       <TableCell>
         <ListItemText

@@ -52,4 +52,7 @@ export class VendorEntity {
 
     @Column({ type: 'varchar', nullable: true })
     gstDetails?: string; // Optional additional GST details
+
+    @Column({ type: 'boolean', default: true })
+    isAllowPlaceOrder!: boolean; // Boolean to allow/disallow placing orders
 }

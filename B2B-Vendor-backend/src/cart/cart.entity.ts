@@ -13,8 +13,9 @@ export class CartItemEntity {
   @Column()
   quantity!: number;
 
+  @Column({ default: 0 }) // Set default value for discount
+  discount!: number; // Ensure discount defaults to 0 if not provided
   
-
   @Column()
   userId!: string; // Associate with the user (assuming you have users)
   price!: number;

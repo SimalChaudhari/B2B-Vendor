@@ -65,4 +65,10 @@ export class VendorDto {
     @IsOptional()
     @IsString()
     gstDetails?: string; // Optional additional details
+
+    @IsOptional()
+    @IsBoolean()
+    is_allow_place_order?: boolean; // Optional additional details
+
+    
 }

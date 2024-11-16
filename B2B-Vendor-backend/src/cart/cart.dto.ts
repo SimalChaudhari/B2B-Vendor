@@ -10,6 +10,10 @@ export class AddToCartItemDto  {
   @IsNumber()
   @Min(1)
   quantity!: number;
+
+  @IsNumber()
+  @Min(0)
+  discount?: number; // Optional discount, default to 0 if not provided
 }
 
 export class AddToCartDto {

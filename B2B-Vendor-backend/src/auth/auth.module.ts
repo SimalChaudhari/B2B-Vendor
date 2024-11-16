@@ -9,6 +9,7 @@ import { JwtModule } from '@nestjs/jwt';
 import * as dotenv from 'dotenv';
 import { AddressesService } from 'users/address/addresses/addresses.service';
 import { Address } from 'users/address/addresses/addresses.entity';
+import { EmailService } from 'service/email/email.service';
 
 dotenv.config(); // Load environment variables
 
@@ -21,7 +22,7 @@ dotenv.config(); // Load environment variables
   }),
 
 ],
-  providers: [AuthService,AddressesService],
+  providers: [AuthService,AddressesService,EmailService],
   controllers: [AuthController],
 })
 export class AuthModule {}

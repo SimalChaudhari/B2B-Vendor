@@ -11,11 +11,32 @@ import InputAdornment from '@mui/material/InputAdornment';
 import { fCurrency } from 'src/utils/format-number';
 
 import { Iconify } from 'src/components/iconify';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
 // ----------------------------------------------------------------------
 
 export function CheckoutSummary({ total, onEdit, discount, subtotal, shipping, onApplyDiscount }) {
+  const [discountCode, setDiscountCode] = useState(''); // State to store input value
+
   const displayShipping = shipping !== null ? 'Free' : '-';
+
+  const handleInputChange = (event) => {
+    setDiscountCode(event.target.value); // Update the state as the user types
+  };
+
+  const handleApply = () => {
+    const percentage = parseFloat(discountCode);
+    if (Number.isNaN(percentage) || percentage <= 0 || percentage > 100) {
+      toast.error('Enter a valid percentage between 1 and 100');
+      return;
+    }
+  
+    const discountValue = (subtotal * percentage) / 100; // Calculate discount as percentage
+    onApplyDiscount(discountValue); // Trigger parent function
+    setDiscountCode(''); // Clear the input field
+  };
+
 
   return (
     <Card sx={{ mb: 3 }}>
@@ -92,12 +113,13 @@ export function CheckoutSummary({ total, onEdit, discount, subtotal, shipping, o
         {onApplyDiscount && (
           <TextField
             fullWidth
-            placeholder="Discount codes / Gifts"
-            value=""
+            placeholder="Enter discount percentage (e.g., 10 for 10%)"
+            value={discountCode} // Bind input to state
+            onChange={handleInputChange} // Update state on input change
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
-                  <Button color="primary" onClick={() => onApplyDiscount(5)} sx={{ mr: -0.5 }}>
+                  <Button color="primary" onClick={handleApply} sx={{ mr: -0.5 }}>
                     Apply
                   </Button>
                 </InputAdornment>
