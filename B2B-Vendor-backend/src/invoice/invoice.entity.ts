@@ -25,6 +25,10 @@ export class Invoice {
     @Column({ type: 'enum', enum: InvoiceStatus, default: InvoiceStatus.PENDING })
     status!: InvoiceStatus;
 
+     // Add enable/disable field
+     @Column({ type: 'boolean', default: true })
+     enabled!: boolean; // Indicates if the invoice sync feature is enabled
+
     @CreateDateColumn()
     createdAt!: Date;
 }

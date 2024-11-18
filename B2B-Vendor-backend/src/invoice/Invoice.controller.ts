@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Invoice, InvoiceStatus } from './invoice.entity';
@@ -33,5 +33,23 @@ export class InvoiceController {
 
         // Call the service and return its JSON response directly
         return await this.invoiceRetryService.postPendingInvoices(userId);
+    }
+
+    @Patch('enable-disable')
+    async toggleInvoiceFeature(
+        @Req() req: Request,
+        @Body() body: { enabled: boolean },
+    ): Promise<{ status: string; message: string }> {
+        const userId = req['user'].userId;
+
+        await this.invoiceRepository.update(
+            { userId },
+            { enabled: body.enabled },
+        );
+
+        return {
+            status: 'success',
+            message: `Invoice posting feature has been ${body.enabled ? 'enabled' : 'disabled'}.`,
+        };
     }
 }

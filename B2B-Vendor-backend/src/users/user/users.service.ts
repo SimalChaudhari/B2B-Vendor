@@ -1,6 +1,6 @@
 //users.service.ts
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
-import { User, UserRole } from './users.entity';
+import { User, UserRole, UserStatus } from './users.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as fs from 'fs';
@@ -16,6 +16,25 @@ export class UserService {
         @InjectRepository(Address)
         private addressRepository: Repository<Address>,
     ) { }
+
+    async updateUserStatus(id: string, status: UserStatus): Promise<User> {
+        const user = await this.userRepository.findOne({ where: { id } });
+    
+        if (!user) {
+            throw new NotFoundException('User not found');
+        }
+    
+        if (!Object.values(UserStatus).includes(status)) {
+            throw new ConflictException('Invalid user status');
+        }
+    
+        user.status = status;
+        await this.userRepository.save(user);
+    
+        return user;
+    }
+    
+    
 
     async getAll(): Promise<User[]> {
         return await this.userRepository.find({

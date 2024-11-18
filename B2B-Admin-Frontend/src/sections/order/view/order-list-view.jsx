@@ -16,7 +16,7 @@ import { useRouter } from 'src/routes/hooks';
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useSetState } from 'src/hooks/use-set-state';
 
-import { fIsAfter, fIsBetween } from 'src/utils/format-time';
+import { fIsAfter } from 'src/utils/format-time';
 
 import { varAlpha } from 'src/theme/styles';
 import { DashboardContent } from 'src/layouts/dashboard';
@@ -48,6 +48,7 @@ import { useFetchOrderData } from '../components/fetch-order';
 import useUserRole from 'src/layouts/components/user-role';
 import { syncOrder } from 'src/store/action/orderActions';
 import { Typography } from '@mui/material';
+import { applyFilter } from '../utils/filterUtils';
 
 // ----------------------------------------------------------------------
 
@@ -83,22 +84,20 @@ export function OrderListView() {
   //-----------------------------------------------------------------------------------------------------
 
   const TABLE_HEAD = [
-    { id: 'OrderNo', label: 'Order No', align: 'center',width: 120 }, // Always present
+    { id: 'OrderNo', label: 'Order No', align: 'center', width: 120 }, // Always present
     ...(userRole === "Admin"
       ? [
         { id: 'Customer', label: 'Customer' },
-        { id: 'Mobile', label: 'Mobile', align: 'center' },
       ]
       : []),
-    { id: 'Quantity', label: 'Total Quantity', align: 'center' },
-    { id: 'Amount', label: 'Sub Total' },
-    { id: 'Discount', label: 'Discount (%)' }, // New column for discount
-    { id: 'FinalAmount', label: 'Final Amount (With Discount)' }, // New column for amount after discount  
+    { id: 'Quantity', label: 'Quantity', align: 'center' },
+    { id: 'Discount', label: 'Discount (%)', align: 'center' }, // New column for discount
+    { id: 'FinalAmount', label: 'Final Amount', align: 'center' }, // New column for amount after discount  
     { id: 'Delivery', label: 'Delivery Type' },
     { id: 'createdAt', label: 'Order Date' },
     { id: 'status', label: 'Status' },
-    { id: 'Ledger Statement', label: 'Ledger Statement' },
-    { id: 'Invoices ', label: 'Invoices' ,align: 'center' },
+    { id: 'Ledger Statement', label: 'Ledger Statement', align: 'center' },
+    { id: 'Invoices ', label: 'Invoices', align: 'center' },
     { id: '', width: 88 },
   ];
 
@@ -240,6 +239,7 @@ export function OrderListView() {
             filters={filters}
             onResetPage={table.onResetPage}
             dateError={dateError}
+            data={tableData}
           />
 
           {canReset && (
@@ -375,41 +375,4 @@ export function OrderListView() {
   );
 }
 
-function applyFilter({ inputData, comparator, filters, dateError, userRole }) {
-  const { status, name, startDate, endDate } = filters;
 
-  const stabilizedThis = inputData.map((el, index) => [el, index]);
-
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
-
-  inputData = stabilizedThis.map((el) => el[0]);
-
-  if (name) {
-    inputData = inputData.filter((order) =>
-      userRole === "Admin"
-        ? order.user.name.toLowerCase().includes(name.toLowerCase()) ||
-        order.user.email.toLowerCase().includes(name.toLowerCase()) ||
-        order.user.mobile.toLowerCase().includes(name.toLowerCase()) ||
-        order.totalPrice.toString().includes(name.toLowerCase()) ||
-        order.totalQuantity.toString().includes(name.toLowerCase())
-        : order.totalPrice.toString().includes(name.toLowerCase()) ||
-        order.totalQuantity.toString().includes(name.toLowerCase())
-    );
-  }
-
-  if (status !== 'all') {
-    inputData = inputData.filter((order) => order.status === status);
-  }
-
-  if (!dateError && startDate && endDate) {
-    inputData = inputData.filter((order) =>
-      fIsBetween(order.createdAt, startDate, endDate)
-    );
-  }
-
-  return inputData;
-}

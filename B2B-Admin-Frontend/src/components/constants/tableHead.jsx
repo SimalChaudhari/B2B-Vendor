@@ -56,7 +56,7 @@ export const TABLE_VENDOR_HEAD = [
   { id: 'address', label: 'Address' },
   { id: 'country', label: 'Country' },
   { id: 'state', label: 'State' },
-  { id: 'pincode', label: 'Pincode' },
+  { id: 'status', label: 'Status' },
   { id: 'action', label: 'Actions' }
 ];
 

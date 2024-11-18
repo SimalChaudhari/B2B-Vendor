@@ -4,7 +4,7 @@ import { OrderEntity } from 'order/order.entity';
 
 export enum UserStatus {
     Active = 'Active',
-    Suspended = 'Suspended',
+    Inactive = 'Inactive',
 }
 
 export enum UserRole {

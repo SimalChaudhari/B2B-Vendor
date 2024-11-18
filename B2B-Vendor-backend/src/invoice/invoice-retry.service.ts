@@ -19,6 +19,19 @@ export class InvoiceRetryService {
     ) { }
 
     async postPendingInvoices(userId: string): Promise<{ status: string; message: string }> {
+
+        // Check if invoice posting is enabled
+        const isEnabled = await this.invoiceRepository.findOne({
+            where: { userId, enabled: true },
+        });
+
+        if (!isEnabled) {
+            return {
+                status: 'disabled',
+                message: 'The invoice posting feature is currently disabled.',
+            };
+        }
+
         const pendingInvoices = await this.invoiceRepository.find({
             where: {
                 status: InvoiceStatus.PENDING,
@@ -38,7 +51,7 @@ export class InvoiceRetryService {
                 const response = await axios.post(process.env.TALLY_URL as string, invoice.xmlContent, {
                     headers: { 'Content-Type': 'application/xml' },
                 });
-               
+
                 if (response.data.includes('<LINEERROR>')) {
                     // Immediately return partial success message if there’s a line error
                     return {
@@ -49,7 +62,7 @@ export class InvoiceRetryService {
 
                 // Delete the invoice from the database after successful posting
                 await this.invoiceRepository.delete(invoice.id);
-                
+
 
             } catch (error) {
                 return {
@@ -65,64 +78,72 @@ export class InvoiceRetryService {
         };
     }
 
+    @Cron('*/5 * * * * *') // Runs every 5 seconds
+    async retryPendingInvoices(userId: string): Promise<{ status: string; message: string }> {
+        console.log("sync.......1")
+
+        // Check if invoice posting is enabled
+        const isEnabled = await this.invoiceRepository.findOne({
+            where: { userId, enabled: true },
+        });
+
+        if (!isEnabled) {
+            return {
+                status: 'disabled',
+                message: 'The invoice posting feature is currently disabled.',
+            };
+        }
+        console.log("sync.......2")
+        const pendingInvoices = await this.invoiceRepository.find({
+            where: {
+                status: InvoiceStatus.PENDING,
+                userId: userId,
+            },
+        });
+
+        if (pendingInvoices.length === 0) {
+            return {
+                status: 'success',
+                message: 'All data is up to date.',
+            };
+        }
+
+        for (const invoice of pendingInvoices) {
+        console.log("sync.......4")
+
+            try {
+                const response = await axios.post(process.env.TALLY_URL as string, invoice.xmlContent, {
+                    headers: { 'Content-Type': 'application/xml' },
+                });
+
+                if (response.data.includes('<LINEERROR>')) {
+                    // Immediately return partial success message if there’s a line error
+                    return {
+                        status: 'partial_success',
+                        message: 'Some invoices could not be posted. Please log in to Tally or check sync logs for more details.',
+                    };
+                }
+
+                // Delete the invoice from the database after successful posting
+                await this.invoiceRepository.delete(invoice.id);
+
+
+            } catch (error) {
+                console.log("sync.......3")
+                return {
+                    status: 'error',
+                    message: 'Please ensure Tally is open and accessible, then try again.',
+                };
+            }
+        }
+
+        return {
+            status: 'success',
+            message: 'All pending invoices have been successfully posted to Tally.',
+        };
+    }
 
 }
-
-// @Cron('*/1 * * * *') // Run every 10 minutes
-
-// async retryPendingInvoices() {
-//     // Check if there are pending invoices
-//     const pendingInvoices = await this.invoiceRepository.find({
-//         where: { status: InvoiceStatus.PENDING },
-//     });
-
-//     // If no pending invoices, exit the function without logging
-//     if (pendingInvoices.length === 0) {
-//         console.log("No pending invoices. Sync not required.");
-//         return;
-//     }
-
-//     // // Proceed with sync log entry creation only if there are pending invoices
-//     // const syncLog = new SyncLog();
-//     // syncLog.timestamp = new Date();
-//     // syncLog.attempt_count = 0;
-//     // syncLog.status = 'IN_PROGRESS';
-
-//     // await this.syncLogRepository.save(syncLog);
-
-//     // let successCount = 0;
-//     // let failureCount = 0;
-
-//     // for (const invoice of pendingInvoices) {
-//     //     syncLog.attempt_count += 1;
-
-//     //     try {
-//     //         const response = await axios.post(process.env.TALLY_URL as string, invoice.xmlContent, {
-//     //             headers: { 'Content-Type': 'application/xml' },
-//     //         });
-
-//     //         if (response.data.includes('<LINEERROR>')) {
-//     //             failureCount += 1;
-//     //             continue;
-//     //         }
-
-//     //         await this.invoiceRepository.delete(invoice.id);
-//     //         successCount += 1;
-
-//     //     } catch (error) {
-//     //         console.error(`Failed to resend invoice ${invoice.id}`);
-//     //         failureCount += 1;
-//     //     }
-//     // }
-
-//     // // Update status based on success/failure counts
-//     // syncLog.status = failureCount === 0
-//     //     ? 'SUCCESS'
-//     //     : (successCount > 0 ? 'PARTIAL_SUCCESS' : 'FAILURE');
-
-
-//     // await this.syncLogRepository.save(syncLog);
-// }
 
 // @Cron('*/1 * * * *') // Run every 1 minute
 // async retryPendingInvoices() {

@@ -3,7 +3,7 @@ import { Injectable, BadRequestException, NotFoundException, UnauthorizedExcepti
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { User, UserRole } from 'users/user/users.entity';
+import { User, UserRole, UserStatus } from 'users/user/users.entity';
 import { AuthDto } from './auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as fs from 'fs';
@@ -123,6 +123,10 @@ export class AuthService {
       const user = await this.userRepository.findOne({ where: whereCondition });
       if (!user) {
         throw new NotFoundException('User not found');
+      }
+        // Check if the user's status is Suspended
+        if (user.status === UserStatus.Inactive) {
+          throw new UnauthorizedException('You are Inactive.Please contact the admin or company for assistance.');
       }
 
       const otp = generateOTP();

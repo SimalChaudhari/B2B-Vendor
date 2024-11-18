@@ -1,5 +1,4 @@
 import { useCallback } from 'react';
-
 import Stack from '@mui/material/Stack';
 import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
@@ -8,13 +7,18 @@ import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { formHelperTextClasses } from '@mui/material/FormHelperText';
+import * as XLSX from 'xlsx'; // Import the XLSX library
+
 
 import { Iconify } from 'src/components/iconify';
 import { usePopover, CustomPopover } from 'src/components/custom-popover';
+import { fIsBetween } from 'src/utils/format-time';
+import { generatePrintableContent } from './components/file-downlaod/pdf-generation';
+import { exportToExcel } from './components/file-downlaod/excel-generation';
 
 // ----------------------------------------------------------------------
 
-export function OrderTableToolbar({ filters, onResetPage, dateError }) {
+export function OrderTableToolbar({ filters, onResetPage, dateError, data }) {
   const popover = usePopover();
 
   const handleFilterName = useCallback(
@@ -40,6 +44,42 @@ export function OrderTableToolbar({ filters, onResetPage, dateError }) {
     },
     [filters, onResetPage]
   );
+  
+  const handlePrint = () => {
+    if (!data || data.length === 0) {
+      console.error('No data available for export.');
+      return;
+    }
+
+    const { startDate, endDate } = filters.state;
+
+    // Filter data based on the date range
+
+    const filteredData = startDate && endDate
+      ? data.filter((item) => fIsBetween(item.createdAt, startDate, endDate))
+      : data;
+
+    if (filteredData.length === 0) {
+      console.warn('No data found for the selected date range.');
+      return;
+    }
+
+      // Generate printable content
+  const printableContent = generatePrintableContent(filteredData);
+  
+    // Open a new window and print the content
+    const newWindow = window.open('', '_blank');
+    newWindow.document.write(printableContent);
+    newWindow.document.close();
+    newWindow.print();
+  };
+  
+
+
+  const handleExport = () => {
+    exportToExcel(data, filters, fIsBetween);
+  };
+  
 
   return (
     <>
@@ -92,7 +132,9 @@ export function OrderTableToolbar({ filters, onResetPage, dateError }) {
             }}
           />
 
-         
+          <IconButton onClick={popover.onOpen}>
+            <Iconify icon="eva:more-vertical-fill" />
+          </IconButton>
         </Stack>
       </Stack>
 
@@ -106,6 +148,7 @@ export function OrderTableToolbar({ filters, onResetPage, dateError }) {
           <MenuItem
             onClick={() => {
               popover.onClose();
+              handlePrint()
             }}
           >
             <Iconify icon="solar:printer-minimalistic-bold" />
@@ -113,17 +156,10 @@ export function OrderTableToolbar({ filters, onResetPage, dateError }) {
           </MenuItem>
 
           <MenuItem
-            onClick={() => {
-              popover.onClose();
-            }}
-          >
-            <Iconify icon="solar:import-bold" />
-            Import
-          </MenuItem>
 
-          <MenuItem
             onClick={() => {
               popover.onClose();
+              handleExport(); // Call export function on "Export" button click
             }}
           >
             <Iconify icon="solar:export-bold" />

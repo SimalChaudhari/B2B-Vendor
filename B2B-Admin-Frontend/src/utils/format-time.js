@@ -111,8 +111,12 @@ export function fIsBetween(inputDate, startDate, endDate) {
   const formattedStartDate = fTimestamp(startDate);
   const formattedEndDate = fTimestamp(endDate);
 
+    // Add time to endDate to include the entire day
+    const endDateWithTime = new Date(formattedEndDate);
+    endDateWithTime.setHours(23, 59, 59, 999);
+
   if (formattedInputDate && formattedStartDate && formattedEndDate) {
-    return formattedInputDate >= formattedStartDate && formattedInputDate <= formattedEndDate;
+    return formattedInputDate >= formattedStartDate && formattedInputDate <= endDateWithTime;
   }
 
   return false;

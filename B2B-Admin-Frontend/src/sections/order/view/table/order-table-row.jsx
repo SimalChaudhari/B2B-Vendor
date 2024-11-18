@@ -51,26 +51,25 @@ export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteR
       </TableCell>
       <TableCell align="center"> {row?.orderNo || "N/A"} </TableCell>
       {userRole === "Admin" &&
-        <>
-          <TableCell>
-            <Stack spacing={2} direction="row" alignItems="center">
-              <Avatar alt={row?.user?.name} src={row?.user?.name} />
-              <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
-                <Link color="inherit" sx={{ cursor: 'pointer' }}>
-                  {row?.user?.name}
-                </Link>
-                <Box component="span" sx={{ color: 'text.disabled' }}>
-                  {row?.user?.email}
-                </Box>
-              </Stack>
+        <TableCell>
+          <Stack spacing={2} direction="row" alignItems="center">
+            <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
+              <Link color="inherit" sx={{ cursor: 'pointer' }}>
+                {row?.user?.name}
+              </Link>
+              <Box component="span" sx={{ color: 'text.disabled' }}>
+                {row?.user?.email}
+              </Box>
+
+              <Box component="span" sx={{ color: 'text.disabled' }}>
+                {row?.user?.mobile}
+              </Box>
             </Stack>
-          </TableCell>
-          <TableCell align="center"> {row?.user.mobile || "N/A"} </TableCell>
-        </>
+          </Stack>
+        </TableCell>
+
       }
       <TableCell align="center"> {row?.totalQuantity} </TableCell>
-
-      <TableCell align="center"> {fCurrency(row.totalPrice)} </TableCell>
       <TableCell align="center"> {`${row.discount}%`} </TableCell>
       <TableCell align="center"> {fCurrency(row.finalAmount)} </TableCell>
 
@@ -102,7 +101,7 @@ export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteR
         </Label>
       </TableCell>
 
-      <TableCell align="center" sx={{cursor:"pointer" }}>
+      <TableCell align="center" sx={{ cursor: "pointer" }}>
         <Tooltip title={isDownloadable ? "Download File" : "File not available"}>
           <span> {/* Wrap in span to allow tooltip on disabled button */}
             <IconButton
@@ -116,7 +115,7 @@ export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteR
         </Tooltip>
       </TableCell>
 
-      <TableCell align="center" sx={{cursor:"pointer" }}>
+      <TableCell align="center" sx={{ cursor: "pointer" }}>
         <Tooltip title={isDownloadable ? "Download File" : "File not available"}>
           <span> {/* Wrap in span to allow tooltip on disabled button */}
             <IconButton
@@ -150,7 +149,7 @@ export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteR
 
   const renderSecondary = (
     <TableRow>
-      <TableCell sx={{ p: 0, border: 'none' }} colSpan={8}>
+      <TableCell sx={{ p: 0, border: 'none' }} colSpan={12}>
         <Collapse
           in={collapse.value}
           timeout="auto"

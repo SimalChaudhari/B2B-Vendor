@@ -16,13 +16,44 @@ import { ConfirmDialog } from 'src/components/custom-dialog';
 import { usePopover, CustomPopover } from 'src/components/custom-popover';
 import { Link as RouterLink } from 'react-router-dom'; // Import Link from react-router-dom
 import { useFetchVendorData } from '../../components';
+import { Label } from 'src/components/label';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import { onUpdateStatus } from 'src/store/action/vendorActions';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 export function VendorTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
+
 
     const confirm = useBoolean();
     const { fetchData } = useFetchVendorData();
 
     const popover = usePopover();
+    const dispatch = useDispatch();
+
+    const [newStatus, setNewStatus] = useState(null); // Temporary status for confirmation
+    const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+
+    const confirmStatusChange = async () => {
+        try {
+            const res = await dispatch(onUpdateStatus(row.id, { status: newStatus })); // Use newStatus here
+            if (res) {
+                fetchData(); // Refresh data after a successful update
+            }
+
+        } catch (error) {
+            console.error('Error updating status:', error);
+        } finally {
+            setIsConfirmOpen(false); // Close the confirmation dialog
+        }
+    };
+
+
+    // Cancel Status Change
+    const cancelStatusChange = () => {
+        setNewStatus(null);
+        setIsConfirmOpen(false); // Close confirmation dialog
+    };
 
     return (
         <>
@@ -49,8 +80,24 @@ export function VendorTableRow({ row, selected, onEditRow, onSelectRow, onDelete
                 <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.address || 'not available'}</TableCell>
                 <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.country || 'not available'}</TableCell>
                 <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.state || 'not available'}</TableCell>
-                <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.pincode || 'not available'}</TableCell>
-
+                <TableCell sx={{ whiteSpace: 'nowrap' }}>
+                    <Label sx={{ cursor: "pointer" }}
+                        variant="soft"
+                        color={
+                            (row.status === 'Active' && 'success') ||
+                            (row.status === 'Inactive' && 'error') ||
+                            'default'
+                        }
+                        onClick={() => {
+                            // Toggle between Active and Inactive for demonstration
+                            const updatedStatus = row.status === 'Active' ? 'Inactive' : 'Active';
+                            setNewStatus(updatedStatus); // Set the new status
+                            setIsConfirmOpen(true); // Open the confirmation dialog
+                        }}
+                    >
+                        {row.status}
+                    </Label>
+                </TableCell>
                 <TableCell>
                     <Stack direction="row" alignItems="center">
                         {/* 
@@ -127,6 +174,25 @@ export function VendorTableRow({ row, selected, onEditRow, onSelectRow, onDelete
                     </Button>
                 }
             />
+
+            {/* Confirmation Dialog */}
+            <Dialog open={isConfirmOpen} onClose={cancelStatusChange}>
+                <DialogTitle>Confirm Status Change</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Are you sure you want to change the status to <strong>{newStatus}</strong>?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={cancelStatusChange} color="secondary">
+                        Cancel
+                    </Button>
+                    <Button onClick={confirmStatusChange} variant="contained" color="primary">
+                        Confirm
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
         </>
     );
 }

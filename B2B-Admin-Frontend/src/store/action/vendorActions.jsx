@@ -43,7 +43,6 @@ export const syncVendor = () => async (dispatch) => {
         }
         return true;
     } catch (error) {
-        console.log("🚀 ~ syncVendor ~ error:", error)
         // Check if error response exists and handle error message
         const errorMessage = error?.response?.data?.message || 'An unexpected error occurred. Please try again.';
         toast.error(errorMessage);
@@ -58,6 +57,21 @@ export const deleteVendor = (id) => async (dispatch) => {
         // Check if the response is successful
         if (response && response.status >= 200 && response.status < 300) {
             toast.success(response.data.message || 'vendors deleted successfully!');
+            return true; // Indicate successful deletion
+        }
+    } catch (error) {
+        // Handle errors appropriately
+        const errorMessage = error?.response?.data?.message || 'An unexpected error occurred. Please try again.';
+        toast.error(errorMessage);
+    }
+    return false; // Return false for any errors or unsuccessful attempts
+};
+
+export const onUpdateStatus = (id, status) => async (dispatch) => {
+      try {
+        const response = await axiosInstance.patch(`/users/status/${id}`, status);
+        if (response) {
+            toast.success(response.data.message);
             return true; // Indicate successful deletion
         }
     } catch (error) {

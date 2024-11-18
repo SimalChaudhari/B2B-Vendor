@@ -9,7 +9,7 @@ export enum UserRole {
 
 export enum UserStatus {
     Active = 'Active',
-    Suspended = 'Suspended',
+    Inactive = 'Inactive',
 }
 
 export class VendorDto {
