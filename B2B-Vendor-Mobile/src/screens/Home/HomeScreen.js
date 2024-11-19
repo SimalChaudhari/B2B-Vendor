@@ -11,6 +11,7 @@ import { resetSelectedGroup, setSelectedGroupR } from '../../../redux/groupReduc
 import LoadingComponent from '../../components/Loading/LoadingComponent';
 import ErrorComponent from '../../components/Error/ErrorComponent';
 import LogoComponent from '../../components/Logo/LogoComponent';
+import { fetchBanner } from '../../BackendApis/bannerApi';
 
 const HomeScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -23,6 +24,7 @@ const HomeScreen = ({ navigation }) => {
   const [error, setError] = useState(null); // For error messages
   const [refreshing, setRefreshing] = useState(false); // For pull-to-refresh functionality
   const [currentIndex, setCurrentIndex] = useState(0); // For carousel index
+  const [bannerData, setBannerData] = useState([]);
 
   const images = [
     require('../../assets/images/Banner_1.png'),
@@ -37,6 +39,8 @@ const HomeScreen = ({ navigation }) => {
     setLoading(true);
     try {
       const data = await fetchItems();
+      const bannerData = await fetchBanner();
+      setBannerData(bannerData);
       setItems(data);
 
       // Extract unique groups with images
@@ -101,23 +105,31 @@ const HomeScreen = ({ navigation }) => {
           <Text style={styles.Verticalline} />
 
           <View>
-            <Carousel
-              loop
-              width={400}
-              height={200}
-              autoPlay={true}
-              data={images}
-              onSnapToItem={(index) => setCurrentIndex(index)}
-              renderItem={({ item }) => (
-                <View style={styles.slide}>
-                  <Image source={item} style={styles.image} resizeMode="cover" />
-                </View>
-              )}
-              scrollAnimationDuration={3000}
-            />
+            {bannerData.length > 0 ? (
+              <Carousel
+                loop
+                width={400}
+                height={200}
+                autoPlay={true}
+                data={bannerData}
+                onSnapToItem={(index) => setCurrentIndex(index)}
+                renderItem={({ item }) => (
+                  <View style={styles.slide}>
+                    <Image
+                      source={{ uri: item.BannerImages[0] }} // Use dynamic URL from bannerData
+                      style={styles.image}
+                      resizeMode="cover"
+                    />
+                  </View>
+                )}
+                scrollAnimationDuration={3000}
+              />
+            ) : (
+              <ActivityIndicator size="large" color="#fe0002" />
+            )}
 
             <View style={styles.dotsContainer}>
-              {images.map((_, index) => (
+              {bannerData.map((_, index) => (
                 <TouchableOpacity
                   key={index}
                   style={[styles.dot, currentIndex === index ? styles.activeDot : null]}
@@ -125,6 +137,7 @@ const HomeScreen = ({ navigation }) => {
               ))}
             </View>
           </View>
+
 
           <Text style={styles.Verticalline} />
           <Text style={styles.productText}>Product Categories</Text>

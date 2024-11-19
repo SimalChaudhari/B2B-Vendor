@@ -15,6 +15,7 @@ export const paths = {
   comingSoon: '/coming-soon',
   about: '/about-us',
   contact: '/contact-us',
+  termsandcondition: '/terms-and-condition',
   faqs: '/faqs',
   page403: '/error/403',
   page404: '/error/404',

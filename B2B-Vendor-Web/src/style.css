@@ -530,7 +530,7 @@
   }
   
   .card:hover {
-    border: 1px solid black;
+    border: 1px solid #ff5630;
     transform: scale(1.05);
   }
   
@@ -647,4 +647,8 @@
 
   .css-qrjz2g-MuiStack-root {
     align-items: start !important;
+    }
+
+    .nml__editor__content__listItem:hover{
+        background-color: transparent !important;
     }

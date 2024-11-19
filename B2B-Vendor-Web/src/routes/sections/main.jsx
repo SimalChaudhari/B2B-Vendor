@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import { MainLayout } from 'src/layouts/main';
 import { SimpleLayout } from 'src/layouts/simple';
 import { SplashScreen } from 'src/components/loading-screen';
+import { TermsAndConditionView } from 'src/sections/termsandcondition/view';
 
 const FaqsPage = lazy(() => import('src/pages/faqs'));
 const AboutPage = lazy(() => import('src/pages/about-us'));
@@ -45,6 +46,10 @@ export const mainRoutes = [
           {
             path: 'contact-us',
             element: <ContactPage />,
+          },
+          {
+            path: 'terms-and-condition',
+            element: <TermsAndConditionView />,
           },
           {
             path: 'faqs',

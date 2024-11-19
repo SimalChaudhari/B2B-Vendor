@@ -24,6 +24,8 @@ import ShopScreen from '../src/screens/products/ShopScreen';
 import ContactUsScree from '../src/screens/ContactUs/ContactUsScree';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import OrderConfirmScreen from '../src/screens/Order/OrderConfirmScreen';
+import SettingScreen from '../src/screens/Setting/SettingScreen';
+import TermsAndConditionsScreen from '../src/screens/TermsAndConditions/TermsAndConditionsScreen';
 // import useAuthToken from '../src/components/AuthToken/useAuthToken';
 
 const Stack = createNativeStackNavigator();
@@ -98,17 +100,19 @@ const StackNavigator = () => {
 
 
                 <Tab.Screen
-                    name="ContactUs"
-                    component={ContactUsScree}
+                    name="Setting"
+                    component={SettingScreen}
                     options={{
-                        tabBarLabel: "Contact Us",
+                        tabBarLabel: "Setting",
                         tabBarLabelStyle: { color: "#000", fontWeight:700, marginBottom:7  },
                         headerShown: false,
                         tabBarIcon: ({ focused }) => (
                             focused ? (
-                                <MaterialCommunityIcons name="message-question" size={26} color="#fe0002" />
+                                <Ionicons name="settings" size={26} color="#fe0002" />
+                                // <MaterialCommunityIcons name="message-question" size={26} color="#fe0002" />
                             ) : (
-                                <MaterialCommunityIcons name="message-question-outline" size={26} color="#fe0002" />
+                                <Ionicons name="settings-outline" size={26} color="#fe0002" />
+                                // <MaterialCommunityIcons name="message-question-outline" size={26} color="#fe0002" />
                             )
                         ),
                     }}
@@ -175,6 +179,16 @@ const StackNavigator = () => {
                 <Stack.Screen
                     name="OrderConfirm"
                     component={OrderConfirmScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="ContactUs"
+                    component={ContactUsScree}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="TermsAndConditions"
+                    component={TermsAndConditionsScreen}
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>

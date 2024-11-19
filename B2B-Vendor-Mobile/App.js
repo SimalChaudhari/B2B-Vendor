@@ -5,6 +5,7 @@ import { Provider } from "react-redux";
 import store from "./store";
 import Toast from 'react-native-toast-message';
 import { UserContext } from './UserContext';
+import 'react-native-gesture-handler';
 
 const App = () => {
   return (
