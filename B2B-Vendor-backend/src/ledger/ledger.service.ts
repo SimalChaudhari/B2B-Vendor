@@ -17,7 +17,7 @@ export class LedgerService {
         private readonly ledgerRepository: Repository<LedgerEntity>,
         @InjectRepository(BillEntity)
         private readonly billRepository: Repository<BillEntity>,
-    ) {}
+    ) { }
 
     async fetchAndStoreLedgers(): Promise<void> {
         try {
@@ -25,16 +25,18 @@ export class LedgerService {
                 headers: { 'Content-Type': 'text/xml' },
                 data: ledger,
             });
-
-            const parsedData = await parseStringPromise(response.data);
-            const customers = parsedData?.CUSTOMER || {}; // Default to an empty object if undefined
-
-            this.logger.log("Fetched customers from Tally:", customers);
-
-            // Convert customers object to an array for processing
-            const customerArray = Object.values(customers);
-
-            await this.processAndStoreCustomers(customerArray);
+    
+            const parsedData = await parseStringPromise(response.data, { explicitArray: true });
+            console.log('Parsed Data:', JSON.stringify(parsedData, null, 2));
+    
+            const customers = Array.isArray(parsedData?.CUSTOMER)
+                ? parsedData.CUSTOMER
+                : parsedData?.CUSTOMER
+                ? [parsedData.CUSTOMER]
+                : [];
+    
+            console.log('Customers:', customers);
+            await this.processAndStoreCustomers(customers);
         } catch (error: any) {
             this.logger.error('Error fetching or processing ledgers', error.stack);
             if (error.code === 'ECONNABORTED') {
@@ -45,6 +47,7 @@ export class LedgerService {
             throw new InternalServerErrorException('Failed to process ledger data.');
         }
     }
+    
 
     private async processAndStoreCustomers(customers: any[]): Promise<void> {
         const existingLedgers = await this.ledgerRepository.find({ relations: ['bills'] });
@@ -77,7 +80,6 @@ export class LedgerService {
             for (const ledger of ledgersToUpdate) {
                 await this.ledgerRepository.save(ledger);
             }
-            
         }
     }
 
@@ -94,29 +96,58 @@ export class LedgerService {
             }
         });
 
-        // Save bills separately to ensure consistency
         const savedBills = await this.billRepository.save(updatedBills);
-        ledger.bills = savedBills; // Assign saved bills back to the ledger
+        ledger.bills = savedBills;
+
+        await this.ledgerRepository.save(ledger);
     }
 
     private mapToLedgerDto(customer: any): LedgerDto {
+        // Log the raw customer data
+        console.log('Raw Customer Data:', customer);
+
         return {
             customerName: customer?.CUSTOMERNAME?.[0] || 'Unknown Customer',
             creditLimit: parseFloat(customer?.CREDITLIMIT?.[0] || '0'),
             closingBalance: parseFloat(customer?.CLOSINGBALANCE?.[0] || '0'),
-            bills: customer?.BILLS?.[0]?.BILL?.map((bill: any) => ({
-                tallyOrdId: bill?.TALLYORDID?.[0] || null,
-                nxOrderId: bill?.NXORDERID?.[0] || null,
-                tallyInvNo: bill?.TALLYINVNO?.[0] || null,
-                billDate: bill?.BILLDATE?.[0] || null,
-                openingBalance: parseFloat(bill?.OPENINGBALANCE?.[0] || '0'),
-                closingBalance: parseFloat(bill?.CLOSINGBALANCE?.[0] || '0'),
-                creditPeriod: bill?.CREDITPERIOD?.[0] || null,
-            })) || [], // Default to an empty array if BILLS is undefined
+            bills: customer?.BILLS
+                ? customer.BILLS.map((bill: any) => ({
+                    tallyOrdId: bill?.TALLYORDID?.[0] || null,
+                    nxOrderId: bill?.NXORDERID?.[0] || null,
+                    tallyInvNo: bill?.TALLYINVNO?.[0] || null,
+                    billDate: bill?.BILLDATE?.[0] || null,
+                    openingBalance: parseFloat(bill?.OPENINGBALANCE?.[0] || '0'),
+                    closingBalance: parseFloat(bill?.CLOSINGBALANCE?.[0] || '0'),
+                    creditPeriod: bill?.CREDITPERIOD?.[0] || null,
+                }))
+                : [],
         };
     }
 
     async findAll(): Promise<LedgerEntity[]> {
         return this.ledgerRepository.find({ relations: ['bills'] });
     }
+
+      // Fetch ledger by ID
+      async findById(id: string): Promise<LedgerEntity | null> {
+        return this.ledgerRepository.findOne({ where: { id }, relations: ['bills'] });
+    }
+
+    // Delete ledger by ID
+    async deleteById(id: string): Promise<boolean> {
+        const ledger = await this.ledgerRepository.findOne({ where: { id }, relations: ['bills'] });
+        if (!ledger) {
+            return false;
+        }
+
+        // Remove associated bills first
+        if (ledger.bills.length > 0) {
+            await this.billRepository.remove(ledger.bills);
+        }
+
+        // Remove ledger
+        await this.ledgerRepository.remove(ledger);
+        return true;
+    }
+
 }

@@ -32,6 +32,10 @@ export const BANNER_LIST = "BANNER_LIST"
 
 export const STOCK_LIST = "STOCK_LIST"
 
+export const RECEIVABLE_GET_BY_LIST = "RECEIVABLE_GET_BY_LIST"
+export const RECEIVABLE_LIST = "RECEIVABLE_LIST"
+
+
 
 
 

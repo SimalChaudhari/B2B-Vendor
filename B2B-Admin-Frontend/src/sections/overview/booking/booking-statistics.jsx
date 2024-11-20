@@ -50,6 +50,7 @@ export function BookingStatistics({ title, chart, selectedYear, onYearChange, ..
           label="Select Year"
           value={dayjs().year(selectedYear)}
           onChange={(newValue) => onYearChange(newValue ? newValue.year() : dayjs().year())}
+          maxDate={dayjs()} // Restricts selection to the current year
           renderInput={(params) => <TextField {...params} sx={{ minWidth: 150 }} />}
         />
       </Box>

@@ -11,6 +11,7 @@ import { VendorEditView } from 'src/sections/vendor/view/vendor-edit';
 import { ItemView } from 'src/sections/vendor-sections/product/view';
 import { OrderDetailsView } from 'src/sections/order/view';
 import { BannerCreateView, BannerEditView, BannerView } from 'src/sections/setting/banner/view';
+import { ReceivablesListDetails } from 'src/sections/accounting/Receivables/view/receivables-details';
 
 // Overview
 const IndexPage = lazy(() => import('src/pages/dashboard'));
@@ -106,7 +107,8 @@ export const dashboardRoutes = [
     children: [
       { element: <LedgerPage />, index: true },
       { path: 'ledger', element: <LedgerPage /> },
-      { path: 'receivable', element: <ReceivablesPage /> }
+      { path: 'receivable', element: <ReceivablesPage /> },
+      { path: 'view/:id', element: <ReceivablesListDetails /> },
     ],
   },
 

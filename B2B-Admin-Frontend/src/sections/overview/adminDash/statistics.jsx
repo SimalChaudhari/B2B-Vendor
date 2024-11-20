@@ -68,6 +68,7 @@ export function Statistics({ title, generateMonthlyData, ...other }) {
           label="Select Year"
           value={dayjs().year(selectedYear)}
           onChange={(newValue) => setSelectedYear(newValue ? newValue.year() : dayjs().year())}
+          maxDate={dayjs()} // Restricts selection to the current year
           renderInput={(params) => <TextField {...params} sx={{ minWidth: isSmallScreen ? '100%' : 150 }} />}
         />
       </Box>

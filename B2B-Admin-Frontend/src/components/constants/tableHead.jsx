@@ -60,6 +60,8 @@ export const TABLE_VENDOR_HEAD = [
   { id: 'action', label: 'Actions' }
 ];
 
+
+
 export const TABLE_FAQ_HEAD = [
   { id: 'question', label: 'Question' },
   { id: 'answer', label: 'Answer' },

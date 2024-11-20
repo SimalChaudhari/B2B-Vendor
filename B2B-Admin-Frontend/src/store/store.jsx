@@ -13,6 +13,7 @@ import cartReducer from './reducer/cartReducer';
 import orderReducer from './reducer/orderReducer';
 import dashboardReducer from './reducer/dashboardReducer';
 import stockReducer from './reducer/stockSummaryReducer';
+import AccountingReducer from './reducer/accountingReducer';
 
 // Combine your reducers
 const rootReducer = combineReducers({
@@ -27,7 +28,8 @@ const rootReducer = combineReducers({
   cart: cartReducer,
   order: orderReducer,
   dash: dashboardReducer,
-  stock : stockReducer
+  stock : stockReducer,
+  accounting : AccountingReducer
 
 
 

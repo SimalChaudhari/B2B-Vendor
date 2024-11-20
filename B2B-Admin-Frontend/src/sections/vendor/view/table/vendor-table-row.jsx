@@ -180,7 +180,21 @@ export function VendorTableRow({ row, selected, onEditRow, onSelectRow, onDelete
                 <DialogTitle>Confirm Status Change</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Are you sure you want to change the status to <strong>{newStatus}</strong>?
+                        {newStatus === 'Inactive' ? (
+                            <>
+                                Are you sure you want to change the status to <strong>{newStatus}</strong>?
+                                <br />
+                                <br />
+                                <strong>Note:</strong> The vendor will <strong>not be able to log in</strong> or <strong>place orders</strong>.
+                            </>
+                        ) : (
+                            <>
+                                Are you sure you want to change the status to <strong>{newStatus}</strong>?
+                                <br />
+                                <br />
+                                <strong>Note:</strong> The vendor will be able to <strong>log in</strong> and <strong>place orders</strong>.
+                            </>
+                        )}
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
@@ -192,6 +206,7 @@ export function VendorTableRow({ row, selected, onEditRow, onSelectRow, onDelete
                     </Button>
                 </DialogActions>
             </Dialog>
+
 
         </>
     );
