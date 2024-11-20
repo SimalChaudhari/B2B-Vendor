@@ -32,6 +32,8 @@ const LogoutPage = lazy(() => import('src/pages/settings/logout'));
 // Vendor
 const ItemPage = lazy(() => import('src/pages/vendor-page/items'));
 
+const SyncPage = lazy(() => import('src/pages/settings/sync'));
+
 // Error
 const Page500 = lazy(() => import('src/pages/error/500'));
 const Page403 = lazy(() => import('src/pages/error/403'));
@@ -130,6 +132,9 @@ export const dashboardRoutes = [
       { path: 'banner/create', element: <BannerCreateView /> },
       { path: 'banner/edit/:id', element: <BannerEditView /> },
       { path: 'banner/view/:id', element: <BannerView /> },
+
+      { path: 'sync', element: <SyncPage /> },
+
     ],
   },
 

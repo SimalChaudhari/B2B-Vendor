@@ -75,14 +75,10 @@ export function ReceivablesListView() {
     const dateError = fIsAfter(filters.state.startDate, filters.state.endDate);
     //-----------------------------------------------------------------------------------------------------
     const TABLE_HEAD = [
-        ...(userRole === "Admin"
-            ? [
-                { id: 'Customer', label: 'Customer' },
-            ]
-            : []),
+        { id: 'Customer', label: 'Customer' },
         { id: 'CreditLimit', label: 'Credit Limit' },
         { id: 'closingBalance', label: 'Closing Balance' }, // New column for discount
-        { id: 'action', label: 'Actions'}
+        { id: 'action', label: 'Actions' }
     ];
 
 

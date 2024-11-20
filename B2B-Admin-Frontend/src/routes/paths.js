@@ -54,10 +54,10 @@ export const paths = {
     view: (id) => `/view/${id}`,
   },
 
-  accounts : {
+  accounts: {
     root: `/accounts`,
-    ledger : `/accounts/ledger`,
-    receivable : `/accounts/receivable`,
+    ledger: `/accounts/ledger`,
+    receivable: `/accounts/receivable`,
     viewReceivable: (id) => `/accounts/view/${id}`,
   },
 
@@ -75,6 +75,8 @@ export const paths = {
     createBanner: `/create`,
     editBanner: (id) => `/edit/${id}`,
     viewBanner: (id) => `/view/${id}`,
+
+    sync: `/settings/sync`,
 
   },
 

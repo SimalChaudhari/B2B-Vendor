@@ -25,91 +25,112 @@ export const useNavData = () => {
   const [userRole, setUserRole] = useState(null);
 
   useEffect(() => {
-    // Retrieve user role from localStorage whenever it changes
     const handleRoleChange = () => {
-      const userData = JSON.parse(localStorage.getItem('userData'));
-      setUserRole(userData?.user?.role);
+      const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+      setUserRole(userData?.user?.role || null);
     };
 
-    // Listen for storage events to detect changes (when user logs in/out from other tabs)
     window.addEventListener('storage', handleRoleChange);
+    handleRoleChange(); // Initial fetch
 
-    // Initial role fetch
-    handleRoleChange();
-
-    // Cleanup listener on unmount
     return () => {
       window.removeEventListener('storage', handleRoleChange);
     };
   }, []);
 
-  const navData = [
-    {
-      subheader: 'Overview',
-      items: [{ title: 'Dashboard', path: paths.dashboard.root, icon: ICONS.dashboard }],
-    },
+  const commonItems = [
+    { title: 'Dashboard', path: paths.dashboard.root, icon: ICONS.dashboard },
+    { title: 'Logout', path: paths.logout.root, icon: ICONS.logout },
+  ];
+
+  const adminItems = [
     {
       subheader: 'Management',
       items: [
-        ...(userRole === 'Admin'
-          ? [
-            { title: 'Products', path: paths.products.root, icon: ICONS.products },
-            { title: 'Vendors', path: paths.vendors.root, icon: ICONS.vendors },
-            { title: 'Orders', path: paths.orders.root, icon: ICONS.orders },
-           
-            {
-              title: 'Accounting Reports',
-              path: paths.accounts.root,
-              icon: ICONS.account,
-              children: [
-                { title: 'Ledger Statement', path: paths.accounts.ledger,icon: ICONS.analytics},
-                { title: 'Outstanding Receivables', path: paths.accounts.receivable,icon: ICONS.receivables}
-              ],
-            },
-
-            {
-              title: 'Inventory Reports',
-              path: paths.stocks.root,
-              icon: ICONS.stocks,
-              children: [
-                { title: 'Stocks', path: paths.stocks.root, icon: ICONS.ledger },
-              ],
-            },
-
-
-
-            {
-              title: 'Settings',
-              path: paths.settings.root,
-              icon: ICONS.settings,
-              children: [
-                { title: 'FAQs', path: paths.settings.faq },
-                { title: 'Contact us', path: paths.settings.contact_us },
-                { title: 'Terms Conditions', path: paths.settings.terms_conditions },
-                { title: 'Banner', path: paths.settings.banner },
-                { title: 'Profile', path: paths.settings.profile },
-              ],
-            },
-          ]
-          : []),
-
-        ...(userRole === 'Vendor'
-          ? [
-            { title: 'Products', path: paths.items.root, icon: ICONS.products },
-            { title: 'Orders', path: paths.orders.root, icon: ICONS.orders },
-            {
-              title: 'Settings',
-              path: paths.settings.root,
-              icon: ICONS.settings,
-              children: [{ title: 'Profile', path: paths.settings.profile }],
-            },
-          ]
-          : []),
-
-        { title: 'Logout', path: paths.logout.root, icon: ICONS.logout },
-
+        { title: 'Products', path: paths.products.root, icon: ICONS.products },
+        { title: 'Vendors', path: paths.vendors.root, icon: ICONS.vendors },
+        { title: 'Orders', path: paths.orders.root, icon: ICONS.orders },
       ],
     },
+
+  ];
+
+  const reportsItem = [
+    {
+      subheader: 'Reports',
+      items: [
+        {
+          title: 'Accounting',
+          path: paths.accounts.root,
+          icon: ICONS.account,
+          children: [
+            { title: 'Ledger Statement', path: paths.accounts.ledger },
+            { title: 'Outstanding Receivables', path: paths.accounts.receivable },
+          ],
+        },
+        {
+          title: 'Inventory',
+          path: paths.stocks.root,
+          icon: ICONS.stocks,
+          children: [{ title: 'Stocks', path: paths.stocks.root }],
+        },
+
+
+
+      ],
+    }
+
+  ]
+
+  const vendorItems = [
+    {
+      subheader: 'Management',
+      items: [
+        { title: 'Products', path: paths.items.root, icon: ICONS.products },
+        { title: 'Orders', path: paths.orders.root, icon: ICONS.orders },
+      ],
+    },
+
+  ];
+
+  const vendorSettingsItem = [
+    {
+      subheader: 'Settings',
+      items: [
+        {
+          title: 'Profile',
+          path: paths.settings.profile,
+          icon: ICONS.settings,
+        },
+      ],
+    },
+  ]
+
+  const settingsItems = [
+    {
+      subheader: 'Settings',
+      items: [
+        {
+          title: 'Settings',
+          path: paths.settings.root,
+          icon: ICONS.settings,
+          children: [
+            { title: 'FAQs', path: paths.settings.faq },
+            { title: 'Contact Us', path: paths.settings.contact_us },
+            { title: 'Terms & Conditions', path: paths.settings.terms_conditions },
+            { title: 'Banner', path: paths.settings.banner },
+            { title: 'Sync Data', path: paths.settings.sync },
+            { title: 'Profile', path: paths.settings.profile },
+          ],
+        },
+      ],
+    },
+  ];
+
+  const navData = [
+    ...commonItems,
+    ...(userRole === 'Admin' ? [...adminItems, ...reportsItem, ...settingsItems] : []),
+    ...(userRole === 'Vendor' ? [...vendorItems, ...reportsItem, ...vendorSettingsItem] : []),
   ];
 
   return navData;

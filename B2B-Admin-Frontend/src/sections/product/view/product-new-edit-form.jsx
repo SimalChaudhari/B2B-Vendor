@@ -119,7 +119,7 @@ export default function ProductNewEditForm({ currentProduct }) {
                                     onChange={(e) => setApplyToAllProductImages(e.target.checked)}
                                 />
                             }
-                            label="Apply to all items with the same subGroup1"
+                            label="Apply to all items with the same Sub-Group 2"
                         />
         
                         <Field.Upload
@@ -144,7 +144,7 @@ export default function ProductNewEditForm({ currentProduct }) {
                                     onChange={(e) => setApplyToAllDimensionalFiles(e.target.checked)}
                                 />
                             }
-                            label="Apply to all items with the same subGroup1"
+                            label="Apply to all items with the same Sub-Group 2"
                         />
         
                         <Field.SingleFile
