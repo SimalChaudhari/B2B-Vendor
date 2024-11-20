@@ -18,6 +18,8 @@ const UsersPage = lazy(() => import('src/pages/users'));
 const ProductPage = lazy(() => import('src/pages/products'));
 const StockPage = lazy(() => import('src/pages/stock-summary'));
 const OrderPage = lazy(() => import('src/pages/orders'));
+const LedgerPage = lazy(() => import('src/pages/accounting/ledger'));
+const ReceivablesPage = lazy(() => import('src/pages/accounting/Receivables'));
 const VendorPage = lazy(() => import('src/pages/vendors'));
 const FAQPage = lazy(() => import('src/pages/settings/faq'));
 const BannerPage = lazy(() => import('src/pages/settings/banner'));
@@ -84,7 +86,7 @@ export const dashboardRoutes = [
     children: [
       { element: <OrderPage />, index: true },
       { path: 'details/:id', element: <OrderDetailsView /> },
-  
+
     ],
   },
 
@@ -92,9 +94,19 @@ export const dashboardRoutes = [
     path: 'stocks',
     element: CONFIG.auth.skip ? <>{layoutContent}</> : <AuthGuard>{layoutContent}</AuthGuard>,
     children: [
-   
+
       { element: <StockPage />, index: true }
 
+    ],
+  },
+
+  {
+    path: 'accounts',
+    element: CONFIG.auth.skip ? <> {layoutContent} </> : <AuthGuard> {layoutContent} </AuthGuard>,
+    children: [
+      { element: <LedgerPage />, index: true },
+      { path: 'ledger', element: <LedgerPage /> },
+      { path: 'receivable', element: <ReceivablesPage /> }
     ],
   },
 
@@ -113,9 +125,9 @@ export const dashboardRoutes = [
       { path: 'terms-conditions', element: <TermsPage /> },
       { path: 'profile-settings', element: <ProfilePage /> },
       { path: 'banner', element: <BannerPage /> },
-      { path: 'banner/create', element: <BannerCreateView/> },
-      { path: 'banner/edit/:id', element: <BannerEditView/> },
-      { path: 'banner/view/:id', element: <BannerView/> },
+      { path: 'banner/create', element: <BannerCreateView /> },
+      { path: 'banner/edit/:id', element: <BannerEditView /> },
+      { path: 'banner/view/:id', element: <BannerView /> },
     ],
   },
 
@@ -130,7 +142,7 @@ export const dashboardRoutes = [
     ],
   },
 
-  
+
   {
     path: 'logout',
     element: CONFIG.auth.skip ? <>{layoutContent}</> : <AuthGuard>{layoutContent}</AuthGuard>,

@@ -30,13 +30,7 @@ export const paths = {
     view: (id) => `/view/${id}`,
   },
 
-  stocks: {
-    root: `/stocks`,
-    list: `/stocks/list`,
-    details: (id) => `/stocks/${id}`,
-    edit: (id) => `/edit/${id}`,
-    view: (id) => `/view/${id}`,
-  },
+
 
   vendors: {
     root: `/vendors`,
@@ -50,6 +44,20 @@ export const paths = {
     details: (id) => `/orders/${id}`,
     view: (id) => `/view/${id}`,
 
+  },
+
+  stocks: {
+    root: `/stocks`,
+    list: `/stocks/list`,
+    details: (id) => `/stocks/${id}`,
+    edit: (id) => `/edit/${id}`,
+    view: (id) => `/view/${id}`,
+  },
+
+  accounts : {
+    root: `/accounts`,
+    ledger : `/accounts/ledger`,
+    receivable : `/accounts/receivable`,
   },
 
   settings: {

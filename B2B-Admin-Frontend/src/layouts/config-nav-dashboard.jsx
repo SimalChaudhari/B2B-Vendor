@@ -14,8 +14,11 @@ const ICONS = {
   orders: icon('ic-order'),
   settings: icon('ic-lock'),
   stocks: icon('ic-job'),
+  ledger: icon('ic-invoice'),
   logout: icon('ic-external'),
-
+  account: icon('ic-tour'),
+  analytics: icon('ic-analytics'),
+  receivables: icon('ic-ecommerce'),
 };
 
 export const useNavData = () => {
@@ -53,7 +56,27 @@ export const useNavData = () => {
             { title: 'Products', path: paths.products.root, icon: ICONS.products },
             { title: 'Vendors', path: paths.vendors.root, icon: ICONS.vendors },
             { title: 'Orders', path: paths.orders.root, icon: ICONS.orders },
-            { title: 'Stocks Summary', path: paths.stocks.root, icon: ICONS.stocks },
+           
+            {
+              title: 'Accounting Reports',
+              path: paths.accounts.root,
+              icon: ICONS.account,
+              children: [
+                { title: 'Ledger Statement', path: paths.accounts.ledger,icon: ICONS.analytics},
+                { title: 'Outstanding Receivables', path: paths.accounts.receivable,icon: ICONS.receivables}
+              ],
+            },
+
+            {
+              title: 'Inventory Reports',
+              path: paths.stocks.root,
+              icon: ICONS.stocks,
+              children: [
+                { title: 'Stocks', path: paths.stocks.root, icon: ICONS.ledger },
+              ],
+            },
+
+
 
             {
               title: 'Settings',
@@ -83,7 +106,7 @@ export const useNavData = () => {
           ]
           : []),
 
-          { title: 'Logout', path: paths.logout.root, icon: ICONS.logout },
+        { title: 'Logout', path: paths.logout.root, icon: ICONS.logout },
 
       ],
     },

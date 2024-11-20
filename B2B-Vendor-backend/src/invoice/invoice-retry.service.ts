@@ -78,10 +78,9 @@ export class InvoiceRetryService {
         };
     }
 
-    @Cron('*/5 * * * * *') // Runs every 5 seconds
+    // @Cron('*/10 * * * * *') // Runs every 5 seconds
     async retryPendingInvoices(userId: string): Promise<{ status: string; message: string }> {
         console.log("sync.......1")
-
         // Check if invoice posting is enabled
         const isEnabled = await this.invoiceRepository.findOne({
             where: { userId, enabled: true },

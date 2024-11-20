@@ -13,6 +13,7 @@ import { DashboardModule } from 'dashboard/dashboard.module';
 import { InvoiceModule } from 'invoice/invoice.module';
 import { SyncLogModule } from 'sync-log/sync-log.module';
 import { StockModule } from 'stock/stock.module';
+import { LedgerModule } from 'ledger/ledger.module';
 
 
 @Module({
@@ -39,7 +40,8 @@ import { StockModule } from 'stock/stock.module';
     DashboardModule,
     InvoiceModule,
     SyncLogModule,
-    StockModule
+    StockModule,
+    LedgerModule
     // FileModule
   ],
 })

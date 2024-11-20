@@ -49,7 +49,7 @@ import useUserRole from 'src/layouts/components/user-role';
 import { syncOrder } from 'src/store/action/orderActions';
 import { Typography } from '@mui/material';
 import { applyFilter } from '../utils/filterUtils';
-
+import Switch from '@mui/material/Switch';
 // ----------------------------------------------------------------------
 
 const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...ORDER_STATUS_OPTIONS];
@@ -61,6 +61,9 @@ export function OrderListView() {
   const confirm = useBoolean();
   const userRole = useUserRole();
   const [selectedRows, setSelectedRows] = useState([]); // Store selected row IDs
+
+  const [isEbakleDisabled, setIsEbakleDisabled] = useState(false);
+
 
 
 
@@ -196,8 +199,16 @@ export function OrderListView() {
             )
           }
         />
-
+       
         <Card>
+         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Typography variant="subtitle2">Sync Setting</Typography>
+          <Switch
+            checked={isEbakleDisabled}
+            onChange={(event) => setIsEbakleDisabled(event.target.checked)}
+            color="primary"
+          />
+        </Box>
           <Tabs
             value={filters.state.status}
             onChange={handleFilterStatus}
