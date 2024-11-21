@@ -6,7 +6,6 @@ import {
   Pressable,
   TextInput,
   Image,
-  Alert,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Feather } from "@expo/vector-icons";
@@ -17,15 +16,17 @@ import {
 } from "../../../redux/CartReducer";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { formatNumber } from "../../utils";
-import { deleteCartItem, fetchCart } from "../../BackendApis/cartApi";
+import { decreaseQuantity, deleteCartItem, fetchCart, increaseQuantity } from "../../BackendApis/cartApi";
 import LoadingComponent from "../../components/Loading/LoadingComponent";
 import { useAuth } from "../../components/AuthToken/AuthContext";
 
-const CartScreen = () => {
+const VendorCartScreen = () => {
 
   const { token } = useAuth();
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [quantity, setQuantity] = useState(1); // Initial quantity set to 1 or any default value  
 
 
   const total = cart
@@ -66,6 +67,38 @@ const CartScreen = () => {
     return <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 20 }}><LoadingComponent /></View>;
   }
 
+  // Handle item quantity changes
+  const handleIncreaseQuantity = async (id) => {
+    try {
+      await increaseQuantity(id);
+
+      const cartData = await fetchCart(); // API call
+      dispatch(addToCart(cartData));
+      setCart((prevCart) =>
+        prevCart.map((item) =>
+          item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+        )
+      );
+    } catch (error) {
+      console.error('Error increasing quantity:', error);
+    }
+  };
+
+  const handleDecreaseQuantity = async (id) => {
+    try {
+      await decreaseQuantity(id);
+
+      const cartData = await fetchCart(); // API call
+      dispatch(addToCart(cartData));
+      setCart((prevCart) =>
+        prevCart.map((item) =>
+          item.id === id ? { ...item, quantity: item.quantity - 1 } : item
+        )
+      );
+    } catch (error) {
+      console.error('Error decreasing quantity:', error);
+    }
+  };
 
   const handleDeleteItem = async (id) => {
     try {
@@ -120,7 +153,7 @@ const CartScreen = () => {
 
           <Pressable
             // onPress={handleProceedToBuy} // Updated onPress handler
-            onPress={() => navigation.navigate("VendorConfirm")}
+            onPress={() => navigation.navigate("Confirm")}
             style={{
               backgroundColor: cart.length > 0 ? "#1C252E" : "#D3D3D3", // Change color if disabled
               padding: 15,
@@ -240,7 +273,31 @@ const CartScreen = () => {
                       borderRadius: 7,
                     }}
                   >
-
+                    {item.quantity > 1 ? (
+                      <Pressable
+                        onPress={() => handleDecreaseQuantity(item.id)}
+                        style={{
+                          backgroundColor: "#D8D8D8",
+                          padding: 7,
+                          borderTopLeftRadius: 6,
+                          borderBottomLeftRadius: 6,
+                        }}
+                      >
+                        <AntDesign name="minus" size={24} color="#1C252E" />
+                      </Pressable>
+                    ) : (
+                      <Pressable
+                        onPress={() => handleDeleteItem(item.id)}
+                        style={{
+                          backgroundColor: "#D8D8D8",
+                          padding: 7,
+                          borderTopLeftRadius: 6,
+                          borderBottomLeftRadius: 6,
+                        }}
+                      >
+                        <AntDesign name="delete" size={24} color="#1C252E" />
+                      </Pressable>
+                    )}
 
                     <Pressable
                       style={{
@@ -260,28 +317,21 @@ const CartScreen = () => {
                       </Text>
                     </Pressable>
 
-
+                    <Pressable
+                      onPress={() => handleIncreaseQuantity(item.id)}
+                      style={{
+                        backgroundColor: "#D8D8D8",
+                        padding: 7,
+                        borderTopLeftRadius: 6,
+                        borderBottomLeftRadius: 6,
+                      }}
+                    >
+                      <Feather name="plus" size={24} color="#1C252E" />
+                    </Pressable>
                   </View>
 
                   <Pressable
-                    onPress={() =>
-                      Alert.alert(
-                        "Confirm Deletion", // Alert title
-                        "Are you sure you want to delete this item?", // Alert message
-                        [
-                          {
-                            text: "Cancel", // Cancel button text
-                            onPress: () => console.log("Deletion cancelled"), // Action when Cancel is pressed
-                            style: "cancel", // Button style (default for cancel actions)
-                          },
-                          {
-                            text: "Delete", // Delete button text
-                            onPress: () => handleDeleteItem(item.id), // Call the delete function if confirmed
-                            style: "destructive", // Button style (red on iOS)
-                          },
-                        ]
-                      )
-                    }
+                    onPress={() => handleDeleteItem(item.id)}
                     style={{
                       backgroundColor: "white",
                       paddingHorizontal: 8,
@@ -305,7 +355,7 @@ const CartScreen = () => {
   );
 };
 
-export default CartScreen;
+export default VendorCartScreen;
 
 const styles = StyleSheet.create({
   CheckOutText: {

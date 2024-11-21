@@ -6,14 +6,17 @@ import store from "./store";
 import Toast from 'react-native-toast-message';
 import { UserContext } from './UserContext';
 import 'react-native-gesture-handler';
+import { AuthProvider } from './src/components/AuthToken/AuthContext';
 
 const App = () => {
   return (
     <Provider store={store}>
       <UserContext>
         <View style={styles.container}>
-          <StackNavigator />
-          <Toast ref={(ref) => Toast.setRef(ref)} />
+          <AuthProvider>
+            <StackNavigator />
+            <Toast ref={(ref) => Toast.setRef(ref)} />
+          </AuthProvider>
         </View>
       </UserContext>
     </Provider>

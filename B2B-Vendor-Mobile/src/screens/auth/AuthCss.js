@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     // General styles
     container: {
         flex: 1,
-        backgroundColor: colors.background,
+        backgroundColor: colors.white,
         padding: 20,
         justifyContent: 'center',
         alignItems: 'center',
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
         fontSize: 25,
     },
     button: {
-        backgroundColor: colors.buttonColor,
+        backgroundColor: colors.background,
         padding: 15,
         borderRadius: 5,
         alignItems: 'center',
@@ -95,6 +95,7 @@ const styles = StyleSheet.create({
         marginRight: 5,
     },
     signUpContainer: {
+        display:"none",
         flexDirection: 'row',
         justifyContent: 'center',
         marginTop: 20,
@@ -176,8 +177,7 @@ const styles = StyleSheet.create({
         borderColor: colors.white,
         borderWidth: 1,
         borderRadius: 5,
-        // marginBottom: 12,
-        marginTop: 20,
+        marginBottom: 12,
         width: 200,
     },
     selectedText: {
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         // justifyContent: 'flex-end', // Align items to the right
         justifyContent: 'space-between', // Align items to the right
-        // alignItems: 'center', 
+        alignItems: 'center', // Center vertically
         // paddingHorizontal: 3,
         marginLeft: 3,
         gap: 10,

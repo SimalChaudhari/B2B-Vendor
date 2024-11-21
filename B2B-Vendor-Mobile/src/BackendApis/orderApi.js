@@ -3,9 +3,9 @@
 import axiosInstance from '../config/axiosInstance'; // Correct import path
 
 // Add Order Api
-export const addOrderFirst = async (addressId, totalPrice, totalQuantity) => {
+export const addOrderFirst = async (addressId, totalPrice, totalQuantity, discount, finalAmount, DeliveryType) => {
     try {
-        const response = await axiosInstance.post('/order/generate', { addressId, totalPrice, totalQuantity }); // Use axiosInstance directly
+        const response = await axiosInstance.post('/order/generate', { addressId, totalPrice, totalQuantity, discount, finalAmount, DeliveryType }); // Use axiosInstance directly
         return response.data; // Return the data from response
     } catch (error) {
         console.error('Error adding to Order:', error);

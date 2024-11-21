@@ -3,13 +3,15 @@ import React, { useState, useEffect } from 'react';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import styles from '../../assets/cssFile';
+import styles from './AuthCss';
 import { setUser } from '../../../redux/authReducer';
 import { useDispatch, useSelector } from 'react-redux';
 import Toast from 'react-native-toast-message';
 import { authLogin } from '../../BackendApis/authApi'; // Import the authVerify function
+import { useAuth } from '../../components/AuthToken/AuthContext';
 
 const OTPVerification = ({ route, navigation }) => {
+    const { updateToken } = useAuth();
     const { email } = route.params;
     const [otp, setOtp] = useState('');
     const [loading, setLoading] = useState(false);
@@ -52,12 +54,16 @@ const OTPVerification = ({ route, navigation }) => {
             await AsyncStorage.setItem("userId", user.id); // Use user.id instead of user_id
             await AsyncStorage.setItem("userData", JSON.stringify(user));
             dispatch(setUser(user)); // Dispatch user data to Redux
-    
+            updateToken(token);
             Toast.show({
                 type: 'success',
                 text1: 'Verification Successful',
                 text2: 'Your OTP has been verified successfully.',
             });
+
+            console.log('====================================');
+            console.log("Your OTP has been verified successfully.");
+            console.log('====================================');
     
             navigation.navigate('Home');
         } catch (error) {

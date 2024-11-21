@@ -2,10 +2,12 @@
 
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import { API_URL_SECONDARY, API_URL_PRIMARY } from '@env';
 
 const axiosInstance = axios.create({
-  baseURL: 'http://192.168.1.112:3000' || 'http://localhost:3000',
+  // baseURL: 'http://192.168.1.112:3000' || 'http://localhost:3000',
   // baseURL: 'http://localhost:3000',
+  baseURL: API_URL_SECONDARY || API_URL_PRIMARY,
 });
 
 // Request interceptor

@@ -4,9 +4,11 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { useDispatch } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
-import styles from '../../assets/cssFile';
+import styles from './AuthCss';
 import { authVerify } from '../../BackendApis/authApi';
 import { setUser } from '../../../redux/authReducer';
+import ShortLogoComponent from '../../components/Logo/ShortLogoComponent';
+
 
 const LoginScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -46,8 +48,8 @@ const LoginScreen = ({ navigation }) => {
     try {
       const response = await authVerify(email);
 
-      const  user = response;
-      if ( user) {
+      const user = response;
+      if (user) {
         navigation.navigate('OTPVerification', { email });
       } else {
         throw new Error('Invalid response data');
@@ -62,7 +64,9 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.logo}>Your Logo</Text>
+      <Text style={styles.logo}>
+      </Text>
+      <ShortLogoComponent style={styles.logo} />
 
       <View style={[styles.inputContainer, isEmailInvalid && { borderColor: 'red', borderWidth: 1 }]}>
         <FontAwesome5 name="user-alt" size={24} color="black" style={styles.inputIcon} />
