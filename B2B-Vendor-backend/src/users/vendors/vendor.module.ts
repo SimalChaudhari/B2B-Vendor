@@ -8,9 +8,11 @@ import { UserService } from 'users/user/users.service';
 import { User } from 'users/user/users.entity';
 import { Address } from 'users/address/addresses/addresses.entity';
 import { AddressesService } from 'users/address/addresses/addresses.service';
+import { SyncLogEntity } from 'sync-log/sync-log.entity';
+import { SyncLogService } from 'sync-log/sync-log.service';
 @Module({
-  imports: [TypeOrmModule.forFeature([VendorEntity,User,Address])], // Register the VendorEntity
+  imports: [TypeOrmModule.forFeature([VendorEntity,User,Address,SyncLogEntity])], // Register the VendorEntity
   controllers: [VendorController], // Register the VendorController
-  providers: [VendorService,AddressesService], // Register the VendorService and FirebaseService
+  providers: [VendorService,AddressesService,SyncLogService], // Register the VendorService and FirebaseService
 })
 export class VendorModule {}

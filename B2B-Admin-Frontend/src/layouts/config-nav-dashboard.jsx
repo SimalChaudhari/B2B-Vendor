@@ -39,6 +39,7 @@ export const useNavData = () => {
   }, []);
 
   const commonItems = [
+    
     { title: 'Dashboard', path: paths.dashboard.root, icon: ICONS.dashboard },
     { title: 'Logout', path: paths.logout.root, icon: ICONS.logout },
   ];

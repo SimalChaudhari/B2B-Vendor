@@ -9,6 +9,9 @@ import { User, UserRole } from 'users/user/users.entity';
 import { VendorDto } from './../user/users.dto';
 import { AddressesService } from 'users/address/addresses/addresses.service';
 import { CreateAddressDto } from 'users/address/addresses/addresses.dto';
+import { Cron } from '@nestjs/schedule';
+import { SyncLogEntity, SyncLogStatus } from 'sync-log/sync-log.entity';
+import { SyncLogService } from 'sync-log/sync-log.service';
 
 @Injectable()
 export class VendorService {
@@ -16,6 +19,11 @@ export class VendorService {
         @InjectRepository(User)
         private vendorRepository: Repository<User>,
         private readonly addressesService: AddressesService,
+
+        @InjectRepository(SyncLogEntity)
+        private readonly syncLogRepository: Repository<SyncLogEntity>,
+        private readonly syncLogService: SyncLogService,
+
     ) { }
 
     async fetchAndStoreVendors(): Promise<void> {
@@ -39,14 +47,12 @@ export class VendorService {
                 const existingVendor = existingVendorMap.get(vendor.name);
 
                 if (existingVendor) {
-                    const vendorUpdated = this.hasChanges(existingVendor, vendor);
-                    if (vendorUpdated) {
-                        await this.vendorRepository.update(existingVendor.id, this.getUpdatedFields(existingVendor, vendor));
-                        console.log(`Vendor updated: ${vendor.name}`);
+                    // If the item exists, compare and update if necessary
+                    if (this.hasChanges(existingVendor, vendor)) {
+                        await this.vendorRepository.save({ ...existingVendor, ...vendor });
                     } else {
                         console.log(`No changes for vendor: ${vendor.name}`);
                     }
-
                     // Handle address separately
                     await this.storeVendorAddress(existingVendor, vendor);
                 } else {
@@ -142,23 +148,23 @@ export class VendorService {
         );
     }
 
-    private getUpdatedFields(existingVendor: User, newVendor: VendorDto): Partial<User> {
-        const updatedFields: Partial<User> = {};
-        if (existingVendor.slNo !== newVendor.slNo) updatedFields.slNo = newVendor.slNo;
-        if (existingVendor.name !== newVendor.name) updatedFields.name = newVendor.name;
-        if (existingVendor.alias !== newVendor.alias) updatedFields.alias = newVendor.alias;
-        if (existingVendor.active !== newVendor.active) updatedFields.active = newVendor.active;
-        if (existingVendor.parent !== newVendor.parent) updatedFields.parent = newVendor.parent;
-        if (existingVendor.contactPerson !== newVendor.contactPerson) updatedFields.contactPerson = newVendor.contactPerson;
-        if (existingVendor.mobile !== newVendor.mobile) updatedFields.mobile = newVendor.mobile;
-        if (existingVendor.email !== newVendor.email) updatedFields.email = newVendor.email;
-        if (existingVendor.pan !== newVendor.pan) updatedFields.pan = newVendor.pan;
-        if (existingVendor.gstType !== newVendor.gstType) updatedFields.gstType = newVendor.gstType;
-        if (existingVendor.gstNo !== newVendor.gstNo) updatedFields.gstNo = newVendor.gstNo;
-        if (existingVendor.gstDetails !== newVendor.gstDetails) updatedFields.gstDetails = newVendor.gstDetails;
+    // private getUpdatedFields(existingVendor: User, newVendor: VendorDto): Partial<User> {
+    //     const updatedFields: Partial<User> = {};
+    //     if (existingVendor.slNo !== newVendor.slNo) updatedFields.slNo = newVendor.slNo;
+    //     if (existingVendor.name !== newVendor.name) updatedFields.name = newVendor.name;
+    //     if (existingVendor.alias !== newVendor.alias) updatedFields.alias = newVendor.alias;
+    //     if (existingVendor.active !== newVendor.active) updatedFields.active = newVendor.active;
+    //     if (existingVendor.parent !== newVendor.parent) updatedFields.parent = newVendor.parent;
+    //     if (existingVendor.contactPerson !== newVendor.contactPerson) updatedFields.contactPerson = newVendor.contactPerson;
+    //     if (existingVendor.mobile !== newVendor.mobile) updatedFields.mobile = newVendor.mobile;
+    //     if (existingVendor.email !== newVendor.email) updatedFields.email = newVendor.email;
+    //     if (existingVendor.pan !== newVendor.pan) updatedFields.pan = newVendor.pan;
+    //     if (existingVendor.gstType !== newVendor.gstType) updatedFields.gstType = newVendor.gstType;
+    //     if (existingVendor.gstNo !== newVendor.gstNo) updatedFields.gstNo = newVendor.gstNo;
+    //     if (existingVendor.gstDetails !== newVendor.gstDetails) updatedFields.gstDetails = newVendor.gstDetails;
 
-        return updatedFields;
-    }
+    //     return updatedFields;
+    // }
 
     async findAll(): Promise<User[]> {
         return this.vendorRepository.find({
@@ -175,4 +181,112 @@ export class VendorService {
             throw new NotFoundException(`Vendor with ID  not found`);
         }
     }
+
+
+    // Cron Job Set
+        @Cron('*/60 * * * * *') // Runs every 60 seconds
+        async CronFetchAndStoreVendors(): Promise<void> {
+            console.log('Vendor executed at:', new Date().toISOString());
+            const REQUEST_TIMEOUT = 20000; // 20 seconds timeout
+
+            let successCount = 0;
+            let failedCount = 0;
+
+            try {
+                const response = await axios.get(process.env.TALLY_URL as string, {
+                    headers: {
+                        'Content-Type': 'text/xml',
+                    },
+                    data: Vendors, // Replace with your dynamic XML request
+                    timeout: REQUEST_TIMEOUT, // Set a timeout for the request
+                });
+
+                const vendors = await this.parseXmlToVendors(response.data);
+                const existingVendors = await this.vendorRepository.find();
+
+                // Create a map of existing vendors for quick lookup
+                const existingVendorMap = new Map(existingVendors.map(vendor => [vendor.name, vendor]));
+
+                for (const vendor of vendors) {
+                    const existingVendor = existingVendorMap.get(vendor.name);
+                    try {
+                        if (existingVendor) {
+                            // If the item exists, compare and update if necessary
+                            if (this.hasChanges(existingVendor, vendor)) {
+                                await this.vendorRepository.save({ ...existingVendor, ...vendor });
+                                successCount++;
+                            } else {
+                                console.log(`No changes for vendor: ${vendor.name}`);
+                            }
+                            // Handle address separately
+                            await this.storeVendorAddress(existingVendor, vendor);
+                        } else {
+                            const savedVendor = await this.vendorRepository.save(vendor);
+                            await this.storeVendorAddress(savedVendor, vendor);
+                            console.log(`New vendor and address saved: ${vendor.name}`);
+                            successCount++;
+                        }
+                    } catch (itemError) {
+                        failedCount++;
+                    }
+                }
+                await this.syncLogRepository.save({
+                    sync_type: 'vendors',
+                    success_count: successCount,
+                    failed_count: failedCount,
+                    total_count: vendors.length,
+                    status: SyncLogStatus.SUCCESS, // Enum value
+                  });
+            } catch (error: any) {
+                failedCount++;
+                await this.syncLogRepository.save({
+                    sync_type: 'vendors',
+                    success_count: successCount,
+                    failed_count: failedCount,
+                    total_count: 0,
+                    status: SyncLogStatus.FAIL, // Enum value
+                });
+                // Handle timeout specifically for login error message
+                if (error.code === 'ECONNABORTED') {
+                    throw new InternalServerErrorException(
+                        'Please log in to Tally and try again.'
+                    );
+                }
+
+                // Handle general error if Tally is not accessible
+                throw new InternalServerErrorException(
+                    'Please ensure Tally is open and accessible, then try again.'
+                );
+            }
+        }
+
+    // @Cron('*/60 * * * * *')
+    // async cronFetchAndStoreVendors(): Promise<void> {
+    //     console.log('Vendor sync executed at:', new Date().toISOString());
+    //     await this.syncLogService.fetchAndStoreData(
+    //         process.env.TALLY_URL as string,
+    //         Vendors, // XML payload for vendors
+    //         this.parseXmlToVendors.bind(this), // XML parsing function for vendors
+    //         this.vendorRepository,
+    //         'vendor',
+    //         'vendors',
+    //         this.syncLogRepository
+    //     );
+    // }
+
+
+    @Cron('0 0 * * 0') // Runs weekly at midnight on Sunday to delete logs older than two minutes.
+    async cleanupAllLogs(): Promise<void> {
+        console.log('Complete log cleanup started:', new Date().toISOString());
+
+        try {
+            // Delete all logs without any condition
+            const result = await this.syncLogRepository.delete({});
+
+            console.log(`Complete log cleanup completed. Deleted ${result.affected} logs.`);
+        } catch (error) {
+            console.error('Complete log cleanup failed:', error);
+        }
+    }
+
 }

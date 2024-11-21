@@ -10,6 +10,7 @@ import { FirebaseService } from 'service/firebase.service';
 import { products } from 'tally/products';
 import { Cron } from '@nestjs/schedule';
 import { SyncLogEntity, SyncLogStatus } from 'sync-log/sync-log.entity';
+import { SyncLogService } from 'sync-log/sync-log.service';
 
 
 @Injectable()
@@ -21,9 +22,10 @@ export class ItemService {
 
     @InjectRepository(SyncLogEntity)
     private readonly syncLogRepository: Repository<SyncLogEntity>,
+    private readonly syncLogService: SyncLogService,
   ) { }
   async fetchAndStoreItems(): Promise<void> {
-    const REQUEST_TIMEOUT = 15000; // 15 seconds timeout
+    const REQUEST_TIMEOUT = 20000; // 15 seconds timeout
     try {
       // Fetch data from the external source
       const response = await axios.get(process.env.TALLY_URL as string, {
@@ -36,7 +38,6 @@ export class ItemService {
 
       // Parse XML response into items
       const items = await this.parseXmlToItems(response.data);
-
       // Fetch all existing items from the database
       const existingItems = await this.itemRepository.find();
 
@@ -49,7 +50,6 @@ export class ItemService {
         if (existingItem) {
           // If the item exists, compare and update if necessary
           if (this.hasChanges(existingItem, item)) {
-            console.log(`Updating item: ${item.itemName}`);
             await this.itemRepository.save({ ...existingItem, ...item });
           } else {
             console.log(`No changes for item: ${item.itemName}`);
@@ -285,8 +285,8 @@ export class ItemService {
 
   @Cron('*/60 * * * * *') // Runs every 60 seconds
   async cronFetchAndStoreItems(): Promise<void> {
-    console.log('Task executed at:', new Date().toISOString());
-    const REQUEST_TIMEOUT = 15000; // 15 seconds timeout
+    console.log('Item executed at:', new Date().toISOString());
+    const REQUEST_TIMEOUT = 20000; // 20 seconds timeout
 
     let successCount = 0;
     let failedCount = 0;
@@ -346,6 +346,20 @@ export class ItemService {
       throw new InternalServerErrorException('Open Tally to fetch items');
     }
   }
+
+  // @Cron('*/60 * * * * *')
+  // async cronFetchAndStoreItems(): Promise<void> {
+  //   console.log('Item sync executed at:', new Date().toISOString());
+  //   await this.syncLogService.fetchAndStoreData(
+  //     process.env.TALLY_URL as string,
+  //     products, // XML payload for items
+  //     this.parseXmlToItems.bind(this), // XML parsing function for items
+  //     this.itemRepository,
+  //     'item',
+  //     'items',
+  //     this.syncLogRepository
+  //   );
+  // }
 
   @Cron('0 0 * * 0') // Runs weekly at midnight on Sunday to delete logs older than two minutes.
   async cleanupAllLogs(): Promise<void> {
