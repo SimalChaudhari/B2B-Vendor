@@ -26,15 +26,20 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import OrderConfirmScreen from '../src/screens/Order/OrderConfirmScreen';
 import SettingScreen from '../src/screens/Setting/SettingScreen';
 import TermsAndConditionsScreen from '../src/screens/TermsAndConditions/TermsAndConditionsScreen';
-// import useAuthToken from '../src/components/AuthToken/useAuthToken';
+import VendorShopScreen from '../src/screens/products/VendorShopScreen';
+import CartScreen from '../src/screens/products/CartScreen';
+import VendorConfirmationScreen from '../src/screens/auth/VendorConfirmationScreen';
+import { useAuth } from '../src/components/AuthToken/AuthContext';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const StackNavigator = () => {
 
+    const { token } = useAuth();
+
     const [isConnected, setIsConnected] = useState(true); // Track network status   
-    
+
 
     // Check network status
     useEffect(() => {
@@ -66,9 +71,10 @@ const StackNavigator = () => {
                 <Tab.Screen
                     name="Home"
                     component={HomeScreen}
+                    // component={CartScreen}
                     options={{
                         tabBarLabel: "Home",
-                        tabBarLabelStyle: { color: "#000", fontWeight:700, marginBottom:7  },
+                        tabBarLabelStyle: { color: "#000", fontWeight: 700, marginBottom: 7 },
                         headerShown: false,
                         tabBarIcon: ({ focused }) => (
                             focused ? (
@@ -80,22 +86,39 @@ const StackNavigator = () => {
                     }}
                 />
 
-                <Tab.Screen
-                    name="Shop"
-                    component={ShopScreen}
-                    options={{
-                        tabBarLabel: "Products",
-                        tabBarLabelStyle: { color: "#000", fontWeight:700, marginBottom:7  },
-                        headerShown: false,
-                        tabBarIcon: ({ focused }) => (
-                            focused ? (
-                                <Ionicons name="storefront-sharp" size={26} color="#fe0002" />
-                            ) : (
-                                <Ionicons name="storefront-outline" size={26} color="#fe0002" />
-                            )
-                        ),
-                    }}
-                />
+                {token ? (
+                    <Tab.Screen
+                        name="VendorShop"
+                        component={VendorShopScreen} // Show VendorShopScreen when token is present
+                        options={{
+                            tabBarLabel: "Products",
+                            tabBarLabelStyle: { color: "#000", fontWeight: 700, marginBottom: 7 },
+                            headerShown: false,
+                            tabBarIcon: ({ focused }) =>
+                                focused ? (
+                                    <Ionicons name="storefront-sharp" size={26} color="#fe0002" />
+                                ) : (
+                                    <Ionicons name="storefront-outline" size={26} color="#fe0002" />
+                                ),
+                        }}
+                    />
+                ) : (
+                    <Tab.Screen
+                        name="Shop"
+                        component={ShopScreen} // Show ShopScreen when token is not present
+                        options={{
+                            tabBarLabel: "Products",
+                            tabBarLabelStyle: { color: "#000", fontWeight: 700, marginBottom: 7 },
+                            headerShown: false,
+                            tabBarIcon: ({ focused }) =>
+                                focused ? (
+                                    <Ionicons name="storefront-sharp" size={26} color="#fe0002" />
+                                ) : (
+                                    <Ionicons name="storefront-outline" size={26} color="#fe0002" />
+                                ),
+                        }}
+                    />
+                )}
 
 
 
@@ -104,7 +127,7 @@ const StackNavigator = () => {
                     component={SettingScreen}
                     options={{
                         tabBarLabel: "Setting",
-                        tabBarLabelStyle: { color: "#000", fontWeight:700, marginBottom:7  },
+                        tabBarLabelStyle: { color: "#000", fontWeight: 700, marginBottom: 7 },
                         headerShown: false,
                         tabBarIcon: ({ focused }) => (
                             focused ? (
@@ -117,7 +140,7 @@ const StackNavigator = () => {
                         ),
                     }}
                 />
-                
+
 
             </Tab.Navigator>
         );
@@ -134,6 +157,11 @@ const StackNavigator = () => {
                 <Stack.Screen
                     name="VendorHome"
                     component={VendorHomeScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="VendorCart"
+                    component={CartScreen}
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen
@@ -169,6 +197,11 @@ const StackNavigator = () => {
                 <Stack.Screen
                     name="Confirm"
                     component={ConfirmationScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="VendorConfirm"
+                    component={VendorConfirmationScreen}
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen

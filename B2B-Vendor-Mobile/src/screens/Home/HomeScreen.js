@@ -1,4 +1,4 @@
-import { Image, View, TouchableOpacity, Text, RefreshControl, ScrollView, ActivityIndicator } from 'react-native';
+import { Image, View, TouchableOpacity, Text, RefreshControl, ScrollView, ActivityIndicator, Dimensions  } from 'react-native';
 import React, { useState, useCallback } from "react";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Carousel from 'react-native-reanimated-carousel';
@@ -12,8 +12,10 @@ import LoadingComponent from '../../components/Loading/LoadingComponent';
 import ErrorComponent from '../../components/Error/ErrorComponent';
 import LogoComponent from '../../components/Logo/LogoComponent';
 import { fetchBanner } from '../../BackendApis/bannerApi';
+import { useAuth } from '../../components/AuthToken/AuthContext';
 
 const HomeScreen = ({ navigation }) => {
+  const { token } = useAuth();
   const dispatch = useDispatch();
   const selectedGroup = useSelector(state => state.group.selectedGroup); // Get selected group from Redux state
 
@@ -92,6 +94,8 @@ const HomeScreen = ({ navigation }) => {
     }
   };
 
+  const screenWidth = Dimensions.get("window").width;
+
   return (
     <SafeAreaView style={styles.heroContainer}>
       {loading ? (
@@ -108,7 +112,8 @@ const HomeScreen = ({ navigation }) => {
             {bannerData.length > 0 ? (
               <Carousel
                 loop
-                width={400}
+                // width={400}
+                width={screenWidth}
                 height={200}
                 autoPlay={true}
                 data={bannerData}
@@ -148,7 +153,13 @@ const HomeScreen = ({ navigation }) => {
                 <TouchableOpacity
                   key={item.id}
                   style={styles.categoryContainer}
-                  onPress={() => handleCategoryPress(item)}
+                  onPress={() => {
+                    if (!token) {
+                      handleCategoryPress(item); // Only navigate if token is not present
+                    } else {
+                      console.log('Navigation prevented because token is present');
+                    }
+                  }}
                 >
                   {item.firstImage && (
                     <Image
@@ -161,6 +172,7 @@ const HomeScreen = ({ navigation }) => {
                 </TouchableOpacity>
               ))}
             </View>
+
           ) : (
             <ErrorComponent errorMessage={error} onRetry={getItems} />
           )}
@@ -173,7 +185,15 @@ const HomeScreen = ({ navigation }) => {
             </View>
 
             <View style={styles.productTextAndIcon}>
-              <TouchableOpacity onPress={() => navigation.navigate('Shop')}>
+              <TouchableOpacity
+                onPress={() => {
+                  if (!token) {
+                    navigation.navigate('Shop'); // Navigate only if token is not present
+                  } else {
+                    console.log('Navigation to Shop prevented because token is present');
+                  }
+                }}
+              >
                 <Text style={styles.viewAllText}>View All</Text>
               </TouchableOpacity>
               <MaterialIcons name="keyboard-double-arrow-right" size={25} color="#fe0002" />
@@ -186,7 +206,13 @@ const HomeScreen = ({ navigation }) => {
                 <View key={item.id.toString()} style={styles.productColumn}>
                   <TouchableOpacity
                     style={styles.productContainer}
-                    onPress={() => navigation.navigate("Info", { id: item.id })}
+                    onPress={() => {
+                      if (!token) {
+                        navigation.navigate("Info", { id: item.id }); // Navigate only if token is not present
+                      } else {
+                        console.log('Navigation to Info prevented because token is present');
+                      }
+                    }}
                   >
                     {item.productImages && item.productImages.length > 0 && (
                       <Image source={{ uri: item.productImages[0] }} style={styles.productImage} resizeMode="contain" />

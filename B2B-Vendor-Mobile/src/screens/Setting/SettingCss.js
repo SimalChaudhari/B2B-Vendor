@@ -20,6 +20,11 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: colors.white,
     },
+
+    LogoContainer: {
+        backgroundColor: colors.background,
+        padding: 10,
+    },
     headerContainer: {
         backgroundColor: colors.background,
         paddingVertical: 20,
@@ -46,8 +51,8 @@ const styles = StyleSheet.create({
     enhancedButton: {
         marginVertical: 15,
         paddingVertical: 15,
-        borderColor: '#fe0002', 
-        borderWidth: 1, 
+        borderColor: '#fe0002',
+        borderWidth: 1,
         borderRadius: 8,
         alignItems: 'center',
         justifyContent: 'center',

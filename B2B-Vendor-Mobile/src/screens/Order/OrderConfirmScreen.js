@@ -57,28 +57,19 @@ const OrderConfirmScreen = () => {
                 {address ? (
                     <View style={styles.detailsContainer}>
                         <Text style={styles.detail}>
-                            <MaterialIcons name="person" size={16} color="#555" /> Name: {address.name}
-                        </Text>
-                        <Text style={styles.detail}>
-                            <MaterialIcons name="house" size={16} color="#555" /> House No: {address.houseNo}
-                        </Text>
-                        <Text style={styles.detail}>
-                            <MaterialIcons name="place" size={16} color="#555" /> Street: {address.street}
-                        </Text>
-                        <Text style={styles.detail}>
-                            <MaterialIcons name="location-on" size={16} color="#555" /> Landmark: {address.landmark}
-                        </Text>
-                        <Text style={styles.detail}>
-                            <MaterialIcons name="location-city" size={16} color="#555" /> City: {address.city}
+                            <MaterialIcons name="place" size={16} color="#555" /> Street Address: {address.street_address}
                         </Text>
                         <Text style={styles.detail}>
                             <MaterialIcons name="public" size={16} color="#555" /> Country: {address.country}
                         </Text>
                         <Text style={styles.detail}>
-                            <MaterialIcons name="email" size={16} color="#555" /> Postal Code: {address.postalCode}
+                            <MaterialIcons name="public" size={16} color="#555" /> State: {address.state}
                         </Text>
                         <Text style={styles.detail}>
-                            <MaterialIcons name="phone" size={16} color="#555" /> Mobile No: {address.mobileNo}
+                            <MaterialIcons name="email" size={16} color="#555" /> Zip Code: {address.zip_code}
+                        </Text>
+                        <Text style={styles.detail}>
+                            <MaterialIcons name="phone" size={16} color="#555" /> Mobile No: {address.mobile}
                         </Text>
                     </View>
                 ) : (

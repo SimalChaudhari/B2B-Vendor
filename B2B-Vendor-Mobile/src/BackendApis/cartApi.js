@@ -3,15 +3,16 @@
 import axiosInstance from '../config/axiosInstance'; // Correct import path
 
 // Add a product to the cart
-export const addCart = async (productId, quantity) => {
+export const addCart = async (Itemdata) => {
     try {
-        const response = await axiosInstance.post('/cart/add', { productId, quantity }); // Use axiosInstance directly
+        const response = await axiosInstance.post('/cart/add', Itemdata); // Remove the wrapping around Itemdata
         return response.data; // Return the data from response
     } catch (error) {
         console.error('Error adding to cart:', error);
         throw error; // Re-throw the error for further handling
     }
 };
+
 
 // Fetch a single item by ID 
 export const fetchCart = async () => {    

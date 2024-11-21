@@ -231,33 +231,44 @@ const ShopScreen = () => {
         </View>
 
         <View style={styles.heroFilter}>
-          <Pressable style={styles.filterButton} onPress={toggleSidebar}>
-            <Text style={styles.filterText}>Filters</Text>
-            <Ionicons name="filter-sharp" size={24} color="white" />
-          </Pressable>
-          <Pressable style={styles.sortButton}>
-            <Text style={styles.sortByText}>Sort by:</Text>
-            <Text style={styles.sortText}> Featured</Text>
-            <Feather name="chevron-down" size={24} color="white" />
-          </Pressable>
+          <View>
+            <Pressable style={styles.filterButton} onPress={toggleSidebar}>
+              <Text style={styles.filterText}>Filters</Text>
+              <Ionicons name="filter-sharp" size={24} color="white" />
+            </Pressable>
+          </View>
+
+          <View>
+
+
+
+            <View>
+              <Pressable style={styles.sortButton}>
+                <Text style={styles.sortByText}>Sort by:</Text>
+                <Text style={styles.sortText}> Featured</Text>
+                <Feather name="chevron-down" size={24} color="white" />
+              </Pressable>
+            </View>
+            <View>
+              <Dropdown
+                style={styles.DropdownStyle}
+                data={options}
+                labelField="label"
+                valueField="value"
+                placeholder="Select items per page"
+                value={dropdownValue}
+                onChange={item => {
+                  setDropdownValue(item.value);
+                  setItemsPerPage(item.value); // Update the number of items per page
+                  setCurrentPage(1); // Reset to the first page
+                }}
+                selectedTextStyle={styles.selectedText}
+              />
+            </View>
+
+          </View>
         </View>
 
-        <View style={styles.dropdownContainer}>
-          <Dropdown
-            style={styles.DropdownStyle}
-            data={options}
-            labelField="label"
-            valueField="value"
-            placeholder="Select items per page"
-            value={dropdownValue}
-            onChange={item => {
-              setDropdownValue(item.value);
-              setItemsPerPage(item.value); // Update the number of items per page
-              setCurrentPage(1); // Reset to the first page
-            }}
-            selectedTextStyle={styles.selectedText}
-          />
-        </View>
         <Text style={styles.Verticalline} />
 
         <View style={styles.heroTreanding}>

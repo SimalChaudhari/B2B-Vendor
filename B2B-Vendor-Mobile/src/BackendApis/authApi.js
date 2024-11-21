@@ -1,7 +1,9 @@
 import axios from 'axios';
+import { API_URL_SECONDARY, API_URL_PRIMARY } from '@env';
 
 // const BASE_URL = 'http://localhost:3000';
-const BASE_URL = 'http://192.168.1.112:3000';
+// const BASE_URL = 'http://192.168.1.112:3000';
+const BASE_URL = API_URL_SECONDARY || API_URL_PRIMARY;
 
 const axiosInstance = axios.create({
     baseURL: BASE_URL,

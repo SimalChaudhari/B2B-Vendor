@@ -7,13 +7,11 @@ import { fetchItemById } from "../../BackendApis/itemsApi"; // Ensure this is co
 import LoadingComponent from "../../components/Loading/LoadingComponent";
 import ErrorComponent from "../../components/Error/ErrorComponent";
 import { formatNumber } from "../../utils";
-import useAuthToken from "../../components/AuthToken/useAuthToken";
 import { AntDesign, Entypo, Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { setProductDetails } from "../../../redux/productAndAddressReducer";
 
 const ProductInfoScreen = () => {
   const route = useRoute();
-  const { token } = useAuthToken();
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const { id } = route.params;

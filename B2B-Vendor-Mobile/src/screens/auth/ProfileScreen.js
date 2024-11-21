@@ -17,11 +17,13 @@ import { getAllOrder } from "../../BackendApis/orderApi";
 import { authLogout, fetchUserData } from "../../BackendApis/userApi";
 import useAuthToken from "../../components/AuthToken/useAuthToken";
 import LoadingComponent from "../../components/Loading/LoadingComponent";
+import { useAuth } from "../../components/AuthToken/AuthContext";
 
 
 const ProfileScreen = () => {
 
-  const { token, userData } = useAuthToken();
+  const { userData } = useAuthToken();
+  const { token } = useAuth();
 
   const parsedUserData = JSON.parse(userData);
   const [userId, setUserId] = useState(null);
