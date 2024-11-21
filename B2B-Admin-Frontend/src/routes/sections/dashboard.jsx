@@ -29,6 +29,9 @@ const TermsPage = lazy(() => import('src/pages/settings/terms-conditions'));
 const ProfilePage = lazy(() => import('src/pages/vendor-page/settings/profile'));
 const LogoutPage = lazy(() => import('src/pages/settings/logout'));
 
+const LogPage = lazy(() => import('src/pages/log-history'));
+
+
 // Vendor
 const ItemPage = lazy(() => import('src/pages/vendor-page/items'));
 
@@ -149,6 +152,13 @@ export const dashboardRoutes = [
     ],
   },
 
+  {
+    path: 'logs',
+    element: CONFIG.auth.skip ? <>{layoutContent}</> : <AuthGuard>{layoutContent}</AuthGuard>,
+    children: [
+      { element: <LogPage />, index: true },
+    ],
+  },
 
   {
     path: 'logout',

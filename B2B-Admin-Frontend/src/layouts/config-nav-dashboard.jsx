@@ -127,9 +127,20 @@ export const useNavData = () => {
     },
   ];
 
+
+  const logsHistory = [
+    {
+      subheader: 'Logs',
+      items: [
+        { title: 'Logs', path: paths.logs.root, icon: ICONS.dashboard },
+      ],
+    },
+
+  ];
+
   const navData = [
     ...commonItems,
-    ...(userRole === 'Admin' ? [...adminItems, ...reportsItem, ...settingsItems] : []),
+    ...(userRole === 'Admin' ? [...adminItems, ...reportsItem, ...settingsItems, ...logsHistory] : []),
     ...(userRole === 'Vendor' ? [...vendorItems, ...reportsItem, ...vendorSettingsItem] : []),
   ];
 

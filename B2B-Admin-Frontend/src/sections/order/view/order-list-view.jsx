@@ -1,5 +1,4 @@
 import { useState, useCallback, useEffect } from 'react';
-
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
@@ -9,20 +8,13 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import TableBody from '@mui/material/TableBody';
 import IconButton from '@mui/material/IconButton';
-
 import { paths } from 'src/routes/paths';
-import { useRouter } from 'src/routes/hooks';
-
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useSetState } from 'src/hooks/use-set-state';
-
 import { fIsAfter } from 'src/utils/format-time';
-
 import { varAlpha } from 'src/theme/styles';
 import { DashboardContent } from 'src/layouts/dashboard';
-
 import { Label } from 'src/components/label';
-import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 import { ConfirmDialog } from 'src/components/custom-dialog';
@@ -30,7 +22,6 @@ import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 import {
   useTable,
   emptyRows,
-  rowInPage,
   TableNoData,
   getComparator,
   TableEmptyRows,
@@ -49,7 +40,6 @@ import useUserRole from 'src/layouts/components/user-role';
 import { syncOrder } from 'src/store/action/orderActions';
 import { Typography } from '@mui/material';
 import { applyFilter } from '../utils/filterUtils';
-import Switch from '@mui/material/Switch';
 // ----------------------------------------------------------------------
 
 const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...ORDER_STATUS_OPTIONS];
@@ -61,12 +51,6 @@ export function OrderListView() {
   const confirm = useBoolean();
   const userRole = useUserRole();
   const [selectedRows, setSelectedRows] = useState([]); // Store selected row IDs
-
-  const [isEbakleDisabled, setIsEbakleDisabled] = useState(false);
-
-
-
-
   const { fetchData, fetchDeleteData } = useFetchOrderData(); // Destructure fetchData from the custom hook
   const dispatch = useDispatch();
   const confirmSync = useBoolean(); // Separate confirmation state for syncing
@@ -99,11 +83,10 @@ export function OrderListView() {
     { id: 'Delivery', label: 'Delivery Type' },
     { id: 'createdAt', label: 'Order Date' },
     { id: 'status', label: 'Status' },
-    { id: 'Ledger Statement', label: 'Ledger Statement', align: 'center' },
     { id: 'Invoices ', label: 'Invoices', align: 'center' },
-    { id: '', width: 88 },
-  ];
+    { id: 'action', label: 'Action', align: 'center' },
 
+  ];
 
   //----------------------------------------------------------------------------------------------------
   useEffect(() => {
@@ -114,8 +97,6 @@ export function OrderListView() {
     setTableData(_orders);
   }, [_orders]);
   //----------------------------------------------------------------------------------------------------
-
-
 
   const handleSelectRow = useCallback((id) => {
     setSelectedRows((prev) =>
@@ -172,7 +153,6 @@ export function OrderListView() {
     }
   };
 
-
   //--------------------------------------------------
   return (
     <div>
@@ -201,14 +181,7 @@ export function OrderListView() {
         />
        
         <Card>
-         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography variant="subtitle2">Sync Setting</Typography>
-          <Switch
-            checked={isEbakleDisabled}
-            onChange={(event) => setIsEbakleDisabled(event.target.checked)}
-            color="primary"
-          />
-        </Box>
+       
           <Tabs
             value={filters.state.status}
             onChange={handleFilterStatus}

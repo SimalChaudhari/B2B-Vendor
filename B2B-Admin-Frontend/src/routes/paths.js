@@ -90,6 +90,13 @@ export const paths = {
     view: (id) => `/view/${id}`,
   },
 
+  // logs
+  logs: {
+    root: `/logs`,
+    list: `/logs/list`,
+  },
+
+
   logout: {
     root: `/logout`
   },

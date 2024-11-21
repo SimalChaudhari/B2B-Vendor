@@ -5,7 +5,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Invoice, InvoiceStatus } from './invoice.entity';
 import axios from 'axios';
-import { SyncLog } from 'sync-log/sync-log.entity';
 
 @Injectable()
 export class InvoiceRetryService {
@@ -13,8 +12,7 @@ export class InvoiceRetryService {
     constructor(
         @InjectRepository(Invoice)
         private readonly invoiceRepository: Repository<Invoice>,
-        @InjectRepository(SyncLog)
-        private readonly syncLogRepository: Repository<SyncLog>, // Repository for logging sync attempts
+    
 
     ) { }
 

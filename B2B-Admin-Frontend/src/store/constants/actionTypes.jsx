@@ -35,11 +35,7 @@ export const STOCK_LIST = "STOCK_LIST"
 export const RECEIVABLE_GET_BY_LIST = "RECEIVABLE_GET_BY_LIST"
 export const RECEIVABLE_LIST = "RECEIVABLE_LIST"
 
-
-
-
-
-
+export const LOGS_LIST = "LOGS_LIST"
 
 
 

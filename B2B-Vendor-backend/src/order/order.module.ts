@@ -11,12 +11,12 @@ import { OrderItemEntity } from './order.item.entity';
 import { CartItemEntity } from 'cart/cart.entity';
 import { InvoiceRetryService } from 'invoice/invoice-retry.service';
 import { Invoice } from 'invoice/invoice.entity';
-import { SyncLog } from 'sync-log/sync-log.entity';
+import { SyncLogEntity } from 'sync-log/sync-log.entity';
 import { EmailService } from 'service/email/email.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([OrderEntity,ItemEntity,User,Address,OrderItemEntity,CartItemEntity,Invoice, SyncLog]),
+    TypeOrmModule.forFeature([OrderEntity,ItemEntity,User,Address,OrderItemEntity,CartItemEntity,Invoice, SyncLogEntity]),
     JwtModule.register({
       secret: process.env.JWT_SECRET,  // Use JWT secret from .env file
       signOptions: { expiresIn: '1d' },  // Set token expiration

@@ -12,7 +12,7 @@ export const chipProps = {
 
 export function FiltersResult({ totalResults, onReset, sx, children }) {
   return (
-    <Box sx={sx}>
+    <Box sx={sx} mt={1}>
       <Box sx={{ mb: 1.5, typography: 'body2' }}>
         <strong>{totalResults}</strong>
         <Box component="span" sx={{ color: 'text.secondary', ml: 0.25 }}>

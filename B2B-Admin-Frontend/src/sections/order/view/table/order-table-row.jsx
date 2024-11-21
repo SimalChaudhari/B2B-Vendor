@@ -115,23 +115,9 @@ export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteR
         </Tooltip>
       </TableCell>
 
-      <TableCell align="center" sx={{ cursor: "pointer" }}>
-        <Tooltip title={isDownloadable ? "Download File" : "File not available"}>
-          <span> {/* Wrap in span to allow tooltip on disabled button */}
-            <IconButton
-              // onClick={() => isDownloadable && onDownload(row.id)}
-              sx={{ color: 'primary.main' }}
-              disabled={!isDownloadable} // Disable if no pdfPath
-            >
-              <Iconify icon="eva:download-outline" />
-            </IconButton>
-          </span>
-        </Tooltip>
-      </TableCell>
 
 
-
-      <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
+      <TableCell align="center" sx={{ px: 1, whiteSpace: 'nowrap' }}>
         <IconButton
           color={collapse.value ? 'inherit' : 'default'}
           onClick={collapse.onToggle}
