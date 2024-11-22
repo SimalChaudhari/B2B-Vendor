@@ -32,7 +32,6 @@ const sendOtpSms = async (mobile: string, otp: string) => {
   console.log(`Sending OTP ${otp} to mobile: ${mobile}`);
   // Implement actual SMS sending logic here
 };
-
 @Injectable()
 export class AuthService {
   constructor(
