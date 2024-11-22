@@ -7,7 +7,7 @@ async function bootstrap() {
 
     // Get environment variables with fallback defaults
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3030';
-    const port = process.env.PORT || 3000;
+    const port = process.env.PORT || 6000;
 
     // Enable CORS
     app.enableCors({
