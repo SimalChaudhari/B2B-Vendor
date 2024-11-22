@@ -24,12 +24,6 @@ import { JwtAuthGuard } from 'jwt/jwt-auth.guard';
 export class AddressesController {
     constructor(private readonly addressesService: AddressesService) { }
 
-    // @Get()
-    // async getAllAddresses(@Res() response: Response) {
-    //     const addresses = await this.addressesService.getAll();
-    //     return response.status(HttpStatus.OK).json(addresses);
-    // }
-
     @Get()
     async getAllAddresses(@Req() request: Request, @Res() response: Response) {
         const userId = request.user?.id; // Assuming you store the logged-in user's ID in request.user
@@ -43,7 +37,6 @@ export class AddressesController {
             });
         }
     }
-
 
     @Post('create')
     async createAddress(
