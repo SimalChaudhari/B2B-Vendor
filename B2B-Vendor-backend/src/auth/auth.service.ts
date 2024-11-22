@@ -5,10 +5,8 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { AuthDto } from './auth.dto';
 import { JwtService } from '@nestjs/jwt';
-import { User, UserRole, UserStatus } from 'user/users.entity';
+import { User, UserStatus } from 'user/users.entity';
 import { EmailService } from 'service/email/email.service';
-import { AddressesService } from 'addresses/addresses.service';
-import { CreateAddressDto } from 'addresses/addresses.dto';
 
 const generateOTP = (): string => {
   const otp = Math.floor(100000 + Math.random() * 900000).toString(); // Generate a 6-digit OTP
@@ -19,12 +17,6 @@ const validateEmail = (input: string | undefined): boolean => {
   if (!input) return false; // If input is undefined, return false
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(input);
-};
-
-// Dummy functions to simulate sending OTP via email or SMS
-const sendOtpEmail = async (email: string, otp: string) => {
-  console.log(`Sending OTP ${otp} to email: ${email}`);
-  // Implement actual email sending logic here
 };
 
 const sendOtpSms = async (mobile: string, otp: string) => {
@@ -39,68 +31,66 @@ export class AuthService {
     private userRepository: Repository<User>,
     private readonly JwtService: JwtService, // Inject JwtService
     private readonly emailService: EmailService,
-    // private readonly mailerService: MailerService, // If used
-    private readonly addressesService: AddressesService,
   ) { }
 
-  async register(authDto: AuthDto): Promise<{ message: string, user: User }> {
-    try {
-      // Check if the email or mobile already exists
-      const existingUser = await this.userRepository.findOne({
-        where: [{ email: authDto.email }, { mobile: authDto.mobile }],
-      });
+  // async register(authDto: AuthDto): Promise<{ message: string, user: User }> {
+  //   try {
+  //     // Check if the email or mobile already exists
+  //     const existingUser = await this.userRepository.findOne({
+  //       where: [{ email: authDto.email }, { mobile: authDto.mobile }],
+  //     });
 
-      if (existingUser) {
-        throw new BadRequestException('Email or Mobile number already exists');
-      }
+  //     if (existingUser) {
+  //       throw new BadRequestException('Email or Mobile number already exists');
+  //     }
 
-      // Create the new user
-      const newUser = this.userRepository.create({
-        ...authDto,
-        role: UserRole.Customer, // Default role to Customer
-        slNo: 'N/A',  // Default values for other fields
-        alias: 'N/A',
-        active: 'N/A',
-        contactPerson: 'N/A',
-        pan: 'N/A',
-        gstType: 'N/A',
-        gstNo: 'N/A',
-        gstDetails: 'N/A',
-        isDeleted: false,
-      });
+  //     // Create the new user
+  //     const newUser = this.userRepository.create({
+  //       ...authDto,
+  //       role: UserRole.Customer, // Default role to Customer
+  //       slNo: 'N/A',  // Default values for other fields
+  //       alias: 'N/A',
+  //       active: 'N/A',
+  //       contactPerson: 'N/A',
+  //       pan: 'N/A',
+  //       gstType: 'N/A',
+  //       gstNo: 'N/A',
+  //       gstDetails: 'N/A',
+  //       isDeleted: false,
+  //     });
 
-      await this.userRepository.save(newUser); // Save the new user
+  //     await this.userRepository.save(newUser); // Save the new user
 
-      const createAddressDto: CreateAddressDto = {
-        mobile: authDto.mobile,
-        street_address: authDto.address,
-        country: authDto.country,
-        state: authDto.state,
-        zip_code: authDto.pincode,
-        userId: newUser.id,
-      };
+  //     const createAddressDto: CreateAddressDto = {
+  //       mobile: authDto.mobile,
+  //       street_address: authDto.address,
+  //       country: authDto.country,
+  //       state: authDto.state,
+  //       zip_code: authDto.pincode,
+  //       userId: newUser.id,
+  //     };
 
-      const existingAddress = await this.addressesService.findByUserId(newUser.id);
+  //     const existingAddress = await this.addressesService.findByUserId(newUser.id);
 
-      if (existingAddress) {
-        await this.addressesService.update(existingAddress.id, createAddressDto);
-      } else {
-        await this.addressesService.create(createAddressDto, newUser.id);
-      }
+  //     if (existingAddress) {
+  //       await this.addressesService.update(existingAddress.id, createAddressDto);
+  //     } else {
+  //       await this.addressesService.create(createAddressDto, newUser.id);
+  //     }
 
-      return {
-        message: 'User data Added successfully',
-        user: newUser,
-      };
+  //     return {
+  //       message: 'User data Added successfully',
+  //       user: newUser,
+  //     };
 
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        throw new BadRequestException(err.message);
-      }
-      throw err;
+  //   } catch (err: unknown) {
+  //     if (err instanceof Error) {
+  //       throw new BadRequestException(err.message);
+  //     }
+  //     throw err;
 
-    }
-  }
+  //   }
+  // }
 
   // Send OTP for verification
   async verifyOtp(authDto: AuthDto): Promise<{ message: string }> {
