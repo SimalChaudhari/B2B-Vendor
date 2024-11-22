@@ -3,8 +3,8 @@
 import { Injectable, NotFoundException, InternalServerErrorException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Banner, ContactUs, Faq, PrivacyPolicy, TermsConditions } from './setting.entity';
-import { CreateBannerDto, CreateContactDto, CreateFaqDto, CreateLogoDto, CreatePrivacyPolicyDto, CreateTermsConditionsDto, UpdateBannerDto, UpdateFaqDto, UpdateLogoDto } from './setting.dto';
+import {  Banner, ContactUs, Faq, PrivacyPolicy, SyncControlSettings, TermsConditions } from './setting.entity';
+import {  CreateBannerDto, CreateContactDto, CreateFaqDto, CreateLogoDto, CreatePrivacyPolicyDto, CreateTermsConditionsDto, UpdateBannerDto, UpdateFaqDto, UpdateLogoDto, UpdateSyncControlSettingsDto } from './setting.dto';
 // import { bucket } from '../firebase/firebase.config'; // Import the bucket configuration
 import * as admin from 'firebase-admin';
 import { FirebaseService } from 'service/firebase.service';
@@ -338,8 +338,47 @@ export class BannerService {
         // Return a success message
         return { message: `Banner image has been deleted successfully.` }
 
+    }
+}
 
+@Injectable()
+export class SyncControlSettingsService {
+  constructor(
+    @InjectRepository(SyncControlSettings)
+    private readonly repository: Repository<SyncControlSettings>,
+  ) {}
+
+  async createOrUpdate(dto: UpdateSyncControlSettingsDto): Promise<SyncControlSettings> {
+    const { moduleName, isAutoSyncEnabled, isManualSyncEnabled } = dto;
+
+    let setting = await this.repository.findOne({ where: { moduleName } });
+    if (!setting) {
+      setting = this.repository.create({ moduleName, isAutoSyncEnabled, isManualSyncEnabled });
+    } else {
+      setting.isAutoSyncEnabled = isAutoSyncEnabled;
+      setting.isManualSyncEnabled = isManualSyncEnabled;
     }
 
+    return this.repository.save(setting);
+  }
 
+  async findAll(): Promise<SyncControlSettings[]> {
+    return this.repository.find();
+  }
+
+  async findById(id: number): Promise<SyncControlSettings> {
+    const setting = await this.repository.findOne({ where: { id } });
+    if (!setting) {
+      throw new NotFoundException('Sync setting not found');
+    }
+    return setting;
+  }
+
+  async delete(id: number): Promise<void> {
+    const setting = await this.findById(id);
+    await this.repository.remove(setting);
+  }
 }
+
+
+

@@ -1,8 +1,8 @@
 // src/faq/faq.controller.ts
 
 import { Controller, Post, Get, Delete, Param, Body, Put, HttpStatus, Res, UseInterceptors, UploadedFile, UploadedFiles } from '@nestjs/common';
-import { BannerService, ContactUsService, FaqService,  PrivacyPolicyService, TermsConditionsService } from './setting.service';
-import {  CreateBannerDto, CreateContactDto, CreateFaqDto, CreatePrivacyPolicyDto, CreateTermsConditionsDto, UpdateBannerDto, UpdateFaqDto } from './setting.dto';
+import {  BannerService, ContactUsService, FaqService, PrivacyPolicyService, SyncControlSettingsService, TermsConditionsService } from './setting.service';
+import {  CreateBannerDto, CreateContactDto, CreateFaqDto, CreatePrivacyPolicyDto, CreateTermsConditionsDto, UpdateBannerDto, UpdateFaqDto, UpdateSyncControlSettingsDto } from './setting.dto';
 import { ContactUs, PrivacyPolicy, TermsConditions } from './setting.entity';
 import { Response } from 'express';
 import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
@@ -91,7 +91,7 @@ export class PrivacyPolicyController {
 
 @Controller('terms-conditions')
 export class TermsConditionsController {
-    constructor(private readonly termsConditionsService: TermsConditionsService) {}
+    constructor(private readonly termsConditionsService: TermsConditionsService) { }
 
     @Get()
     async getOrShow(): Promise<TermsConditions | { message: string }> {
@@ -110,7 +110,7 @@ export class TermsConditionsController {
 // contact as Controller
 @Controller('contact')
 export class ContactUsController {
-    constructor(private readonly contactService: ContactUsService) {}
+    constructor(private readonly contactService: ContactUsService) { }
 
     @Get()
     async getOrShow(): Promise<ContactUs | { message: string }> {
@@ -129,47 +129,73 @@ export class ContactUsController {
 
 @Controller('banner')
 export class BannerController {
-  constructor(private readonly bannerService: BannerService) {}
+    constructor(private readonly bannerService: BannerService) { }
 
-  @Post('/create')
-  @UseInterceptors(FileFieldsInterceptor([{ name: 'bannerImages', maxCount: 10 }])) // Allow up to 10 images
-  async createBanner(
-    @UploadedFiles() files: { bannerImages?: Express.Multer.File[] },
-    @Body() createBannerDto: CreateBannerDto
-  ) {
-    return this.bannerService.createBannerWithImages(files.bannerImages || [], createBannerDto);
- }
+    @Post('/create')
+    @UseInterceptors(FileFieldsInterceptor([{ name: 'bannerImages', maxCount: 10 }])) // Allow up to 10 images
+    async createBanner(
+        @UploadedFiles() files: { bannerImages?: Express.Multer.File[] },
+        @Body() createBannerDto: CreateBannerDto
+    ) {
+        return this.bannerService.createBannerWithImages(files.bannerImages || [], createBannerDto);
+    }
 
-  @Put('/update/:id')
-  @UseInterceptors(FileFieldsInterceptor([{ name: 'bannerImages', maxCount: 10 }]))
-  async updateBanner(
-    @Param('id') id: string,
-    @UploadedFiles() files: { bannerImages?: Express.Multer.File[] },
-    @Body() updateBannerDto: UpdateBannerDto
-  ) {
-    return this.bannerService.updateBannerImages(id, files.bannerImages || [], updateBannerDto);
- 
-  }
+    @Put('/update/:id')
+    @UseInterceptors(FileFieldsInterceptor([{ name: 'bannerImages', maxCount: 10 }]))
+    async updateBanner(
+        @Param('id') id: string,
+        @UploadedFiles() files: { bannerImages?: Express.Multer.File[] },
+        @Body() updateBannerDto: UpdateBannerDto
+    ) {
+        return this.bannerService.updateBannerImages(id, files.bannerImages || [], updateBannerDto);
 
- // Retrieve all banners
- @Get('/all')
- async getAllBanners() {
-   return this.bannerService.getAllBanners();
- }
+    }
 
- // Retrieve a specific banner by ID
- @Get('/:id')
- async getBannerById(@Param('id') id: string) {
-   return this.bannerService.getBannerById(id);
- }
+    // Retrieve all banners
+    @Get('/all')
+    async getAllBanners() {
+        return this.bannerService.getAllBanners();
+    }
 
- // Delete a specific banner by ID
- @Delete('/delete/:id')
- async deleteBanner(@Param('id') id: string) {
-   return this.bannerService.deleteBanner(id);
- }
+    // Retrieve a specific banner by ID
+    @Get('/:id')
+    async getBannerById(@Param('id') id: string) {
+        return this.bannerService.getBannerById(id);
+    }
+
+    // Delete a specific banner by ID
+    @Delete('/delete/:id')
+    async deleteBanner(@Param('id') id: string) {
+        return this.bannerService.deleteBanner(id);
+    }
 }
 
+// Controller: api_control_settings.controller.ts
+@Controller('sync-control-settings')
+export class SyncControlSettingsController {
+  constructor(private readonly service: SyncControlSettingsService) {}
+
+  @Post()
+  async createOrUpdate(@Body() dto: UpdateSyncControlSettingsDto) {
+    return this.service.createOrUpdate(dto);
+  }
+
+  @Get()
+  async findAll() {
+    return this.service.findAll();
+  }
+
+  @Put(':id')
+  async update(@Param('id') id: number, @Body() dto: UpdateSyncControlSettingsDto) {
+    return this.service.createOrUpdate(dto);
+  }
+
+  @Delete(':id')
+  async delete(@Param('id') id: number) {
+    await this.service.delete(id);
+    return { message: 'Sync setting deleted successfully' };
+  }
+}
 
 
 

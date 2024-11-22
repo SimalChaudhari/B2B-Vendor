@@ -38,7 +38,8 @@ export const RECEIVABLE_LIST = "RECEIVABLE_LIST"
 export const LOGS_LIST = "LOGS_LIST"
 
 
-
+export const SYNC_LIST = "SYNC_LIST"
+export const SYNC_GET_BY_LIST = "SYNC_GET_BY_LIST"
 
 
 

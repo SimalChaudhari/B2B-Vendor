@@ -112,6 +112,7 @@ export class StockService {
 
   @Cron('*/60 * * * * *')
   async cronFetchAndStoreItems(): Promise<void> {
+    console.log('stocks executed at:', new Date().toISOString());
     const REQUEST_TIMEOUT = 15000; // 15 seconds timeout
     let successCount = 0;
     let failedCount = 0;
@@ -137,7 +138,7 @@ export class StockService {
               await this.stockRepository.save({ ...existingStock, ...stock });
               successCount++;
             } else {
-              console.log(`No changes for stock item: ${stock.itemName}`);
+              // console.log(`No changes for stock item: ${stock.itemName}`);
             }
           } else {
             await this.stockRepository.save(stock);

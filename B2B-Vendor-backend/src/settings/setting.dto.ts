@@ -1,6 +1,6 @@
 // src/faq/dto/create-faq.dto.ts
 
-import { IsNotEmpty, IsString, IsIn, IsEnum, IsOptional, IsEmail } from 'class-validator';
+import { IsNotEmpty, IsString, IsIn, IsEnum, IsOptional, IsEmail, IsBoolean } from 'class-validator';
 import { PartialType } from '@nestjs/mapped-types';
 import { FAQStatus } from './setting.entity';
 
@@ -62,3 +62,18 @@ export class CreateBannerDto {
     name!: string; // URL/path to the logo image
 }
 export class UpdateBannerDto extends PartialType(CreateBannerDto) { }
+
+// DTO: api_control_settings.dto.ts
+export class UpdateSyncControlSettingsDto {
+    @IsNotEmpty()
+    @IsString()
+    moduleName!: string; // E.g., 'Products', 'Orders'
+  
+    @IsNotEmpty()
+    @IsBoolean()
+    isAutoSyncEnabled!: boolean; // Auto Sync status
+  
+    @IsNotEmpty()
+    @IsBoolean()
+    isManualSyncEnabled!: boolean; // Manual Sync status
+  }

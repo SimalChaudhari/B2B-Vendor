@@ -50,15 +50,12 @@ export class VendorService {
                     // If the item exists, compare and update if necessary
                     if (this.hasChanges(existingVendor, vendor)) {
                         await this.vendorRepository.save({ ...existingVendor, ...vendor });
-                    } else {
-                        console.log(`No changes for vendor: ${vendor.name}`);
-                    }
+                    } 
                     // Handle address separately
                     await this.storeVendorAddress(existingVendor, vendor);
                 } else {
                     const savedVendor = await this.vendorRepository.save(vendor);
                     await this.storeVendorAddress(savedVendor, vendor);
-                    console.log(`New vendor and address saved: ${vendor.name}`);
                 }
             }
 
@@ -215,15 +212,13 @@ export class VendorService {
                             if (this.hasChanges(existingVendor, vendor)) {
                                 await this.vendorRepository.save({ ...existingVendor, ...vendor });
                                 successCount++;
-                            } else {
-                                console.log(`No changes for vendor: ${vendor.name}`);
                             }
                             // Handle address separately
                             await this.storeVendorAddress(existingVendor, vendor);
                         } else {
                             const savedVendor = await this.vendorRepository.save(vendor);
                             await this.storeVendorAddress(savedVendor, vendor);
-                            console.log(`New vendor and address saved: ${vendor.name}`);
+    
                             successCount++;
                         }
                     } catch (itemError) {

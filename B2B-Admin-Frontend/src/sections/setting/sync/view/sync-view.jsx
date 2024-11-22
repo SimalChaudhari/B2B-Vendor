@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Box,
     Typography,
@@ -7,11 +7,6 @@ import {
     Paper,
     Grid,
     Divider,
-    Table,
-    TableHead,
-    TableRow,
-    TableCell,
-    TableBody,
     Dialog,
     DialogActions,
     DialogContent,
@@ -22,57 +17,87 @@ import {
 import { DashboardContent } from "src/layouts/dashboard";
 import { CustomBreadcrumbs } from "src/components/custom-breadcrumbs";
 import { paths } from "src/routes/paths";
+import { useDispatch, useSelector } from "react-redux";
+import { editSyncSetting, syncSettingList } from "src/store/action/settingActions";
 
 export function SyncView() {
-    // States for each section
-    const [productsAutoSync, setProductsAutoSync] = useState(false);
-    const [productsManualSync, setProductsManualSync] = useState(false);
+    const dispatch = useDispatch();
 
-    const [ordersAutoSync, setOrdersAutoSync] = useState(false);
-    const [ordersManualSync, setOrdersManualSync] = useState(false);
-
-    const [vendorsAutoSync, setVendorsAutoSync] = useState(false);
-    const [vendorsManualSync, setVendorsManualSync] = useState(false);
-
-    const [ledgerAutoSync, setLedgerAutoSync] = useState(false);
-    const [ledgerManualSync, setLedgerManualSync] = useState(false);
-
-    const [receivablesAutoSync, setReceivablesAutoSync] = useState(false);
-    const [receivablesManualSync, setReceivablesManualSync] = useState(false);
-
-    // Confirmation Dialog
+    const syncs = useSelector((state) => state.setting?.syncData || []);
+  
+    // States to manage confirmation dialog
     const [dialogOpen, setDialogOpen] = useState(false);
     const [currentAction, setCurrentAction] = useState(null);
 
-    const handleToggle = (setStateFunction, currentState) => {
+    // Fetch sync settings from the backend
+    useEffect(() => {
+        const fetchData = async () => {
+            await dispatch(syncSettingList());
+        };
+        fetchData();
+    }, [dispatch]);
+
+    // API call to update sync settings
+    const updateSyncSetting = async (id, moduleName, isAutoSyncEnabled, isManualSyncEnabled) => {
+        try {
+            // Dispatch the action to update the sync setting
+            const success = await dispatch(
+                editSyncSetting(id, {
+                    moduleName,
+                    isAutoSyncEnabled,
+                    isManualSyncEnabled,
+                })
+            );
+            if (success) {
+                console.log(`Sync setting for ${moduleName} updated successfully.`);
+            } else {
+                console.error(`Failed to update sync setting for ${moduleName}.`);
+            }
+        } catch (error) {
+            console.error("Failed to update sync setting:", error);
+        }
+    };
+
+    // Handle toggle with confirmation dialog
+    const handleToggle = (id, moduleName, setStateFunction, currentState, syncType) => {
         setDialogOpen(true);
-        setCurrentAction(() => () => {
-            setStateFunction(!currentState);
+        setCurrentAction(() => async () => {
+            const updatedState = !currentState;
+
+            // Update the local state
+            setStateFunction(updatedState);
+
+            // Update API
+            const updatedSyncs = {
+                isAutoSyncEnabled: syncType === "Auto Sync" ? updatedState : undefined,
+                isManualSyncEnabled: syncType === "Manual Sync" ? updatedState : undefined,
+            };
+            await updateSyncSetting(id, moduleName, updatedSyncs.isAutoSyncEnabled, updatedSyncs.isManualSyncEnabled);
+
             setDialogOpen(false);
         });
     };
 
-    const renderSyncCard = (
-        title,
-        autoSync,
-        manualSync,
-        setAutoSync,
-        setManualSync
-    ) => (
-        <Paper sx={{ p: 2, mb: 2 }}>
-            <Typography variant="h6" gutterBottom>{title}</Typography>
+    // Render individual sync cards dynamically
+    const renderSyncCard = (sync) => (
+        <Paper key={sync.id} sx={{ p: 2, mb: 2 }}>
+            <Typography variant="h6" gutterBottom>{sync.moduleName}</Typography>
             <Divider />
             <Box sx={{ mt: 2 }}>
                 <Typography>Auto Sync</Typography>
                 <FormControlLabel
                     control={
                         <Switch
-                            checked={autoSync}
-                            onChange={() => handleToggle(setAutoSync, autoSync)}
+                            checked={sync.isAutoSyncEnabled}
+                            onChange={() =>
+                                handleToggle(sync.id, sync.moduleName, (state) => {
+                                    sync.isAutoSyncEnabled = state;
+                                }, sync.isAutoSyncEnabled, "Auto Sync")
+                            }
                             color="primary"
                         />
                     }
-                    label={autoSync ? "Enabled" : "Disabled"}
+                    label={sync.isAutoSyncEnabled ? "Enabled" : "Disabled"}
                 />
             </Box>
             <Box sx={{ mt: 2 }}>
@@ -80,15 +105,18 @@ export function SyncView() {
                 <FormControlLabel
                     control={
                         <Switch
-                            checked={manualSync}
-                            onChange={() => handleToggle(setManualSync, manualSync)}
+                            checked={sync.isManualSyncEnabled}
+                            onChange={() =>
+                                handleToggle(sync.id, sync.moduleName, (state) => {
+                                    sync.isManualSyncEnabled = state;
+                                }, sync.isManualSyncEnabled, "Manual Sync")
+                            }
                             color="primary"
                         />
                     }
-                    label={manualSync ? "Enabled" : "Disabled"}
+                    label={sync.isManualSyncEnabled ? "Enabled" : "Disabled"}
                 />
             </Box>
-
         </Paper>
     );
 
@@ -102,60 +130,18 @@ export function SyncView() {
                 ]}
             />
             <Box sx={{ p: 4 }}>
-              
                 <Grid container spacing={2}>
-                    {/* Products */}
-                    <Grid item xs={12} sm={6} md={4}>
-                        {renderSyncCard(
-                            "Products",
-                            productsAutoSync,
-                            productsManualSync,
-                            setProductsAutoSync,
-                            setProductsManualSync
-                        )}
-                    </Grid>
-                    {/* Orders */}
-                    <Grid item xs={12} sm={6} md={4}>
-                        {renderSyncCard(
-                            "Orders",
-                            ordersAutoSync,
-                            ordersManualSync,
-                            setOrdersAutoSync,
-                            setOrdersManualSync
-                        )}
-                    </Grid>
-                    {/* Vendors */}
-                    <Grid item xs={12} sm={6} md={4}>
-                        {renderSyncCard(
-                            "Vendors",
-                            vendorsAutoSync,
-                            vendorsManualSync,
-                            setVendorsAutoSync,
-                            setVendorsManualSync
-                        )}
-                    </Grid>
-                    {/* Ledger Statement */}
-                    <Grid item xs={12} sm={6} md={4}>
-                        {renderSyncCard(
-                            "Ledger Statement",
-                            ledgerAutoSync,
-                            ledgerManualSync,
-                            setLedgerAutoSync,
-                            setLedgerManualSync
-                        )}
-                    </Grid>
-                    {/* Outstanding Receivables */}
-                    <Grid item xs={12} sm={6} md={4}>
-                        {renderSyncCard(
-                            "Outstanding Receivables",
-                            receivablesAutoSync,
-                            receivablesManualSync,
-                            setReceivablesAutoSync,
-                            setReceivablesManualSync
-                        )}
-                    </Grid>
+                    {syncs
+                        .slice() // Create a copy of the array to avoid mutating the original state
+                        .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt)) // Sort by createdAt in ascending order
+                        .map((sync) => (
+                            <Grid key={sync.id} item xs={12} sm={6} md={4}>
+                                {renderSyncCard(sync)}
+                            </Grid>
+                        ))}
                 </Grid>
             </Box>
+
 
             {/* Confirmation Dialog */}
             <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>

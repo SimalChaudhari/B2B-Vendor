@@ -1,4 +1,4 @@
-import { FAQ_LIST, FAQ_GET_BY_LIST, CONTACT_GET_BY_LIST, CONTACT_LIST, TERM_LIST, TERM_GET_BY_LIST, BANNER_LIST, BANNER_GET_BY_LIST } from "../constants/actionTypes";
+import { SYNC_GET_BY_LIST, SYNC_LIST, FAQ_LIST, FAQ_GET_BY_LIST, CONTACT_GET_BY_LIST, CONTACT_LIST, TERM_LIST, TERM_GET_BY_LIST, BANNER_LIST, BANNER_GET_BY_LIST } from "../constants/actionTypes";
 
 const initialState = {
     faq: [],
@@ -8,11 +8,26 @@ const initialState = {
     getByContact: '',
     getByTermCondition: '',
     banner: [],
-    getByBanner: ''
+    getByBanner: '',
+    syncData: [],
+    getBySyncData: ''
 
 };
 const settingReducer = (state = initialState, { type, payload } = {}) => {
     switch (type) {
+
+        case SYNC_LIST:
+            return {
+                ...state,
+                syncData: payload,
+            };
+
+        case SYNC_GET_BY_LIST:
+            return {
+                ...state,
+                getBySyncData: payload,
+            };
+
         case FAQ_LIST:
             return {
                 ...state,

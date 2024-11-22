@@ -1,6 +1,6 @@
 import { toast } from "sonner";
 import axiosInstance from "src/configs/axiosInstance";
-import {BANNER_GET_BY_LIST, BANNER_LIST, CONTACT_GET_BY_LIST, CONTACT_LIST, FAQ_GET_BY_LIST, FAQ_LIST, TERM_GET_BY_LIST, TERM_LIST } from "../constants/actionTypes";
+import {BANNER_GET_BY_LIST, BANNER_LIST, CONTACT_GET_BY_LIST, CONTACT_LIST, FAQ_GET_BY_LIST, FAQ_LIST, SYNC_GET_BY_LIST, SYNC_LIST, TERM_GET_BY_LIST, TERM_LIST } from "../constants/actionTypes";
 
 // FAQ Settings
 export const FAQList = () => async (dispatch) => {
@@ -226,6 +226,90 @@ export const deleteBanner = (bannerId) => async (dispatch) => {
         // Check if the response is successful
         if (response && response.status >= 200 && response.status < 300) {
             toast.success(response.data.message || 'banner deleted successfully!');
+            return true; // Indicate successful deletion
+        }
+    } catch (error) {
+        // Handle errors appropriately
+        const errorMessage = error?.response?.data?.message || 'An unexpected error occurred. Please try again.';
+        toast.error(errorMessage);
+    }
+    return false; // Return false for any errors or unsuccessful attempts
+};
+
+// Syncs Data Settings
+
+export const syncSettingList = () => async (dispatch) => {
+    try {
+        const response = await axiosInstance.get('/sync-control-settings/');
+         dispatch({
+            type: SYNC_LIST,
+            payload: response.data, // Assuming response contains the customers data
+        });
+        return true;
+    } catch (error) {
+        // Check if error response exists and handle error message
+        const errorMessage = error?.response?.data?.message || 'An unexpected error occurred. Please try again.';
+        toast.error(errorMessage);
+    }
+    return false; // Return false for any errors
+};
+
+export const syncSettingGetByList = (id) => async (dispatch) => {
+    try {
+        const response = await axiosInstance.get(`/sync-control-settings/${id}`);
+
+        dispatch({
+            type: SYNC_GET_BY_LIST,
+            payload: response.data, // Assuming response contains the customers data
+        });
+        return true;
+    } catch (error) {
+        // Check if error response exists and handle error message
+        const errorMessage = error?.response?.data?.message || 'An unexpected error occurred. Please try again.';
+        toast.error(errorMessage);
+    }
+    return false; // Return false for any errors
+};
+
+// export const createSyncSetting = (data) => async (dispatch) => {
+//     try {
+//         const response = await axiosInstance.post('/sync-control-settings', data);
+//         if (response && response.status >= 200 && response.status < 300) {
+//             toast.success(response.data.message || 'created successfully!');
+//             return true;
+//         }
+//         return true;
+//     } catch (error) {
+//         // Check if error response exists and handle error message
+//         const errorMessage = error?.response?.data?.message || 'An unexpected error occurred. Please try again.';
+//         toast.error(errorMessage);
+//     }
+//     return false; // Return false for any errors
+// };
+
+export const editSyncSetting = (id, data) => async (dispatch) => {
+    try {
+        const response = await axiosInstance.put(`/sync-control-settings/${id}`, data);
+
+        // Check if the response is successful
+        if (response && response.status >= 200 && response.status < 300) {
+            toast.success(response.data.message || 'updated successfully!');
+            return true; // Indicate successful update
+        }
+    } catch (error) {
+        // Handle errors appropriately
+        const errorMessage = error?.response?.data?.message || 'An unexpected error occurred. Please try again.';
+        toast.error(errorMessage);
+    }
+    return false; // Return false for any errors or unsuccessful attempts
+};
+
+export const deleteSyncSetting = (id) => async (dispatch) => {
+    try {
+        const response = await axiosInstance.delete(`/sync-control-settings/${id}`);
+        // Check if the response is successful
+        if (response && response.status >= 200 && response.status < 300) {
+            toast.success(response.data.message );
             return true; // Indicate successful deletion
         }
     } catch (error) {

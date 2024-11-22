@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { paths } from 'src/routes/paths';
+
 import { CONFIG } from 'src/config-global';
 import { SvgColor } from 'src/components/svg-color';
+import { paths } from 'src/routes/paths';
 
 const icon = (name) => (
   <SvgColor src={`${CONFIG.site.basePath}/assets/icons/navbar/${name}.svg`} />
@@ -39,11 +40,15 @@ export const useNavData = () => {
   }, []);
 
   const commonItems = [
-    
-    { title: 'Dashboard', path: paths.dashboard.root, icon: ICONS.dashboard },
-    { title: 'Logout', path: paths.logout.root, icon: ICONS.logout },
-  ];
+    {
+      subheader: 'Dashboard',
+      items: [
 
+        { title: 'Dashboard', path: paths.dashboard.root, icon: ICONS.dashboard },
+      ],
+    },
+
+  ];
   const adminItems = [
     {
       subheader: 'Management',
@@ -103,6 +108,7 @@ export const useNavData = () => {
           path: paths.settings.profile,
           icon: ICONS.settings,
         },
+        { title: 'Logout', path: paths.logout.root, icon: ICONS.logout },
       ],
     },
   ]
@@ -124,6 +130,7 @@ export const useNavData = () => {
             { title: 'Profile', path: paths.settings.profile },
           ],
         },
+        { title: 'Logout', path: paths.logout.root, icon: ICONS.logout },
       ],
     },
   ];

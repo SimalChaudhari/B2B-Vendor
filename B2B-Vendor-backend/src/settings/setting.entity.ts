@@ -19,7 +19,7 @@ export class Faq {
     @Column()
     answer!: string;
 
-    @Column({type: 'enum',enum: FAQStatus,default: FAQStatus.Active})
+    @Column({ type: 'enum', enum: FAQStatus, default: FAQStatus.Active })
     status!: FAQStatus; // Status field
 
     @CreateDateColumn()
@@ -80,7 +80,7 @@ export class Banner {
     @PrimaryGeneratedColumn('uuid')
     id!: string;
 
-    
+
     @Column()
     name!: string;
 
@@ -92,5 +92,25 @@ export class Banner {
 
     @UpdateDateColumn()
     updatedAt!: Date;
-  
+}
+
+@Entity('sync_control_settings')
+export class SyncControlSettings {
+    @PrimaryGeneratedColumn('uuid')
+    id!: number;
+
+    @Column()
+    moduleName!: string; // E.g., 'Products', 'Orders', etc.
+
+    @Column({ default: false })
+    isAutoSyncEnabled!: boolean; // Auto Sync status
+
+    @Column({ default: false })
+    isManualSyncEnabled!: boolean; // Manual Sync status
+    
+    @CreateDateColumn({ type: 'timestamp' })
+    createdAt!: Date;
+
+    @UpdateDateColumn({ type: 'timestamp' })
+    updatedAt!: Date;
 }
