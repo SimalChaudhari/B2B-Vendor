@@ -4,7 +4,6 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class EmailService {
     private transporter: nodemailer.Transporter;
-
     constructor() {
         this.transporter = nodemailer.createTransport({
             service: 'Gmail', // Use your email service
