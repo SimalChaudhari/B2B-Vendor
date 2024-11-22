@@ -3,16 +3,12 @@ import { Injectable, BadRequestException, NotFoundException, UnauthorizedExcepti
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-// import { User, UserRole, UserStatus } from 'users/user/users.entity';
 import { AuthDto } from './auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import { User, UserRole, UserStatus } from 'users/user/users.entity';
 import { EmailService } from 'service/email/email.service';
 import { AddressesService } from 'users/address/addresses/addresses.service';
 import { CreateAddressDto } from 'users/address/addresses/addresses.dto';
-// import { AddressesService } from 'users/address/addresses/addresses.service';
-// import { CreateAddressDto } from 'users/address/addresses/addresses.dto';
-// import { EmailService } from 'service/email/email.service';
 
 const generateOTP = (): string => {
   const otp = Math.floor(100000 + Math.random() * 900000).toString(); // Generate a 6-digit OTP
