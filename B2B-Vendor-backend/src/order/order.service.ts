@@ -10,7 +10,7 @@ import { DataSource, Like, Repository } from 'typeorm';
 import { generateInvoiceXML } from 'tally/invoice-xml-generator';
 import axios from 'axios';
 import { Invoice, InvoiceStatus } from 'invoice/invoice.entity';
-import { EmailService } from 'service/email/email.service';
+import { EmailService } from 'service/email.service';
 import { UserEntity } from 'user/users.entity';
 import { Address } from 'addresses/addresses.entity';
 

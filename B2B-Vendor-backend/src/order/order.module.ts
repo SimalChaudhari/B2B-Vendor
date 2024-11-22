@@ -10,7 +10,7 @@ import { CartItemEntity } from 'cart/cart.entity';
 import { InvoiceRetryService } from 'invoice/invoice-retry.service';
 import { Invoice } from 'invoice/invoice.entity';
 import { SyncLogEntity } from 'sync-log/sync-log.entity';
-import { EmailService } from 'service/email/email.service';
+import { EmailService } from 'service/email.service';
 import { UserEntity } from 'user/users.entity';
 import { Address } from 'addresses/addresses.entity';
 

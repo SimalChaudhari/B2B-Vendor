@@ -5,7 +5,7 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtModule } from '@nestjs/jwt';
 import * as dotenv from 'dotenv';
-import { EmailService } from 'service/email/email.service';
+import { EmailService } from 'service/email.service';
 import { UserEntity } from 'user/users.entity';
 import { Address } from 'addresses/addresses.entity';
 import { AddressesService } from 'addresses/addresses.service';
