@@ -20,5 +20,6 @@ dotenv.config(); // Load environment variables
 ],
   providers: [AuthService,AddressesService,EmailService],
   controllers: [AuthController],
+  exports: [AuthService],
 })
 export class AuthModule {}
