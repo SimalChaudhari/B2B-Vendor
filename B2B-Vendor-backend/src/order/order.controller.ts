@@ -1,13 +1,12 @@
 import { Controller, Post, Get, Body, Req, UseGuards, Param, Delete, Res, HttpStatus } from '@nestjs/common';
 import { OrderService } from './order.service';
-
-import { JwtAuthGuard } from 'auth/jwt/jwt-auth.guard'; // Adjust the import path
 import { Request, Response } from 'express';
 import { CreateItemOrderDto, CreateOrderDto } from './order.dto';
 import { OrderEntity } from './order.entity';
 import { OrderItemEntity } from './order.item.entity';
 import { isAdmin } from 'utils/auth.utils';
-import { RolesGuard } from 'auth/jwt/roles.guard';
+import { JwtAuthGuard } from 'jwt/jwt-auth.guard';
+import { RolesGuard } from 'jwt/roles.guard';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('order')

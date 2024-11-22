@@ -2,16 +2,14 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthService } from './auth.service';
-import { User } from 'users/user/users.entity';
 import { AuthController } from './auth.controller';
 import { JwtModule } from '@nestjs/jwt';
 import * as dotenv from 'dotenv';
-import { Address } from 'users/address/addresses/addresses.entity';
 import { EmailService } from 'service/email/email.service';
-import { AddressesService } from 'users/address/addresses/addresses.service';
-// import { AddressesService } from 'users/address/addresses/addresses.service';
-// import { Address } from 'users/address/addresses/addresses.entity';
-// import { EmailService } from 'service/email/email.service';
+import { User } from 'user/users.entity';
+import { Address } from 'addresses/addresses.entity';
+import { AddressesService } from 'addresses/addresses.service';
+
 
 dotenv.config(); // Load environment variables
 

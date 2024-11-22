@@ -7,7 +7,7 @@ import { Invoice } from './invoice.entity';
 import { InvoiceController } from './Invoice.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { SyncLogEntity } from 'sync-log/sync-log.entity';
-import { User } from 'users/user/users.entity';
+import { User } from 'user/users.entity';
 
 @Module({
     imports: [

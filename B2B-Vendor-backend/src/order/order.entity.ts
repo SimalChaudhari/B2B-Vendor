@@ -1,8 +1,8 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'typeorm';
-import { Address } from 'users/address/addresses/addresses.entity';
-import { User } from 'users/user/users.entity';
 import { OrderItemEntity } from './order.item.entity';
 import { DeliveryType } from './order.dto'; // Import enums from DTO
+import { User } from 'user/users.entity';
+import { Address } from 'addresses/addresses.entity';
 
 export enum OrderStatus {
     PENDING = 'pending',

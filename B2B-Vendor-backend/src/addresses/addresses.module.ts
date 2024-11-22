@@ -4,7 +4,7 @@ import { AddressesService } from './addresses.service';
 import { AddressesController } from './addresses.controller';
 import { Address } from './addresses.entity';
 import { JwtModule } from '@nestjs/jwt';
-import { User } from 'users/user/users.entity';
+import { User } from 'user/users.entity';
 
 @Module({
     imports: [TypeOrmModule.forFeature([Address,User]),

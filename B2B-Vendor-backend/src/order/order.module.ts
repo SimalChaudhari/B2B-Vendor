@@ -5,14 +5,14 @@ import { OrderService } from './order.service';
 import { OrderController } from './order.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { ItemEntity } from 'fetch-products/item.entity';
-import { User } from 'users/user/users.entity';
-import { Address } from 'users/address/addresses/addresses.entity';
 import { OrderItemEntity } from './order.item.entity';
 import { CartItemEntity } from 'cart/cart.entity';
 import { InvoiceRetryService } from 'invoice/invoice-retry.service';
 import { Invoice } from 'invoice/invoice.entity';
 import { SyncLogEntity } from 'sync-log/sync-log.entity';
 import { EmailService } from 'service/email/email.service';
+import { User } from 'user/users.entity';
+import { Address } from 'addresses/addresses.entity';
 
 @Module({
   imports: [

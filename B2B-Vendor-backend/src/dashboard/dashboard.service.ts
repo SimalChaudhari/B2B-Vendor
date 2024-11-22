@@ -2,7 +2,8 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ItemService } from 'fetch-products/item.service';
 import { OrderService } from 'order/order.service';
-import { UserService } from 'users/user/users.service';
+import { UserService } from 'user/users.service';
+
 
 @Injectable()
 export class DashboardService {

@@ -1,8 +1,7 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OrderEntity, OrderStatus } from './order.entity';
-import { User } from 'users/user/users.entity';
-import { Address } from 'users/address/addresses/addresses.entity';
+
 import { CreateItemOrderDto, CreateOrderDto } from './order.dto';
 import { ItemEntity } from 'fetch-products/item.entity';
 import { OrderItemEntity } from './order.item.entity';
@@ -12,6 +11,9 @@ import { generateInvoiceXML } from 'tally/invoice-xml-generator';
 import axios from 'axios';
 import { Invoice, InvoiceStatus } from 'invoice/invoice.entity';
 import { EmailService } from 'service/email/email.service';
+import { User } from 'user/users.entity';
+import { Address } from 'addresses/addresses.entity';
+
 
 @Injectable()
 export class OrderService {

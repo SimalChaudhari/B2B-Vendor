@@ -3,15 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import axios from 'axios';
 import { parseStringPromise } from 'xml2js'; // Library for parsing XML to JSON
-import { VendorEntity } from './vendor.entity'; // Make sure to import your Vendor Entity
 import { Vendors } from 'tally/vendors';
-import { User, UserRole } from 'users/user/users.entity';
 import { VendorDto } from './../user/users.dto';
-import { AddressesService } from 'users/address/addresses/addresses.service';
-import { CreateAddressDto } from 'users/address/addresses/addresses.dto';
 import { Cron } from '@nestjs/schedule';
 import { SyncLogEntity, SyncLogStatus } from 'sync-log/sync-log.entity';
 import { SyncLogService } from 'sync-log/sync-log.service';
+import { User, UserRole } from 'user/users.entity';
+import { AddressesService } from 'addresses/addresses.service';
+import { CreateAddressDto } from 'addresses/addresses.dto';
+
 
 @Injectable()
 export class VendorService {

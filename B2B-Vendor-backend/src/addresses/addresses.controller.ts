@@ -17,7 +17,7 @@ import {
 import { AddressesService } from './addresses.service';
 import { CreateAddressDto, UpdateAddressDto } from './addresses.dto';
 import { Request, Response } from 'express';
-import { JwtAuthGuard } from 'auth/jwt/jwt-auth.guard';
+import { JwtAuthGuard } from 'jwt/jwt-auth.guard';
 
 @UseGuards(JwtAuthGuard) // Protect all routes in this controller
 @Controller('addresses')

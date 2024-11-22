@@ -13,10 +13,10 @@ import {
 import { UserRole } from './users.dto';
 import { Response } from 'express';
 import { UserService } from './users.service';
-import { Roles } from 'auth/jwt/roles.decorator';
-import { JwtAuthGuard } from 'auth/jwt/jwt-auth.guard';
-import { RolesGuard } from 'auth/jwt/roles.guard';
 import { UserStatus } from './users.entity';
+import { JwtAuthGuard } from 'jwt/jwt-auth.guard';
+import { RolesGuard } from 'jwt/roles.guard';
+import { Roles } from 'jwt/roles.decorator';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard, RolesGuard)

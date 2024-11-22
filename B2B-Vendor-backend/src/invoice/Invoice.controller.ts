@@ -4,7 +4,8 @@ import { Repository } from 'typeorm';
 import { Invoice, InvoiceStatus } from './invoice.entity';
 import { InvoiceRetryService } from './invoice-retry.service';
 import { Request } from 'express';
-import { JwtAuthGuard } from 'auth/jwt/jwt-auth.guard';
+import { JwtAuthGuard } from 'jwt/jwt-auth.guard';
+
 
 @UseGuards(JwtAuthGuard)
 @Controller('retry-invoice')

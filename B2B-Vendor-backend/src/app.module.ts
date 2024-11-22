@@ -2,11 +2,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module'; // Adjust the path as necessary
-import { AddressesModule } from 'users/address/addresses/addresses.module';
-import { UserModule } from 'users/user/users.module';
 import { SettingModule } from 'settings/setting.module';
 import { ItemModule } from 'fetch-products/item.module';
-import { VendorModule } from 'users/vendors/vendor.module';
 import { CartModule } from 'cart/cart.module';
 import { OrderModule } from 'order/order.module';
 import { DashboardModule } from 'dashboard/dashboard.module';
@@ -14,6 +11,9 @@ import { InvoiceModule } from 'invoice/invoice.module';
 import { SyncLogModule } from 'sync-log/sync-log.module';
 import { StockModule } from 'stock/stock.module';
 import { LedgerModule } from 'ledger/ledger.module';
+import { UserModule } from 'user/users.module';
+import { AddressesModule } from 'addresses/addresses.module';
+import { VendorModule } from 'vendors/vendor.module';
 
 
 @Module({
