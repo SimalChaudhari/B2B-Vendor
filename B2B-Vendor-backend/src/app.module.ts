@@ -30,7 +30,7 @@ import { VendorModule } from 'vendors/vendor.module';
       
     }),
     UserModule,
-    AuthModule,
+    // AuthModule,
     AddressesModule,
     ItemModule,
     SettingModule,

@@ -7,7 +7,8 @@ import { AuthDto } from './auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import { AddressesService } from 'addresses/addresses.service';
 import { CreateAddressDto } from 'addresses/addresses.dto';
-import { UserEntity, UserRole, UserStatus } from 'user/users.entity';
+import { UserEntity } from 'user/users.entity';
+import { UserRole, UserStatus } from 'user/users.entity';
 import { EmailService } from 'service/email.service';
 
 const generateOTP = (): string => {
