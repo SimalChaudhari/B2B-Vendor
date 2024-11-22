@@ -9,11 +9,7 @@ import { EmailService } from 'service/email/email.service';
 import { User } from 'user/users.entity';
 import { Address } from 'addresses/addresses.entity';
 import { AddressesService } from 'addresses/addresses.service';
-
-
 dotenv.config(); // Load environment variables
-
-
 @Module({
   imports: [TypeOrmModule.forFeature([User,Address]),
   JwtModule.register({
