@@ -5,11 +5,11 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { AuthDto } from './auth.dto';
 import { JwtService } from '@nestjs/jwt';
-import { AddressesService } from 'addresses/addresses.service';
 import { CreateAddressDto } from 'addresses/addresses.dto';
 import { UserEntity } from 'user/users.entity';
 import { UserRole, UserStatus } from 'user/users.entity';
 import { EmailService } from 'service/email.service';
+import { AddressesService } from 'addresses/addresses.service';
 
 const generateOTP = (): string => {
   const otp = Math.floor(100000 + Math.random() * 900000).toString(); // Generate a 6-digit OTP
