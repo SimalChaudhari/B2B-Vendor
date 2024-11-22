@@ -5,10 +5,10 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { AuthDto } from './auth.dto';
 import { JwtService } from '@nestjs/jwt';
-// import { AddressesService } from 'addresses/addresses.service';
-// import { CreateAddressDto } from 'addresses/addresses.dto';
+import { AddressesService } from 'addresses/addresses.service';
+import { CreateAddressDto } from 'addresses/addresses.dto';
 import { UserEntity, UserRole, UserStatus } from 'user/users.entity';
-// import { EmailService } from 'service/email.service';
+import { EmailService } from 'service/email.service';
 
 const generateOTP = (): string => {
   const otp = Math.floor(100000 + Math.random() * 900000).toString(); // Generate a 6-digit OTP
@@ -37,9 +37,9 @@ export class AuthService {
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
     private readonly JwtService: JwtService, // Inject JwtService
-    // private readonly emailService: EmailService,
+    private readonly emailService: EmailService,
     // private readonly mailerService: MailerService, // If used
-    // private readonly addressesService: AddressesService,
+    private readonly addressesService: AddressesService,
   ) { }
 
   async register(authDto: AuthDto): Promise<{ message: string, user: UserEntity }> {
@@ -70,22 +70,22 @@ export class AuthService {
 
       await this.userRepository.save(newUser); // Save the new user
 
-      // const createAddressDto: CreateAddressDto = {
-      //   mobile: authDto.mobile,
-      //   street_address: authDto.address,
-      //   country: authDto.country,
-      //   state: authDto.state,
-      //   zip_code: authDto.pincode,
-      //   userId: newUser.id,
-      // };
+      const createAddressDto: CreateAddressDto = {
+        mobile: authDto.mobile,
+        street_address: authDto.address,
+        country: authDto.country,
+        state: authDto.state,
+        zip_code: authDto.pincode,
+        userId: newUser.id,
+      };
 
-      // const existingAddress = await this.addressesService.findByUserId(newUser.id);
+      const existingAddress = await this.addressesService.findByUserId(newUser.id);
 
-      // if (existingAddress) {
-        // await this.addressesService.update(existingAddress.id, createAddressDto);
-      // } else {
-        // await this.addressesService.create(createAddressDto, newUser.id);
-      // }
+      if (existingAddress) {
+        await this.addressesService.update(existingAddress.id, createAddressDto);
+      } else {
+        await this.addressesService.create(createAddressDto, newUser.id);
+      }
 
       return {
         message: 'User data Added successfully',
@@ -134,7 +134,7 @@ export class AuthService {
       await this.userRepository.save(user); // Save the updated user
 
       // Send OTP
-      // isEmail ? await this.emailService.sendOTP(user.email, otp) : await sendOtpSms(user.mobile, otp);
+      isEmail ? await this.emailService.sendOTP(user.email, otp) : await sendOtpSms(user.mobile, otp);
 
       return { message: 'OTP sent successfully' };
 
