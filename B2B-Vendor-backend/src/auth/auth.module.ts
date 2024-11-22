@@ -5,11 +5,13 @@ import { AuthService } from './auth.service';
 import { User } from 'users/user/users.entity';
 import { AuthController } from './auth.controller';
 import { JwtModule } from '@nestjs/jwt';
-
 import * as dotenv from 'dotenv';
-import { AddressesService } from 'users/address/addresses/addresses.service';
 import { Address } from 'users/address/addresses/addresses.entity';
 import { EmailService } from 'service/email/email.service';
+import { AddressesService } from 'users/address/addresses/addresses.service';
+// import { AddressesService } from 'users/address/addresses/addresses.service';
+// import { Address } from 'users/address/addresses/addresses.entity';
+// import { EmailService } from 'service/email/email.service';
 
 dotenv.config(); // Load environment variables
 

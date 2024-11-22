@@ -1,8 +1,7 @@
 // src/auth/auth.controller.ts
-import { Controller, Post, Body, UseInterceptors, UploadedFile, Res, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Body, Res, HttpStatus } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto } from './auth.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 
 @Controller('auth')
