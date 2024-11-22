@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 
 import { OrderEntity } from 'order/order.entity';
-import { Address } from 'addresses/addresses.entity';
+import { AddressEntity } from 'addresses/addresses.entity';
 
 export enum UserStatus {
     Active = 'Active',
@@ -96,8 +96,8 @@ export class UserEntity {
     @Column({ default: true })
     isAllowPlaceOrder!: boolean; // Boolean to allow/disallow placing orders
 
-    @OneToMany(() => Address, (address) => address.user)
-    addresses?: Address[];
+    @OneToMany(() => AddressEntity, (address) => address.user)
+    addresses?: AddressEntity[];
 
     @OneToMany(() => OrderEntity, (order) => order.user)
     orders?: OrderEntity[];

@@ -6,11 +6,11 @@ import { VendorController } from './vendor.controller'; // Import the VendorCont
 import { SyncLogEntity } from 'sync-log/sync-log.entity';
 import { SyncLogService } from 'sync-log/sync-log.service';
 import { UserEntity } from 'user/users.entity';
-import { Address } from 'addresses/addresses.entity';
+import { AddressEntity } from 'addresses/addresses.entity';
 import { AddressesService } from 'addresses/addresses.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([VendorEntity,UserEntity,Address,SyncLogEntity])], // Register the VendorEntity
+  imports: [TypeOrmModule.forFeature([VendorEntity,UserEntity,AddressEntity,SyncLogEntity])], // Register the VendorEntity
   controllers: [VendorController], // Register the VendorController
   providers: [VendorService,AddressesService,SyncLogService], // Register the VendorService and FirebaseService
 })

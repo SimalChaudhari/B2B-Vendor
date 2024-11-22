@@ -2,7 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'ty
 import { OrderItemEntity } from './order.item.entity';
 import { DeliveryType } from './order.dto'; // Import enums from DTO
 import { UserEntity } from 'user/users.entity';
-import { Address } from 'addresses/addresses.entity';
+import { AddressEntity } from 'addresses/addresses.entity';
 
 export enum OrderStatus {
     PENDING = 'pending',
@@ -22,8 +22,8 @@ export class OrderEntity {
     @ManyToOne(() => UserEntity, (user) => user.orders, { nullable: false, onDelete: 'CASCADE' })
     user!: UserEntity;  // Made non-nullable
 
-    @ManyToOne(() => Address, (address) => address.orders, { nullable: false })
-    address!: Address; // Made non-nullable
+    @ManyToOne(() => AddressEntity, (address) => address.orders, { nullable: false })
+    address!: AddressEntity; // Made non-nullable
 
     @OneToMany(() => OrderItemEntity, (orderItem) => orderItem.order) // Add relation to OrderItemEntity
     orderItems!: OrderItemEntity[];

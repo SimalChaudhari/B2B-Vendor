@@ -3,7 +3,7 @@ import { OrderEntity } from 'order/order.entity';
 import { UserEntity } from 'user/users.entity';
 
 @Entity('addresses')
-export class Address {
+export class AddressEntity {
     @PrimaryGeneratedColumn('uuid')
     id!: string;
 

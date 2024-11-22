@@ -2,25 +2,25 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateAddressDto, UpdateAddressDto } from './addresses.dto';
-import { Address } from './addresses.entity';
+import { AddressEntity } from './addresses.entity';
 import { UserEntity } from 'user/users.entity';
 
 @Injectable()
 export class AddressesService {
     constructor(
-        @InjectRepository(Address)
-        private addressesRepository: Repository<Address>,
+        @InjectRepository(AddressEntity)
+        private addressesRepository: Repository<AddressEntity>,
 
         @InjectRepository(UserEntity)
         private userRepository: Repository<UserEntity>,
     ) { }
 
-    async getAll(): Promise<Address[]> {
+    async getAll(): Promise<AddressEntity[]> {
         const address = await this.addressesRepository.find();
         return address
     }
 
-    async create(createAddressDto: CreateAddressDto, userId: string): Promise<Address> {
+    async create(createAddressDto: CreateAddressDto, userId: string): Promise<AddressEntity> {
 
 
         // Step 1: Fetch the user entity by userId
@@ -41,13 +41,13 @@ export class AddressesService {
         return this.addressesRepository.save(address);
     }
 
-    async findByUserId(userId: string): Promise<Address | null> {
+    async findByUserId(userId: string): Promise<AddressEntity | null> {
         return this.addressesRepository.findOne({
             where: { user: { id: userId } },
         });
     }
 
-    async findByUserIds(userId: string): Promise<Address | null> {
+    async findByUserIds(userId: string): Promise<AddressEntity | null> {
         const res = await this.addressesRepository.findOne({ where: { user: { id: userId } } });
         if (!res) {
             throw new NotFoundException('Address not found');
@@ -56,7 +56,7 @@ export class AddressesService {
     }
 
     // Service method to fetch all addresses for a user
-    async findByUserAll(userId: string): Promise<Address[]> {
+    async findByUserAll(userId: string): Promise<AddressEntity[]> {
         const res = await this.addressesRepository.find({
             where: { user: { id: userId } }
         });
@@ -68,7 +68,7 @@ export class AddressesService {
         return res;
     }
 
-    async getById(id: string): Promise<Address> {
+    async getById(id: string): Promise<AddressEntity> {
         const address = await this.addressesRepository.findOne({ where: { id } }); // Correct way to find by ID
         if (!address) {
             throw new NotFoundException('Address not found');
@@ -76,7 +76,7 @@ export class AddressesService {
         return address;
     }
 
-    async update(id: string, updateAddressDto: UpdateAddressDto): Promise<Address> {
+    async update(id: string, updateAddressDto: UpdateAddressDto): Promise<AddressEntity> {
         const address = await this.getById(id);
         Object.assign(address, updateAddressDto);
         return this.addressesRepository.save(address);

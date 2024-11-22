@@ -3,7 +3,7 @@ import { ConflictException, Injectable, NotFoundException } from '@nestjs/common
 import {  UserEntity, UserRole, UserStatus } from './users.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Address } from 'addresses/addresses.entity';
+import { AddressEntity } from 'addresses/addresses.entity';
 
 
 @Injectable()
@@ -11,8 +11,8 @@ export class UserService {
     constructor(
         @InjectRepository(UserEntity)
         private userRepository: Repository<UserEntity>,
-        @InjectRepository(Address)
-        private addressRepository: Repository<Address>,
+        @InjectRepository(AddressEntity)
+        private addressRepository: Repository<AddressEntity>,
     ) { }
 
     async updateUserStatus(id: string, status: UserStatus): Promise<UserEntity> {
