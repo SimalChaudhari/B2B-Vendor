@@ -5,10 +5,11 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { AuthDto } from './auth.dto';
 import { JwtService } from '@nestjs/jwt';
-import { User, UserRole, UserStatus } from 'user/users.entity';
+// import { User, UserRole, UserStatus } from 'user/users.entity';
 import { EmailService } from 'service/email/email.service';
 import { AddressesService } from 'addresses/addresses.service';
 import { CreateAddressDto } from 'addresses/addresses.dto';
+import { UserEntity, UserRole, UserStatus } from 'user/users.entity';
 
 const generateOTP = (): string => {
   const otp = Math.floor(100000 + Math.random() * 900000).toString(); // Generate a 6-digit OTP
@@ -35,15 +36,15 @@ const sendOtpSms = async (mobile: string, otp: string) => {
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
+    @InjectRepository(UserEntity)
+    private userRepository: Repository<UserEntity>,
     private readonly JwtService: JwtService, // Inject JwtService
     private readonly emailService: EmailService,
     // private readonly mailerService: MailerService, // If used
     private readonly addressesService: AddressesService,
   ) { }
 
-  async register(authDto: AuthDto): Promise<{ message: string, user: User }> {
+  async register(authDto: AuthDto): Promise<{ message: string, user: UserEntity }> {
     try {
       // Check if the email or mobile already exists
       const existingUser = await this.userRepository.findOne({
@@ -148,7 +149,7 @@ export class AuthService {
   };
 
   // Login user with OTP
-  async login(authDto: AuthDto): Promise<{ message: string, access_token: string; user: Partial<User> }> {
+  async login(authDto: AuthDto): Promise<{ message: string, access_token: string; user: Partial<UserEntity> }> {
 
     try {
 

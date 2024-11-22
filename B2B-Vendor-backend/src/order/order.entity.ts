@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'typeorm';
 import { OrderItemEntity } from './order.item.entity';
 import { DeliveryType } from './order.dto'; // Import enums from DTO
-import { User } from 'user/users.entity';
+import { UserEntity } from 'user/users.entity';
 import { Address } from 'addresses/addresses.entity';
 
 export enum OrderStatus {
@@ -19,8 +19,8 @@ export class OrderEntity {
     @Column()
     orderNo!: string;
 
-    @ManyToOne(() => User, (user) => user.orders, { nullable: false, onDelete: 'CASCADE' })
-    user!: User;  // Made non-nullable
+    @ManyToOne(() => UserEntity, (user) => user.orders, { nullable: false, onDelete: 'CASCADE' })
+    user!: UserEntity;  // Made non-nullable
 
     @ManyToOne(() => Address, (address) => address.orders, { nullable: false })
     address!: Address; // Made non-nullable

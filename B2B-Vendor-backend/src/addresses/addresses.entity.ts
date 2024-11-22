@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, OneToMany } from 'typeorm';
 import { OrderEntity } from 'order/order.entity';
-import { User } from 'user/users.entity';
+import { UserEntity } from 'user/users.entity';
 
 @Entity('addresses')
 export class Address {
@@ -28,8 +28,8 @@ export class Address {
     @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     created_at!: Date;
 
-    @ManyToOne(() => User, (user) => user.addresses, { nullable: false, onDelete: 'CASCADE' })
-    user!: User; // Made non-nullable
+    @ManyToOne(() => UserEntity, (user) => user.addresses, { nullable: false, onDelete: 'CASCADE' })
+    user!: UserEntity; // Made non-nullable
 
     @OneToMany(() => OrderEntity, (order) => order.address)
     orders?: OrderEntity[]; // This can remain optional

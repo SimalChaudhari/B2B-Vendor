@@ -8,7 +8,7 @@ import { VendorDto } from './../user/users.dto';
 import { Cron } from '@nestjs/schedule';
 import { SyncLogEntity, SyncLogStatus } from 'sync-log/sync-log.entity';
 import { SyncLogService } from 'sync-log/sync-log.service';
-import { User, UserRole } from 'user/users.entity';
+import { UserEntity, UserRole } from 'user/users.entity';
 import { AddressesService } from 'addresses/addresses.service';
 import { CreateAddressDto } from 'addresses/addresses.dto';
 
@@ -16,8 +16,8 @@ import { CreateAddressDto } from 'addresses/addresses.dto';
 @Injectable()
 export class VendorService {
     constructor(
-        @InjectRepository(User)
-        private vendorRepository: Repository<User>,
+        @InjectRepository(UserEntity)
+        private vendorRepository: Repository<UserEntity>,
         private readonly addressesService: AddressesService,
 
         @InjectRepository(SyncLogEntity)
@@ -77,7 +77,7 @@ export class VendorService {
         }
     }
 
-    async storeVendorAddress(vendor: User, vendorDto: VendorDto): Promise<void> {
+    async storeVendorAddress(vendor: UserEntity, vendorDto: VendorDto): Promise<void> {
         const createAddressDto: CreateAddressDto = {
             userId: vendor.id,
             mobile: vendorDto.mobile || 'N/A',
@@ -95,7 +95,7 @@ export class VendorService {
         }
     }
 
-    async parseXmlToVendors(xml: string): Promise<User[]> {
+    async parseXmlToVendors(xml: string): Promise<UserEntity[]> {
         const parsedResult = await parseStringPromise(xml);
         const vendorItems = parsedResult.ENVELOPE.LEDGER || []; // Adjust based on your XML structure
 
@@ -127,7 +127,7 @@ export class VendorService {
     }
 
     // Function to check if the existing vendor has changes
-    private hasChanges(existingVendor: User, newVendor: User): boolean {
+    private hasChanges(existingVendor: UserEntity, newVendor: UserEntity): boolean {
         return (
             existingVendor.slNo !== newVendor.slNo ||
             existingVendor.name !== newVendor.name ||
@@ -166,13 +166,13 @@ export class VendorService {
     //     return updatedFields;
     // }
 
-    async findAll(): Promise<User[]> {
+    async findAll(): Promise<UserEntity[]> {
         return this.vendorRepository.find({
             where: { role: UserRole.Vendor }, // Use UserRole enum to match the role correctly
         });
     }
 
-    async findById(id: string): Promise<User | null> {
+    async findById(id: string): Promise<UserEntity | null> {
         return this.vendorRepository.findOne({ where: { id } }); // Load files for the vendor by ID
     }
     async delete(id: string): Promise<void> {

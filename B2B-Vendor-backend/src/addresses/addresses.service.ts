@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateAddressDto, UpdateAddressDto } from './addresses.dto';
 import { Address } from './addresses.entity';
-import { User } from 'user/users.entity';
+import { UserEntity } from 'user/users.entity';
 
 @Injectable()
 export class AddressesService {
@@ -11,8 +11,8 @@ export class AddressesService {
         @InjectRepository(Address)
         private addressesRepository: Repository<Address>,
 
-        @InjectRepository(User)
-        private userRepository: Repository<User>,
+        @InjectRepository(UserEntity)
+        private userRepository: Repository<UserEntity>,
     ) { }
 
     async getAll(): Promise<Address[]> {

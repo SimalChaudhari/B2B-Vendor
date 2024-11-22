@@ -29,8 +29,8 @@ import { VendorModule } from 'vendors/vendor.module';
       synchronize: true, // Set to false in production
       
     }),
-    AuthModule,
     UserModule,
+    AuthModule,
     AddressesModule,
     ItemModule,
     SettingModule,

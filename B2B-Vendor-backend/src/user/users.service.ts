@@ -1,6 +1,6 @@
 //users.service.ts
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
-import { User, UserRole, UserStatus } from './users.entity';
+import {  UserEntity, UserRole, UserStatus } from './users.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Address } from 'addresses/addresses.entity';
@@ -9,13 +9,13 @@ import { Address } from 'addresses/addresses.entity';
 @Injectable()
 export class UserService {
     constructor(
-        @InjectRepository(User)
-        private userRepository: Repository<User>,
+        @InjectRepository(UserEntity)
+        private userRepository: Repository<UserEntity>,
         @InjectRepository(Address)
         private addressRepository: Repository<Address>,
     ) { }
 
-    async updateUserStatus(id: string, status: UserStatus): Promise<User> {
+    async updateUserStatus(id: string, status: UserStatus): Promise<UserEntity> {
         const user = await this.userRepository.findOne({ where: { id } });
     
         if (!user) {
@@ -34,20 +34,20 @@ export class UserService {
     
     
 
-    async getAll(): Promise<User[]> {
+    async getAll(): Promise<UserEntity[]> {
         return await this.userRepository.find({
             where: { isDeleted: false },
             relations: ['addresses'], // Ensure addresses are loaded
         });
     }
 
-    async findAllVendors(): Promise<User[]> {
+    async findAllVendors(): Promise<UserEntity[]> {
         return this.userRepository.find({ where: { role: UserRole.Vendor } });
     }
 
 
 
-    async getById(id: string): Promise<User> {
+    async getById(id: string): Promise<UserEntity> {
         const user = await this.userRepository.findOne({ where: { id, isDeleted: false } }); // Correct way to find by ID
         if (!user) {
             throw new NotFoundException("User not found or has been deleted");

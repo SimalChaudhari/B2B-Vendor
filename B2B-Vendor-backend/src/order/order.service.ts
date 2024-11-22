@@ -11,7 +11,7 @@ import { generateInvoiceXML } from 'tally/invoice-xml-generator';
 import axios from 'axios';
 import { Invoice, InvoiceStatus } from 'invoice/invoice.entity';
 import { EmailService } from 'service/email/email.service';
-import { User } from 'user/users.entity';
+import { UserEntity } from 'user/users.entity';
 import { Address } from 'addresses/addresses.entity';
 
 
@@ -21,8 +21,8 @@ export class OrderService {
     constructor(
         @InjectRepository(OrderEntity)
         private readonly orderRepository: Repository<OrderEntity>,
-        @InjectRepository(User)
-        private readonly userRepository: Repository<User>,
+        @InjectRepository(UserEntity)
+        private readonly userRepository: Repository<UserEntity>,
         @InjectRepository(Address)
         private readonly addressRepository: Repository<Address>,
 
