@@ -10,16 +10,10 @@ async function bootstrap() {
     const port = process.env.PORT || 6000;
 
     // Enable CORS
-    // app.enableCors({
-    //   origin: frontendUrl,
-    //   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    //   credentials: true,
-    // });
-
     app.enableCors({
-      origin: '*', // Allow all origins
+      origin: frontendUrl,
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-      credentials: true, // If using cookies
+      credentials: true,
     });
 
     await app.listen(port);

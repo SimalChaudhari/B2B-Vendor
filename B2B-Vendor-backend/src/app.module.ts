@@ -25,7 +25,9 @@ import { LedgerModule } from 'ledger/ledger.module';
       username: process.env.DATABASE_USER,
       password: process.env.DATABASE_PASSWORD,
       database: process.env.DATABASE_NAME,
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      // entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+
       synchronize: true, // Set to false in production
       
     }),
