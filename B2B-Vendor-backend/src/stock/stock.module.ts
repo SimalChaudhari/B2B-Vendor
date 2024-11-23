@@ -7,13 +7,14 @@ import { StockController } from './stock.controller';
 import { StockService } from './stock.service';
 import { SyncLogService } from 'sync-log/sync-log.service';
 import { SyncLogEntity } from 'sync-log/sync-log.entity';
+import { SyncControlSettings } from 'settings/setting.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([StockEntity,SyncLogEntity]),
+    TypeOrmModule.forFeature([StockEntity,SyncLogEntity,SyncControlSettings]),
     JwtModule.register({
       secret: process.env.JWT_SECRET,  // Use JWT secret from .env file
-      signOptions: { expiresIn: '1d' },  // Set token expiration
+      signOptions: { },  // Set token expiration
     }),
   ],
   controllers: [StockController],

@@ -8,14 +8,15 @@ import { InvoiceController } from './Invoice.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { SyncLogEntity } from 'sync-log/sync-log.entity';
 import { UserEntity } from 'user/users.entity';
+import { SyncControlSettings } from 'settings/setting.entity';
 
 @Module({
     imports: [
         ScheduleModule.forRoot(), // Enables scheduling
-        TypeOrmModule.forFeature([Invoice, SyncLogEntity, UserEntity]), // Registers Invoice repository
+        TypeOrmModule.forFeature([Invoice, SyncLogEntity, UserEntity,SyncControlSettings]), // Registers Invoice repository
         JwtModule.register({
             secret: process.env.JWT_SECRET,  // Use JWT secret from .env file
-            signOptions: { expiresIn: '1d' },  // Set token expiration
+            signOptions: {  },  // Set token expiration
         }),
     ],
 

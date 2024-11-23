@@ -36,21 +36,5 @@ export class InvoiceController {
         return await this.invoiceRetryService.postPendingInvoices(userId);
     }
 
-    @Patch('enable-disable')
-    async toggleInvoiceFeature(
-        @Req() req: Request,
-        @Body() body: { enabled: boolean },
-    ): Promise<{ status: string; message: string }> {
-        const userId = req['user'].userId;
 
-        await this.invoiceRepository.update(
-            { userId },
-            { enabled: body.enabled },
-        );
-
-        return {
-            status: 'success',
-            message: `Invoice posting feature has been ${body.enabled ? 'enabled' : 'disabled'}.`,
-        };
-    }
 }

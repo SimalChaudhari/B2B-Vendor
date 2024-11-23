@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { parseStringPromise } from 'xml2js';
@@ -7,6 +7,8 @@ import { BillEntity } from './bill.entity';
 import { LedgerDto } from './ledger.dto';
 import axios from 'axios';
 import { ledger } from 'tally/ledger';
+import { SyncControlSettings } from 'settings/setting.entity';
+import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class LedgerService {
@@ -17,24 +19,36 @@ export class LedgerService {
         private readonly ledgerRepository: Repository<LedgerEntity>,
         @InjectRepository(BillEntity)
         private readonly billRepository: Repository<BillEntity>,
+
+        @InjectRepository(SyncControlSettings)
+        private readonly syncControlSettingsRepository: Repository<SyncControlSettings>,
     ) { }
 
     async fetchAndStoreLedgers(): Promise<void> {
+        // Check if "Auto Sync" is enabled 
+        const SyncSetting = await this.syncControlSettingsRepository.findOne({
+            where: { moduleName: 'Outstanding Receivables' },
+        });
+
+        if (!SyncSetting || !SyncSetting.isManualSyncEnabled) {
+            throw new BadRequestException('Auto Sync for Outstanding Receivables is disabled.');
+        }
+
         try {
             const response = await axios.get(process.env.TALLY_URL as string, {
                 headers: { 'Content-Type': 'text/xml' },
                 data: ledger,
             });
-    
+
             const parsedData = await parseStringPromise(response.data, { explicitArray: true });
             console.log('Parsed Data:', JSON.stringify(parsedData, null, 2));
-    
+
             const customers = Array.isArray(parsedData?.CUSTOMER)
                 ? parsedData.CUSTOMER
                 : parsedData?.CUSTOMER
-                ? [parsedData.CUSTOMER]
-                : [];
-    
+                    ? [parsedData.CUSTOMER]
+                    : [];
+
             console.log('Customers:', customers);
             await this.processAndStoreCustomers(customers);
         } catch (error: any) {
@@ -47,7 +61,8 @@ export class LedgerService {
             throw new InternalServerErrorException('Failed to process ledger data.');
         }
     }
-    
+
+
 
     private async processAndStoreCustomers(customers: any[]): Promise<void> {
         const existingLedgers = await this.ledgerRepository.find({ relations: ['bills'] });
@@ -128,8 +143,8 @@ export class LedgerService {
         return this.ledgerRepository.find({ relations: ['bills'] });
     }
 
-      // Fetch ledger by ID
-      async findById(id: string): Promise<LedgerEntity | null> {
+    // Fetch ledger by ID
+    async findById(id: string): Promise<LedgerEntity | null> {
         return this.ledgerRepository.findOne({ where: { id }, relations: ['bills'] });
     }
 
@@ -148,6 +163,49 @@ export class LedgerService {
         // Remove ledger
         await this.ledgerRepository.remove(ledger);
         return true;
+    }
+
+
+    // cron job set
+    @Cron('*/60 * * * * *')
+    async CronFetchAndStoreLedgers(): Promise<void> {
+        console.log('Outstanding executed at:', new Date().toISOString());
+
+        // Check if "Auto Sync" is enabled 
+        const SyncSetting = await this.syncControlSettingsRepository.findOne({
+            where: { moduleName: 'Outstanding Receivables' },
+        });
+
+        if (!SyncSetting || !SyncSetting.isAutoSyncEnabled) {
+            throw new BadRequestException('Auto Sync for Outstanding Receivables is disabled.');
+        }
+
+        try {
+            const response = await axios.get(process.env.TALLY_URL as string, {
+                headers: { 'Content-Type': 'text/xml' },
+                data: ledger,
+            });
+
+            const parsedData = await parseStringPromise(response.data, { explicitArray: true });
+            console.log('Parsed Data:', JSON.stringify(parsedData, null, 2));
+
+            const customers = Array.isArray(parsedData?.CUSTOMER)
+                ? parsedData.CUSTOMER
+                : parsedData?.CUSTOMER
+                    ? [parsedData.CUSTOMER]
+                    : [];
+
+            console.log('Customers:', customers);
+            await this.processAndStoreCustomers(customers);
+        } catch (error: any) {
+            this.logger.error('Error fetching or processing ledgers', error.stack);
+            if (error.code === 'ECONNABORTED') {
+                throw new InternalServerErrorException(
+                    'Tally request timed out. Please ensure Tally is open and accessible.',
+                );
+            }
+            throw new InternalServerErrorException('Failed to process ledger data.');
+        }
     }
 
 }

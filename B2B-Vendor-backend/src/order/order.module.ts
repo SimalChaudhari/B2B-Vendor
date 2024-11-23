@@ -13,13 +13,14 @@ import { SyncLogEntity } from 'sync-log/sync-log.entity';
 import { UserEntity } from 'user/users.entity';
 import { AddressEntity } from 'addresses/addresses.entity';
 import { EmailService } from 'service/email.service';
+import { SyncControlSettings } from 'settings/setting.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([OrderEntity,ItemEntity,UserEntity,AddressEntity,OrderItemEntity,CartItemEntity,Invoice, SyncLogEntity]),
+    TypeOrmModule.forFeature([OrderEntity,ItemEntity,UserEntity,AddressEntity,OrderItemEntity,CartItemEntity,Invoice, SyncLogEntity,SyncControlSettings]),
     JwtModule.register({
       secret: process.env.JWT_SECRET,  // Use JWT secret from .env file
-      signOptions: { expiresIn: '1d' },  // Set token expiration
+      signOptions: {},  // Set token expiration
     }),
   ],
   controllers: [OrderController],

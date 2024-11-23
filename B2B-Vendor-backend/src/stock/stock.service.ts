@@ -1,5 +1,5 @@
 // stock.service.ts
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import axios from 'axios';
@@ -10,6 +10,7 @@ import { summary } from 'tally/summary';
 import { Cron } from '@nestjs/schedule';
 import { SyncLogEntity, SyncLogStatus } from 'sync-log/sync-log.entity';
 import { SyncLogService } from 'sync-log/sync-log.service';
+import { SyncControlSettings } from 'settings/setting.entity';
 
 @Injectable()
 export class StockService {
@@ -20,6 +21,9 @@ export class StockService {
     @InjectRepository(SyncLogEntity)
     private readonly syncLogRepository: Repository<SyncLogEntity>,
     private readonly syncLogService: SyncLogService,
+
+    @InjectRepository(SyncControlSettings)
+    private readonly syncControlSettingsRepository: Repository<SyncControlSettings>,
   ) { }
 
   async findAll(): Promise<StockEntity[]> {
@@ -29,6 +33,15 @@ export class StockService {
 
   async fetchAndStoreStockSummary(): Promise<void> {
     const REQUEST_TIMEOUT = 15000; // 15 seconds timeout
+
+    // Check if "Auto Sync" is enabled 
+    const SyncSetting = await this.syncControlSettingsRepository.findOne({
+      where: { moduleName: 'Stocks' },
+    });
+
+    if (!SyncSetting || !SyncSetting.isManualSyncEnabled) {
+      throw new BadRequestException('Auto Sync for Stocks is disabled.');
+    }
 
     try {
       const response = await axios.get(process.env.TALLY_URL as string, {
@@ -116,6 +129,15 @@ export class StockService {
     const REQUEST_TIMEOUT = 15000; // 15 seconds timeout
     let successCount = 0;
     let failedCount = 0;
+
+    // Check if "Auto Sync" is enabled 
+    const SyncSetting = await this.syncControlSettingsRepository.findOne({
+      where: { moduleName: 'Stocks' },
+    });
+
+    if (!SyncSetting || !SyncSetting.isAutoSyncEnabled) {
+      throw new BadRequestException('Auto Sync for Stocks is disabled.');
+    }
     try {
       const response = await axios.get(process.env.TALLY_URL as string, {
         headers: {

@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import axios from 'axios';
@@ -11,6 +11,7 @@ import { SyncLogService } from 'sync-log/sync-log.service';
 import { UserEntity, UserRole } from 'user/users.entity';
 import { AddressesService } from 'addresses/addresses.service';
 import { CreateAddressDto } from 'addresses/addresses.dto';
+import { SyncControlSettings } from 'settings/setting.entity';
 
 
 @Injectable()
@@ -24,10 +25,24 @@ export class VendorService {
         private readonly syncLogRepository: Repository<SyncLogEntity>,
         private readonly syncLogService: SyncLogService,
 
+        @InjectRepository(SyncControlSettings)
+        private readonly syncControlSettingsRepository: Repository<SyncControlSettings>,
+
+
     ) { }
 
     async fetchAndStoreVendors(): Promise<void> {
         const REQUEST_TIMEOUT = 20000; // 20 seconds timeout
+
+
+        // Check if "Manual Sync" is enabled for products
+        const SyncSetting = await this.syncControlSettingsRepository.findOne({
+            where: { moduleName: 'Vendors' },
+        });
+
+        if (!SyncSetting || !SyncSetting.isManualSyncEnabled) {
+            throw new BadRequestException('Manual Sync for Vendor is disabled.');
+        }
         try {
             const response = await axios.get(process.env.TALLY_URL as string, {
                 headers: {
@@ -50,7 +65,7 @@ export class VendorService {
                     // If the item exists, compare and update if necessary
                     if (this.hasChanges(existingVendor, vendor)) {
                         await this.vendorRepository.save({ ...existingVendor, ...vendor });
-                    } 
+                    }
                     // Handle address separately
                     await this.storeVendorAddress(existingVendor, vendor);
                 } else {
@@ -181,79 +196,88 @@ export class VendorService {
 
 
     // Cron Job Set
-        @Cron('*/60 * * * * *') // Runs every 60 seconds
-        async CronFetchAndStoreVendors(): Promise<void> {
-            console.log('Vendor executed at:', new Date().toISOString());
-            const REQUEST_TIMEOUT = 20000; // 20 seconds timeout
+    @Cron('*/60 * * * * *') // Runs every 60 seconds
+    async CronFetchAndStoreVendors(): Promise<void> {
+        console.log('Vendor executed at:', new Date().toISOString());
+        const REQUEST_TIMEOUT = 20000; // 20 seconds timeout
 
-            let successCount = 0;
-            let failedCount = 0;
+        let successCount = 0;
+        let failedCount = 0;
 
-            try {
-                const response = await axios.get(process.env.TALLY_URL as string, {
-                    headers: {
-                        'Content-Type': 'text/xml',
-                    },
-                    data: Vendors, // Replace with your dynamic XML request
-                    timeout: REQUEST_TIMEOUT, // Set a timeout for the request
-                });
+        // Check if "Auto Sync" is enabled 
+        const SyncSetting = await this.syncControlSettingsRepository.findOne({
+            where: { moduleName: 'Vendors' },
+        });
 
-                const vendors = await this.parseXmlToVendors(response.data);
-                const existingVendors = await this.vendorRepository.find();
+        if (!SyncSetting || !SyncSetting.isAutoSyncEnabled) {
+            throw new BadRequestException('Auto Sync for Vendor is disabled.');
+        }
 
-                // Create a map of existing vendors for quick lookup
-                const existingVendorMap = new Map(existingVendors.map(vendor => [vendor.name, vendor]));
+        try {
+            const response = await axios.get(process.env.TALLY_URL as string, {
+                headers: {
+                    'Content-Type': 'text/xml',
+                },
+                data: Vendors, // Replace with your dynamic XML request
+                timeout: REQUEST_TIMEOUT, // Set a timeout for the request
+            });
 
-                for (const vendor of vendors) {
-                    const existingVendor = existingVendorMap.get(vendor.name);
-                    try {
-                        if (existingVendor) {
-                            // If the item exists, compare and update if necessary
-                            if (this.hasChanges(existingVendor, vendor)) {
-                                await this.vendorRepository.save({ ...existingVendor, ...vendor });
-                                successCount++;
-                            }
-                            // Handle address separately
-                            await this.storeVendorAddress(existingVendor, vendor);
-                        } else {
-                            const savedVendor = await this.vendorRepository.save(vendor);
-                            await this.storeVendorAddress(savedVendor, vendor);
-    
+            const vendors = await this.parseXmlToVendors(response.data);
+            const existingVendors = await this.vendorRepository.find();
+
+            // Create a map of existing vendors for quick lookup
+            const existingVendorMap = new Map(existingVendors.map(vendor => [vendor.name, vendor]));
+
+            for (const vendor of vendors) {
+                const existingVendor = existingVendorMap.get(vendor.name);
+                try {
+                    if (existingVendor) {
+                        // If the item exists, compare and update if necessary
+                        if (this.hasChanges(existingVendor, vendor)) {
+                            await this.vendorRepository.save({ ...existingVendor, ...vendor });
                             successCount++;
                         }
-                    } catch (itemError) {
-                        failedCount++;
-                    }
-                }
-                await this.syncLogRepository.save({
-                    sync_type: 'vendors',
-                    success_count: successCount,
-                    failed_count: failedCount,
-                    total_count: vendors.length,
-                    status: SyncLogStatus.SUCCESS, // Enum value
-                  });
-            } catch (error: any) {
-                failedCount++;
-                await this.syncLogRepository.save({
-                    sync_type: 'vendors',
-                    success_count: successCount,
-                    failed_count: failedCount,
-                    total_count: 0,
-                    status: SyncLogStatus.FAIL, // Enum value
-                });
-                // Handle timeout specifically for login error message
-                if (error.code === 'ECONNABORTED') {
-                    throw new InternalServerErrorException(
-                        'Please log in to Tally and try again.'
-                    );
-                }
+                        // Handle address separately
+                        await this.storeVendorAddress(existingVendor, vendor);
+                    } else {
+                        const savedVendor = await this.vendorRepository.save(vendor);
+                        await this.storeVendorAddress(savedVendor, vendor);
 
-                // Handle general error if Tally is not accessible
+                        successCount++;
+                    }
+                } catch (itemError) {
+                    failedCount++;
+                }
+            }
+            await this.syncLogRepository.save({
+                sync_type: 'vendors',
+                success_count: successCount,
+                failed_count: failedCount,
+                total_count: vendors.length,
+                status: SyncLogStatus.SUCCESS, // Enum value
+            });
+        } catch (error: any) {
+            failedCount++;
+            await this.syncLogRepository.save({
+                sync_type: 'vendors',
+                success_count: successCount,
+                failed_count: failedCount,
+                total_count: 0,
+                status: SyncLogStatus.FAIL, // Enum value
+            });
+            // Handle timeout specifically for login error message
+            if (error.code === 'ECONNABORTED') {
                 throw new InternalServerErrorException(
-                    'Please ensure Tally is open and accessible, then try again.'
+                    'Please log in to Tally and try again.'
                 );
             }
+
+            // Handle general error if Tally is not accessible
+            throw new InternalServerErrorException(
+                'Please ensure Tally is open and accessible, then try again.'
+            );
         }
+    }
 
     // @Cron('*/60 * * * * *')
     // async cronFetchAndStoreVendors(): Promise<void> {
