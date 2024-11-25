@@ -20,12 +20,15 @@ import { VendorModule } from './vendors/vendor.module';
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      url: process.env.DATABASE_URL,
-      autoLoadEntities: true, // Automatically load entities
-      synchronize: true, // Be careful using this in production
-      ssl: false, // Use SSL for production
+      host: process.env.DATABASE_HOST,
+      port: 5432,
+      username: process.env.DATABASE_USER,
+      password: process.env.DATABASE_PASSWORD,
+      database: process.env.DATABASE_NAME,
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      synchronize: true, // Set to false in production
+        
     }),
-  
   UserModule,
   AuthModule,
   AddressesModule,
