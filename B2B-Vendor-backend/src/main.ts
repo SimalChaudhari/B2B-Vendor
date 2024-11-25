@@ -6,11 +6,12 @@ const server = express();
 
 async function bootstrap() {
   try {
-    
     const app = await NestFactory.create(AppModule);
+
     // Get environment variables with fallback defaults
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3030';
     const port = process.env.PORT || 3000;
+
     // Enable CORS
     app.enableCors({
       origin: frontendUrl,
@@ -18,14 +19,15 @@ async function bootstrap() {
       credentials: true,
     });
 
+    console.log('CORS enabled for:', frontendUrl);
+
+    // Start the server
     await app.listen(port);
-    console.log(`Server is running on: http://localhost:${port}`); // Log the port
-
-  } catch (error) {
-    console.error('Error starting the server:', error);
-    process.exit(1); // Exit the process with failure
+    console.log(`Server is running on: http://localhost:${port}`);
+  } catch (error:any) {
+    console.error('Error starting the server:', error.message);
+    process.exit(1); // Exit process on failure
   }
-
 }
 
 bootstrap();

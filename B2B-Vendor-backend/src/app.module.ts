@@ -1,4 +1,3 @@
-// src/app.module.ts
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AddressesModule } from './addresses/addresses.module';
@@ -16,29 +15,30 @@ import { UserModule } from './user/users.module';
 import { VendorModule } from './vendors/vendor.module';
 
 @Module({
-
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
       url: process.env.DATABASE_URL,
       autoLoadEntities: true, // Automatically load entities
-      synchronize: true, // Be careful using this in production
-
+      synchronize: true, // Be cautious in production
+      logging: true, // Enable query logging for debugging
+      extra: {
+        ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : undefined,
+      },
     }),
-  
-  UserModule,
-  AuthModule,
-  AddressesModule,
-  ItemModule,
-  SettingModule,
-  VendorModule,
-  CartModule,
-  OrderModule,
-  DashboardModule,
-  InvoiceModule,
-  SyncLogModule,
-  StockModule,
-  LedgerModule
+    UserModule,
+    AuthModule,
+    AddressesModule,
+    ItemModule,
+    SettingModule,
+    VendorModule,
+    CartModule,
+    OrderModule,
+    DashboardModule,
+    InvoiceModule,
+    SyncLogModule,
+    StockModule,
+    LedgerModule,
   ],
 })
-export class AppModule { }
+export class AppModule {}
