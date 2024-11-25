@@ -1,5 +1,5 @@
 // cart.entity.ts
-import { ItemEntity } from 'fetch-products/item.entity';
+import { ItemEntity } from './../fetch-products/item.entity';
 import { Entity, PrimaryGeneratedColumn, ManyToOne, Column } from 'typeorm';
 
 @Entity('CartItems')

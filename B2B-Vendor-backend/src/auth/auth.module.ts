@@ -8,7 +8,7 @@ import * as dotenv from 'dotenv';
 import { UserEntity } from './../user/users.entity';
 
 import { EmailService } from 'service/email.service';
-import { AddressEntity } from 'addresses/addresses.entity';
+import { AddressEntity } from './../addresses/addresses.entity';
 import { AddressesService } from 'addresses/addresses.service';
 import { AddressesModule } from 'addresses/addresses.module';
 dotenv.config(); // Load environment variables

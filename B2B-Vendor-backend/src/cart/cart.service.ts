@@ -9,7 +9,7 @@ import {
   import { Repository } from 'typeorm';
   import { CartItemEntity } from './cart.entity';
   import { AddToCartDto, AddToCartItemDto } from './cart.dto';
-  import { ItemEntity } from 'fetch-products/item.entity';
+  import { ItemEntity } from './../fetch-products/item.entity';
   
   @Injectable()
   export class CartService {

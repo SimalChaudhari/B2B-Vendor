@@ -1,5 +1,5 @@
 // Item.entity.ts
-import { OrderItemEntity } from 'order/order.item.entity';
+import { OrderItemEntity } from './../order/order.item.entity';
 import { Entity, Column, PrimaryGeneratedColumn,OneToMany } from 'typeorm';
 
 @Entity('Items')

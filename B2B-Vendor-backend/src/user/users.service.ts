@@ -3,7 +3,7 @@ import { ConflictException, Injectable, NotFoundException } from '@nestjs/common
 import {  UserEntity, UserRole, UserStatus } from './users.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { AddressEntity } from 'addresses/addresses.entity';
+import { AddressEntity } from './../addresses/addresses.entity';
 
 
 @Injectable()

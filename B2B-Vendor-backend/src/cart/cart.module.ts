@@ -5,7 +5,7 @@ import { CartItemEntity } from './cart.entity';
 
 import { CartService } from './cart.service';
 import { CartController } from './cart.controller';
-import { ItemEntity } from 'fetch-products/item.entity';
+import { ItemEntity } from './../fetch-products/item.entity';
 import { JwtModule } from '@nestjs/jwt';
 
 @Module({

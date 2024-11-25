@@ -3,16 +3,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { OrderEntity, OrderStatus } from './order.entity';
 
 import { CreateItemOrderDto, CreateOrderDto } from './order.dto';
-import { ItemEntity } from 'fetch-products/item.entity';
+import { ItemEntity } from './../fetch-products/item.entity';
 import { OrderItemEntity } from './order.item.entity';
-import { CartItemEntity } from 'cart/cart.entity';
+import { CartItemEntity } from './../cart/cart.entity';
 import { DataSource, Like, Repository } from 'typeorm';
 import { generateInvoiceXML } from 'tally/invoice-xml-generator';
 import axios from 'axios';
-import { Invoice, InvoiceStatus } from 'invoice/invoice.entity';
+import { Invoice, InvoiceStatus } from './../invoice/invoice.entity';
 import { EmailService } from 'service/email.service';
 import { UserEntity } from './../user/users.entity';
-import { AddressEntity } from 'addresses/addresses.entity';
+import { AddressEntity } from './../addresses/addresses.entity';
 
 
 @Injectable()

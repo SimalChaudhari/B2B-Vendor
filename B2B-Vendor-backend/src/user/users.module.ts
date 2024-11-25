@@ -5,7 +5,7 @@ import { UserService } from './users.service';
 import { UserController } from './users.controller';
 import { UserEntity } from './users.entity';
 import { JwtModule } from '@nestjs/jwt';
-import { AddressEntity } from 'addresses/addresses.entity';
+import { AddressEntity } from './../addresses/addresses.entity';
 
 
 @Module({

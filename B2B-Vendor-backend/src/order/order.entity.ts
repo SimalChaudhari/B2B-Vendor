@@ -2,7 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'ty
 import { OrderItemEntity } from './order.item.entity';
 import { DeliveryType } from './order.dto'; // Import enums from DTO
 import { UserEntity } from './../user/users.entity';
-import { AddressEntity } from 'addresses/addresses.entity';
+import { AddressEntity } from './../addresses/addresses.entity';
 
 export enum OrderStatus {
     PENDING = 'pending',

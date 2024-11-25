@@ -1,4 +1,4 @@
-import { ItemEntity } from 'fetch-products/item.entity';
+import { ItemEntity } from './../fetch-products/item.entity';
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { OrderEntity } from './order.entity';
 

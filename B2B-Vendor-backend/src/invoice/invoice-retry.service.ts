@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Invoice, InvoiceStatus } from './invoice.entity';
 import axios from 'axios';
-import { SyncControlSettings } from 'settings/setting.entity';
+import { SyncControlSettings } from './../settings/setting.entity';
 import { Cron } from '@nestjs/schedule';
 
 @Injectable()

@@ -7,7 +7,7 @@ import { BillEntity } from './bill.entity';
 import { LedgerDto } from './ledger.dto';
 import axios from 'axios';
 import { ledger } from 'tally/ledger';
-import { SyncControlSettings } from 'settings/setting.entity';
+import { SyncControlSettings } from './../settings/setting.entity';
 import { Cron } from '@nestjs/schedule';
 
 @Injectable()
