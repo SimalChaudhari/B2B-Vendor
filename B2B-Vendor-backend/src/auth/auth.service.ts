@@ -6,8 +6,8 @@ import * as bcrypt from 'bcrypt';
 import { AuthDto } from './auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import { CreateAddressDto } from 'addresses/addresses.dto';
-import { UserEntity } from 'user/users.entity';
-import { UserRole, UserStatus } from 'user/users.entity';
+import { UserEntity } from './../user/users.entity';
+import { UserRole, UserStatus } from './../user/users.entity';
 import { EmailService } from 'service/email.service';
 import { AddressesService } from 'addresses/addresses.service';
 

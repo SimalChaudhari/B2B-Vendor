@@ -1,5 +1,5 @@
 import * as crypto from 'crypto';
-import { UserRole } from 'user/users.entity';
+import { UserRole } from './../user/users.entity';
 
 // Utility function to validate if the input is an email or not
 export const validateEmail = (input: string): boolean => {

@@ -8,7 +8,7 @@ import { VendorDto } from './../user/users.dto';
 import { Cron } from '@nestjs/schedule';
 import { SyncLogEntity, SyncLogStatus } from 'sync-log/sync-log.entity';
 import { SyncLogService } from 'sync-log/sync-log.service';
-import { UserEntity, UserRole } from 'user/users.entity';
+import { UserEntity, UserRole } from './../user/users.entity';
 import { AddressesService } from 'addresses/addresses.service';
 import { CreateAddressDto } from 'addresses/addresses.dto';
 import { SyncControlSettings } from 'settings/setting.entity';

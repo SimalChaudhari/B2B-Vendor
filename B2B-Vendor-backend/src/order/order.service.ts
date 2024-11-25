@@ -11,7 +11,7 @@ import { generateInvoiceXML } from 'tally/invoice-xml-generator';
 import axios from 'axios';
 import { Invoice, InvoiceStatus } from 'invoice/invoice.entity';
 import { EmailService } from 'service/email.service';
-import { UserEntity } from 'user/users.entity';
+import { UserEntity } from './../user/users.entity';
 import { AddressEntity } from 'addresses/addresses.entity';
 
 

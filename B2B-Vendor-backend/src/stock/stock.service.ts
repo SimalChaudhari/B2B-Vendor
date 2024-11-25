@@ -34,13 +34,13 @@ export class StockService {
   async fetchAndStoreStockSummary(): Promise<void> {
     const REQUEST_TIMEOUT = 15000; // 15 seconds timeout
 
-    // Check if "Auto Sync" is enabled 
+    // Check if "ManualSync " is enabled 
     const SyncSetting = await this.syncControlSettingsRepository.findOne({
       where: { moduleName: 'Stocks' },
     });
 
     if (!SyncSetting || !SyncSetting.isManualSyncEnabled) {
-      throw new BadRequestException('Auto Sync for Stocks is disabled.');
+      throw new BadRequestException('Manual Sync for Stocks is disabled.');
     }
 
     try {
@@ -51,6 +51,11 @@ export class StockService {
         data: summary, // Replace with your dynamic XML request
         timeout: REQUEST_TIMEOUT, // Set a timeout for the request
       });
+
+      // Check for specific XML error patterns in the response
+      if (response.data.includes('<LINEERROR>')) {
+        throw new BadRequestException(`Tally Error: Could not find Company,Make Sure Tally is Open and logged In`);
+      }
 
       const stockSummaries = await this.parseXmlToStockSummaries(response.data);
       const existingStocks = await this.stockRepository.find();
@@ -71,11 +76,9 @@ export class StockService {
         }
       }
     } catch (error: any) {
-      // Handle request timeout error specifically
-      if (error.code === 'ECONNABORTED') {
-        throw new InternalServerErrorException(
-          'Please log in to Tally and try again.'
-        );
+      // If the error is already a BadRequestException, rethrow it
+      if (error instanceof BadRequestException) {
+        throw error;
       }
       // General error handling
       throw new InternalServerErrorException('Open Tally to fetch stock');
@@ -147,6 +150,11 @@ export class StockService {
         timeout: REQUEST_TIMEOUT, // Set a timeout for the request
       });
 
+         // Check for specific XML error patterns in the response
+         if (response.data.includes('<LINEERROR>')) {
+          throw new BadRequestException(`Tally Error: Could not find Company,Make Sure Tally is Open and logged In`);
+        }
+  
       const stockSummaries = await this.parseXmlToStockSummaries(response.data);
       const existingStocks = await this.stockRepository.find();
 
@@ -186,11 +194,9 @@ export class StockService {
         total_count: 0,
         status: SyncLogStatus.FAIL, // Enum value
       });
-      // Handle request timeout error specifically
-      if (error.code === 'ECONNABORTED') {
-        throw new InternalServerErrorException(
-          'Please log in to Tally and try again.'
-        );
+      // If the error is already a BadRequestException, rethrow it
+      if (error instanceof BadRequestException) {
+        throw error;
       }
       // General error handling
       throw new InternalServerErrorException('Open Tally to fetch stock');
