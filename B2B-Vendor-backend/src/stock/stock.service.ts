@@ -6,10 +6,10 @@ import axios from 'axios';
 import { parseStringPromise } from 'xml2js';
 import { StockEntity } from './stock.entity';
 import { StockDto } from './stock.dto';
-import { summary } from 'tally/summary';
+import { summary } from '../tally/summary';
 import { Cron } from '@nestjs/schedule';
 import { SyncLogEntity, SyncLogStatus } from './../sync-log/sync-log.entity';
-import { SyncLogService } from 'sync-log/sync-log.service';
+import { SyncLogService } from './../sync-log/sync-log.service';
 import { SyncControlSettings } from './../settings/setting.entity';
 
 @Injectable()

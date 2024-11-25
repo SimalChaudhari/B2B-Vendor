@@ -1,9 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeepPartial, ObjectLiteral, Repository } from 'typeorm';
-import { SyncLogEntity, SyncLogStatus } from './sync-log.entity';
+import { DeepPartial, Repository } from 'typeorm';
+import { SyncLogEntity } from './sync-log.entity';
 import { CreateSyncLogDto } from './create-sync-log.dto';
-import axios from 'axios';
 
 @Injectable()
 export class SyncLogService {

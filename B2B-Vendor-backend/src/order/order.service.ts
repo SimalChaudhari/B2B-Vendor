@@ -7,7 +7,7 @@ import { ItemEntity } from './../fetch-products/item.entity';
 import { OrderItemEntity } from './order.item.entity';
 import { CartItemEntity } from './../cart/cart.entity';
 import { DataSource, Like, Repository } from 'typeorm';
-import { generateInvoiceXML } from 'tally/invoice-xml-generator';
+import { generateInvoiceXML } from '../tally/invoice-xml-generator';
 import axios from 'axios';
 import { Invoice, InvoiceStatus } from './../invoice/invoice.entity';
 import { EmailService } from './../service/email.service';
