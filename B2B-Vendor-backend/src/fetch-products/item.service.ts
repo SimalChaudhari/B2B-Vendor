@@ -6,7 +6,7 @@ import axios from 'axios';
 import { parseStringPromise } from 'xml2js'; // Library for parsing XML to JSON
 import { ItemEntity } from './item.entity';
 import { ItemDto } from './item.dto';
-import { FirebaseService } from 'service/firebase.service';
+import { FirebaseService } from './../service/firebase.service';
 import { products } from 'tally/products';
 import { Cron } from '@nestjs/schedule';
 import { SyncLogEntity, SyncLogStatus } from './../sync-log/sync-log.entity';

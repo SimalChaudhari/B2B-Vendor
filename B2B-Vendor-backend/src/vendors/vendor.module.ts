@@ -4,10 +4,10 @@ import { VendorService } from './vendor.service'; // Import the VendorService
 import { VendorEntity } from './vendor.entity'; // Import the VendorEntity
 import { VendorController } from './vendor.controller'; // Import the VendorController
 import { SyncLogEntity } from './../sync-log/sync-log.entity';
-import { SyncLogService } from 'sync-log/sync-log.service';
+import { SyncLogService } from './../sync-log/sync-log.service';
 import { UserEntity} from './../user/users.entity';
-import { AddressEntity } from 'addresses/addresses.entity';
-import { AddressesService } from 'addresses/addresses.service';
+import { AddressEntity } from './../addresses/addresses.entity';
+import { AddressesService } from './../addresses/addresses.service';
 import { SyncControlSettings } from './../settings/setting.entity';
 
 @Module({

@@ -5,8 +5,8 @@ import { DashboardController } from './dashboard.controller';
 
 import { OrderModule } from '../order/order.module';
 
-import { ItemModule } from 'fetch-products/item.module';
-import { UserModule } from 'user/users.module';
+import { ItemModule } from './../fetch-products/item.module';
+import { UserModule } from './../user/users.module';
 
 @Module({
   imports: [ItemModule, UserModule, OrderModule],

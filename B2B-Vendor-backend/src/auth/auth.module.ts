@@ -7,10 +7,10 @@ import { JwtModule } from '@nestjs/jwt';
 import * as dotenv from 'dotenv';
 import { UserEntity } from './../user/users.entity';
 
-import { EmailService } from 'service/email.service';
+import { EmailService } from './../service/email.service';
 import { AddressEntity } from './../addresses/addresses.entity';
-import { AddressesService } from 'addresses/addresses.service';
-import { AddressesModule } from 'addresses/addresses.module';
+import { AddressesService } from './../addresses/addresses.service';
+import { AddressesModule } from './../addresses/addresses.module';
 dotenv.config(); // Load environment variables
 @Module({
   imports: [TypeOrmModule.forFeature([UserEntity,AddressEntity,AddressesModule]),

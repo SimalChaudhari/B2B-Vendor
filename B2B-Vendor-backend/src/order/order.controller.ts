@@ -4,9 +4,9 @@ import { Request, Response } from 'express';
 import { CreateItemOrderDto, CreateOrderDto } from './order.dto';
 import { OrderEntity } from './order.entity';
 import { OrderItemEntity } from './order.item.entity';
-import { isAdmin } from 'utils/auth.utils';
-import { JwtAuthGuard } from 'jwt/jwt-auth.guard';
-import { RolesGuard } from 'jwt/roles.guard';
+import { isAdmin } from './../utils/auth.utils';
+import { JwtAuthGuard } from './../jwt/jwt-auth.guard';
+import { RolesGuard } from './../jwt/roles.guard';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('order')

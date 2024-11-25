@@ -7,7 +7,7 @@ import {  Banner, ContactUs, Faq, PrivacyPolicy, SyncControlSettings, TermsCondi
 import {  CreateBannerDto, CreateContactDto, CreateFaqDto, CreateLogoDto, CreatePrivacyPolicyDto, CreateTermsConditionsDto, UpdateBannerDto, UpdateFaqDto, UpdateLogoDto, UpdateSyncControlSettingsDto } from './setting.dto';
 // import { bucket } from '../firebase/firebase.config'; // Import the bucket configuration
 import * as admin from 'firebase-admin';
-import { FirebaseService } from 'service/firebase.service';
+import { FirebaseService } from './../service/firebase.service';
 
 @Injectable()
 export class FaqService {
