@@ -10,6 +10,7 @@
     /* width: 100%; */
     /* overflow-y: auto; */
     font-weight: 500;
+    transform: skew(30deg) translateX(0) !important;
 }
 
 .parent {
@@ -58,7 +59,7 @@ ul ul ul {
     margin-left: 1px;
 }
 
-li:hover {
+.parent:hover {
     background-color: #EC2932;
 }
 

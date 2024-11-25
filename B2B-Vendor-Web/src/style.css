@@ -464,6 +464,9 @@
     height: 200px;
     object-fit: contain !important;
 }
+/* li:hover{
+    background-color: transparent !important;
+} */
 
 /* Hover effect */
 .letestProductImage:hover {
@@ -652,3 +655,37 @@
     .nml__editor__content__listItem:hover{
         background-color: transparent !important;
     }
+
+
+      
+      /* Optional: Style the li element */
+      /* ul > div > li {
+        list-style: none !important;
+      } */
+
+
+        .css-oz3fsx  div {
+            display: flex;
+            justify-content: center !important;
+            align-items: center !important;
+            height: 100% !important;
+            transform: skew(-30deg) translateX(0); 
+        }
+        
+        .css-oz3fsx div  li  a {
+            
+    transform: skew(30deg) translateX(0) !important; 
+        }
+      
+
+        .css-oz3fsx div:hover {
+            background-color: rgb(255, 255, 255) !important;
+            transform: skew(-20deg) translateX(1); 
+            color: var(--primary-color) !important;
+        }
+        
+        .css-oz3fsx div:hover  li  a {
+            color: var(--primary-color) !important;
+        }
+      
+      
