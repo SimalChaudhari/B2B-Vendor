@@ -7,7 +7,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { ItemEntity } from './../fetch-products/item.entity';
 import { OrderItemEntity } from './order.item.entity';
 import { CartItemEntity } from './../cart/cart.entity';
-import { InvoiceRetryService } from 'invoice/invoice-retry.service';
+import { InvoiceRetryService } from './../invoice/invoice-retry.service';
 import { Invoice } from './../invoice/invoice.entity';
 import { SyncLogEntity } from './../sync-log/sync-log.entity';
 import { UserEntity } from './../user/users.entity';
