@@ -1,7 +1,7 @@
 // invoice-xml-generator.ts
 
-import { OrderEntity } from "order/order.entity";
-import { OrderItemEntity } from "order/order.item.entity";
+import { OrderEntity } from "./../order/order.entity";
+import { OrderItemEntity } from "./../order/order.item.entity";
 
 export function generateInvoiceXML(order: OrderEntity, orderItems: OrderItemEntity[]): string {
     const { user, address, totalPrice, orderNo, createdAt } = order;

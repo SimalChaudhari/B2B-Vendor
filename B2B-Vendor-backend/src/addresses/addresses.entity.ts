@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, OneToMany } from 'typeorm';
-import { OrderEntity } from 'order/order.entity';
+import { OrderEntity } from './../order/order.entity';
 import { UserEntity } from './../user/users.entity';
 
 @Entity('addresses')

@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 
-import { OrderEntity } from 'order/order.entity';
-import { AddressEntity } from 'addresses/addresses.entity';
+import { OrderEntity } from './../order/order.entity';
+import { AddressEntity } from './../addresses/addresses.entity';
 
 export enum UserStatus {
     Active = 'Active',
