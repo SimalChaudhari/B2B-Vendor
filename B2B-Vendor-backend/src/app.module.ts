@@ -15,7 +15,6 @@ import { UserModule } from './user/users.module';
 import { AddressesModule } from './addresses/addresses.module';
 import { VendorModule } from './vendors/vendor.module';
 
-
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -42,7 +41,6 @@ import { VendorModule } from './vendors/vendor.module';
     SyncLogModule,
     StockModule,
     LedgerModule
-    // FileModule
   ],
 })
 export class AppModule { }
