@@ -1,5 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { ExpressAdapter } from '@nestjs/platform-express';
+import express from 'express';
+
+const server = express();
 
 async function bootstrap() {
   try {
@@ -21,6 +25,9 @@ async function bootstrap() {
     console.error('Error starting the server:', error);
     process.exit(1); // Exit the process with failure
   }
+
 }
 
 bootstrap();
+
+export default server;
