@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal, ActivityIndicator, ScrollView } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { MaterialIcons } from '@expo/vector-icons';
-import { resetProductAndAddress } from '../../../redux/productAndAddressReducer';
+import { resetProductAndAddress, setQuantity } from '../../../redux/productAndAddressReducer';
 import { useNavigation } from '@react-navigation/native';
 
 const OrderConfirmScreen = () => {
@@ -20,9 +20,41 @@ const OrderConfirmScreen = () => {
         setTimeout(() => {
             setLoading(false);
             setModalVisible(false);
-            dispatch(resetProductAndAddress()); // Reset Redux state
-            navigation.navigate('Order'); // Navigate to the Confirmation screen
+
+            // Extract the required data
+            const extractedData = {
+                product: {
+                    ProductName: productDetails.itemName,
+                    group: productDetails.group,
+                    subGroup1: productDetails.subGroup1,
+                    subGroup2: productDetails.subGroup2,
+                    SellingPrice: productDetails.sellingPrice,
+                    Quantity: 1,
+                },
+                address: {
+                    StreetAddress: address.street_address,
+                    State: address.state,
+                    Country: address.country,
+                    ZipCode: address.zip_code,
+                    PhoneNumber: address.mobile,
+                },
+            };
+
+            // Convert to JSON string
+            const jsonData = JSON.stringify(extractedData, null, 2);
+
             console.log('Order confirmed!');
+            console.log('====================================');
+            console.log('JSON Data to Send:', jsonData);
+            console.log('====================================');
+
+            // dispatch(resetProductAndAddress()); // Reset Redux state
+            // navigation.navigate('Order'); // Navigate to the Confirmation screen
+            console.log('Order confirmed!');
+            // console.log('====================================');
+            // console.log("productDetails :", productDetails);
+            // console.log("address :", address);
+            // console.log('====================================');
         }, 2000);
     };
 

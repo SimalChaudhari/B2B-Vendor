@@ -21,18 +21,20 @@ const LINKS = [
     headline: 'Minimal',
     children: [
       { name: 'About us', href: paths.about },
-      { name: 'Contact us', href: paths.contact },
       { name: 'FAQs', href: paths.faqs },
     ],
   },
   {
     headline: 'Legal',
     children: [
-      { name: 'Terms and condition', href:  paths.termsandcondition },
+      { name: 'Terms and condition', href: paths.termsandcondition },
       { name: 'Privacy policy', href: '#' },
     ],
   },
-  { headline: 'Contact', children: [{ name: 'info@alovate.io', href: '#' }] },
+  { headline: 'Contact', children: [
+    { name: 'info@alovate.io', href: '#' },
+    { name: 'Contact us', href: paths.contact },
+  ] },
 ];
 
 // ----------------------------------------------------------------------
@@ -46,13 +48,16 @@ export function Footer({ layoutQuery, sx }) {
 
       <Container
         sx={{
-          pb: 5,
-          pt: 10,
+          // pb: 5,
+          // pt: 10,
+          py:5,
           textAlign: 'center',
           [theme.breakpoints.up(layoutQuery)]: { textAlign: 'unset' },
         }}
       >
+        {/*
         <Logo />
+         */}
 
         <Grid
           container
@@ -71,8 +76,12 @@ export function Footer({ layoutQuery, sx }) {
                 [theme.breakpoints.up(layoutQuery)]: { mx: 'unset' },
               }}
             >
+            <Logo />
+              {/**
               The starting point for your next project with Alovate, built on the newest version of
               Material-UI ©, ready to be customized to your style.
+               */}
+              Techon Industrial Product private limited
             </Typography>
 
             <Stack
@@ -90,7 +99,7 @@ export function Footer({ layoutQuery, sx }) {
 
           <Grid {...{ xs: 12, [layoutQuery]: 6 }}>
             <Stack
-              spacing={5}
+              spacing={2}
               sx={{
                 flexDirection: 'column',
                 [theme.breakpoints.up(layoutQuery)]: { flexDirection: 'row' },

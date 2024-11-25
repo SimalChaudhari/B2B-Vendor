@@ -90,7 +90,7 @@ export function HomeLetestProduct() {
       <Grid container spacing={2}>
         {displayedProducts.map((product) => (
           <Grid item xs={6} sm={4} md={3} key={product.id}>
-            <div className="unique-card">
+            <Button className="unique-card" onClick={() => navigate(`/product/${product.id}`)}   >
               <div className="background-overlay" />
               <div className="card-content">
 
@@ -106,16 +106,18 @@ export function HomeLetestProduct() {
                     </div>
                   )}
                   <CardContent>
-                    <Typography variant="h6" className='productTitle'>
+                    <Typography variant="h6" className='productTitle' sx={{ textAlign: 'left', marginBottom: "5px" }}>
                       {product.itemName} {/* Display product name instead of group */}
                     </Typography>
-                    <Typography >
-                      {product.description} {/* Display product name instead of group */}
+                    <Typography sx={{ fontSize: '13px', textAlign: 'left' }}>
+                      {product.description.length > 50
+                        ? `${product.description.slice(0, 50)}...`
+                        : product.description} {/* Display product name instead of group */}
                     </Typography>
                   </CardContent>
                 </span>
               </div>
-            </div>
+            </Button>
           </Grid>
         ))}
       </Grid>

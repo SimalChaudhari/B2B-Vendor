@@ -15,13 +15,15 @@ import { Iconify } from 'src/components/iconify';
 import { ColorPreview } from 'src/components/color-utils';
 
 import { useCheckoutContext } from '../checkout/context';
-import { Rating } from '@mui/material';
+import { Button } from '@mui/material';
+import { useNavigate } from 'react-router';
 
 // ----------------------------------------------------------------------
 
 const dummyImage = 'https://png.pngtree.com/png-vector/20210303/ourmid/pngtree-mobile-phone-png-smartphone-camera-mockup-png-image_3009179.jpg'
 
 export function ProductItem({ product }) {
+  const navigate = useNavigate();
   const checkout = useCheckoutContext();
 
 
@@ -77,21 +79,15 @@ export function ProductItem({ product }) {
       <Box component="span">
         {group}
       </Box>
-      <Box component="span" sx={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight:'200', fontSize:'13px' }}>
+      <Box component="span" sx={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: '200', fontSize: '13px' }}>
         {limitedDescription}
       </Box>
-      {/* 5-Star Rating */}
-      <Rating name="size-small" defaultValue={2} size="small" />
+
 
       <Stack direction="row" alignItems="center" justifyContent="space-between">
         <Stack direction="row" spacing={0.5} sx={{ typography: 'subtitle1' }}>
 
 
-          {sellingPrice && (
-            <Box component="span" sx={{ color: 'text.disabled', textDecoration: 'line-through' }}>
-              {fCurrency(sellingPrice - 500)}
-            </Box>
-          )}
           <Box component="span">&nbsp; {fCurrency(sellingPrice)}</Box>
         </Stack>
       </Stack>
@@ -100,14 +96,18 @@ export function ProductItem({ product }) {
 
   return (
     <div className="card">
-      <Card sx={{ '&:hover .add-cart-btn': { opacity: 1 } }}>
-        {/* {renderLabels} */}
+      <Button
+        onClick={() => navigate(`/product/${product.id}`)}
+      >
+        <Card sx={{ '&:hover .add-cart-btn': { opacity: 1 } }}>
+          {/* {renderLabels} */}
 
 
-        {renderImg}
+          {renderImg}
 
-        {renderContent}
-      </Card>
+          {renderContent}
+        </Card>
+      </Button>
     </div>
   );
 }
