@@ -1,3 +1,4 @@
+// src/app.module.ts
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AddressesModule } from './addresses/addresses.module';
@@ -20,25 +21,22 @@ import { VendorModule } from './vendors/vendor.module';
       type: 'postgres',
       url: process.env.DATABASE_URL,
       autoLoadEntities: true, // Automatically load entities
-      synchronize: true, // Be cautious in production
-      logging: true, // Enable query logging for debugging
-      extra: {
-        ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : undefined,
-      },
+      synchronize: true, // Be careful using this in production
     }),
-    UserModule,
-    AuthModule,
-    AddressesModule,
-    ItemModule,
-    SettingModule,
-    VendorModule,
-    CartModule,
-    OrderModule,
-    DashboardModule,
-    InvoiceModule,
-    SyncLogModule,
-    StockModule,
-    LedgerModule,
+  
+  UserModule,
+  AuthModule,
+  AddressesModule,
+  ItemModule,
+  SettingModule,
+  VendorModule,
+  CartModule,
+  OrderModule,
+  DashboardModule,
+  InvoiceModule,
+  SyncLogModule,
+  StockModule,
+  LedgerModule
   ],
 })
-export class AppModule {}
+export class AppModule { }
