@@ -12,7 +12,7 @@ import { Invoice } from './../invoice/invoice.entity';
 import { SyncLogEntity } from './../sync-log/sync-log.entity';
 import { UserEntity } from './../user/users.entity';
 import { AddressEntity } from './../addresses/addresses.entity';
-import { EmailService } from 'service/email.service';
+import { EmailService } from './../service/email.service';
 import { SyncControlSettings } from './../settings/setting.entity';
 
 @Module({
