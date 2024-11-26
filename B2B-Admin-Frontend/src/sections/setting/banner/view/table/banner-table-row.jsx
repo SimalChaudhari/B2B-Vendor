@@ -45,17 +45,18 @@ export function BannerTableRow({ row, selected, onEditRow, onSelectRow, onDelete
 
                 <TableCell>
                     <Stack direction="row" alignItems="center">
-                        <Tooltip title="Quick Edit" placement="top" arrow>
+                        <Tooltip title="Quick Edit" arrow>
                             <Link component={RouterLink} to={`/settings/banner/edit/${row.id}`} sx={{ textDecoration: 'none' }}>
                                 <IconButton>
                                     <Iconify icon="solar:pen-bold" />
                                 </IconButton>
                             </Link>
-                        </Tooltip>
-
+                            </Tooltip>
+                        <Tooltip title="More Actions" arrow>
                         <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
                             <Iconify icon="eva:more-vertical-fill" />
                         </IconButton>
+                        </Tooltip>
                     </Stack>
                 </TableCell>
             </TableRow>

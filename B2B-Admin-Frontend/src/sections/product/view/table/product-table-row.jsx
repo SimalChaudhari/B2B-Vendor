@@ -70,7 +70,7 @@ export function ProductTableRow({ row, selected, onEditRow, onSelectRow, onDelet
 
                 <TableCell>
                     <Stack direction="row" alignItems="center">
-                        <Tooltip title="Quick Edit" placement="top" arrow>
+                        <Tooltip title="Quick Edit" arrow>
                             <Link
                                 component={RouterLink}
                                 to={`/products/edit/${row.id}`} // Ensure this route exists
@@ -91,10 +91,11 @@ export function ProductTableRow({ row, selected, onEditRow, onSelectRow, onDelet
                                 </IconButton>
                             </Link>
                         </Tooltip>
-
+                        <Tooltip title="More Actions">
                         <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
                             <Iconify icon="eva:more-vertical-fill" />
                         </IconButton>
+                        </Tooltip>
                     </Stack>
                 </TableCell>
             </TableRow >

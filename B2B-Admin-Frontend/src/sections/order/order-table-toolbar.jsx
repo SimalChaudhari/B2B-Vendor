@@ -15,6 +15,7 @@ import { usePopover, CustomPopover } from 'src/components/custom-popover';
 import { fIsBetween } from 'src/utils/format-time';
 import { generatePrintableContent } from './components/file-downlaod/pdf-generation';
 import { exportToExcel } from './components/file-downlaod/excel-generation';
+import { Tooltip } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -131,10 +132,11 @@ export function OrderTableToolbar({ filters, onResetPage, dateError, data }) {
               ),
             }}
           />
-
+          <Tooltip title="Print & Export">
           <IconButton onClick={popover.onOpen}>
             <Iconify icon="eva:more-vertical-fill" />
           </IconButton>
+          </Tooltip>
         </Stack>
       </Stack>
 

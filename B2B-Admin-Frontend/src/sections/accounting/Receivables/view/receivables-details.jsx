@@ -21,24 +21,13 @@ import { useFetchData } from '../components/fetch-receivable';
 import { useParams } from 'react-router';
 import { useSelector } from 'react-redux';
 // ----------------------------------------------------------------------
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-    [`& .${tableCellClasses.root}`]: {
-        textAlign: 'right',
-        borderBottom: 'none',
-        paddingTop: theme.spacing(1),
-        paddingBottom: theme.spacing(1),
-    },
-}));
-
-// ----------------------------------------------------------------------
 
 export function ReceivablesListDetails({ invoice }) {
 
     const { fetchByIdData } = useFetchData()
     const { id } = useParams(); // Get the vendor ID from URL
     const receivable = useSelector((state) => state.accounting?.getByReceivable || []);
-    console.log("🚀 ~ ReceivablesListDetails ~ receivable:", receivable)
-
+  
     useEffect(() => {
         fetchByIdData(id)
     }, [])
@@ -107,11 +96,11 @@ export function ReceivablesListDetails({ invoice }) {
 
         <DashboardContent maxWidth="2xl">
             <CustomBreadcrumbs
-                heading="List"
+                heading="View List"
                 links={[
                     { name: 'Dashboard', href: paths.dashboard.root },
-                    { name: 'Receivable', href: paths?.dashboard?.accounting?.root },
-                    { name: 'List' },
+                    { name: 'Receivable', href: paths?.accounts?.receivable},
+                    { name: 'View' },
                 ]}
                 sx={{ mb: { xs: 3, md: 5 } }}
             />

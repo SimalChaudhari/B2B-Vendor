@@ -81,6 +81,7 @@ export function VendorTableRow({ row, selected, onEditRow, onSelectRow, onDelete
                 <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.country || 'not available'}</TableCell>
                 <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.state || 'not available'}</TableCell>
                 <TableCell sx={{ whiteSpace: 'nowrap' }}>
+                <Tooltip title="Click here to Change Status">
                     <Label sx={{ cursor: "pointer" }}
                         variant="soft"
                         color={
@@ -97,6 +98,7 @@ export function VendorTableRow({ row, selected, onEditRow, onSelectRow, onDelete
                     >
                         {row.status}
                     </Label>
+                    </Tooltip>
                 </TableCell>
                 <TableCell>
                     <Stack direction="row" alignItems="center">
@@ -123,9 +125,12 @@ export function VendorTableRow({ row, selected, onEditRow, onSelectRow, onDelete
                             </Link>
                         </Tooltip>
 */}
-                        <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
-                            <Iconify icon="eva:more-vertical-fill" />
-                        </IconButton>
+                        <Tooltip title="More Actions">
+                            <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
+                                <Iconify icon="eva:more-vertical-fill" />
+                            </IconButton>
+                        </Tooltip>
+
                     </Stack>
                 </TableCell>
             </TableRow >

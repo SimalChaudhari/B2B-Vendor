@@ -25,11 +25,11 @@ export function ProductEditView() {
     return (
         <DashboardContent maxWidth='2xl'>
             <CustomBreadcrumbs
-                heading= {product?.itemName}
+                heading={`Edit# ${product?.itemName}`}
                 links={[
                     { name: 'Dashboard', href: paths.dashboard.root },
                     { name: 'Products', href: paths?.products.root },
-                    { name: "List"},
+                    { name: "Edit"},
                 ]}
                 sx={{ mb: { xs: 3, md: 5 } }}
             />

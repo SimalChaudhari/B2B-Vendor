@@ -56,7 +56,7 @@ export function OrderDetailsItems({
   return (
     <Card>
       <CardHeader
-        title="Details"
+        title="Order Info"
 
       />
 

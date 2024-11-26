@@ -250,17 +250,6 @@ export class LedgerService {
         }
     }
 
-    @Cron('0 0 * * 0') // Runs weekly at midnight on Sunday to delete logs older than two minutes.
-    async cleanupAllLogs(): Promise<void> {
-
-        try {
-            // Delete all logs without any condition
-            const result = await this.syncLogRepository.delete({});
-            console.log(`Complete log cleanup completed. Deleted ${result.affected} logs.`);
-        } catch (error) {
-            console.error('Complete log cleanup failed:', error);
-        }
-    }
 
 
 }

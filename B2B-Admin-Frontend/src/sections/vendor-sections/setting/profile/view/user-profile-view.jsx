@@ -32,8 +32,8 @@ export function UserProfileView() {
         <ProfileCover
           role={authUser.role}
           name={authUser?.name}
-          avatarUrl={authUser.profile}
-          coverUrl={_userAbout.coverUrl}
+          avatarUrl='/assets/profile/pic.jpg'
+          coverUrl='/assets/profile/ban2.jpg'
         />
       </Card>
 

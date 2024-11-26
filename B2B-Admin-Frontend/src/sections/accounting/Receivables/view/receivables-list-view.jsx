@@ -132,14 +132,6 @@ export function ReceivablesListView() {
 
     const handleViewRow = useCallback((id) => id, []);
 
-    const handleFilterStatus = useCallback(
-        (event, newValue) => {
-            table.onResetPage();
-            filters.setState({ status: newValue });
-        },
-        [filters, table]
-    );
-
     const handleSyncAPI = async () => {
         setLoading(true); // Set loading to true
         try {
@@ -159,10 +151,10 @@ export function ReceivablesListView() {
         <div>
             <DashboardContent maxWidth="2xl">
                 <CustomBreadcrumbs
-                    heading="List"
+                    heading="Table List"
                     links={[
                         { name: 'Dashboard', href: paths.dashboard.root },
-                        { name: 'Receivable', href: paths?.dashboard?.accounting?.root },
+                        { name: 'Receivable'},
                         { name: 'List' },
                     ]}
                     sx={{ mb: { xs: 3, md: 5 } }}

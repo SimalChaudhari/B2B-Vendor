@@ -13,14 +13,13 @@ export function ProfileCover({ name, avatarUrl, role, coverUrl }) {
 
   return (
     <Box
-      sx={{
-        ...bgGradient({
-          color: `0deg, ${varAlpha(theme.vars.palette.primary.darkerChannel, 0.8)}, ${varAlpha(theme.vars.palette.primary.darkerChannel, 0.8)}`,
-          imgUrl: coverUrl,
-        }),
-        height: 1,
-        color: 'common.white',
-      }}
+    sx={{
+      ...bgGradient({
+        color: `0deg, rgba(139, 0, 0, 0.8), rgba(139, 0, 0, 0.8)`, // Dark red gradient
+      }),
+      height: 1,
+      color: 'common.white',
+    }}
     >
       <Stack
         direction={{ xs: 'column', md: 'row' }}

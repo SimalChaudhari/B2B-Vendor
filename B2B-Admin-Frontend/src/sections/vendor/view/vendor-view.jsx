@@ -35,7 +35,7 @@ export function VendorView() {
     <DashboardContent maxWidth="2xl">
       {/* Breadcrumbs */}
       <CustomBreadcrumbs
-        heading="Vendor Details"
+        heading="View"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
           { name: 'Vendors', href: paths?.vendors?.root },

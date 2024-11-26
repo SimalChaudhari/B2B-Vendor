@@ -171,7 +171,7 @@ export function OrderListView() {
           heading="List"
           links={[
             { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'Order', href: paths?.dashboard?.order?.root },
+            { name: 'Order', href: paths?.orders.root },
             { name: 'List' },
           ]}
           sx={{ mb: { xs: 3, md: 5 } }}

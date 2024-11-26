@@ -118,17 +118,21 @@ export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteR
 
 
       <TableCell align="center" sx={{ px: 1, whiteSpace: 'nowrap' }}>
-        <IconButton
-          color={collapse.value ? 'inherit' : 'default'}
-          onClick={collapse.onToggle}
-          sx={{ ...(collapse.value && { bgcolor: 'action.hover' }) }}
-        >
-          <Iconify icon="eva:arrow-ios-downward-fill" />
-        </IconButton>
+        <Tooltip title="Product Information">
+          <IconButton
+            color={collapse.value ? 'inherit' : 'default'}
+            onClick={collapse.onToggle}
+            sx={{ ...(collapse.value && { bgcolor: 'action.hover' }) }}
+          >
+            <Iconify icon="eva:arrow-ios-downward-fill" />
+          </IconButton>
+        </Tooltip>
 
+        <Tooltip title="More Actions">
         <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
           <Iconify icon="eva:more-vertical-fill" />
         </IconButton>
+        </Tooltip>
       </TableCell>
     </TableRow>
   );

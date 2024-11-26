@@ -46,7 +46,7 @@ export function OrderDetailsView() {
   return (
     <DashboardContent maxWidth="2xl">
       <OrderDetailsToolbar
-        backLink={paths?.dashboard?.orders?.root}
+        backLink={paths?.orders.root}
         orderNumber={order?.orderNo}
         createdAt={order?.createdAt}
         status={order?.status}
