@@ -81,3 +81,23 @@ export const onUpdateStatus = (id, status) => async (dispatch) => {
     }
     return false; // Return false for any errors or unsuccessful attempts
 };
+
+export const deleteAllItem = (ids) => async (dispatch) => {
+    try {
+        // Pass ids as the data property in the axios delete request
+        const response = await axiosInstance.delete(`/vendors/delete/vendors/all`, {
+            data: { ids }
+        });
+
+        // Check if the response is successful
+        if (response && response.status >= 200 && response.status < 300) {
+            toast.success(response.data.message || 'vendors deleted successfully!');
+            return true; // Indicate successful deletion
+        }
+    } catch (error) {
+        // Handle errors appropriately
+        const errorMessage = error?.response?.data?.message || 'An unexpected error occurred. Please try again.';
+        toast.error(errorMessage);
+    }
+    return false; // Return false for any errors or unsuccessful attempts
+};

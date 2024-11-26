@@ -1,5 +1,5 @@
 // stock.service.ts
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import axios from 'axios';
@@ -30,6 +30,43 @@ export class StockService {
     return this.stockRepository.find(); // Load files for all items
   }
 
+  async deleteSelected(ids: string[]): Promise<void> {
+    try {
+      // Delete stocks by the given IDs
+      const deleteResult = await this.stockRepository.delete(ids);
+
+      if (deleteResult.affected === 0) {
+        throw new InternalServerErrorException('No stocks found to delete');
+      }
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to delete selected stocks');
+    }
+  }
+
+  async findById(id: string): Promise<StockEntity | null> {
+    return this.stockRepository.findOne({ where: { id } }); // Load files for the vendor by ID
+  }
+
+  async deleteMultiple(ids: string[]): Promise<{ message: string }> {
+    const notFoundIds: string[] = [];
+
+    for (const id of ids) {
+      const item = await this.findById(id);
+      if (!item) {
+        notFoundIds.push(id);
+        continue; // skip this ID if not found
+      }
+      await this.stockRepository.remove(item);
+    }
+
+    if (notFoundIds.length > 0) {
+      throw new NotFoundException(`stocks with ids ${notFoundIds.join(', ')} not found`);
+    }
+
+    return { message: 'Stocks deleted successfully' };
+  }
+
+
 
   async fetchAndStoreStockSummary(): Promise<void> {
     const REQUEST_TIMEOUT = 15000; // 15 seconds timeout
@@ -54,7 +91,7 @@ export class StockService {
 
       // Check for specific XML error patterns in the response
       if (response.data.includes('<LINEERROR>')) {
-        throw new BadRequestException(`Tally Error: Could not find Company,Make Sure Tally is Open and logged In`);
+        throw new BadRequestException('Please Login The Tally');
       }
 
       const stockSummaries = await this.parseXmlToStockSummaries(response.data);
@@ -80,8 +117,14 @@ export class StockService {
       if (error instanceof BadRequestException) {
         throw error;
       }
+
+      if (error.code === 'ECONNABORTED') {
+        throw new InternalServerErrorException(
+          'Tally request timed out. Please ensure Tally is open and accessible.',
+        );
+      }
       // General error handling
-      throw new InternalServerErrorException('Open Tally to fetch stock');
+      throw new InternalServerErrorException('Make Sure Tally is Open and logged In');
     }
   }
 
@@ -150,11 +193,11 @@ export class StockService {
         timeout: REQUEST_TIMEOUT, // Set a timeout for the request
       });
 
-         // Check for specific XML error patterns in the response
-         if (response.data.includes('<LINEERROR>')) {
-          throw new BadRequestException(`Tally Error: Could not find Company,Make Sure Tally is Open and logged In`);
-        }
-  
+
+      // Check for specific XML error patterns in the response
+      if (response.data.includes('<LINEERROR>')) {
+        throw new BadRequestException('Please Login The Tally');
+      }
       const stockSummaries = await this.parseXmlToStockSummaries(response.data);
       const existingStocks = await this.stockRepository.find();
 
@@ -198,8 +241,26 @@ export class StockService {
       if (error instanceof BadRequestException) {
         throw error;
       }
+
+      if (error.code === 'ECONNABORTED') {
+        throw new InternalServerErrorException(
+          'Tally request timed out. Please ensure Tally is open and accessible.',
+        );
+      }
       // General error handling
-      throw new InternalServerErrorException('Open Tally to fetch stock');
+      throw new InternalServerErrorException('Make Sure Tally is Open and logged In');
     }
+  }
+
+  @Cron('0 0 * * 0') // Runs weekly at midnight on Sunday to delete logs older than two minutes.
+  async cleanupAllLogs(): Promise<void> {
+
+      try {
+          // Delete all logs without any condition
+          const result = await this.syncLogRepository.delete({});
+          console.log(`Complete log cleanup completed. Deleted ${result.affected} logs.`);
+      } catch (error) {
+          console.error('Complete log cleanup failed:', error);
+      }
   }
 }

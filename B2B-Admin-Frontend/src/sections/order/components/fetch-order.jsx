@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux';
-import { deleteOrder, orderGetByList, orderList } from 'src/store/action/orderActions';
+import { deleteOrder, orderGetByList, orderList,deleteAllItem } from 'src/store/action/orderActions';
 
 
 export const useFetchOrderData = () => {
@@ -26,6 +26,17 @@ export const useFetchOrderData = () => {
     }
   };
 
-  return { fetchData, fetchByIdData, fetchDeleteData };
+  const deleteAllItems = async (id) => {
+    try {
+      const response = await dispatch(deleteAllItem(id));;
+      if (response) {
+        fetchData(); // Refetch data data only on successful deletion
+      }
+    } catch (error) {
+      console.error("Error deleting data:", error);
+    }
+  };
+
+  return { fetchData, fetchByIdData, fetchDeleteData,deleteAllItems };
 };
 

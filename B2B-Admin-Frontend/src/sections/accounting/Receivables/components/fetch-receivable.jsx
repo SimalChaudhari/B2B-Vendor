@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux';
-import { deleteReceivable, receivableGetByList, receivableList } from 'src/store/action/accountingActions';
+import { deleteAllItem, deleteReceivable, receivableGetByList, receivableList } from 'src/store/action/accountingActions';
 
 
 export const useFetchData = () => {
@@ -17,7 +17,17 @@ export const useFetchData = () => {
     await dispatch(deleteReceivable(id));
   };
 
+  const deleteAllItems = async (id) => {
+    try {
+      const response = await dispatch(deleteAllItem(id));;
+      if (response) {
+        fetchData(); // Refetch data data only on successful deletion
+      }
+    } catch (error) {
+      console.error("Error deleting data:", error);
+    }
+  };
 
-  return { fetchData, fetchByIdData ,fetchDeleteData};
+  return { fetchData, fetchByIdData ,fetchDeleteData,deleteAllItems};
 };
 

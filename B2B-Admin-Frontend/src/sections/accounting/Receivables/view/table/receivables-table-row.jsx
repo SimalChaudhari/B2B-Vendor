@@ -34,17 +34,28 @@ export function ReceivablesTableRow({ row, selected, onViewRow, onSelectRow, onD
       <TableCell>{row?.closingBalance}</TableCell>
       <TableCell>{row?.creditLimit}</TableCell>
       <TableCell sx={{ px: 1, whiteSpace: 'nowrap' }}>
-        <MenuList>
-          <MenuItem
-            component={RouterLink}
-            to={`/accounts/view/${row.id}`}
-            sx={{ color: 'green', display: 'flex', alignItems: 'center', gap: 1 }} // Adds spacing
-          >
-            <Iconify icon="solar:eye-bold" />
-            <span>View</span>
-          </MenuItem>
-        </MenuList>
-      </TableCell>
+      <MenuList>
+        <MenuItem
+          component={RouterLink}
+          to={`/accounts/view/${row.id}`}
+          sx={{
+           
+            color: 'green',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            '&:hover': {
+              backgroundColor: 'transparent', // Removes background color on hover
+              cursor: 'pointer', // Optional: prevent the pointer cursor on hover
+            },
+          }}
+        >
+          <Iconify icon="solar:eye-bold" />
+          <span>View</span>
+        </MenuItem>
+      </MenuList>
+    </TableCell>
+    
 
     </TableRow>
   );

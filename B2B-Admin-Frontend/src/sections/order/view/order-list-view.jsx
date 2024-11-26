@@ -51,9 +51,11 @@ export function OrderListView() {
   const confirm = useBoolean();
   const userRole = useUserRole();
   const [selectedRows, setSelectedRows] = useState([]); // Store selected row IDs
-  const { fetchData, fetchDeleteData } = useFetchOrderData(); // Destructure fetchData from the custom hook
+  const { fetchData, fetchDeleteData, deleteAllItems } = useFetchOrderData(); // Destructure fetchData from the custom hook
   const dispatch = useDispatch();
   const confirmSync = useBoolean(); // Separate confirmation state for syncing
+  const [deleting, setDeleting] = useState(false); // Track delete operation
+   
 
   const [loading, setLoading] = useState(false);
   const _orders = useSelector((state) =>
@@ -104,12 +106,20 @@ export function OrderListView() {
     );
   }, []);
 
-  const handleDeleteSelectedRows = useCallback(() => {
-    selectedRows.forEach((id) => fetchDeleteData(id));
-    setSelectedRows([]);
-    fetchData(); // Refresh data after deletion
-    confirm.onFalse();
-  }, [selectedRows, fetchDeleteData, fetchData]);
+  const handleDeleteSelectedRows = useCallback(async () => {
+    setDeleting(true); // Start loading for delete operation
+    try {
+      await deleteAllItems(selectedRows);
+      setSelectedRows([]);
+      fetchData(); // Refresh data after deletion
+      confirm.onFalse();
+    } catch (error) {
+      console.error("Error deleting selected rows:", error);
+      // Optionally, show an error message to the user here
+    } finally {
+      setDeleting(false); // Stop loading after delete operation
+    }
+  }, [selectedRows, fetchData, deleteAllItems, confirm]);
 
   //----------------------------------------------------------------------------------------------------
   const dataFiltered = applyFilter({
@@ -179,9 +189,9 @@ export function OrderListView() {
             )
           }
         />
-       
+
         <Card>
-       
+
           <Tabs
             value={filters.state.status}
             onChange={handleFilterStatus}
@@ -346,12 +356,10 @@ export function OrderListView() {
           <Button
             variant="contained"
             color="error"
-            onClick={() => {
-              handleDeleteSelectedRows();
-              confirm.onFalse();
-            }}
+            onClick={handleDeleteSelectedRows}
+            disabled={deleting} // Disable while deleting
           >
-            Delete
+            {deleting ? 'Deleting...' : 'Delete'}
           </Button>
         }
       />

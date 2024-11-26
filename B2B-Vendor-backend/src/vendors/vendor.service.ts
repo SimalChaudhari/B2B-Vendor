@@ -52,6 +52,11 @@ export class VendorService {
                 timeout: REQUEST_TIMEOUT, // Set a timeout for the request
             });
 
+            // Check for specific XML error patterns in the response
+            if (response.data.includes('<LINEERROR>')) {
+                throw new BadRequestException('Please Login The Tally');
+            }
+
             const vendors = await this.parseXmlToVendors(response.data);
             const existingVendors = await this.vendorRepository.find();
 
@@ -75,19 +80,15 @@ export class VendorService {
             }
 
         } catch (error: any) {
-            // Handle timeout specifically for login error message
-            if (error.code === 'ECONNABORTED') {
-                throw new InternalServerErrorException(
-                    'Please log in to Tally and try again.'
-                );
+            // If the error is already a BadRequestException, rethrow it
+            if (error instanceof BadRequestException) {
+              throw error;
             }
-
-            // Handle general error if Tally is not accessible
-            throw new InternalServerErrorException(
-                'Please ensure Tally is open and accessible, then try again.'
-            );
+            // General error handling
+            throw new InternalServerErrorException('Make Sure Tally is Open and logged In');
+          }
         }
-    }
+    
 
     async storeVendorAddress(vendor: UserEntity, vendorDto: VendorDto): Promise<void> {
         const createAddressDto: CreateAddressDto = {
@@ -160,24 +161,6 @@ export class VendorService {
         );
     }
 
-    // private getUpdatedFields(existingVendor: User, newVendor: VendorDto): Partial<User> {
-    //     const updatedFields: Partial<User> = {};
-    //     if (existingVendor.slNo !== newVendor.slNo) updatedFields.slNo = newVendor.slNo;
-    //     if (existingVendor.name !== newVendor.name) updatedFields.name = newVendor.name;
-    //     if (existingVendor.alias !== newVendor.alias) updatedFields.alias = newVendor.alias;
-    //     if (existingVendor.active !== newVendor.active) updatedFields.active = newVendor.active;
-    //     if (existingVendor.parent !== newVendor.parent) updatedFields.parent = newVendor.parent;
-    //     if (existingVendor.contactPerson !== newVendor.contactPerson) updatedFields.contactPerson = newVendor.contactPerson;
-    //     if (existingVendor.mobile !== newVendor.mobile) updatedFields.mobile = newVendor.mobile;
-    //     if (existingVendor.email !== newVendor.email) updatedFields.email = newVendor.email;
-    //     if (existingVendor.pan !== newVendor.pan) updatedFields.pan = newVendor.pan;
-    //     if (existingVendor.gstType !== newVendor.gstType) updatedFields.gstType = newVendor.gstType;
-    //     if (existingVendor.gstNo !== newVendor.gstNo) updatedFields.gstNo = newVendor.gstNo;
-    //     if (existingVendor.gstDetails !== newVendor.gstDetails) updatedFields.gstDetails = newVendor.gstDetails;
-
-    //     return updatedFields;
-    // }
-
     async findAll(): Promise<UserEntity[]> {
         return this.vendorRepository.find({
             where: { role: UserRole.Vendor }, // Use UserRole enum to match the role correctly
@@ -194,6 +177,25 @@ export class VendorService {
         }
     }
 
+    async deleteMultiple(ids: string[]): Promise<{ message: string }> {
+           const notFoundIds: string[] = [];
+    
+        for (const id of ids) {
+          const item = await this.findById(id);
+          console.log("🚀 ~ VendorService ~ deleteMultiple ~ item:", item)
+          if (!item) {
+            notFoundIds.push(id);
+            continue; // skip this ID if not found
+          }
+          await this.vendorRepository.remove(item);
+        }
+    
+        if (notFoundIds.length > 0) {
+          throw new NotFoundException(`vendors with ids ${notFoundIds.join(', ')} not found`);
+        }
+    
+        return { message: 'Vendors deleted successfully' };
+      }
 
     // Cron Job Set
     @Cron('*/60 * * * * *') // Runs every 60 seconds
@@ -265,43 +267,21 @@ export class VendorService {
                 total_count: 0,
                 status: SyncLogStatus.FAIL, // Enum value
             });
-            // Handle timeout specifically for login error message
-            if (error.code === 'ECONNABORTED') {
-                throw new InternalServerErrorException(
-                    'Please log in to Tally and try again.'
-                );
+
+            if (error instanceof BadRequestException) {
+                throw error;
+              }
+              // General error handling
+              throw new InternalServerErrorException('Make Sure Tally is Open and logged In');
             }
-
-            // Handle general error if Tally is not accessible
-            throw new InternalServerErrorException(
-                'Please ensure Tally is open and accessible, then try again.'
-            );
-        }
     }
-
-    // @Cron('*/60 * * * * *')
-    // async cronFetchAndStoreVendors(): Promise<void> {
-    //     console.log('Vendor sync executed at:', new Date().toISOString());
-    //     await this.syncLogService.fetchAndStoreData(
-    //         process.env.TALLY_URL as string,
-    //         Vendors, // XML payload for vendors
-    //         this.parseXmlToVendors.bind(this), // XML parsing function for vendors
-    //         this.vendorRepository,
-    //         'vendor',
-    //         'vendors',
-    //         this.syncLogRepository
-    //     );
-    // }
-
 
     @Cron('0 0 * * 0') // Runs weekly at midnight on Sunday to delete logs older than two minutes.
     async cleanupAllLogs(): Promise<void> {
-        console.log('Complete log cleanup started:', new Date().toISOString());
 
         try {
             // Delete all logs without any condition
             const result = await this.syncLogRepository.delete({});
-
             console.log(`Complete log cleanup completed. Deleted ${result.affected} logs.`);
         } catch (error) {
             console.error('Complete log cleanup failed:', error);

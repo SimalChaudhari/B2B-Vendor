@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux';
-import { deleteVendor, vendorList } from 'src/store/action/vendorActions';
+import { deleteVendor, vendorList,deleteAllItem } from 'src/store/action/vendorActions';
 
 export const useFetchVendorData = () => {
   const dispatch = useDispatch();
@@ -20,7 +20,19 @@ export const useFetchVendorData = () => {
     }
   };
 
+  const deleteAllItems = async (id) => {
+    try {
+      const response = await dispatch(deleteAllItem(id));;
+      if (response) {
+        fetchData(); // Refetch data data only on successful deletion
+      }
+    } catch (error) {
+      console.error("Error deleting data:", error);
+    }
+  };
 
-  return { fetchData, fetchDeleteData };
+
+
+  return { fetchData, fetchDeleteData,deleteAllItems };
 };
 

@@ -18,7 +18,7 @@ import { exportToExcel } from '../components/file-downlaod/excel-generation';
 
 // ----------------------------------------------------------------------
 
-export function ReceivablesTableToolbar({ filters, onResetPage, dateError, data }) {
+export function ReceivablesTableToolbar({ filters, onResetPage, data }) {
   const popover = usePopover();
 
   const handleFilterName = useCallback(
@@ -89,33 +89,7 @@ export function ReceivablesTableToolbar({ filters, onResetPage, dateError, data 
         direction={{ xs: 'column', md: 'row' }}
         sx={{ p: 2.5, pr: { xs: 2.5, md: 1 } }}
       >
-        <DatePicker
-          label="Start date"
-          value={filters.state.startDate}
-          onChange={handleFilterStartDate}
-          slotProps={{ textField: { fullWidth: true } }}
-          sx={{ maxWidth: { md: 200 } }}
-        />
-
-        <DatePicker
-          label="End date"
-          value={filters.state.endDate}
-          onChange={handleFilterEndDate}
-          slotProps={{
-            textField: {
-              fullWidth: true,
-              error: dateError,
-              helperText: dateError ? 'End date must be later than start date' : null,
-            },
-          }}
-          sx={{
-            maxWidth: { md: 200 },
-            [`& .${formHelperTextClasses.root}`]: {
-              position: { md: 'absolute' },
-              bottom: { md: -40 },
-            },
-          }}
-        />
+      
 
         <Stack direction="row" alignItems="center" spacing={2} flexGrow={1} sx={{ width: 1 }}>
           <TextField

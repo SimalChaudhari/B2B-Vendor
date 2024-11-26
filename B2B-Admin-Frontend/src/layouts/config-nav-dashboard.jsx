@@ -7,7 +7,6 @@ import { paths } from 'src/routes/paths';
 const icon = (name) => (
   <SvgColor src={`${CONFIG.site.basePath}/assets/icons/navbar/${name}.svg`} />
 );
-
 const ICONS = {
   dashboard: icon('ic-dashboard'),
   products: icon('ic-product'),
@@ -88,6 +87,26 @@ export const useNavData = () => {
 
   ]
 
+
+  const reportsVendorsItem = [
+    {
+      subheader: 'Reports',
+      items: [
+        {
+          title: 'Accounting',
+          path: paths.accounts.root,
+          icon: ICONS.account,
+          children: [
+            { title: 'Ledger Statement', path: paths.accounts.ledger },
+            { title: 'Outstanding Receivables', path: paths.accounts.receivable },
+          ],
+        },
+      ],
+    }
+
+  ]
+
+
   const vendorItems = [
     {
       subheader: 'Management',
@@ -148,8 +167,8 @@ export const useNavData = () => {
 
   const navData = [
     ...commonItems,
-    ...(userRole === 'Admin' ? [...adminItems, ...reportsItem, ...settingsItems, ...logsHistory] : []),
-    ...(userRole === 'Vendor' ? [...vendorItems, ...reportsItem, ...vendorSettingsItem] : []),
+    ...(userRole === 'Admin' ? [...adminItems, ...reportsItem,...logsHistory, ...settingsItems, ] : []),
+    ...(userRole === 'Vendor' ? [...vendorItems, ...reportsVendorsItem, ...vendorSettingsItem] : []),
   ];
 
   return navData;

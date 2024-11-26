@@ -258,6 +258,25 @@ export class OrderService {
         await this.orderRepository.remove(order);
     }
 
+    async deleteMultiple(ids: string[]): Promise<{ message: string }> {
+        const notFoundIds: string[] = [];
+ 
+        for (const id of ids) {
+            try {
+                await this.deleteOrder(id);  // attempt to delete the order
+            } catch (error) {
+                notFoundIds.push(id);  // if an error occurs, track the not found ID
+                continue;  // skip to the next ID
+            }
+        }  
+        if (notFoundIds.length > 0) {
+            throw new NotFoundException(`orders with ids ${notFoundIds.join(', ')} not found`);
+        }
+
+        return { message: 'orders deleted successfully' };
+    }
+    
+    
     // order item
 
     async addItemToOrder(createItemOrderDto: CreateItemOrderDto): Promise<OrderItemEntity[]> {
@@ -331,7 +350,6 @@ export class OrderService {
             });
     
             if (response.data.includes('<LINEERROR>')) {
-                console.log("Detected LINE-ERROR in response");
                 await this.savePendingInvoice(order, xml);
                 isInvoiceSaved = true;
                 throw new Error(`Failed to post invoice to Tally due to line error.`);

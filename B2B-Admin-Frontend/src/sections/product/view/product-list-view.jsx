@@ -49,7 +49,7 @@ export function ProductListView() {
     const [loading, setLoading] = useState(false);
     const [selectedRows, setSelectedRows] = useState([]); // Store selected row IDs
     const [deleting, setDeleting] = useState(false); // Track delete operation
-   
+
 
     const { fetchData, fetchDeleteData, fetchDeleteItem, deleteAllItems } = useFetchProductData(); // Destructure fetchData from the custom hook
     const dispatch = useDispatch();
@@ -139,7 +139,6 @@ export function ProductListView() {
 
     //----------------------------------------------------------------------------------------------------
 
-    const handleDeleteRows = useCallback((id) => { fetchDeleteData(id) }, []);
 
     const handleDeleteRow = useCallback((id) => { fetchDeleteItem(id) }, []);
 
@@ -320,13 +319,18 @@ export function ProductListView() {
             {/* Sync Confirmation Dialog */}
             <ConfirmDialog
                 open={confirmSync.value}
-                onClose={confirmSync.onFalse}
+                onClose={loading ? !confirmSync.onFalse : confirmSync.onFalse}
                 content={
                     <Box>
                         <Typography gutterBottom>Are you sure you want to sync the products?</Typography>
                         <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                             This action will update the product data and may take a few moments.
                         </Typography>
+                        {loading && (
+                            <Typography variant="caption" sx={{ color: 'text.secondary', mt: 1 }}>
+                                Please wait, the sync is in progress... (may take up to 20 seconds)
+                            </Typography>
+                        )}
                     </Box>
                 }
                 action={

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { parseStringPromise } from 'xml2js';
@@ -9,6 +9,7 @@ import axios from 'axios';
 import { ledger } from '../tally/ledger';
 import { SyncControlSettings } from './../settings/setting.entity';
 import { Cron } from '@nestjs/schedule';
+import { SyncLogEntity } from 'sync-log/sync-log.entity';
 
 @Injectable()
 export class LedgerService {
@@ -19,6 +20,10 @@ export class LedgerService {
         private readonly ledgerRepository: Repository<LedgerEntity>,
         @InjectRepository(BillEntity)
         private readonly billRepository: Repository<BillEntity>,
+
+
+        @InjectRepository(SyncLogEntity)
+        private readonly syncLogRepository: Repository<SyncLogEntity>,
 
         @InjectRepository(SyncControlSettings)
         private readonly syncControlSettingsRepository: Repository<SyncControlSettings>,
@@ -40,8 +45,12 @@ export class LedgerService {
                 data: ledger,
             });
 
+            // Check for specific XML error patterns in the response
+            if (response.data.includes('<LINEERROR>')) {
+                throw new BadRequestException('Please Login The Tally');
+            }
+
             const parsedData = await parseStringPromise(response.data, { explicitArray: true });
-            console.log('Parsed Data:', JSON.stringify(parsedData, null, 2));
 
             const customers = Array.isArray(parsedData?.CUSTOMER)
                 ? parsedData.CUSTOMER
@@ -49,19 +58,44 @@ export class LedgerService {
                     ? [parsedData.CUSTOMER]
                     : [];
 
-            console.log('Customers:', customers);
             await this.processAndStoreCustomers(customers);
+
+
         } catch (error: any) {
-            this.logger.error('Error fetching or processing ledgers', error.stack);
+            // If the error is already a BadRequestException, rethrow it
+            if (error instanceof BadRequestException) {
+                throw error;
+            }
+
             if (error.code === 'ECONNABORTED') {
                 throw new InternalServerErrorException(
                     'Tally request timed out. Please ensure Tally is open and accessible.',
                 );
             }
-            throw new InternalServerErrorException('Failed to process ledger data.');
+            // General error handling
+            throw new InternalServerErrorException('Make Sure Tally is Open and logged In');
         }
     }
 
+
+    async deleteMultiple(ids: string[]): Promise<{ message: string }> {
+        const notFoundIds: string[] = [];
+
+        for (const id of ids) {
+            const ledger = await this.findById(id);
+            if (!ledger) {
+                notFoundIds.push(id);
+                continue; // skip this ID if not found
+            }
+            await this.ledgerRepository.remove(ledger);
+        }
+
+        if (notFoundIds.length > 0) {
+            throw new NotFoundException(`outstanding with ids ${notFoundIds.join(', ')} not found`);
+        }
+
+        return { message: 'outstanding deleted successfully' };
+    }
 
 
     private async processAndStoreCustomers(customers: any[]): Promise<void> {
@@ -186,8 +220,11 @@ export class LedgerService {
                 data: ledger,
             });
 
+            // Check for specific XML error patterns in the response
+            if (response.data.includes('<LINEERROR>')) {
+                throw new BadRequestException('Please Login The Tally');
+            }
             const parsedData = await parseStringPromise(response.data, { explicitArray: true });
-            console.log('Parsed Data:', JSON.stringify(parsedData, null, 2));
 
             const customers = Array.isArray(parsedData?.CUSTOMER)
                 ? parsedData.CUSTOMER
@@ -195,17 +232,35 @@ export class LedgerService {
                     ? [parsedData.CUSTOMER]
                     : [];
 
-            console.log('Customers:', customers);
+
             await this.processAndStoreCustomers(customers);
         } catch (error: any) {
-            this.logger.error('Error fetching or processing ledgers', error.stack);
+            // If the error is already a BadRequestException, rethrow it
+            if (error instanceof BadRequestException) {
+                throw error;
+            }
+
             if (error.code === 'ECONNABORTED') {
                 throw new InternalServerErrorException(
                     'Tally request timed out. Please ensure Tally is open and accessible.',
                 );
             }
-            throw new InternalServerErrorException('Failed to process ledger data.');
+            // General error handling
+            throw new InternalServerErrorException('Make Sure Tally is Open and logged In');
         }
     }
+
+    @Cron('0 0 * * 0') // Runs weekly at midnight on Sunday to delete logs older than two minutes.
+    async cleanupAllLogs(): Promise<void> {
+
+        try {
+            // Delete all logs without any condition
+            const result = await this.syncLogRepository.delete({});
+            console.log(`Complete log cleanup completed. Deleted ${result.affected} logs.`);
+        } catch (error) {
+            console.error('Complete log cleanup failed:', error);
+        }
+    }
+
 
 }

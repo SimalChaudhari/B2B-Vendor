@@ -30,95 +30,92 @@ export class ItemService {
 
   ) { }
   async fetchAndStoreItems(): Promise<void> {
-    const REQUEST_TIMEOUT = 20000; // 15 seconds timeout
-
-    // Check if "Manual Sync" is enabled for products
+    const REQUEST_TIMEOUT = 20000; // 20 seconds timeout
+   
     const productSyncSetting = await this.syncControlSettingsRepository.findOne({
       where: { moduleName: 'Products' },
     });
-
+  
     if (!productSyncSetting || !productSyncSetting.isManualSyncEnabled) {
       throw new BadRequestException('Manual Sync for Products is disabled.');
     }
 
-      try {
-        // Fetch data from the external source
-        const response = await axios.get(process.env.TALLY_URL as string, {
-          headers: {
-            'Content-Type': 'text/xml',
-          },
-          data: products, // Replace with your dynamic XML request
-          timeout: REQUEST_TIMEOUT, // Set a timeout for the request
-        });
-
-        // Parse XML response into items
-        const items = await this.parseXmlToItems(response.data);
-        // Fetch all existing items from the database
-        const existingItems = await this.itemRepository.find();
-
-        // Create a Map of existing items for quick lookup by alias
-        const existingItemMap = new Map(existingItems.map(item => [item.alias, item]));
-
-        for (const item of items) {
-          const existingItem = existingItemMap.get(item.alias);
-
-          if (existingItem) {
-            // If the item exists, compare and update if necessary
-            if (this.hasChanges(existingItem, item)) {
-              await this.itemRepository.save({ ...existingItem, ...item });
-            } else {
-              console.log(`No changes for item: ${item.itemName}`);
-            }
-          } else {
-            // If the item does not exist, create a new entry
-            console.log(`Adding new item: ${item.itemName}`);
-            await this.itemRepository.save(item);
-          }
-        }
-      } catch (error: any) {
-        // Handle request timeout error specifically
-        if (error.code === 'ECONNABORTED') {
-          throw new InternalServerErrorException(
-            'Please log in to Tally and try again.'
-          );
-        }
-        // General error handling
-        throw new InternalServerErrorException('Open Tally to fetch items');
-      }
-    }
-
-
-
-  async parseXmlToItems(xml: string): Promise < ItemEntity[] > {
-      const parsedResult = await parseStringPromise(xml);
-      const stockItems = parsedResult.ENVELOPE.STOCKITEM || [];
-
-      return stockItems.map((item: any) => {
-        const itemDto = new ItemDto();
-
-        itemDto.itemName = this.cleanString(item.ITEMNAME?.[0]);
-        itemDto.alias = this.cleanString(item.ALIAS?.[0]);
-        itemDto.partNo = this.cleanString(item.PARTNO?.[0]);
-        itemDto.description = this.cleanString(item.DESCRIPTION?.[0]);
-        itemDto.group = this.cleanString(item.GROUP?.[0]);
-        itemDto.subGroup1 = this.cleanString(item.SUBGROUP1?.[0]);
-        itemDto.subGroup2 = this.cleanString(item.SUBGROUP2?.[0]);
-        itemDto.baseUnit = this.cleanString(item.BASEUNIT?.[0]);
-        itemDto.alternateUnit = this.cleanString(item.ALTERNATEUNIT?.[0]);
-        itemDto.conversion = this.cleanString(item.CONVERSION?.[0]);
-        itemDto.denominator = parseInt(item.DENOMINATOR?.[0], 10) || 1;
-        itemDto.sellingPriceDate = new Date(item.SELLINGPRICEDATE?.[0]);
-        itemDto.sellingPrice = parseFloat(item.SELLINGPRICE?.[0]) || 0;
-        itemDto.gstApplicable = this.cleanString(item.GSTAPPLICABLE?.[0]);
-        itemDto.gstApplicableDate = new Date(item.GSTAPPLICABLEDATE?.[0]);
-        itemDto.taxability = this.cleanString(item.TAXABILITY?.[0]);
-        itemDto.gstRate = parseFloat(item.GSTRATE?.[0]) || 0;
-
-        // Convert DTO to Entity
-        return this.itemRepository.create(itemDto);
+    try {
+      // Fetch data from the external source
+      const response = await axios.get(process.env.TALLY_URL as string, {
+        headers: {
+          'Content-Type': 'text/xml',
+        },
+        data: products, // Replace with your dynamic XML request
+        timeout: REQUEST_TIMEOUT, // Set a timeout for the request
       });
 
+      // Parse XML response into items
+      const items = await this.parseXmlToItems(response.data);
+      // Fetch all existing items from the database
+      const existingItems = await this.itemRepository.find();
+
+      // Create a Map of existing items for quick lookup by alias
+      const existingItemMap = new Map(existingItems.map(item => [item.alias, item]));
+
+      for (const item of items) {
+        const existingItem = existingItemMap.get(item.alias);
+
+        if (existingItem) {
+          // If the item exists, compare and update if necessary
+          if (this.hasChanges(existingItem, item)) {
+            await this.itemRepository.save({ ...existingItem, ...item });
+          } else {
+            console.log(`No changes for item: ${item.itemName}`);
+          }
+        } else {
+          // If the item does not exist, create a new entry
+          console.log(`Adding new item: ${item.itemName}`);
+          await this.itemRepository.save(item);
+        }
+      }
+    } catch (error: any) {
+        // If the error is already a BadRequestException, rethrow it
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      // General error handling
+      throw new InternalServerErrorException('Make Sure Tally is Open and logged In');
     }
+  }
+
+
+
+  async parseXmlToItems(xml: string): Promise<ItemEntity[]> {
+    const parsedResult = await parseStringPromise(xml);
+    const stockItems = parsedResult.ENVELOPE.STOCKITEM || [];
+
+    return stockItems.map((item: any) => {
+      const itemDto = new ItemDto();
+
+      itemDto.itemName = this.cleanString(item.ITEMNAME?.[0]);
+      itemDto.alias = this.cleanString(item.ALIAS?.[0]);
+      itemDto.partNo = this.cleanString(item.PARTNO?.[0]);
+      itemDto.description = this.cleanString(item.DESCRIPTION?.[0]);
+      itemDto.group = this.cleanString(item.GROUP?.[0]);
+      itemDto.subGroup1 = this.cleanString(item.SUBGROUP1?.[0]);
+      itemDto.subGroup2 = this.cleanString(item.SUBGROUP2?.[0]);
+      itemDto.baseUnit = this.cleanString(item.BASEUNIT?.[0]);
+      itemDto.alternateUnit = this.cleanString(item.ALTERNATEUNIT?.[0]);
+      itemDto.conversion = this.cleanString(item.CONVERSION?.[0]);
+      itemDto.denominator = parseInt(item.DENOMINATOR?.[0], 10) || 1;
+      itemDto.sellingPriceDate = new Date(item.SELLINGPRICEDATE?.[0]);
+      itemDto.sellingPrice = parseFloat(item.SELLINGPRICE?.[0]) || 0;
+      itemDto.gstApplicable = this.cleanString(item.GSTAPPLICABLE?.[0]);
+      itemDto.gstApplicableDate = new Date(item.GSTAPPLICABLEDATE?.[0]);
+      itemDto.taxability = this.cleanString(item.TAXABILITY?.[0]);
+      itemDto.gstRate = parseFloat(item.GSTRATE?.[0]) || 0;
+
+      // Convert DTO to Entity
+      return this.itemRepository.create(itemDto);
+    });
+
+  }
 
   private cleanString(value: string | undefined): string {
     return value?.replace(/\x04/g, '').trim() || '';
@@ -367,19 +364,6 @@ export class ItemService {
     }
   }
 
-  // @Cron('*/60 * * * * *')
-  // async cronFetchAndStoreItems(): Promise<void> {
-  //   console.log('Item sync executed at:', new Date().toISOString());
-  //   await this.syncLogService.fetchAndStoreData(
-  //     process.env.TALLY_URL as string,
-  //     products, // XML payload for items
-  //     this.parseXmlToItems.bind(this), // XML parsing function for items
-  //     this.itemRepository,
-  //     'item',
-  //     'items',
-  //     this.syncLogRepository
-  //   );
-  // }
 
   @Cron('0 0 * * 0') // Runs weekly at midnight on Sunday to delete logs older than two minutes.
   async cleanupAllLogs(): Promise<void> {

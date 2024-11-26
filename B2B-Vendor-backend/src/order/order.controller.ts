@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Req, UseGuards, Param, Delete, Res, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Get, Body, Req, UseGuards, Param, Delete, Res, HttpStatus, NotFoundException } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { Request, Response } from 'express';
 import { CreateItemOrderDto, CreateOrderDto } from './order.dto';
@@ -33,19 +33,19 @@ export class OrderController {
 
     @Get('get/monthly')
     async getOrdersMonthly(
-      @Req() req: Request,
+        @Req() req: Request,
     ): Promise<Array<{ month: string; status: string; count: number }>> {
-      const user = req.user;
-      const userRole = user?.role;
-    
-      // Admin users get all orders
-      if (isAdmin(userRole)) {
-        return this.orderService.getMonthlyProductCounts();
-      }
-      // Handle case where the user is not an admin
-      return [];
+        const user = req.user;
+        const userRole = user?.role;
+
+        // Admin users get all orders
+        if (isAdmin(userRole)) {
+            return this.orderService.getMonthlyProductCounts();
+        }
+        // Handle case where the user is not an admin
+        return [];
     }
-    
+
 
     @Get(':orderId')
     async getOrderById(@Param('orderId') orderId: string): Promise<OrderEntity | null> {
@@ -64,6 +64,20 @@ export class OrderController {
     async deleteOrder(@Param('orderId') orderId: string): Promise<{ message: string }> {
         await this.orderService.deleteOrder(orderId);
         return { message: 'order has been deleted' };  // Return a success message
+    }
+
+    @Delete('delete/orders/all')
+    async deleteMultiple(@Body('ids') ids: string[], @Res() response: Response) {
+        try {
+            const result = await this.orderService.deleteMultiple(ids);
+            return response.status(HttpStatus.OK).json(result);
+        } catch (error) {
+            // Handle the error appropriately
+            if (error instanceof NotFoundException) {
+                return response.status(HttpStatus.NOT_FOUND).json({ message: error.message });
+            }
+            return response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: 'An error occurred while deleting the data.' });
+        }
     }
 
     // order item

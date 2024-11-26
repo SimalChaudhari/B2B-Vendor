@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, NotFoundException, Param, Post, Res } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, NotFoundException, Param, Post, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { LedgerService } from './ledger.service';
 
@@ -34,5 +34,19 @@ export class LedgerController {
             throw new NotFoundException('Ledger not found');
         }
         return response.status(200).json({ message: 'Ledger deleted successfully.' });
+    }
+
+    @Delete('delete/all')
+    async deleteMultiple(@Body('ids') ids: string[], @Res() response: Response) {
+        try {
+            const result = await this.ledgerService.deleteMultiple(ids);
+            return response.status(HttpStatus.OK).json(result);
+        } catch (error) {
+            // Handle the error appropriately
+            if (error instanceof NotFoundException) {
+                return response.status(HttpStatus.NOT_FOUND).json({ message: error.message });
+            }
+            return response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: 'An error occurred while deleting the data.' });
+        }
     }
 }

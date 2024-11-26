@@ -49,19 +49,14 @@ export function ReceivablesListDetails({ invoice }) {
         <Box gap={2} display="flex" alignItems="center" flexWrap="wrap" sx={{ py: 3 }}>
             <div>
                 <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-                    NOTES
+                    NOTES : -
                 </Typography>
                 <Typography variant="body2">
-                    We appreciate your business. Should you need us to add VAT or extra notes let us know!
+                    Outstanding receivables are updated automatically every 24 hours through auto-sync.
                 </Typography>
             </div>
 
-            <Box flexGrow={{ md: 1 }} sx={{ textAlign: { md: 'right' } }}>
-                <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-                    Have a question?
-                </Typography>
-                <Typography variant="body2">info@alovate.io</Typography>
-            </Box>
+
         </Box>
     );
 

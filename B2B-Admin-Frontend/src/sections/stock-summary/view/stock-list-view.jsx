@@ -47,12 +47,14 @@ export function StockListView() {
     const confirmSync = useBoolean(); // Separate confirmation state for syncing
     const [loading, setLoading] = useState(false);
     const [selectedRows, setSelectedRows] = useState([]); // Store selected row IDs
+    const [deleting, setDeleting] = useState(false); // Track delete operation
+   
 
-    const { fetchData} = useFetchStockData(); // Destructure fetchData from the custom hook
+    const { fetchData,deleteAllItems } = useFetchStockData(); // Destructure fetchData from the custom hook
     const dispatch = useDispatch();
     const _stock = useSelector((state) => state.stock?.stock || []);
     const [tableData, setTableData] = useState(_stock);
-   const options = _stock.map(opt => ({
+    const options = _stock.map(opt => ({
         group: opt.group,
         subGroup1: opt.subGroup1,
         subGroup2: opt.subGroup2,
@@ -76,6 +78,23 @@ export function StockListView() {
             prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
         );
     }, []);
+
+
+    
+    const handleDeleteSelectedRows = useCallback(async () => {
+        setDeleting(true); // Start loading for delete operation
+        try {
+            await deleteAllItems(selectedRows);
+            setSelectedRows([]);
+            fetchData(); // Refresh data after deletion
+            confirm.onFalse();
+        } catch (error) {
+            console.error("Error deleting selected rows:", error);
+            // Optionally, show an error message to the user here
+        } finally {
+            setDeleting(false); // Stop loading after delete operation
+        }
+    }, [selectedRows, fetchData, deleteAllItems, confirm]);
 
 
     //----------------------------------------------------------------------------------------------------
@@ -183,7 +202,21 @@ export function StockListView() {
                     )}
 
                     <Box sx={{ position: 'relative' }}>
-                      
+                        <TableSelectedAction
+                            dense={table.dense}
+                            numSelected={selectedRows.length}
+                            rowCount={dataFiltered.length}
+                            onSelectAllRows={(checked) => setSelectedRows(checked ? dataFiltered.map(row => row.id) : [])}
+
+                            action={
+                                <Tooltip title="Delete">
+                                    <IconButton color="primary" onClick={confirm.onTrue}>
+                                        <Iconify icon="solar:trash-bin-trash-bold" />
+                                    </IconButton>
+                                </Tooltip>
+                            }
+                        />
+
                         <Scrollbar>
                             <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 960 }}>
                                 <TableHeadCustom
@@ -209,7 +242,7 @@ export function StockListView() {
                                             row={row}
                                             selected={selectedRows.includes(row.id)}
                                             onSelectRow={() => handleSelectRow(row.id)}
-                            
+
 
                                         />
                                     ))}
@@ -262,7 +295,30 @@ export function StockListView() {
                 }
             />
 
-        
+            <ConfirmDialog
+                open={confirm.value}
+                onClose={confirm.onFalse}
+                title="Delete Stocks?"
+                content={
+                    <Box>
+                        <Typography gutterBottom>Are you sure you want to delete the selected Stocks?</Typography>
+                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                            This action cannot be undone.
+                        </Typography>
+                    </Box>
+                }
+                action={
+                    <Button
+                        variant="contained"
+                        color="error"
+                        onClick={handleDeleteSelectedRows}
+                        disabled={deleting} // Disable while deleting
+                    >
+                        {deleting ? 'Deleting...' : 'Delete'}
+                    </Button>
+                }
+            />
+
         </>
     );
 }
