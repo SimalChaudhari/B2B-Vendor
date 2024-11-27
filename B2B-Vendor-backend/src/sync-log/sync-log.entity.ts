@@ -13,15 +13,6 @@ export class SyncLogEntity {
     @Column({ type: 'varchar', length: 50 })
     sync_type!: string; // 'orders', 'products', etc.
 
-    @Column({ type: 'int', default: 0 })
-    success_count!: number;
-
-    @Column({ type: 'int', default: 0 })
-    failed_count!: number;
-
-    @Column({ type: 'int', default: 0 })
-    total_count!: number;
-
     @Column({ type: 'enum', enum: SyncLogStatus })
     status!: SyncLogStatus; // 'success' or 'fail'
 

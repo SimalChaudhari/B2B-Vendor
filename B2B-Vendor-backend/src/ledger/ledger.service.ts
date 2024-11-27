@@ -9,7 +9,7 @@ import axios from 'axios';
 import { ledger } from '../tally/ledger';
 import { SyncControlSettings } from './../settings/setting.entity';
 import { Cron } from '@nestjs/schedule';
-import { SyncLogEntity } from 'sync-log/sync-log.entity';
+import { SyncLogEntity, SyncLogStatus } from 'sync-log/sync-log.entity';
 
 @Injectable()
 export class LedgerService {
@@ -152,9 +152,7 @@ export class LedgerService {
     }
 
     private mapToLedgerDto(customer: any): LedgerDto {
-        // Log the raw customer data
-        console.log('Raw Customer Data:', customer);
-
+    
         return {
             customerName: customer?.CUSTOMERNAME?.[0] || 'Unknown Customer',
             creditLimit: parseFloat(customer?.CREDITLIMIT?.[0] || '0'),
@@ -201,54 +199,63 @@ export class LedgerService {
 
 
     // cron job set
-    @Cron('*/60 * * * * *')
+    @Cron('*/60 * * * * *') // Runs every 60 seconds
     async CronFetchAndStoreLedgers(): Promise<void> {
-        console.log('Outstanding executed at:', new Date().toISOString());
-
-        // Check if "Auto Sync" is enabled 
-        const SyncSetting = await this.syncControlSettingsRepository.findOne({
+        console.log('Outstanding Receivables sync executed at:', new Date().toISOString());
+    
+        // Check if "Auto Sync" is enabled
+        const syncSetting = await this.syncControlSettingsRepository.findOne({
             where: { moduleName: 'Outstanding Receivables' },
         });
-
-        if (!SyncSetting || !SyncSetting.isAutoSyncEnabled) {
+    
+        if (!syncSetting?.isAutoSyncEnabled) {
             throw new BadRequestException('Auto Sync for Outstanding Receivables is disabled.');
         }
-
+    
         try {
             const response = await axios.get(process.env.TALLY_URL as string, {
                 headers: { 'Content-Type': 'text/xml' },
-                data: ledger,
+                data: ledger, // Replace with your dynamic XML request
             });
-
+    
             // Check for specific XML error patterns in the response
             if (response.data.includes('<LINEERROR>')) {
-                throw new BadRequestException('Please Login The Tally');
+                throw new BadRequestException('Please log in to Tally.');
             }
+    
             const parsedData = await parseStringPromise(response.data, { explicitArray: true });
-
             const customers = Array.isArray(parsedData?.CUSTOMER)
                 ? parsedData.CUSTOMER
                 : parsedData?.CUSTOMER
-                    ? [parsedData.CUSTOMER]
-                    : [];
-
-
+                ? [parsedData.CUSTOMER]
+                : [];
+    
             await this.processAndStoreCustomers(customers);
+    
+            // Log successful sync
+            await this.syncLogRepository.save({
+                sync_type: 'Receivables',
+                status: SyncLogStatus.SUCCESS,
+            });
         } catch (error: any) {
-            // If the error is already a BadRequestException, rethrow it
-            if (error instanceof BadRequestException) {
-                throw error;
-            }
-
+            // Log failed sync
+            await this.syncLogRepository.save({
+                sync_type: 'Receivables',
+                status: SyncLogStatus.FAIL,
+            });
+    
+            if (error instanceof BadRequestException) throw error;
+    
             if (error.code === 'ECONNABORTED') {
                 throw new InternalServerErrorException(
                     'Tally request timed out. Please ensure Tally is open and accessible.',
                 );
             }
-            // General error handling
-            throw new InternalServerErrorException('Make Sure Tally is Open and logged In');
+    
+            throw new InternalServerErrorException('Make sure Tally is open and logged in.');
         }
     }
+    
 
 
 

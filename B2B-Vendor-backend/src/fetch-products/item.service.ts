@@ -31,11 +31,11 @@ export class ItemService {
   ) { }
   async fetchAndStoreItems(): Promise<void> {
     const REQUEST_TIMEOUT = 20000; // 20 seconds timeout
-   
+
     const productSyncSetting = await this.syncControlSettingsRepository.findOne({
       where: { moduleName: 'Products' },
     });
-  
+
     if (!productSyncSetting || !productSyncSetting.isManualSyncEnabled) {
       throw new BadRequestException('Manual Sync for Products is disabled.');
     }
@@ -75,7 +75,7 @@ export class ItemService {
         }
       }
     } catch (error: any) {
-        // If the error is already a BadRequestException, rethrow it
+      // If the error is already a BadRequestException, rethrow it
       if (error instanceof BadRequestException) {
         throw error;
       }
@@ -297,9 +297,6 @@ export class ItemService {
     console.log('Item executed at:', new Date().toISOString());
     const REQUEST_TIMEOUT = 20000; // 20 seconds timeout
 
-    let successCount = 0;
-    let failedCount = 0;
-
     const productSyncSetting = await this.syncControlSettingsRepository.findOne({
       where: { moduleName: 'Products' },
     });
@@ -322,41 +319,26 @@ export class ItemService {
 
       const existingItemMap = new Map(existingItems.map(item => [item.alias, item]));
 
+
       for (const item of items) {
         const existingItem = existingItemMap.get(item.alias);
-        try {
-          if (existingItem) {
-            if (this.hasChanges(existingItem, item)) {
-              await this.itemRepository.save({ ...existingItem, ...item });
-              successCount++;
-            } else {
-              console.log(`No changes for item: ${item.itemName}`);
-            }
-          } else {
-            await this.itemRepository.save(item);
-            successCount++;
+        if (existingItem) {
+          if (this.hasChanges(existingItem, item)) {
+            await this.itemRepository.save({ ...existingItem, ...item });
           }
-        } catch (itemError) {
-          failedCount++;
+        } else {
+          await this.itemRepository.save(item);
         }
       }
 
       await this.syncLogRepository.save({
-        sync_type: 'items',
-        success_count: successCount,
-        failed_count: failedCount,
-        total_count: items.length,
-        status: SyncLogStatus.SUCCESS, // Enum value
+        sync_type: 'Products',
+        status: SyncLogStatus.SUCCESS,
       });
-
     } catch (error: any) {
-      failedCount = 1; // Entire operation failed
 
       await this.syncLogRepository.save({
-        sync_type: 'items',
-        success_count: successCount,
-        failed_count: failedCount,
-        total_count: 0,
+        sync_type: 'Products',
         status: SyncLogStatus.FAIL, // Enum value
       });
 

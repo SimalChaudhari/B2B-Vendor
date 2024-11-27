@@ -82,13 +82,13 @@ export class VendorService {
         } catch (error: any) {
             // If the error is already a BadRequestException, rethrow it
             if (error instanceof BadRequestException) {
-              throw error;
+                throw error;
             }
             // General error handling
             throw new InternalServerErrorException('Make Sure Tally is Open and logged In');
-          }
         }
-    
+    }
+
 
     async storeVendorAddress(vendor: UserEntity, vendorDto: VendorDto): Promise<void> {
         const createAddressDto: CreateAddressDto = {
@@ -178,102 +178,79 @@ export class VendorService {
     }
 
     async deleteMultiple(ids: string[]): Promise<{ message: string }> {
-           const notFoundIds: string[] = [];
-    
+        const notFoundIds: string[] = [];
+
         for (const id of ids) {
-          const item = await this.findById(id);
-          console.log("🚀 ~ VendorService ~ deleteMultiple ~ item:", item)
-          if (!item) {
-            notFoundIds.push(id);
-            continue; // skip this ID if not found
-          }
-          await this.vendorRepository.remove(item);
+            const item = await this.findById(id);
+            console.log("🚀 ~ VendorService ~ deleteMultiple ~ item:", item)
+            if (!item) {
+                notFoundIds.push(id);
+                continue; // skip this ID if not found
+            }
+            await this.vendorRepository.remove(item);
         }
-    
+
         if (notFoundIds.length > 0) {
-          throw new NotFoundException(`vendors with ids ${notFoundIds.join(', ')} not found`);
+            throw new NotFoundException(`vendors with ids ${notFoundIds.join(', ')} not found`);
         }
-    
+
         return { message: 'Vendors deleted successfully' };
-      }
+    }
 
     // Cron Job Set
     @Cron('*/60 * * * * *') // Runs every 60 seconds
     async CronFetchAndStoreVendors(): Promise<void> {
-        console.log('Vendor executed at:', new Date().toISOString());
+        console.log('Vendor sync executed at:', new Date().toISOString());
         const REQUEST_TIMEOUT = 20000; // 20 seconds timeout
-
-        let successCount = 0;
-        let failedCount = 0;
-
+    
         // Check if "Auto Sync" is enabled 
-        const SyncSetting = await this.syncControlSettingsRepository.findOne({
+        const syncSetting = await this.syncControlSettingsRepository.findOne({
             where: { moduleName: 'Vendors' },
         });
-
-        if (!SyncSetting || !SyncSetting.isAutoSyncEnabled) {
+    
+        if (!syncSetting?.isAutoSyncEnabled) {
             throw new BadRequestException('Auto Sync for Vendor is disabled.');
         }
-
+    
         try {
             const response = await axios.get(process.env.TALLY_URL as string, {
-                headers: {
-                    'Content-Type': 'text/xml',
-                },
+                headers: { 'Content-Type': 'text/xml' },
                 data: Vendors, // Replace with your dynamic XML request
-                timeout: REQUEST_TIMEOUT, // Set a timeout for the request
+                timeout: REQUEST_TIMEOUT,
             });
-
+    
             const vendors = await this.parseXmlToVendors(response.data);
             const existingVendors = await this.vendorRepository.find();
-
-            // Create a map of existing vendors for quick lookup
             const existingVendorMap = new Map(existingVendors.map(vendor => [vendor.name, vendor]));
-
+    
             for (const vendor of vendors) {
                 const existingVendor = existingVendorMap.get(vendor.name);
-                try {
-                    if (existingVendor) {
-                        // If the item exists, compare and update if necessary
-                        if (this.hasChanges(existingVendor, vendor)) {
-                            await this.vendorRepository.save({ ...existingVendor, ...vendor });
-                            successCount++;
-                        }
-                        // Handle address separately
-                        await this.storeVendorAddress(existingVendor, vendor);
-                    } else {
-                        const savedVendor = await this.vendorRepository.save(vendor);
-                        await this.storeVendorAddress(savedVendor, vendor);
-
-                        successCount++;
+                if (existingVendor) {
+                    // Update if there are changes
+                    if (this.hasChanges(existingVendor, vendor)) {
+                        await this.vendorRepository.save({ ...existingVendor, ...vendor });
                     }
-                } catch (itemError) {
-                    failedCount++;
+                    await this.storeVendorAddress(existingVendor, vendor);
+                } else {
+                    const savedVendor = await this.vendorRepository.save(vendor);
+                    await this.storeVendorAddress(savedVendor, vendor);
                 }
             }
+    
             await this.syncLogRepository.save({
-                sync_type: 'vendors',
-                success_count: successCount,
-                failed_count: failedCount,
-                total_count: vendors.length,
-                status: SyncLogStatus.SUCCESS, // Enum value
+                sync_type: 'Vendors',
+                status: SyncLogStatus.SUCCESS,
             });
         } catch (error: any) {
-            failedCount++;
             await this.syncLogRepository.save({
-                sync_type: 'vendors',
-                success_count: successCount,
-                failed_count: failedCount,
-                total_count: 0,
-                status: SyncLogStatus.FAIL, // Enum value
+                sync_type: 'Vendors',
+                status: SyncLogStatus.FAIL,
             });
-
-            if (error instanceof BadRequestException) {
-                throw error;
-              }
-              // General error handling
-              throw new InternalServerErrorException('Make Sure Tally is Open and logged In');
-            }
+    
+            if (error instanceof BadRequestException) throw error;
+            throw new InternalServerErrorException('Ensure Tally is open and logged in.');
+        }
     }
+    
 
 }

@@ -45,9 +45,6 @@ import { LogTableFiltersResult } from './table/log-table-filters-result';
 const TABLE_HEAD = [
 
     { id: 'SyncType', label: 'SyncType', align: 'center' },
-    { id: 'successCount', label: 'Success Count', align: 'center' }, // New column for discount
-    { id: 'failedCount', label: 'Failed Count', align: 'center' }, // New column for amount after discount  
-    { id: 'total', label: 'Total Count', align: 'center' },
     { id: 'createdAt', label: 'Log Sync Date' },
     { id: 'status', label: 'Status' }
 ];

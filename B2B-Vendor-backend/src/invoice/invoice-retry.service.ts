@@ -6,6 +6,7 @@ import { Invoice, InvoiceStatus } from './invoice.entity';
 import axios from 'axios';
 import { SyncControlSettings } from './../settings/setting.entity';
 import { Cron } from '@nestjs/schedule';
+import { SyncLogEntity, SyncLogStatus } from 'sync-log/sync-log.entity';
 
 @Injectable()
 export class InvoiceRetryService {
@@ -13,6 +14,9 @@ export class InvoiceRetryService {
     constructor(
         @InjectRepository(Invoice)
         private readonly invoiceRepository: Repository<Invoice>,
+
+        @InjectRepository(SyncLogEntity)
+        private readonly syncLogRepository: Repository<SyncLogEntity>,
 
         @InjectRepository(SyncControlSettings)
         private readonly syncControlSettingsRepository: Repository<SyncControlSettings>,
@@ -79,12 +83,6 @@ export class InvoiceRetryService {
     async retryPendingInvoices(userId: string): Promise<{ status: string; message: string }> {
         console.log('invoice executed at:', new Date().toISOString());
 
-        const pendingInvoices = await this.invoiceRepository.find({
-            where: {
-                status: InvoiceStatus.PENDING,
-                userId: userId,
-            },
-        });
         // Check if "Auto Sync" is enabled 
         const SyncSetting = await this.syncControlSettingsRepository.findOne({
             where: { moduleName: 'Orders' },
@@ -93,8 +91,18 @@ export class InvoiceRetryService {
         if (!SyncSetting || !SyncSetting.isAutoSyncEnabled) {
             throw new BadRequestException('Auto Sync for Orders is disabled.');
         }
+        const pendingInvoices = await this.invoiceRepository.find({
+            where: {
+                status: InvoiceStatus.PENDING,
+                userId: userId,
+            },
+        });
 
         if (pendingInvoices.length === 0) {
+            await this.syncLogRepository.save({
+                sync_type: 'Invoices',
+                status: SyncLogStatus.SUCCESS
+            });
             return {
                 status: 'success',
                 message: 'All data is up to date.',
@@ -109,6 +117,12 @@ export class InvoiceRetryService {
 
                 if (response.data.includes('<LINEERROR>')) {
                     // Immediately return partial success message if there’s a line error
+
+                    await this.syncLogRepository.save({
+                        sync_type: 'Invoices',
+                        status: SyncLogStatus.FAIL
+                    });
+
                     return {
                         status: 'partial_success',
                         message: 'Some invoices could not be posted. Please log in to Tally or check sync logs for more details.',
@@ -118,6 +132,11 @@ export class InvoiceRetryService {
                 await this.invoiceRepository.delete(invoice.id);
 
             } catch (error) {
+
+                await this.syncLogRepository.save({
+                    sync_type: 'Invoices',
+                    status: SyncLogStatus.FAIL
+                });
                 return {
                     status: 'error',
                     message: 'Please ensure Tally is open and accessible, then try again.',
@@ -125,6 +144,10 @@ export class InvoiceRetryService {
             }
         }
 
+        await this.syncLogRepository.save({
+            sync_type: 'Invoices',
+            status: SyncLogStatus.SUCCESS
+        });
         return {
             status: 'success',
             message: 'All pending invoices have been successfully posted to Tally.',

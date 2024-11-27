@@ -169,87 +169,64 @@ export class StockService {
     return value?.replace(/\x04/g, '').trim() || '';
   }
 
-  @Cron('*/60 * * * * *')
+  @Cron('*/60 * * * * *') // Runs every 60 seconds
   async cronFetchAndStoreItems(): Promise<void> {
-    console.log('stocks executed at:', new Date().toISOString());
-    const REQUEST_TIMEOUT = 15000; // 15 seconds timeout
-    let successCount = 0;
-    let failedCount = 0;
-
-    // Check if "Auto Sync" is enabled 
-    const SyncSetting = await this.syncControlSettingsRepository.findOne({
-      where: { moduleName: 'Stocks' },
-    });
-
-    if (!SyncSetting || !SyncSetting.isAutoSyncEnabled) {
-      throw new BadRequestException('Auto Sync for Stocks is disabled.');
-    }
-    try {
-      const response = await axios.get(process.env.TALLY_URL as string, {
-        headers: {
-          'Content-Type': 'text/xml',
-        },
-        data: summary, // Replace with your dynamic XML request
-        timeout: REQUEST_TIMEOUT, // Set a timeout for the request
+      console.log('Stocks sync executed at:', new Date().toISOString());
+      const REQUEST_TIMEOUT = 15000; // 15 seconds timeout
+  
+      // Check if "Auto Sync" is enabled
+      const syncSetting = await this.syncControlSettingsRepository.findOne({
+          where: { moduleName: 'Stocks' },
       });
-
-
-      // Check for specific XML error patterns in the response
-      if (response.data.includes('<LINEERROR>')) {
-        throw new BadRequestException('Please Login The Tally');
+  
+      if (!syncSetting?.isAutoSyncEnabled) {
+          throw new BadRequestException('Auto Sync for Stocks is disabled.');
       }
-      const stockSummaries = await this.parseXmlToStockSummaries(response.data);
-      const existingStocks = await this.stockRepository.find();
-
-      const existingStockMap = new Map(existingStocks.map(stock => [stock.itemName, stock]));
-
-      for (const stock of stockSummaries) {
-        const existingStock = existingStockMap.get(stock.itemName);
-        try {
-          if (existingStock) {
-            if (this.hasStockSummaryChanges(existingStock, stock)) {
-              await this.stockRepository.save({ ...existingStock, ...stock });
-              successCount++;
-            } else {
-              // console.log(`No changes for stock item: ${stock.itemName}`);
-            }
-          } else {
-            await this.stockRepository.save(stock);
-            successCount++;
+  
+      try {
+          const response = await axios.get(process.env.TALLY_URL as string, {
+              headers: { 'Content-Type': 'text/xml' },
+              data: summary, // Replace with your dynamic XML request
+              timeout: REQUEST_TIMEOUT,
+          });
+  
+          // Check for specific XML error patterns in the response
+          if (response.data.includes('<LINEERROR>')) {
+              throw new BadRequestException('Please log in to Tally.');
           }
-        } catch (itemError) {
-          failedCount++;
-        }
+  
+          const stockSummaries = await this.parseXmlToStockSummaries(response.data);
+          const existingStocks = await this.stockRepository.find();
+          const existingStockMap = new Map(existingStocks.map(stock => [stock.itemName, stock]));
+  
+          for (const stock of stockSummaries) {
+              const existingStock = existingStockMap.get(stock.itemName);
+              if (existingStock) {
+                  if (this.hasStockSummaryChanges(existingStock, stock)) {
+                      await this.stockRepository.save({ ...existingStock, ...stock });
+                  }
+              } else {
+                  await this.stockRepository.save(stock);
+              }
+          }
+  
+          await this.syncLogRepository.save({
+              sync_type: 'Stocks',
+              status: SyncLogStatus.SUCCESS,
+          });
+      } catch (error: any) {
+          await this.syncLogRepository.save({
+              sync_type: 'Stocks',
+              status: SyncLogStatus.FAIL,
+          });
+  
+          if (error instanceof BadRequestException) throw error;
+          if (error.code === 'ECONNABORTED') {
+              throw new InternalServerErrorException('Tally request timed out. Ensure Tally is open and accessible.');
+          }
+          throw new InternalServerErrorException('Make sure Tally is open and logged in.');
       }
-      await this.syncLogRepository.save({
-        sync_type: 'stocks',
-        success_count: successCount,
-        failed_count: failedCount,
-        total_count: stockSummaries.length,
-        status: SyncLogStatus.SUCCESS, // Enum value
-      });
-    } catch (error: any) {
-      failedCount = 1; // Entire operation failed
-      await this.syncLogRepository.save({
-        sync_type: 'stocks',
-        success_count: successCount,
-        failed_count: failedCount,
-        total_count: 0,
-        status: SyncLogStatus.FAIL, // Enum value
-      });
-      // If the error is already a BadRequestException, rethrow it
-      if (error instanceof BadRequestException) {
-        throw error;
-      }
-
-      if (error.code === 'ECONNABORTED') {
-        throw new InternalServerErrorException(
-          'Tally request timed out. Please ensure Tally is open and accessible.',
-        );
-      }
-      // General error handling
-      throw new InternalServerErrorException('Make Sure Tally is Open and logged In');
-    }
   }
+  
 
 }

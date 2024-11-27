@@ -24,7 +24,7 @@ export function SyncView() {
     const dispatch = useDispatch();
 
     const syncs = useSelector((state) => state.setting?.syncData || []);
-  
+
     // States to manage confirmation dialog
     const [dialogOpen, setDialogOpen] = useState(false);
     const [currentAction, setCurrentAction] = useState(null);
@@ -129,7 +129,40 @@ export function SyncView() {
                     { name: "Sync Settings", href: paths?.settings.sync },
                 ]}
             />
-            <Box sx={{ p: 4 }}>
+
+            <Box sx={{ p: 2 }}>
+                <Typography variant="body2" color="textSecondary" sx={{ mt: 2, fontWeight: 'bold' }}>
+                    Note:
+                </Typography>
+                <Box
+                    component="ul"
+                    sx={{
+                        pl: 4, // Padding for bullet indentation
+                        mt: 1,
+                        '& li': {
+                            listStyleType: 'disc', // Ensures bullet points are shown
+                            marginLeft: '1rem', // Adjust margin for bullet alignment
+                        },
+                    }}
+                >
+                    <li>
+                        <Typography variant="body2" color="textSecondary">
+                            Auto Sync, when enabled, syncs data automatically every hour.
+                        </Typography>
+                    </li>
+                    <li>
+                        <Typography variant="body2" color="textSecondary">
+                            Manual Sync allows you to sync data on-demand at any time.
+                        </Typography>
+                    </li>
+                    <li>
+                        <Typography variant="body2" color="textSecondary">
+                            Disabling either option stops its respective functionality.
+                        </Typography>
+                    </li>
+                </Box>
+            </Box>
+            <Box>
                 <Grid container spacing={2}>
                     {syncs
                         .slice() // Create a copy of the array to avoid mutating the original state
@@ -141,6 +174,7 @@ export function SyncView() {
                         ))}
                 </Grid>
             </Box>
+
 
 
             {/* Confirmation Dialog */}
