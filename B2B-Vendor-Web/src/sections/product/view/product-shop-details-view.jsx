@@ -25,6 +25,7 @@ import { ProductDetailsReview } from '../product-details-review';
 import { ProductDetailsSummary } from '../product-details-summary';
 import { ProductDetailsCarousel } from '../product-details-carousel';
 import { ProductDetailsDescription } from '../product-details-description';
+import { Divider, Stack } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -98,22 +99,116 @@ export function ProductShopDetailsView({ product }) {
         gap={5}
         display="grid"
         gridTemplateColumns={{ xs: 'repeat(1, 1fr)', md: 'repeat(3, 1fr)' }}
-        sx={{ my: 10 }}
+        // sx={{ my: 10 }}
       >
-        {SUMMARY.map((item) => (
-          <Box key={item.title} sx={{ textAlign: 'center', px: 5 }}>
-            <Iconify icon={item.icon} width={32}  className='text-primary' />
+        {/*
+      {SUMMARY.map((item) => (
+        <Box key={item.title} sx={{ textAlign: 'center', px: 5 }}>
+          <Iconify icon={item.icon} width={32}  className='text-primary' />
 
-            <Typography variant="subtitle1" sx={{ mb: 1, mt: 2 }} >
-              {item.title}
-            </Typography>
+          <Typography variant="subtitle1" sx={{ mb: 1, mt: 2 }} >
+            {item.title}
+          </Typography>
 
-            <Typography variant="body2"  className='text-black'>
-              {item.description}
-            </Typography>
-          </Box>
-        ))}
+          <Typography variant="body2"  className='text-black'>
+            {item.description}
+          </Typography>
+        </Box>
+      ))}
+       */}
+
       </Box>
+
+
+      <Divider sx={{ my: 5 }} />
+
+      <Grid container spacing={3}>
+
+        {/* Box 1: Additional Information */}
+        <Grid item xs={12} sm={6} md={4}>
+          <Box>
+            <Typography variant="subtitle1" gutterBottom>Additional Information</Typography>
+            <Divider sx={{ my: 2 }} />
+            <Stack spacing={1}>
+              <Typography variant="body2"><span className='bold'> Alias: </span> {product?.alias}</Typography>
+              <Typography variant="body2"><span className='bold'> Part Number: </span> {product?.partNo}</Typography>
+              <Typography variant="body2"><span className='bold'> Selling Price Date: </span> {product?.sellingPriceDate}</Typography>
+            </Stack>
+          </Box>
+        </Grid>
+
+        {/* Box 2: Tax & Unit Details */}
+        <Grid item xs={12} sm={6} md={4}>
+          <Box>
+            <Typography variant="subtitle1" gutterBottom>Tax & Unit Details</Typography>
+            <Divider sx={{ my: 2 }} />
+            <Stack spacing={1}>
+              <Typography variant="body2"><span className='bold'>  GST Applicable: </span> {product?.gstApplicable}</Typography>
+              <Typography variant="body2"><span className='bold'>  GST Applicable Date: </span> {product?.gstApplicableDate}</Typography>
+              <Typography variant="body2"><span className='bold'>  GST Rate: </span> {product?.gstRate}%</Typography>
+              <Typography variant="body2"><span className='bold'>  Base Unit: </span> {product?.baseUnit}</Typography>
+              <Typography variant="body2"><span className='bold'>  Alternate Unit: </span> {product?.alternateUnit}</Typography>
+            </Stack>
+          </Box>
+        </Grid>
+
+        {/* Box 3: Conversion & Dimensions */}
+        <Grid item xs={12} sm={6} md={4}>
+          <Box>
+            <Typography variant="subtitle1" gutterBottom>Conversion & Dimensions</Typography>
+            <Divider sx={{ my: 2 }} />
+            <Stack spacing={1}>
+              <Typography variant="body2"><span className='bold'>  Taxability: </span> {product?.taxability}</Typography>
+              <Typography variant="body2"><span className='bold'>  Conversion: </span> {product?.conversion}</Typography>
+              <Typography variant="body2"><span className='bold'>  Denominator: </span> {product?.denominator}</Typography>
+
+              <Box>
+                <Typography variant="body2" className='bold'>Dimensional Files:</Typography>
+                <Divider sx={{ my: 2 }} />
+                {product?.dimensionalFiles?.length > 0 ? (
+                  <Stack direction="column" spacing={0.5} sx={{ ml: 2, mt: 1 }}>
+                    {product.dimensionalFiles.map((file, index) => {
+                      const isPdf = file.endsWith('.pdf');
+                      return (
+                        <Stack direction="row" spacing={1} alignItems="center" key={index}>
+                          {isPdf ? (
+                            <img
+                              src="/pdf-logo/pdf.png"
+                              alt="pdf"
+                              style={{ width: 60, height: 60, objectFit: 'cover' }}
+                            />
+                          ) : (
+                            <img
+                              src={file}
+                              alt={`Dimensional File ${index + 1}`}
+                              style={{ width: 60, height: 60, objectFit: 'cover' }}
+                            />
+                          )}
+                          <a
+                            href={file}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ textDecoration: 'none', color: '#1976d2' }}
+                          >
+                            Download
+                          </a>
+                        </Stack>
+                      );
+                    })}
+                  </Stack>
+                ) : (
+                  <Typography variant="body2" color="text.secondary" sx={{ ml: 2 }} className='bold'>
+                    No dimensional files available
+                  </Typography>
+                )}
+              </Box>
+            </Stack>
+          </Box>
+        </Grid>
+
+      </Grid>
+
+      <Divider sx={{ my: 2 }} />
 
       {/*
         <Card>

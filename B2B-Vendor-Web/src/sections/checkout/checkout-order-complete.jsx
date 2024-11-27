@@ -41,16 +41,12 @@ export function CheckoutOrderComplete({ open, onReset, onDownloadPDF }) {
 
         <OrderCompleteIllustration />
 
-        <Typography>
-          Thanks for placing order
-          <br />
-          <br />
-          <Link>01dc1370-3df6-11eb-b378-0242ac130002</Link>
-          <br />
-          <br />
-          We will send you a notification within 5 days when it ships.
-          <br /> If you have any question or queries then fell to get in contact us. <br />
-          All the best,
+        
+        <Typography sx={{ mt: 2 }}>
+          Your order has been successfully placed and received by our team!
+        </Typography>
+        <Typography sx={{ mt: 1 }}>
+          We will keep you updated and notify you once it ships. Get ready for an amazing experience!
         </Typography>
 
         <Divider sx={{ width: 1, borderStyle: 'dashed' }} />
@@ -66,14 +62,16 @@ export function CheckoutOrderComplete({ open, onReset, onDownloadPDF }) {
             Continue shopping
           </Button>
 
-          <Button
-            size="large"
-            variant="contained"
-            startIcon={<Iconify icon="eva:cloud-download-fill" />}
-            onClick={onDownloadPDF}
-          >
-            Download as PDF
-          </Button>
+          {/*
+            <Button
+              size="large"
+              variant="contained"
+              startIcon={<Iconify icon="eva:cloud-download-fill" />}
+              onClick={onDownloadPDF}
+            >
+              Download as PDF
+            </Button>
+          */}
         </Box>
       </Box>
     </Dialog>

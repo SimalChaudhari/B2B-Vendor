@@ -6,7 +6,8 @@ import packageJson from '../package.json';
 
 export const CONFIG = {
   site: {
-    name: 'Alovate Pro',
+    // name: 'Alovate Pro',
+    name: 'Industrial Product private limited',
     serverUrl: import.meta.env.VITE_SERVER_URL ?? '',
     assetURL: import.meta.env.VITE_ASSET_URL ?? '',
     basePath: import.meta.env.VITE_BASE_PATH ?? '',

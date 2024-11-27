@@ -8,16 +8,21 @@ import { AboutTestimonials } from '../about-testimonials';
 
 export function AboutView() {
   return (
-    <>
+    <div>
       <AboutHero />
 
       <AboutWhat />
 
-      <AboutVision />
+      {/*
 
-      <AboutTeam />
+        <AboutVision />
+  
+        <AboutTeam />
+  
+        <AboutTestimonials />
 
-      <AboutTestimonials />
-    </>
+      */}
+
+    </div>
   );
 }

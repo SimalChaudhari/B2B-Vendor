@@ -58,12 +58,14 @@ export function CheckoutCartProduct({ row, onDelete, onDecrease, onIncrease }) {
             onDecrease={onDecrease}
             onIncrease={onIncrease}
             disabledDecrease={row.quantity <= 1}
-            disabledIncrease={row.quantity >= row.available}
+            // disabledIncrease={row.quantity >= row.available}
           />
 
-          <Typography variant="caption" component="div" sx={{ color: 'text.secondary', mt: 1 }}>
-            available: {row.available}
-          </Typography>
+          {/*
+            <Typography variant="caption" component="div" sx={{ color: 'text.secondary', mt: 1 }}>
+              available: {row.available}
+            </Typography>
+          */}
         </Box>
       </TableCell>
 

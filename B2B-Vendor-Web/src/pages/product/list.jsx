@@ -8,6 +8,7 @@ import { fetchItems } from 'src/services/productApi';
 import { AiOutlineWarning } from 'react-icons/ai'; // Import warning icon
 import { Box, Typography, Container } from '@mui/material'; // Import Material-UI components for styling
 import { ProductItemSkeleton } from "src/sections/product/product-skeleton";
+import { EmptyContent } from "src/components/empty-content";
 
 // Metadata for the page title
 const metadata = { title: `Product shop - ${CONFIG.site.name}` };
@@ -43,10 +44,13 @@ export default function Page() {
     </div>
   }
 
+  const renderNotFound = <EmptyContent filled sx={{ py: 10 }} />;
   // Show "No Data" message if no products are available
-  if (!products || products.length === 0) {
+  if (!products || products?.length === 0) {
     return (
-      <Container style={{ textAlign: 'center', marginTop: '50px' }}>
+      <Container style={{ textAlign: 'center', marginTop: '200px'}}>
+      {renderNotFound}
+      {/*
         <Box
           sx={{
             backgroundColor: '#fff',
@@ -66,6 +70,7 @@ export default function Page() {
             Please check back later or try refreshing the page.
           </Typography>
         </Box>
+         */}
       </Container>
     );
   }

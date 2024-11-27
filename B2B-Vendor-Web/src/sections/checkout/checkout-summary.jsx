@@ -44,31 +44,35 @@ export function CheckoutSummary({ total, onEdit, discount, subtotal, shipping, o
           </Typography>
         </Box>
 
-        <Box display="flex">
-          <Typography
-            component="span"
-            variant="body2"
-            sx={{ flexGrow: 1, color: 'text.secondary' }}
-          >
-            Discount
-          </Typography>
-          <Typography component="span" variant="subtitle2">
-            {discount ? fCurrency(-discount) : '-'}
-          </Typography>
-        </Box>
+        {/*
+          <Box display="flex">
+            <Typography
+              component="span"
+              variant="body2"
+              sx={{ flexGrow: 1, color: 'text.secondary' }}
+            >
+              Discount
+            </Typography>
+            <Typography component="span" variant="subtitle2">
+              {discount ? fCurrency(-discount) : '-'}
+            </Typography>
+          </Box>
+        */}
 
-        <Box display="flex">
-          <Typography
-            component="span"
-            variant="body2"
-            sx={{ flexGrow: 1, color: 'text.secondary' }}
-          >
-            Shipping
-          </Typography>
-          <Typography component="span" variant="subtitle2">
-            {shipping ? fCurrency(shipping) : displayShipping}
-          </Typography>
-        </Box>
+        {/*
+          <Box display="flex">
+            <Typography
+              component="span"
+              variant="body2"
+              sx={{ flexGrow: 1, color: 'text.secondary' }}
+            >
+              Shipping
+            </Typography>
+            <Typography component="span" variant="subtitle2">
+              {shipping ? fCurrency(shipping) : displayShipping}
+            </Typography>
+          </Box>
+        */}
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
@@ -85,28 +89,32 @@ export function CheckoutSummary({ total, onEdit, discount, subtotal, shipping, o
             >
               {fCurrency(total)}
             </Typography>
-            <Typography variant="caption" sx={{ fontStyle: 'italic' }}>
-              (VAT included if applicable)
-            </Typography>
+            {/*
+              <Typography variant="caption" sx={{ fontStyle: 'italic' }}>
+                (VAT included if applicable)
+              </Typography>
+            */}
           </Box>
         </Box>
 
-        {onApplyDiscount && (
-          <TextField
-            fullWidth
-            placeholder="Discount codes / Gifts"
-            value="DISCOUNT5"
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <Button color="primary" onClick={() => onApplyDiscount(5)} sx={{ mr: -0.5 }}>
-                    Apply
-                  </Button>
-                </InputAdornment>
-              ),
-            }}
-          />
-        )}
+        {/*
+          {onApplyDiscount && (
+            <TextField
+              fullWidth
+              placeholder="Discount codes / Gifts"
+              value="DISCOUNT5"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <Button color="primary" onClick={() => onApplyDiscount(5)} sx={{ mr: -0.5 }}>
+                      Apply
+                    </Button>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          )}
+        */}
       </Stack>
     </Card>
   );

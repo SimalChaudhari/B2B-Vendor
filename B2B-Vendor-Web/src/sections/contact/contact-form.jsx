@@ -40,7 +40,7 @@ export function ContactForm() {
 
     try {
       const response = await addContactMessage(formData); // Call the API
-      console.log('Contact message sent successfully:', response);
+      // console.log('Contact message sent successfully:', response);
       
       // Show the success dialog
       setOpen(true);

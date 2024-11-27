@@ -32,7 +32,7 @@ const LINKS = [
     ],
   },
   { headline: 'Contact', children: [
-    { name: 'info@alovate.io', href: '#' },
+    // { name: 'info@alovate.io', href: '#' },
     { name: 'Contact us', href: paths.contact },
   ] },
 ];
@@ -81,7 +81,9 @@ export function Footer({ layoutQuery, sx }) {
               The starting point for your next project with Alovate, built on the newest version of
               Material-UI ©, ready to be customized to your style.
                */}
-              Techon Industrial Product private limited
+               <p style={{whiteSpace:"nowrap"}}>
+               Techon Industrial Product Pvt Ltd.
+               </p>
             </Typography>
 
             <Stack

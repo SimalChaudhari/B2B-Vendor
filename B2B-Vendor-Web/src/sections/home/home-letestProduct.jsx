@@ -16,6 +16,7 @@ import {
 import { AiOutlineWarning } from 'react-icons/ai';
 import { useNavigate } from 'react-router';
 import { MdOutlineKeyboardDoubleArrowRight } from "react-icons/md";
+import { fCurrency } from 'src/utils/format-number';
 
 export function HomeLetestProduct() {
   const dispatch = useDispatch();
@@ -80,7 +81,7 @@ export function HomeLetestProduct() {
         <Button
           variant="text"
           onClick={() => navigate('/product')}
-          className='text-primary font-lg'
+          className='text-primary font-lg ViewAll'
         // sx={{ color: 'primary.main', textTransform: 'none' }}
         >
           View All <MdOutlineKeyboardDoubleArrowRight className='font-lg ml-1' />
@@ -89,7 +90,7 @@ export function HomeLetestProduct() {
 
       <Grid container spacing={2}>
         {displayedProducts.map((product) => (
-          <Grid item xs={6} sm={4} md={3} key={product.id}>
+          <Grid item xs={12} sm={6} md={4} lg={3} key={product.id}>
             <Button className="unique-card" onClick={() => navigate(`/product/${product.id}`)}   >
               <div className="background-overlay" />
               <div className="card-content">
@@ -107,13 +108,17 @@ export function HomeLetestProduct() {
                   )}
                   <CardContent>
                     <Typography variant="h6" className='productTitle' sx={{ textAlign: 'left', marginBottom: "5px" }}>
-                      {product.itemName} {/* Display product name instead of group */}
+                      {product.itemName}
                     </Typography>
-                    <Typography sx={{ fontSize: '13px', textAlign: 'left' }}>
+                    <Typography sx={{ fontSize: '15px', textAlign: 'left', marginBottom: "2px" }}>
+                      {fCurrency(product.sellingPrice)}
+                    </Typography>
+                    <Typography sx={{ fontSize: '13px', textAlign: 'left', marginBottom: "2px" }}>
                       {product.description.length > 50
                         ? `${product.description.slice(0, 50)}...`
-                        : product.description} {/* Display product name instead of group */}
+                        : product.description}
                     </Typography>
+
                   </CardContent>
                 </span>
               </div>

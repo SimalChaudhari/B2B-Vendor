@@ -9,8 +9,8 @@ import { ProductItemSkeleton } from './product-skeleton';
 
 const PRODUCTS_PER_PAGE = 14; // Display 10 products per page
 
-export function ProductList({ products, loading, ...other }) {
-  const [page, setPage] = useState(1); // Track the current page number
+export function ProductList({ products, loading, page, setPage, ...other }) {
+  // const [page, setPage] = useState(1); // Track the current page number
 
   // Calculate the number of pages needed
   const totalPages = Math.ceil(products.length / PRODUCTS_PER_PAGE);

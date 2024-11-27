@@ -84,7 +84,7 @@ export function MainLayout({ sx, data, children }) {
          *************************************** */
         sx={sx}
       >
-        <Main>{children}</Main>
+        <Main sx={{ minHeight: '68vh' }}>{children}</Main>
       </LayoutSection>
     </div>
   );

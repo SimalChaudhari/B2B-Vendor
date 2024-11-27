@@ -11,26 +11,30 @@ import { FaqsCategory } from '../faqs-category';
 
 export function FaqsView() {
   return (
-    <>
+    <div>
       <FaqsHero />
 
       <Container sx={{ pb: 10, pt: { xs: 10, md: 15 }, position: 'relative' }}>
+        {/*
         <FaqsCategory />
+         */}
 
         <Typography variant="h3" sx={{ my: { xs: 5, md: 10 } }}>
           Frequently asked questions
         </Typography>
 
         <Box
-          gap={10}
-          display="grid"
-          gridTemplateColumns={{ xs: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)' }}
+          // gap={10}
+          // display="grid"
+          // gridTemplateColumns={{ xs: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)' }}
         >
           <FaqsList />
 
-          <FaqsForm />
+          {/*
+            <FaqsForm />
+             */}
         </Box>
       </Container>
-    </>
+    </div>
   );
 }

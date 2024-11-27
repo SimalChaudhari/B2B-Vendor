@@ -14,7 +14,7 @@ export function ProductSort({ sort, onSort, sortOptions }) {
   const sortLabel = sortOptions.find((option) => option.value === sort)?.label;
   
   return (
-    <>
+    <div>
       <Button
         disableRipple
         color="inherit"
@@ -48,6 +48,6 @@ export function ProductSort({ sort, onSort, sortOptions }) {
           ))}
         </MenuList>
       </CustomPopover>
-    </>
+    </div>
   );
 }

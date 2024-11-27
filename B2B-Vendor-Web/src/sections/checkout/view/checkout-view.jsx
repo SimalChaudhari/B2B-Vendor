@@ -37,7 +37,8 @@ export function CheckoutView() {
           {checkout.activeStep === 1 && <CheckoutBillingAddress />}
           {checkout.activeStep === 2 && <CheckoutPayment />}
           */}
-          {checkout.activeStep === 0 && <FormView />}
+          {checkout.activeStep === 0 && <CheckoutCart />}
+          {checkout.activeStep === 1 && <FormView />}
           {checkout.activeStep === 2 && <OrderAndAddressView />}
           {checkout.activeStep === 3 && <CheckoutOrderComplete open onReset={checkout.onReset} onDownloadPDF={() => {}} />}
 
