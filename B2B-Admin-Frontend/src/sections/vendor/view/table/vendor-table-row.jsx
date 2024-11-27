@@ -17,10 +17,11 @@ import { usePopover, CustomPopover } from 'src/components/custom-popover';
 import { Link as RouterLink } from 'react-router-dom'; // Import Link from react-router-dom
 import { useFetchVendorData } from '../../components';
 import { Label } from 'src/components/label';
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography } from '@mui/material';
 import { onUpdateStatus } from 'src/store/action/vendorActions';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { LetterAvatar } from 'src/components/avatar';
 
 export function VendorTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
 
@@ -64,11 +65,27 @@ export function VendorTableRow({ row, selected, onEditRow, onSelectRow, onDelete
 
                 <TableCell>
                     <Stack spacing={2} direction="row" alignItems="center">
-                        <Avatar alt="" src="" />
+                    <LetterAvatar name={row.name} size={50} />
                         <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
-                            <Link color="inherit" sx={{ cursor: 'pointer' }}>
-                                {row.name}
-                            </Link>
+
+                            <Tooltip title="Direct To View Page">
+                                <Link
+                                    component={RouterLink}
+                                    to={`/vendors/view/${row.id}`}
+                                    sx={{
+                                        color: '#1E40AF', // Custom dark blue shade
+                                        cursor: 'pointer',
+                                        textDecoration: 'none', // No underline by default
+                                        '&:hover': {
+                                            textDecoration: 'underline', // Underline on hover
+                                            color: '#0F3D91', // Slightly darker blue shade on hover (optional)
+                                        },
+                                    }}
+                                >
+                                    {row.name}
+                                </Link>
+                            </Tooltip>
+
                             <Box component="span" sx={{ color: 'text.disabled' }}>
                                 {row.email}
                             </Box>
@@ -77,27 +94,32 @@ export function VendorTableRow({ row, selected, onEditRow, onSelectRow, onDelete
                 </TableCell>
                 <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.alias || 'not available'}</TableCell>
                 <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.mobile || 'not available'}</TableCell>
-                <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.address || 'not available'}</TableCell>
+                <TableCell sx={{
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    maxWidth: '200px'
+                }}>{row.address || 'not available'}</TableCell>
                 <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.country || 'not available'}</TableCell>
                 <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.state || 'not available'}</TableCell>
                 <TableCell sx={{ whiteSpace: 'nowrap' }}>
-                <Tooltip title="Click here to Change Status">
-                    <Label sx={{ cursor: "pointer" }}
-                        variant="soft"
-                        color={
-                            (row.status === 'Active' && 'success') ||
-                            (row.status === 'Inactive' && 'error') ||
-                            'default'
-                        }
-                        onClick={() => {
-                            // Toggle between Active and Inactive for demonstration
-                            const updatedStatus = row.status === 'Active' ? 'Inactive' : 'Active';
-                            setNewStatus(updatedStatus); // Set the new status
-                            setIsConfirmOpen(true); // Open the confirmation dialog
-                        }}
-                    >
-                        {row.status}
-                    </Label>
+                    <Tooltip title="Click here to Change Status">
+                        <Label sx={{ cursor: "pointer" }}
+                            variant="soft"
+                            color={
+                                (row.status === 'Active' && 'success') ||
+                                (row.status === 'Inactive' && 'error') ||
+                                'default'
+                            }
+                            onClick={() => {
+                                // Toggle between Active and Inactive for demonstration
+                                const updatedStatus = row.status === 'Active' ? 'Inactive' : 'Active';
+                                setNewStatus(updatedStatus); // Set the new status
+                                setIsConfirmOpen(true); // Open the confirmation dialog
+                            }}
+                        >
+                            {row.status}
+                        </Label>
                     </Tooltip>
                 </TableCell>
                 <TableCell>
@@ -187,23 +209,33 @@ export function VendorTableRow({ row, selected, onEditRow, onSelectRow, onDelete
                     <DialogContentText>
                         {newStatus === 'Inactive' ? (
                             <>
-                                Are you sure you want to change the status to <strong>{newStatus}</strong>?
+                                <Typography variant="body">
+                                    Are you sure you want to change the status to <strong>{newStatus}</strong>?
+                                </Typography>
+
                                 <br />
                                 <br />
-                                <strong>Note:</strong> The vendor will <strong>not be able to log in</strong> or <strong>place orders</strong>.
+                                <Typography variant="caption" component="span">
+                                    <strong>Note:</strong> The vendor will <strong>not be able to log in</strong> or <strong>place orders</strong>.
+                                </Typography>
                             </>
                         ) : (
                             <>
-                                Are you sure you want to change the status to <strong>{newStatus}</strong>?
+                                <Typography variant="">
+                                    Are you sure you want to change the status to <strong>{newStatus}</strong>?
+                                </Typography>
                                 <br />
                                 <br />
-                                <strong>Note:</strong> The vendor will be able to <strong>log in</strong> and <strong>place orders</strong>.
+                                <Typography variant="caption" component="span">
+                                    <strong>Note:</strong> The vendor will be able to <strong>log in</strong> and <strong>place orders</strong>.
+                                </Typography>
                             </>
                         )}
                     </DialogContentText>
+
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={cancelStatusChange} color="secondary">
+                    <Button variant="outlined" color="inherit" onClick={cancelStatusChange}>
                         Cancel
                     </Button>
                     <Button onClick={confirmStatusChange} variant="contained" color="primary">

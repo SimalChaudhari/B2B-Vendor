@@ -10,6 +10,7 @@ import { fCurrency } from 'src/utils/format-number';
 
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
+import { DUMMY_IMAGE } from 'src/components/constants';
 
 // ----------------------------------------------------------------------
 
@@ -25,28 +26,28 @@ export function OrderDetailsItems({
   const renderTotal = (
     <Stack spacing={2} alignItems="flex-end" sx={{ p: 3, textAlign: 'right', typography: 'body2' }}>
       <Stack direction="row">
-        <Box sx={{ color: 'text.secondary' }}>Subtotal</Box>
+        <Box sx={{ color: 'text.secondary',fontWeight: 'bold' }}>Subtotal</Box>
         <Box sx={{ width: 160 }}>{fCurrency(totalAmount) || '-'}</Box>
       </Stack>
 
 
 
       <Stack direction="row">
-        <Box sx={{ color: 'text.secondary' }}>Discount</Box>
+        <Box sx={{ color: 'text.secondary',fontWeight: 'bold' }}>Discount</Box>
         <Box sx={{ width: 160, ...(discountPercentage && { color: 'error.main' }) }}>
           {discountPercentage ? `- ${fCurrency(discountPercentage)}` : '-'}
         </Box>
       </Stack>
 
       <Stack direction="row">
-        <Box sx={{ color: 'text.secondary' }}>Shipping</Box>
+        <Box sx={{ color: 'text.secondary',fontWeight: 'bold' }}>Shipping</Box>
         <Box sx={{ width: 160}}>
          Free
         </Box>
       </Stack>
 
       <Stack direction="row" sx={{ typography: 'subtitle1' }}>
-        <div>Total</div>
+        <div style={{fontWeight: 'bold'}}>Total</div>
         <Box sx={{ width: 160 }}>{fCurrency(finalAmount) || '-'}</Box>
       </Stack>
     </Stack>
@@ -72,7 +73,7 @@ export function OrderDetailsItems({
               borderBottom: (theme) => `dashed 2px ${theme.vars.palette.background.neutral}`,
             }}
           >
-            <Avatar src={item.product?.productImages?.[0]} variant="rounded" sx={{ width: 48, height: 48, mr: 2 }} />
+            <Avatar src={item.product?.productImages?.[0] || DUMMY_IMAGE} variant="rounded" sx={{ width: 48, height: 48, mr: 2 }} />
 
             <ListItemText
               primary={item.product?.itemName}

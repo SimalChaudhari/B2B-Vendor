@@ -18,7 +18,6 @@ export function Section({
   methods,
   title = 'Manage the job',
   imgUrl = `${CONFIG.site.basePath}/assets/illustrations/illustration-dashboard.webp`,
-  subtitle = 'More effectively with optimized workflows.',
   ...other
 }) {
   const theme = useTheme();
@@ -55,12 +54,6 @@ export function Section({
         <Typography variant="h3" sx={{ textAlign: 'center' }}>
           {title}
         </Typography>
-
-        {subtitle && (
-          <Typography sx={{ color: 'text.secondary', textAlign: 'center', mt: 2 }}>
-            {subtitle}
-          </Typography>
-        )}
       </div>
 
       <Box

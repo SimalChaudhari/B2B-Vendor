@@ -16,6 +16,8 @@ import { ConfirmDialog } from 'src/components/custom-dialog';
 import { usePopover, CustomPopover } from 'src/components/custom-popover';
 import { useFetchProductData } from '../../components/fetch-product';
 import { Link as RouterLink } from 'react-router-dom'; // Import Link from react-router-dom
+import { DUMMY_IMAGE } from 'src/components/constants';
+import { fCurrency, formatDateIndian } from 'src/utils/format-number';
 
 
 export function ProductTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
@@ -36,19 +38,28 @@ export function ProductTableRow({ row, selected, onEditRow, onSelectRow, onDelet
                     <Stack direction="row" alignItems="center">
                         <Avatar
                             variant="rounded"
-                            alt={row.productImages}
-                            src={row.productImages ? row?.productImages?.[0] : "No File"} // Get the first image link and trim whitespace
+                            alt={row?.productImages?.[0] || "Product Image"}
+                            src={row?.productImages && row?.productImages?.length ? row.productImages?.[0] : DUMMY_IMAGE}
                             sx={{ width: 60, height: 60, mr: 2 }}
                         />
                         <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
-                            <Link
-                                component={RouterLink}
-                                to={`/products/edit/${row.id}`}
-                                color="inherit"
-                                sx={{ cursor: 'pointer' }}
-                            >
-                                {row.itemName}
-                            </Link>
+                            <Tooltip title="Direct To View Page">
+                                <Link
+                                    component={RouterLink}
+                                    to={`/products/view/${row.id}`}
+                                    sx={{
+                                        color: '#1E40AF', // Custom dark blue shade
+                                        cursor: 'pointer',
+                                        textDecoration: 'none', // No underline by default
+                                        '&:hover': {
+                                            textDecoration: 'underline', // Underline on hover
+                                            color: '#0F3D91', // Slightly darker blue shade on hover (optional)
+                                        },
+                                    }}
+                                >
+                                    {row.itemName}
+                                </Link>
+                            </Tooltip>
 
                             <Box component="span" sx={{ color: 'text.disabled' }}>
                                 {row.group}
@@ -64,8 +75,10 @@ export function ProductTableRow({ row, selected, onEditRow, onSelectRow, onDelet
                     textOverflow: 'ellipsis',
                     maxWidth: '200px'
                 }}>{row.description || 'not available'}</TableCell>
-                <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.sellingPrice ? `₹${row.sellingPrice}` : 'not available'}</TableCell>
-                <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.sellingPriceDate || 'not available'}</TableCell>
+                <TableCell sx={{ whiteSpace: 'nowrap' }}>
+                    {fCurrency(row?.sellingPrice) || 'not available'}
+                </TableCell>
+                <TableCell sx={{ whiteSpace: 'nowrap' }}>{formatDateIndian(row.sellingPriceDate) || 'not available'}</TableCell>
                 <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.gstRate || 'not available'}</TableCell>
 
                 <TableCell>
@@ -76,25 +89,15 @@ export function ProductTableRow({ row, selected, onEditRow, onSelectRow, onDelet
                                 to={`/products/edit/${row.id}`} // Ensure this route exists
                                 sx={{ textDecoration: 'none' }}
                             >
-                                <IconButton
-                                    color={popover.open ? 'inherit' : 'default'}
-                                    onClick={(e) => {
-                                        // Prevent the default action of the link if popover should open
-                                        if (popover.open) {
-                                            e.preventDefault();
-                                        } else {
-                                            popover.onOpen(); // Ensure popover opens correctly
-                                        }
-                                    }}
-                                >
+                                <IconButton>
                                     <Iconify icon="solar:pen-bold" />
                                 </IconButton>
                             </Link>
                         </Tooltip>
                         <Tooltip title="More Actions">
-                        <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
-                            <Iconify icon="eva:more-vertical-fill" />
-                        </IconButton>
+                            <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
+                                <Iconify icon="eva:more-vertical-fill" />
+                            </IconButton>
                         </Tooltip>
                     </Stack>
                 </TableCell>

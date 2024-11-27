@@ -96,7 +96,7 @@ export function ReceivablesTableToolbar({ filters, onResetPage, data }) {
             fullWidth
             value={filters.state.name}
             onChange={handleFilterName}
-            placeholder="Search customer or order number..."
+            placeholder="Search customer..."
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">

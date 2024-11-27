@@ -65,7 +65,6 @@ export function AuthSplitLayout({ sx, section = {}, children }) {
           layoutQuery={layoutQuery}
           imgUrl={section.imgUrl}
           method={CONFIG.auth.method}
-          subtitle={section.subtitle} // Provide fallback for missing subtitle
           methods={[
             {
               label: 'Jwt',

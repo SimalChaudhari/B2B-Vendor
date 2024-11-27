@@ -6,7 +6,6 @@ import { GuestGuard } from 'src/auth/guard';
 
 const Jwt = {
   SignInPage: lazy(() => import('src/pages/auth/jwt/sign-in')),
-  SignUpPage: lazy(() => import('src/pages/auth/jwt/sign-up')),
 };
 
 export const authRoutes = [
@@ -28,16 +27,7 @@ export const authRoutes = [
           </GuestGuard>
         ),
       },
-      {
-        path: 'sign-up',
-        element: (
-          <GuestGuard>
-            <AuthSplitLayout>
-              <Jwt.SignUpPage />
-            </AuthSplitLayout>
-          </GuestGuard>
-        ),
-      },
+
     ],
   },
 ];

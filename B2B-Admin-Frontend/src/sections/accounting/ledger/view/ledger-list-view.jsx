@@ -169,7 +169,7 @@ export function LedgerListView() {
                     heading="List"
                     links={[
                         { name: 'Dashboard', href: paths.dashboard.root },
-                        { name: 'Order', href: paths?.dashboard?.order?.root },
+                        { name: 'Orders', href: paths?.dashboard?.order?.root },
                         { name: 'List' },
                     ]}
                     sx={{ mb: { xs: 3, md: 5 } }}

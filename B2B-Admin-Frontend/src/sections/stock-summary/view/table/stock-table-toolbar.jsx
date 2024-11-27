@@ -149,7 +149,7 @@ export function StockTableToolbar({ options, filters, onResetPage }) {
 
             {/* SubGroup1 Filter */}
             <FormControl sx={{ flexShrink: 0, width: { xs: 1, md: 200 } }}>
-                <InputLabel htmlFor="subgroup1-filter-select-label">Sub-Group</InputLabel>
+                <InputLabel htmlFor="subgroup1-filter-select-label">Sub-Group 1</InputLabel>
                 <Select
                     multiple
                     value={selectedSubGroup1}

@@ -9,6 +9,7 @@ import TableCell from '@mui/material/TableCell';
 
 import { Iconify } from 'src/components/iconify';
 import { RouterLink } from 'src/routes/components';
+import { fCurrency } from 'src/utils/format-number';
 
 // ----------------------------------------------------------------------
 
@@ -31,8 +32,8 @@ export function ReceivablesTableRow({ row, selected, onViewRow, onSelectRow, onD
           </Stack>
         </Stack>
       </TableCell>
-      <TableCell>{row?.closingBalance}</TableCell>
-      <TableCell>{row?.creditLimit}</TableCell>
+      <TableCell>{fCurrency(row?.creditLimit)}</TableCell>
+      <TableCell>{fCurrency(row?.closingBalance)}</TableCell>
       <TableCell sx={{ px: 1, whiteSpace: 'nowrap' }}>
       <MenuList>
         <MenuItem

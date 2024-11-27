@@ -10,10 +10,11 @@ import CardHeader from '@mui/material/CardHeader';
 import Typography from '@mui/material/Typography';
 
 import { Iconify } from 'src/components/iconify';
+import { LetterAvatar } from 'src/components/avatar';
 
 // ----------------------------------------------------------------------
 
-export function OrderDetailsInfo({delivery, customer, shippingAddress }) {
+export function OrderDetailsInfo({ delivery, customer, shippingAddress }) {
   const renderCustomer = (
     <>
       <CardHeader
@@ -21,15 +22,10 @@ export function OrderDetailsInfo({delivery, customer, shippingAddress }) {
 
       />
       <Stack direction="row" sx={{ p: 3 }}>
-        <Avatar
-          alt={customer?.name}
-          src={customer?.avatarUrl}
-          sx={{ width: 48, height: 48, mr: 2 }}
-        />
+        <LetterAvatar name={customer?.name} size={60} />
 
-        <Stack spacing={0.5} alignItems="flex-start" sx={{ typography: 'body2' }}>
+        <Stack spacing={0.5} alignItems="flex-start" sx={{ typography: 'body2', ml: 1, pt: 1 }}>
           <Typography variant="subtitle2">{customer?.name}</Typography>
-
           <Box sx={{ color: 'text.secondary' }}>{customer?.email}</Box>
         </Stack>
       </Stack>
@@ -43,12 +39,12 @@ export function OrderDetailsInfo({delivery, customer, shippingAddress }) {
       />
       <Stack spacing={1.5} sx={{ p: 3, typography: 'body2' }}>
         <Stack direction="row" alignItems="center">
-          <Box component="span" sx={{ color: 'text.secondary', width: 120, flexShrink: 0 }}>
+          <Box component="span" sx={{ color: 'text.secondary', fontWeight: 'bold', width: 120, flexShrink: 0 }}>
             Delivery
           </Box>
           {delivery?.delivery}
         </Stack>
-       
+
       </Stack>
     </>
   );
@@ -63,35 +59,35 @@ export function OrderDetailsInfo({delivery, customer, shippingAddress }) {
       />
       <Stack spacing={1.5} sx={{ p: 3, typography: 'body2' }}>
         <Stack direction="row">
-          <Box component="span" sx={{ color: 'text.secondary', width: 120, flexShrink: 0 }}>
+          <Box component="span" sx={{ color: 'text.secondary', fontWeight: 'bold', width: 120, flexShrink: 0 }}>
             Address
           </Box>
           <Box component="span">{shippingAddress?.street_address}</Box>
         </Stack>
 
         <Stack direction="row">
-          <Box component="span" sx={{ color: 'text.secondary', width: 120, flexShrink: 0 }}>
+          <Box component="span" sx={{ color: 'text.secondary', fontWeight: 'bold', width: 120, flexShrink: 0 }}>
             State
           </Box>
           <Box component="span">{shippingAddress?.state}</Box>
         </Stack>
 
         <Stack direction="row">
-          <Box component="span" sx={{ color: 'text.secondary', width: 120, flexShrink: 0 }}>
+          <Box component="span" sx={{ color: 'text.secondary', fontWeight: 'bold', width: 120, flexShrink: 0 }}>
             Zip Code
           </Box>
           <Box component="span">{shippingAddress?.zip_code}</Box>
         </Stack>
 
         <Stack direction="row">
-          <Box component="span" sx={{ color: 'text.secondary', width: 120, flexShrink: 0 }}>
+          <Box component="span" sx={{ color: 'text.secondary', fontWeight: 'bold', width: 120, flexShrink: 0 }}>
             Country
           </Box>
           <Box component="span">{shippingAddress?.country}</Box>
         </Stack>
 
         <Stack direction="row">
-          <Box component="span" sx={{ color: 'text.secondary', width: 120, flexShrink: 0 }}>
+          <Box component="span" sx={{ color: 'text.secondary', fontWeight: 'bold', width: 120, flexShrink: 0 }}>
             Mobile
           </Box>
           <Box component="span">{shippingAddress?.mobile}</Box>

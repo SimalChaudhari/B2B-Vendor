@@ -6,6 +6,7 @@ import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import { Link as RouterLink } from 'react-router-dom'; // Import Link from react-router-dom
 import { Checkbox } from '@mui/material';
+import { DUMMY_IMAGE } from 'src/components/constants';
 
 
 export function StockTableRow({ row, selected, onSelectRow }) {
@@ -20,20 +21,14 @@ export function StockTableRow({ row, selected, onSelectRow }) {
                 <Stack direction="row" alignItems="center">
                     <Avatar
                         variant="rounded"
-                        alt={row.productImages}
-                        src={row.productImages ? row?.productImages?.[0] : "No File"} // Get the first image link and trim whitespace
+                        alt={row?.productImages?.[0] || "Product Image"}
+                        src={row?.productImages && row?.productImages?.length ? row.productImages?.[0] : DUMMY_IMAGE}
                         sx={{ width: 60, height: 60, mr: 2 }}
                     />
                     <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
-                        <Link
-                            component={RouterLink}
-                            to={`/products/edit/${row.id}`}
-                            color="inherit"
-                            sx={{ cursor: 'pointer' }}
-                        >
+                        <Box component="span" >
                             {row.itemName}
-                        </Link>
-
+                        </Box>
                         <Box component="span" sx={{ color: 'text.disabled' }}>
                             {row.group}
                         </Box>
@@ -43,7 +38,7 @@ export function StockTableRow({ row, selected, onSelectRow }) {
             <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.subGroup1 || 'not available'}</TableCell>
             <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.subGroup2 || 'not available'}</TableCell>
             <TableCell sx={{ whiteSpace: 'nowrap' }}>{row.quantity || 'not available'}</TableCell>
-          
+
         </TableRow >
 
     );

@@ -1,6 +1,6 @@
 // Item.entity.ts
 import { OrderItemEntity } from './../order/order.item.entity';
-import { Entity, Column, PrimaryGeneratedColumn,OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn,OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity('Items')
 export class ItemEntity {
@@ -68,4 +68,10 @@ export class ItemEntity {
 
   @OneToMany(() => OrderItemEntity, (order) => order.product)
   orderItem?: OrderItemEntity[];
+
+  @CreateDateColumn()
+  created_at!: Date;
+
+  @UpdateDateColumn()
+  updated_at!: Date;
 }

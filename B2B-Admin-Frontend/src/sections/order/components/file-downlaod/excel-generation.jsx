@@ -1,3 +1,4 @@
+import { fCurrency } from 'src/utils/format-number';
 import * as XLSX from 'xlsx';
 
 /**
@@ -31,15 +32,14 @@ export const exportToExcel = (data, filters, fIsBetween) => {
         ProductDetails: item.orderItems
             .map((orderItem) => {
                 const product = orderItem.product || {};
-                return `${product.itemName || 'N/A'} (Qty: ${orderItem.quantity}, Price: ${product.sellingPrice || 'N/A'})`;
+                return `${product.itemName || 'N/A'} (Qty: ${orderItem.quantity}, Price: ${fCurrency(product.sellingPrice) || 'N/A'})`;
             })
             .join('; '),
         UserName: item.user?.name || 'N/A',
         Address: `${item.user?.address || 'N/A'}, ${item.user?.state || ''}, ${item.user?.country || ''} - ${item.user?.pincode || ''}`,
         TotalQuantity: item.totalQuantity,
-        TotalPrice: item.totalPrice,
         Discount: item.discount,
-        FinalAmount: item.finalAmount,
+        FinalAmount: fCurrency(item.finalAmount),
         DeliveryType: item.delivery,
         OrderDate: item.createdAt,
         GSTNo: item.user?.gstNo || 'N/A',

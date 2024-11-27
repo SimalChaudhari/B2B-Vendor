@@ -60,6 +60,20 @@ export function fCurrency(inputValue, options) {
   return fm;
 }
 
+export function fLimitedCurrency(inputValue, options) {
+  const number = processInput(inputValue);
+  if (number === null) return '';
+
+  const fm = new Intl.NumberFormat('en-IN', {
+    style: 'decimal', // Use 'decimal' to remove the currency symbol
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+    ...options,
+  }).format(number);
+
+  return fm;
+}
+
 
 // ----------------------------------------------------------------------
 
@@ -110,4 +124,20 @@ export function fData(inputValue) {
   const fm = `${parseFloat((number / baseValue ** index).toFixed(decimal))} ${units[index]}`;
 
   return fm;
+}
+
+
+export function formatDateIndian(inputDate) {
+  if (!inputDate) return '';
+
+  // Convert input to a valid Date object
+  const date = new Date(inputDate);
+
+  // Extract day, month, and year
+  const day = String(date.getDate()).padStart(2, '0'); // Ensure 2-digit day
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is zero-based
+  const year = date.getFullYear();
+
+  // Return formatted date
+  return `${day}-${month}-${year}`;
 }

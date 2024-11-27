@@ -69,5 +69,6 @@ export class ItemDto {
     @IsNotEmpty()
     @IsNumber()
     gstRate?: number;
+    
 
 }

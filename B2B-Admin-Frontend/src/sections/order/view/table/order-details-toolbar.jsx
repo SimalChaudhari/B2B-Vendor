@@ -12,7 +12,7 @@ import { fDateTime } from 'src/utils/format-time';
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 import { usePopover, CustomPopover } from 'src/components/custom-popover';
-import { Box } from '@mui/material';
+import { Box, Tooltip } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -30,13 +30,18 @@ export function OrderDetailsToolbar({
     <Box>
       <Stack spacing={3} direction={{ xs: 'column', md: 'row' }} sx={{ mb: { xs: 3, md: 5 } }}>
         <Stack spacing={1} direction="row" alignItems="flex-start">
+        <Tooltip title="Back">
           <IconButton component={RouterLink} href={backLink}>
             <Iconify icon="eva:arrow-ios-back-fill" />
           </IconButton>
+          </Tooltip>
 
           <Stack spacing={0.5}>
             <Stack spacing={1} direction="row" alignItems="center">
-              <Typography variant="h4"> OrderNo# {orderNumber} </Typography>
+              <Typography variant="h4">
+                OrderNo # <Box component="span" sx={{ color: 'primary.main' }}>{orderNumber}</Box>
+              </Typography>
+
               <Label
                 variant="soft"
                 color={

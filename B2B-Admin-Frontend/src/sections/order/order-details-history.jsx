@@ -34,12 +34,12 @@ export function OrderDetailsHistory({ orderDate, history }) {
       }}
     >
       <Stack spacing={0.5}>
-        <Box sx={{ color: 'text.disabled' }}>Order time</Box>
+        <Box sx={{ color: 'text.disabled',fontWeight: 'bold' }}>Order time</Box>
         {fDateTime(orderDate)}
       </Stack>
    
       <Stack spacing={0.5}>
-        <Box sx={{ color: 'text.disabled' }}>Completion time</Box>
+        <Box sx={{ color: 'text.disabled',fontWeight: 'bold' }}>Completion time</Box>
         {fDateTime(orderDate)}
       </Stack>
     </Paper>

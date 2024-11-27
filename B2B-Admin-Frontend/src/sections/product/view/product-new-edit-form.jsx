@@ -2,7 +2,8 @@ import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import {
     Card, CardHeader, Divider, Stack, Typography, Switch,
-    FormControlLabel, Grid
+    FormControlLabel, Grid,
+    Button
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { Field, Form } from 'src/components/hook-form';
@@ -65,6 +66,10 @@ export default function ProductNewEditForm({ currentProduct }) {
         }
     });
 
+    const handleCancel = () => {
+        navigate(-1);
+    }
+
     const handleRemoveFile = useCallback(async (file, fieldName) => {
         try {
             const isLocalFile = file instanceof File;
@@ -104,64 +109,67 @@ export default function ProductNewEditForm({ currentProduct }) {
     return (
         <Form methods={methods} onSubmit={onSubmit}>
             <Stack spacing={3}>
-            <Card>
-            <Stack spacing={2} sx={{ p: 3 }}>
-                <Grid container spacing={4}>
-                    {/* Product Images Section */}
-                    <Grid item xs={12} md={6}>
-                        <Typography variant="h6">Product Images</Typography>
-                        <Divider sx={{ borderStyle: 'dashed', my: 1 }} />
-                        
-                        <FormControlLabel
-                            control={
-                                <Switch
-                                    checked={applyToAllProductImages}
-                                    onChange={(e) => setApplyToAllProductImages(e.target.checked)}
+                <Card>
+                    <Stack spacing={2} sx={{ p: 3 }}>
+                        <Grid container spacing={4}>
+                            {/* Product Images Section */}
+                            <Grid item xs={12} md={6}>
+                                <Typography variant="h6">Product Images</Typography>
+                                <Divider sx={{ borderStyle: 'dashed', my: 1 }} />
+
+                                <FormControlLabel
+                                    control={
+                                        <Switch
+                                            checked={applyToAllProductImages}
+                                            onChange={(e) => setApplyToAllProductImages(e.target.checked)}
+                                        />
+                                    }
+                                    label="Apply this images setting to all items that belong to the same Sub-Group 2 category"
                                 />
-                            }
-                            label="Apply to all items with the same Sub-Group 2"
-                        />
-        
-                        <Field.Upload
-                            multiple
-                            thumbnail
-                            name="productImages"
-                            maxSize={3145728}
-                            onRemove={(file) => handleRemoveFile(file, 'productImages')}
-                            onRemoveAll={() => handleRemoveAllFiles('productImages')}
-                        />
-                    </Grid>
-        
-                    {/* Dimensional Files Section */}
-                    <Grid item xs={12} md={6}>
-                        <Typography variant="h6">Dimensional Files</Typography>
-                        <Divider sx={{ borderStyle: 'dashed', my: 1 }} />
-                        
-                        <FormControlLabel
-                            control={
-                                <Switch
-                                    checked={applyToAllDimensionalFiles}
-                                    onChange={(e) => setApplyToAllDimensionalFiles(e.target.checked)}
+
+                                <Field.Upload
+                                    multiple
+                                    thumbnail
+                                    name="productImages"
+                                    maxSize={3145728}
+                                    onRemove={(file) => handleRemoveFile(file, 'productImages')}
+                                    onRemoveAll={() => handleRemoveAllFiles('productImages')}
                                 />
-                            }
-                            label="Apply to all items with the same Sub-Group 2"
-                        />
-        
-                        <Field.SingleFile
-                            multiple
-                            thumbnail
-                            name="dimensionalFiles"
-                            maxSize={3145728}
-                            onRemove={(file) => handleRemoveFile(file, 'dimensionalFiles')}
-                            onRemoveAll={() => handleRemoveAllFiles('dimensionalFiles')}
-                        />
-                    </Grid>
-                </Grid>
-            </Stack>
-        </Card>
-        
+                            </Grid>
+
+                            {/* Dimensional Files Section */}
+                            <Grid item xs={12} md={6}>
+                                <Typography variant="h6">Dimensional Files</Typography>
+                                <Divider sx={{ borderStyle: 'dashed', my: 1 }} />
+
+                                <FormControlLabel
+                                    control={
+                                        <Switch
+                                            checked={applyToAllDimensionalFiles}
+                                            onChange={(e) => setApplyToAllDimensionalFiles(e.target.checked)}
+                                        />
+                                    }
+                                    label="Apply this Files setting to all items that belong to the same Sub-Group 2 category"
+                                />
+
+                                <Field.SingleFile
+                                    multiple
+                                    thumbnail
+                                    name="dimensionalFiles"
+                                    maxSize={3145728}
+                                    onRemove={(file) => handleRemoveFile(file, 'dimensionalFiles')}
+                                    onRemoveAll={() => handleRemoveAllFiles('dimensionalFiles')}
+                                />
+                            </Grid>
+                        </Grid>
+                    </Stack>
+                </Card>
+
 
                 <Stack direction="row" justifyContent="flex-end" spacing={2}>
+                    <Button variant="outlined" color="secondary" onClick={handleCancel}>
+                        Cancel
+                    </Button>
                     <LoadingButton type="submit" variant="contained" loading={loading}>
                         Submit
                     </LoadingButton>

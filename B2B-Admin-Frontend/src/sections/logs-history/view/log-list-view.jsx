@@ -167,23 +167,10 @@ export function LogListView() {
                     heading="List"
                     links={[
                         { name: 'Dashboard', href: paths.dashboard.root },
-                        { name: 'Order', href: paths?.dashboard?.order?.root },
+                        { name: 'Orders', href: paths?.dashboard?.order?.root },
                         { name: 'List' },
                     ]}
                     sx={{ mb: { xs: 3, md: 5 } }}
-
-                    action={
-                        userRole === 'Admin' && ( // Only show the button for Vendor role
-                            <Button
-                                onClick={confirmSync.onTrue} // Open the sync confirmation dialog
-                                variant="contained"
-                                startIcon={<Iconify icon="eva:sync-fill" />}
-                                disabled={loading}
-                            >
-                                {loading ? 'Syncing...' : 'Sync Invoices'}
-                            </Button>
-                        )
-                    }
                 />
                 <Card>
                     <Tabs

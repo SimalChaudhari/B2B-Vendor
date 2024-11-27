@@ -74,7 +74,7 @@ export function ReceivablesListView() {
         { id: 'Customer', label: 'Customer' },
         { id: 'CreditLimit', label: 'Credit Limit' },
         { id: 'closingBalance', label: 'Closing Balance' }, // New column for discount
-        { id: 'action', label: 'Actions' }
+        { id: 'actions', label: 'Actions' }
     ];
 
 
@@ -151,7 +151,7 @@ export function ReceivablesListView() {
         <div>
             <DashboardContent maxWidth="2xl">
                 <CustomBreadcrumbs
-                    heading="Table List"
+                    heading="List"
                     links={[
                         { name: 'Dashboard', href: paths.dashboard.root },
                         { name: 'Receivable'},

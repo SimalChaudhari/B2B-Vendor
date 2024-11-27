@@ -103,8 +103,7 @@ export const paths = {
   // AUTH
   auth: {
     jwt: {
-      signIn: `${ROOTS.AUTH}/sign-in`,
-      signUp: `${ROOTS.AUTH}/sign-up`,
+      signIn: `${ROOTS.AUTH}/sign-in`
     },
   },
 

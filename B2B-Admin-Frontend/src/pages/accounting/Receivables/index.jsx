@@ -6,7 +6,7 @@ export default function Page() {
 
     const role = useUserRole()
 
-    const metadata = { title: `Receivable - ${role}` };
+    const metadata = { title: `Outstanding Receivables - ${role}` };
 
     return (
         <>

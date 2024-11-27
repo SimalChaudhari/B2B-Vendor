@@ -199,6 +199,7 @@ export function ProductListView() {
                 />
 
                 <Card>
+                    {/*
                     <Tabs value={filters.state.status} onChange={handleFilterStatus}
                         sx={{
                             px: 2.5,
@@ -221,12 +222,14 @@ export function ProductListView() {
                                             (tab.value === 'all' && 'default') || 'default'
                                         }
                                     >
-                                        {tab.count} {/* Display the count for each status */}
+                                        {tab.count} Display the count for each status 
                                     </Label>
                                 }
                             />
                         ))}
                     </Tabs>
+                */}
+
                     <ProductTableToolbar
                         options={options}
                         filters={filters}

@@ -52,9 +52,9 @@ export function VendorListView() {
     const [loading, setLoading] = useState(false);
     const [selectedRows, setSelectedRows] = useState([]); // Store selected row IDs
     const [deleting, setDeleting] = useState(false); // Track delete operation
-   
 
-    const { fetchData, fetchDeleteData,deleteAllItems } = useFetchVendorData(); // Destructure fetchData from the custom hook
+
+    const { fetchData, fetchDeleteData, deleteAllItems } = useFetchVendorData(); // Destructure fetchData from the custom hook
 
     const dispatch = useDispatch();
 
@@ -75,7 +75,7 @@ export function VendorListView() {
         setTableData(_vendorList);
     }, [_vendorList]);
     //----------------------------------------------------------------------------------------------------
-    
+
 
     const handleSelectRow = useCallback((id) => {
         setSelectedRows((prev) =>
@@ -110,7 +110,7 @@ export function VendorListView() {
 
     //----------------------------------------------------------------------------------------------------
 
-  
+
     const handleDeleteRow = useCallback((id) => { fetchDeleteData(id) }, []);
 
     const handleEditRow = useCallback((id) => id, []);
@@ -152,7 +152,7 @@ export function VendorListView() {
                     ]}
                     action={
                         <Button
-                        
+
                             onClick={confirmSync.onTrue} // Open the sync confirmation dialog
                             variant="contained"
                             startIcon={<Iconify icon="eva:sync-fill" />} // Changed icon
@@ -209,7 +209,7 @@ export function VendorListView() {
                             numSelected={selectedRows.length}
                             rowCount={dataFiltered.length}
                             onSelectAllRows={(checked) => setSelectedRows(checked ? dataFiltered.map(row => row.id) : [])}
-                          
+
                             action={
                                 <Tooltip title="Delete">
                                     <IconButton color="primary" onClick={confirm.onTrue}>
@@ -226,7 +226,7 @@ export function VendorListView() {
                                     headLabel={TABLE_VENDOR_HEAD}
                                     rowCount={dataFiltered.length}
                                     numSelected={selectedRows.length}
-                                  
+
                                     onSort={table.onSort}
                                     onSelectAllRows={(checked) =>
                                         setSelectedRows(checked ? dataFiltered.map((row) => row.id) : [])
@@ -274,29 +274,34 @@ export function VendorListView() {
                 </Card>
             </DashboardContent>
 
-              {/* Sync Confirmation Dialog */}
-              <ConfirmDialog
-              open={confirmSync.value}
-              onClose={confirmSync.onFalse}
-              content={
-                  <Box>
-                      <Typography gutterBottom>Are you sure you want to sync the Vendors?</Typography>
-                      <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                          This action will update the vendors data and may take a few moments.
-                      </Typography>
-                  </Box>
-              }
-              action={
-                  <Button
-                      onClick={handleSyncAPI} // Trigger sync API call on confirmation
-                      variant="contained"
-                      color="primary"
-                      disabled={loading} // Disable button while loading
-                  >
-                      {loading ? 'Syncing...' : 'Confirm Sync'}
-                  </Button>
-              }
-          />
+            {/* Sync Confirmation Dialog */}
+            <ConfirmDialog
+                open={confirmSync.value}
+                onClose={loading ? !confirmSync.onFalse : confirmSync.onFalse}
+                content={
+                    <Box>
+                        <Typography gutterBottom>Are you sure you want to sync the Vendors?</Typography>
+                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                            This action will update the vendors data and may take a few moments.
+                        </Typography>
+                        {loading && (
+                            <Typography variant="caption" sx={{ color: 'text.secondary', mt: 1 }}>
+                                Please wait, the sync is in progress... (may take up to 20 seconds)
+                            </Typography>
+                        )}
+                    </Box>
+                }
+                action={
+                    <Button
+                        onClick={handleSyncAPI} // Trigger sync API call on confirmation
+                        variant="contained"
+                        color="primary"
+                        disabled={loading} // Disable button while loading
+                    >
+                        {loading ? 'Syncing...' : 'Confirm Sync'}
+                    </Button>
+                }
+            />
 
             <ConfirmDialog
                 open={confirm.value}

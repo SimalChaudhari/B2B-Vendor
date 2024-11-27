@@ -86,7 +86,7 @@ export function OrderListView() {
     { id: 'createdAt', label: 'Order Date' },
     { id: 'status', label: 'Status' },
     { id: 'Invoices ', label: 'Invoices', align: 'center' },
-    { id: 'action', label: 'Action', align: 'center' },
+    { id: 'actions', label: 'Actions', align: 'center' },
 
   ];
 
@@ -171,7 +171,7 @@ export function OrderListView() {
           heading="List"
           links={[
             { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'Order', href: paths?.orders.root },
+            { name: 'Orders', href: paths?.orders.root },
             { name: 'List' },
           ]}
           sx={{ mb: { xs: 3, md: 5 } }}
