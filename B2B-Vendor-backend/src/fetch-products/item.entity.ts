@@ -1,6 +1,6 @@
 // Item.entity.ts
 import { OrderItemEntity } from './../order/order.item.entity';
-import { Entity, Column, PrimaryGeneratedColumn,OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity('Items')
 export class ItemEntity {
@@ -43,7 +43,7 @@ export class ItemEntity {
   @Column({ type: 'date', nullable: true })
   sellingPriceDate!: Date;
 
-  @Column({ type: 'decimal', nullable: true })
+  @Column() // Set default value for discount
   sellingPrice!: number;
 
   @Column({ type: 'varchar', nullable: true })
@@ -55,7 +55,7 @@ export class ItemEntity {
   @Column({ type: 'varchar', nullable: true })
   taxability!: string;
 
-  @Column({ type: 'decimal', nullable: true })
+  @Column() // Set default value for discount
   gstRate!: number;
 
   @Column('simple-array', { nullable: true }) // For storing product image paths

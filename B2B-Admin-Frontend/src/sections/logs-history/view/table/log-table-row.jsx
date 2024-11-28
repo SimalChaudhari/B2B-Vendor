@@ -13,7 +13,7 @@ import { paths } from 'src/routes/paths';
 
 // ----------------------------------------------------------------------
 
-export function LogTableRow({ row, selected, onSelectRow }) {
+export function LogTableRow({ row, selected, onSelectRow ,index}) {
 
   const navigate = useNavigate(); // Initialize the navigation hook
 
@@ -41,9 +41,9 @@ export function LogTableRow({ row, selected, onSelectRow }) {
           inputProps={{ id: `row-checkbox-${row.id}`, 'aria-label': 'Row checkbox' }}
         />
       </TableCell>
-
+ 
       {/* Sync Type */}
-      <TableCell align="center">
+      <TableCell >
         <Link color="inherit" sx={{ cursor: 'pointer' }} onClick={handleNavigation}>
           {row.sync_type || 'N/A'}
         </Link>

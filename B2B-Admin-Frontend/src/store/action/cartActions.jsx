@@ -32,7 +32,7 @@ export const addToCart = (data) => async (dispatch) => {
         const errorMessage = error?.response?.data?.message || 'An unexpected error occurred. Please try again.';
         toast.error(errorMessage);
     }
-    
+
     return false; // Return false for any errors
 };
 
@@ -54,10 +54,10 @@ export const deleteCartItem = (id) => async (dispatch) => {
 };
 
 
-export const increaseQuantity = (id) => async (dispatch) => {
+export const addQuantity = (id, quantity) => async (dispatch) => {
 
     try {
-        await axiosInstance.patch(`/cart/increment/${id}`);
+        await axiosInstance.patch(`/cart/updateQuantity/${id}`,{ quantity });
         return true;
     } catch (error) {
         // Check if error response exists and handle error message
@@ -67,10 +67,10 @@ export const increaseQuantity = (id) => async (dispatch) => {
     return false; // Return false for any errors
 };
 
-export const decreaseQuantity = (id) => async (dispatch) => {
+export const clearCartItem = () => async (dispatch) => {
 
     try {
-        await axiosInstance.patch(`/cart/decrement/${id}`);
+        await axiosInstance.delete('/cart/clear');
         return true;
     } catch (error) {
         // Check if error response exists and handle error message
@@ -79,3 +79,29 @@ export const decreaseQuantity = (id) => async (dispatch) => {
     }
     return false; // Return false for any errors
 };
+
+// export const increaseQuantity = (id) => async (dispatch) => {
+
+//     try {
+//         await axiosInstance.patch(`/cart/increment/${id}`);
+//         return true;
+//     } catch (error) {
+//         // Check if error response exists and handle error message
+//         const errorMessage = error?.response?.data?.message || 'An unexpected error occurred. Please try again.';
+//         toast.error(errorMessage);
+//     }
+//     return false; // Return false for any errors
+// };
+
+// export const decreaseQuantity = (id) => async (dispatch) => {
+
+//     try {
+//         await axiosInstance.patch(`/cart/decrement/${id}`);
+//         return true;
+//     } catch (error) {
+//         // Check if error response exists and handle error message
+//         const errorMessage = error?.response?.data?.message || 'An unexpected error occurred. Please try again.';
+//         toast.error(errorMessage);
+//     }
+//     return false; // Return false for any errors
+// };

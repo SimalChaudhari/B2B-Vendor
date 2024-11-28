@@ -21,17 +21,29 @@ import { JwtAuthGuard } from './../jwt/jwt-auth.guard';
 export class CartController {
   constructor(private readonly cartService: CartService) { }
 
-  @Patch('/increment/:cartItemId')
-  async incrementQuantity(@Req() req: Request, @Param('cartItemId') cartItemId: string) {
-    const userId = req.user.id;
-    return this.cartService.updateCartItemQuantity(userId, cartItemId, 100); // Increment by 1
-  }
+  // @Patch('/increment/:cartItemId')
+  // async incrementQuantity(@Req() req: Request, @Param('cartItemId') cartItemId: string) {
+  //   const userId = req.user.id;
+  //   return this.cartService.updateCartItemQuantity(userId, cartItemId, 100); // Increment by 1
+  // }
 
-  @Patch('/decrement/:cartItemId')
-  async decrementQuantity(@Req() req: Request, @Param('cartItemId') cartItemId: string) {
-    const userId = req.user.id;
-    return this.cartService.updateCartItemQuantity(userId, cartItemId, -100); // Decrement by 1
-  }
+  // @Patch('/decrement/:cartItemId')
+  // async decrementQuantity(@Req() req: Request, @Param('cartItemId') cartItemId: string) {
+  //   const userId = req.user.id;
+  //   return this.cartService.updateCartItemQuantity(userId, cartItemId, -100); // Decrement by 1
+  // }
+
+    // Update quantity (this now handles both increment and decrement)
+    @Patch('/updateQuantity/:cartItemId')
+    async updateQuantity(
+      @Req() req: Request,
+      @Param('cartItemId') cartItemId: string,
+      @Body() body: { quantity: number } // Get the new quantity value from the request body
+    ) {
+      const userId = req.user.id; // Get the user ID from the request
+      const { quantity } = body; // Get the new quantity from the request body
+      return this.cartService.updateCartItemQuantity(userId, cartItemId, quantity);
+    }
 
   // Discount 
   @Patch('/discount/:cartItemId')

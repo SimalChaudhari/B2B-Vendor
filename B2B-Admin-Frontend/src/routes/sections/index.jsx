@@ -6,11 +6,13 @@
 
 // export function Router() {
 //   const [userRole, setUserRole] = useState(null);
+//   const [isRoleFetched, setIsRoleFetched] = useState(false); // Track role fetch status
 
 //   useEffect(() => {
 //     const handleRoleChange = () => {
 //       const userData = JSON.parse(localStorage.getItem('userData') || '{}');
 //       setUserRole(userData?.user?.role || null);
+//       setIsRoleFetched(true); // Mark as fetched
 //     };
 
 //     window.addEventListener('storage', handleRoleChange);
@@ -21,31 +23,40 @@
 //     };
 //   }, []);
 
-//   // Default routes to prevent conditional hook call
-//   const routes = [
+//   // Define general routes
+//   const baseRoutes = [
 //     {
 //       path: '/',
 //       element: <Navigate to="/dashboard" replace />,
 //     },
-//     // Auth
 //     ...authRoutes,
+//   ];
 
-//     // Role-Specific Routes
-//     ...(userRole === 'Admin'
+//   // Add role-specific routes only when `userRole` is known
+//   const roleSpecificRoutes =
+//     userRole === 'Admin'
 //       ? adminRoute
 //       : userRole === 'Vendor'
 //       ? vendorRoutes
-//       : []),
+//       : [];
 
-//     // Fallback for undefined routes
+//   const routes = [
+//     ...baseRoutes,
+//     ...roleSpecificRoutes,
 //     { path: '*', element: <Navigate to="/404" replace /> },
 //   ];
 
-//   // Always call useRoutes
+//   // Always call `useRoutes`
 //   const element = useRoutes(routes);
+
+//   // Show a loading indicator while waiting for `userRole` to load
+//   if (!isRoleFetched) {
+//     return <div>Loading...</div>;
+//   }
 
 //   return element;
 // }
+
 
 import { Navigate, useRoutes } from 'react-router-dom';
 import { authRoutes } from './auth';

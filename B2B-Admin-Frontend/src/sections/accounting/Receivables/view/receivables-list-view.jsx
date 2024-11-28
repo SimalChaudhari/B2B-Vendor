@@ -33,8 +33,6 @@ import {
     TableSelectedAction,
     TablePaginationCustom,
 } from 'src/components/table';
-
-import { ORDER_STATUS_OPTIONS } from 'src/_mock/_order';
 import { useDispatch, useSelector } from 'react-redux';
 import useUserRole from 'src/layouts/components/user-role';
 import { Typography } from '@mui/material';
@@ -45,8 +43,6 @@ import { ReceivablesTableRow } from './table/receivables-table-row';
 import { useFetchData } from '../components/fetch-receivable';
 import { syncReceivable } from 'src/store/action/accountingActions';
 // ----------------------------------------------------------------------
-
-const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...ORDER_STATUS_OPTIONS];
 
 // ----------------------------------------------------------------------
 
@@ -71,8 +67,8 @@ export function ReceivablesListView() {
     });
     //-----------------------------------------------------------------------------------------------------
     const TABLE_HEAD = [
-        { id: 'Customer', label: 'Customer' },
-        { id: 'CreditLimit', label: 'Credit Limit' },
+        { id: 'customerName', label: 'Customer' },
+        { id: 'creditLimit', label: 'Credit Limit' },
         { id: 'closingBalance', label: 'Closing Balance' }, // New column for discount
         { id: 'actions', label: 'Actions' }
     ];

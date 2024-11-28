@@ -32,7 +32,7 @@ export const TABLE_SUB_CATEGORY_HEAD = [
 ];
 
 export const TABLE_PRODUCT_HEAD = [
-  { id: 'item', label: 'Item Name / Group' },
+  { id: 'itemName', label: 'Item Name / Group' },
   { id: 'subGroup1', label: 'Sub-Group 1' },
   { id: 'subGroup2', label: 'Sub-Group 2' },
   { id: 'description', label: 'Description' },
@@ -43,7 +43,7 @@ export const TABLE_PRODUCT_HEAD = [
 ];
 
 export const TABLE_STOCK_HEAD = [
-  { id: 'item', label: 'Item Name' },
+  { id: 'itemName', label: 'Item Name' },
   { id: 'subGroup1', label: 'Sub-Group 1' },
   { id: 'subGroup2', label: 'Sub-Group 2' },
   { id: 'quantity', label: 'Quantity' }
@@ -52,7 +52,7 @@ export const TABLE_STOCK_HEAD = [
 export const TABLE_VENDOR_HEAD = [
   { id: 'name', label: 'Name / Email' },
   { id: 'alias', label: 'Alias' },
-  { id: 'phone', label: 'Phone' },
+  { id: 'mobile', label: 'Phone' },
   { id: 'address', label: 'Address' },
   { id: 'country', label: 'Country' },
   { id: 'state', label: 'State' },

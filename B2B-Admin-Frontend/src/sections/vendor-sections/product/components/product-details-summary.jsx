@@ -18,7 +18,7 @@ import { Iconify } from 'src/components/iconify';
 import { Form, Field } from 'src/components/hook-form';
 import { ColorPicker } from 'src/components/color-utils';
 import { IncrementerButton } from './incrementer-button';
-import { addToCart, cartList, decreaseQuantity, increaseQuantity } from 'src/store/action/cartActions';
+import { addToCart, cartList} from 'src/store/action/cartActions';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router';
 

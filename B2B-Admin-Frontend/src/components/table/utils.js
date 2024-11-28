@@ -35,3 +35,15 @@ export function getComparator(order, orderBy) {
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
+
+// export function getComparator(order, orderBy) {
+//   return (a, b) => {
+//     if (a[orderBy] < b[orderBy]) {
+//       return order === 'desc' ? 1 : -1;
+//     }
+//     if (a[orderBy] > b[orderBy]) {
+//       return order === 'desc' ? -1 : 1;
+//     }
+//     return 0;
+//   };
+// }

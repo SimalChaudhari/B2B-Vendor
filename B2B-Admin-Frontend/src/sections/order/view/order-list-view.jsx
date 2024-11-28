@@ -73,19 +73,19 @@ export function OrderListView() {
   //-----------------------------------------------------------------------------------------------------
 
   const TABLE_HEAD = [
-    { id: 'OrderNo', label: 'Order No', align: 'center', width: 120 }, // Always present
+    { id: 'orderNo', label: 'Order No', align: 'center', width: 120 }, // Always present
     ...(userRole === "Admin"
       ? [
-        { id: 'Customer', label: 'Customer' },
+        { id: 'name', label: 'Customer' },
       ]
       : []),
-    { id: 'Quantity', label: 'Quantity', align: 'center' },
-    { id: 'Discount', label: 'Discount (%)', align: 'center' }, // New column for discount
-    { id: 'FinalAmount', label: 'Final Amount', align: 'center' }, // New column for amount after discount  
-    { id: 'Delivery', label: 'Delivery Type' },
+    { id: 'totalQuantity', label: 'Quantity', align: 'center' },
+    { id: 'discount', label: 'Discount (%)', align: 'center' }, // New column for discount
+    { id: 'finalAmount', label: 'Final Amount', align: 'center' }, // New column for amount after discount  
+    { id: 'delivery', label: 'Delivery Type' },
     { id: 'createdAt', label: 'Order Date' },
     { id: 'status', label: 'Status' },
-    { id: 'Invoices ', label: 'Invoices', align: 'center' },
+    { id: 'invoices ', label: 'Invoices', align: 'center' },
     { id: 'actions', label: 'Actions', align: 'center' },
 
   ];

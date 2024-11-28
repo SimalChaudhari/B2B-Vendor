@@ -3,20 +3,17 @@ import Button from '@mui/material/Button';
 import Grid from '@mui/material/Unstable_Grid2';
 import CardHeader from '@mui/material/CardHeader';
 import Typography from '@mui/material/Typography';
-import { paths } from 'src/routes/paths';
-import { RouterLink } from 'src/routes/components';
 import { CONFIG } from 'src/config-global';
-import { Iconify } from 'src/components/iconify';
 import { EmptyContent } from 'src/components/empty-content';
 import { useCheckoutContext } from './context';
 import { CheckoutSummary } from './checkout-summary';
 import { CheckoutCartProductList } from './checkout-cart-product-list';
-import { useDispatch, useSelector } from 'react-redux';
-import { cartList, decreaseQuantity, deleteCartItem, increaseQuantity } from 'src/store/action/cartActions';
+import { useDispatch } from 'react-redux';
+import { cartList, clearCartItem, deleteCartItem } from 'src/store/action/cartActions';
 import useCart from './components/useCart';
 import { toast } from 'sonner';
 import { fCurrency } from 'src/utils/format-number';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 // ----------------------------------------------------------------------
 
@@ -53,18 +50,6 @@ export function CheckoutCart() {
     }
   };
 
-  const handleIncreaseQuantity = async (id) => {
-    await dispatch(increaseQuantity(id)); // Action to increase item quantity
-    fetchData();
-
-  };
-
-  const handleDecreaseQuantity = async (id) => {
-    await dispatch(decreaseQuantity(id)); // Action to decrease item quantity
-    fetchData();
-
-  };
-
   const handleDownload = async (id) => {
     const item = mappedData.find((data) => data.id === id);
 
@@ -97,8 +82,16 @@ export function CheckoutCart() {
     }
   };
 
-
-
+  const handleClearCart = async () => {
+    try {
+      const res = await dispatch(clearCartItem()); // Action to delete an item
+      if (res) {
+        fetchData();
+      }
+    } catch (error) {
+      console.error("Failed to clear the cart:", error);
+    }
+  };
 
   return (
     <Grid container spacing={3}>
@@ -113,7 +106,20 @@ export function CheckoutCart() {
                 </Typography>
               </Typography>
             }
+
+            action={
+              !empty && (
+                <Button
+                  size="small"
+                  variant="outlined"
+                  color="error"
+                  onClick={handleClearCart} // Add the handler function to clear the cart
+                >
+                  Clear Cart
+                </Button>
+              )}
             sx={{ mb: 3 }}
+
           />
 
           {empty ? (
@@ -128,8 +134,6 @@ export function CheckoutCart() {
               products={mappedData}
               onDelete={handleDeleteCart}
               onDownload={handleDownload}
-              onIncreaseQuantity={handleIncreaseQuantity}
-              onDecreaseQuantity={handleDecreaseQuantity}
             />
           )}
         </Card>

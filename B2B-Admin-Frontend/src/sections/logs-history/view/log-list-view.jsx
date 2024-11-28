@@ -32,7 +32,6 @@ import {
 } from 'src/components/table';
 
 import { LogTableRow } from './table/log-table-row';
-import { ORDER_STATUS_OPTIONS } from 'src/_mock/_order';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFetchOrderData } from '../components/fetch-logs';
 import useUserRole from 'src/layouts/components/user-role';
@@ -44,8 +43,8 @@ import { LogTableFiltersResult } from './table/log-table-filters-result';
 // ----------------------------------------------------------------------
 const TABLE_HEAD = [
 
-    { id: 'SyncType', label: 'SyncType', align: 'center' },
-    { id: 'createdAt', label: 'Log Sync Date' },
+    { id: 'sync_type', label: 'SyncType' },
+    { id: 'created_at', label: 'Log Sync Date' },
     { id: 'status', label: 'Status' }
 ];
 const STATUS_COLORS = {
@@ -108,14 +107,15 @@ export function LogListView() {
         );
     }, []);
 
-
-    const dataFiltered = tableData.filter((item) =>
-        filters.state.sync_type === 'all' || filters.state.status === 'all'
-            ? true // Show all data for the "All" tab
-            : (filters.state.sync_type && item.sync_type === filters.state.sync_type) ||
-            (filters.state.status && item.status === filters.state.status)
-    );
-
+    const dataFiltered = tableData
+    .filter((item) =>
+      filters.state.sync_type === 'all' || filters.state.status === 'all'
+        ? true
+        : (filters.state.sync_type && item.sync_type === filters.state.sync_type) ||
+          (filters.state.status && item.status === filters.state.status)
+    )
+    .sort(getComparator(table.order, table.orderBy)); // Apply the sorting comparator after filtering
+  
     //----------------------------------------------------------------------------------------------------
 
     const canReset =

@@ -10,7 +10,7 @@ export class CartItemEntity {
   @ManyToOne(() => ItemEntity, { eager: true }) // Fetch related product details
   product!: ItemEntity;
 
-  @Column()
+  @Column({ default: 1 })
   quantity!: number;
 
   @Column({ default: 0 }) // Set default value for discount

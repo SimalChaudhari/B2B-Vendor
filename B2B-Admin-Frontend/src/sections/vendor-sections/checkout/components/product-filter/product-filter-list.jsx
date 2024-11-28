@@ -67,8 +67,8 @@ export function ProductFilterView() {
     const handleSubmit = async (event) => {
         event.preventDefault();
         const productsToAdd = selectedProducts.map((product) => ({
-            productId: product.id,
-            quantity: 100, // Default quantity is 100
+            productId: product.id
+            // quantity: 100, // Default quantity is 100
         }));
         const data = { items: productsToAdd };
         try {

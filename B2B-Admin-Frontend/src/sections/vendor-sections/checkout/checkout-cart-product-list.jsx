@@ -22,8 +22,6 @@ export function CheckoutCartProductList({
   products,
   onDownload,
   onDelete,
-  onIncreaseQuantity,
-  onDecreaseQuantity,
 }) {
   const confirm = useBoolean();
   const [selectedProductId, setSelectedProductId] = useState(null);
@@ -52,8 +50,6 @@ export function CheckoutCartProductList({
               row={row}
               onDownload={() => onDownload(row.id)}
               onDelete={() => openConfirmDialog(row.id)} // Open confirm dialog for specific product
-              onDecrease={() => onDecreaseQuantity(row.id)}
-              onIncrease={() => onIncreaseQuantity(row.id)}
             />
           ))}
         </TableBody>
