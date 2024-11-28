@@ -16,7 +16,6 @@ export function ContactFormData() {
       try {
         const data = await getContactMessage();
         setContactsData(data); // Store data in state
-        // console.log('Terms Data:', data); // Log fetched data
       } catch (err) {
         console.error('Error fetching terms and condition data:', err);
         setError('Failed to fetch terms and condition data'); // Set error message

@@ -137,6 +137,20 @@
     color: white;
 }
 
+.Latest_PRG {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+@media (max-width: 350px) {
+    .Latest_PRG {
+        flex-direction: column; /* Stack items vertically on small screens */
+        align-items: flex-start; /* Align items to the left for small screens */
+    }
+}
+
+
 .mainCss {
     max-width: 1200px;
     margin: 0 auto;
@@ -731,4 +745,9 @@
             color: var(--white-color) !important;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
           }
-          
+          .About_TXT{
+            text-align: left !important;
+          }
+          .css-2thgra-MuiButtonBase-root-MuiIconButton-root{
+            background-color: #fff !important;
+          }

@@ -5,7 +5,6 @@ import { fetchItems } from 'src/services/productApi'; // Ensure this file is cor
 import {
   Container,
   Grid,
-  Card,
   CardMedia,
   CardContent,
   Typography,
@@ -74,8 +73,8 @@ export function HomeLetestProduct() {
 
   return (
     <Container className='containerCss mb-5'>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-        <Typography variant="h4" component="h1" className='text-black mb-2 mt-2'>
+      <Box mb={3} className="Latest_PRG">
+        <Typography variant="h4" component="h1" className='text-black mb-1 mt-1'>
           Latest Products
         </Typography>
         <Button

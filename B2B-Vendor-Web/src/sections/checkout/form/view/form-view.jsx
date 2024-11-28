@@ -45,7 +45,7 @@ export function FormView() {
             state: '',
             address: '',
             pincode: '',
-            country: '',
+            country: 'India',
             primary: true,
             mobile: '',
         },

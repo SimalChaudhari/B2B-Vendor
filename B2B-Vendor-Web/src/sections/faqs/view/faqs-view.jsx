@@ -4,8 +4,6 @@ import Typography from '@mui/material/Typography';
 
 import { FaqsHero } from '../faqs-hero';
 import { FaqsList } from '../faqs-list';
-import { FaqsForm } from '../faqs-form';
-import { FaqsCategory } from '../faqs-category';
 
 // ----------------------------------------------------------------------
 
@@ -14,25 +12,17 @@ export function FaqsView() {
     <div>
       <FaqsHero />
 
-      <Container sx={{ pb: 10, pt: { xs: 10, md: 15 }, position: 'relative' }}>
-        {/*
-        <FaqsCategory />
-         */}
+      <Container sx={{ pb: 10, pt: { xs: 10, md: 1 }, position: 'relative' }}>
+
 
         <Typography variant="h3" sx={{ my: { xs: 5, md: 10 } }}>
           Frequently asked questions
         </Typography>
 
-        <Box
-          // gap={10}
-          // display="grid"
-          // gridTemplateColumns={{ xs: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)' }}
-        >
+        <Box>
+        
           <FaqsList />
 
-          {/*
-            <FaqsForm />
-             */}
         </Box>
       </Container>
     </div>

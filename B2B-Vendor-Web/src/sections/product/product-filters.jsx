@@ -76,7 +76,7 @@ export function ProductFilters({ open, onOpen, onClose, canReset, filters, optio
   const handleFiltersubGroup1 = useCallback(
     (newValue) => {
       filters.setState({ subGroup1: newValue });
-      filters.setState({ category: 'all' });
+      // filters.setState({ category: 'all' });
       filters.setState({ subGroup2: 'all' });
     },
     [filters]
@@ -311,9 +311,9 @@ export function ProductFilters({ open, onOpen, onClose, canReset, filters, optio
             {renderColor}
             */}
             {renderCategory}
+            {rendersubGroup1}
+            {rendersubGroup2}
             {/*
-              {rendersubGroup1}
-              {rendersubGroup2}
               {renderPrice}
               */}
           </Stack>

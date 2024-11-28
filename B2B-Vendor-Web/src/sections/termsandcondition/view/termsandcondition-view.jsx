@@ -16,7 +16,6 @@ export function TermsAndConditionView() {
             try {
                 const data = await fetchTermsAndCondition();
                 setTermsData(data); // Store data in state
-                // console.log('Terms Data:', data); // Log fetched data
             } catch (err) {
                 console.error('Error fetching terms and condition data:', err);
                 setError('Failed to fetch terms and condition data'); // Set error message

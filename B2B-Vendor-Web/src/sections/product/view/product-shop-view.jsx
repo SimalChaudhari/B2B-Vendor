@@ -24,7 +24,6 @@ import { EmptyContent } from 'src/components/empty-content';
 
 import { ProductList } from '../product-list';
 import { ProductSort } from '../product-sort';
-import { ProductSearch } from '../product-search';
 import { CartIcon } from '../components/cart-icon';
 import { ProductFilters } from '../product-filters';
 import { useCheckoutContext } from '../../checkout/context';
@@ -33,12 +32,11 @@ import { CustomSearch } from '../CustomSearch';
 import { fetchItemsSearch } from 'src/services/productApi';
 
 export function ProductShopView({ products = [], loading }) {
-
   const [page, setPage] = useState(1);
   // Extract unique item names
   const uniqueItemNames = Array.from(new Set(products.map(product => product.group)));
-  const uniqueItemsubGroup1 = Array.from(new Set(products.map(product => product.subGroup1)));
-  const uniqueItemsubGroup2 = Array.from(new Set(products.map(product => product.subGroup2)));
+  const [uniqueItemsubGroup1, setUniqueItemsubGroup1] = useState([]);
+  const [uniqueItemsubGroup2, setUniqueItemsubGroup2] = useState([]);
 
   const items = useSelector((state) => state.product.items.data);
 
@@ -48,8 +46,6 @@ export function ProductShopView({ products = [], loading }) {
     { value: 'priceDesc', label: 'Price: High - Low' },
     { value: 'priceAsc', label: 'Price: Low - High' },
   ];  
-
-  // console.log(PRODUCT_SORT_OPTIONS);
 
   const checkout = useCheckoutContext();
 
@@ -83,6 +79,7 @@ export function ProductShopView({ products = [], loading }) {
   });
 
   // const { searchResults, searchLoading } = fetchItemsSearch(debouncedQuery);
+
    // Fetch items based on search query
    useEffect(() => {
     const fetchSearchResults = async () => {
@@ -115,8 +112,36 @@ export function ProductShopView({ products = [], loading }) {
   // Reset the page to 1 whenever filters are changed
   useEffect(() => {
    setPage(1);
+   
  }, [filters.state, sortBy]);
   
+ useEffect(() => {
+  // Recompute uniqueItemsubGroup1 based on selected category
+  if (filters.state.category === 'all') {
+    setUniqueItemsubGroup1(Array.from(new Set(products.map(product => product.subGroup1))));
+  } else {
+    const filteredProducts = products.filter(product => product.group === filters.state.category);
+    setUniqueItemsubGroup1(Array.from(new Set(filteredProducts.map(product => product.subGroup1))));
+  }
+}, [filters.state.category, products]);
+
+// Update uniqueItemsubGroup2 when filters.state.category or filters.state.subGroup1 changes
+useEffect(() => {
+  let filteredProducts = products;
+
+  // Filter by category first
+  if (filters.state.category !== 'all') {
+    filteredProducts = filteredProducts.filter(product => product.group === filters.state.category);
+  }
+
+  // Then filter by subGroup1
+  if (filters.state.subGroup1 !== 'all') {
+    filteredProducts = filteredProducts.filter(product => product.subGroup1 === filters.state.subGroup1);
+  }
+
+  // Set uniqueItemsubGroup2 based on filtered products
+  setUniqueItemsubGroup2(Array.from(new Set(filteredProducts.map(product => product.subGroup2))));
+}, [filters.state.category, filters.state.subGroup1, products]);
   
   const canReset =
     filters.state.gender.length > 0 ||
@@ -148,14 +173,6 @@ export function ProductShopView({ products = [], loading }) {
       alignItems={{ xs: 'flex-end', sm: 'center' }}
       direction={{ xs: 'column', sm: 'row' }}
     >
-    {/*
-      <ProductSearch
-        query={debouncedQuery}
-        results={searchResults}
-        onSearch={handleSearch}
-        loading={searchLoading}
-      />
-     */}
       <CustomSearch
         value={debouncedQuery}
         onSearch={handleSearch}
@@ -222,23 +239,6 @@ function applyFilter({ inputData, filters, sortBy }) {
 
   // const max = priceRange[1];
   
-  // Sort by
-  // if (sortBy === 'featured') {
-  //   inputData = orderBy(inputData, ['totalSold'], ['desc']);
-  // }
-
-  // if (sortBy === 'newest') {
-  //   inputData = orderBy(inputData, ['createdAt'], ['desc']);
-  // }
-
-  // if (sortBy === 'priceDesc') {
-  //   inputData = orderBy(inputData, ['price'], ['desc']);
-  // }
-
-  // if (sortBy === 'priceAsc') {
-  //   inputData = orderBy(inputData, ['price'], ['asc']);
-  // }
-
   // Parse sellingPrice to Number for proper sorting
   inputData = inputData.map((product) => ({
     ...product,

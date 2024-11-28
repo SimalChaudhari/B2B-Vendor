@@ -39,7 +39,6 @@ export function OrderAndAddressView() {
             // Clear the order data from Redux after successful order confirmation
             dispatch(resetProductAndAddress());
 
-            // console.log('Order Confirmed:', address, productDetails);
             // alert('Order confirmed!');
         } catch (error) {
             console.error('Order confirmation failed', error);

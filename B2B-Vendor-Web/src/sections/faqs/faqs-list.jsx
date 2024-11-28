@@ -23,7 +23,6 @@ export function FaqsList() {
       try {
         const data = await getFaqData();
         setContactsData(data.data); // Store data in state
-        // console.log('Terms Data:', data.data); // Log fetched data
       } catch (err) {
         console.error('Error fetching terms and condition data:', err);
         setError('Failed to fetch terms and condition data'); // Set error message

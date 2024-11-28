@@ -7,9 +7,6 @@ export function CustomSearch({ query, onSearch, placeholder = 'Search...' }) {
 
   const handleChange = (event) => {
     const value = event?.target?.value;  // ESLint warning here
-    // console.log('====================================');
-    // console.log("value :", value);
-    // console.log('====================================');
     setInputValue(value);
     onSearch(value); // Trigger the parent search handler
   };

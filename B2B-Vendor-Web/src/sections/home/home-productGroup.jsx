@@ -5,7 +5,6 @@ import { fetchProductsFailure, fetchProductsStart, fetchProductsSuccess } from '
 import { fetchItems } from 'src/services/productApi';
 import {
     Container,
-    Grid,
     CardMedia,
     Typography,
     CircularProgress,
@@ -153,9 +152,9 @@ export function HomeProductGroup() {
 
     return (
         <Container className='containerCss'>
-            <Box className=" flex item-center" sx={{ justifyContent: "space-between" }}>
+            <Box className="Latest_PRG" sx={{ mb:2 }}>
                 <Box>
-                    <Typography className='text-black mt-2 mb-2' variant="h4" component="h1" gutterBottom>
+                    <Typography className='text-black mt-1' variant="h4" component="h1" gutterBottom>
                         Product Categories
                     </Typography>
                 </Box>

@@ -5,14 +5,12 @@ import Divider from '@mui/material/Divider';
 import { useTheme } from '@mui/material/styles';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 
 import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
 
 import { Logo } from 'src/components/logo';
-import { SocialIcon } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
@@ -48,17 +46,11 @@ export function Footer({ layoutQuery, sx }) {
 
       <Container
         sx={{
-          // pb: 5,
-          // pt: 10,
           py:5,
           textAlign: 'center',
           [theme.breakpoints.up(layoutQuery)]: { textAlign: 'unset' },
         }}
       >
-        {/*
-        <Logo />
-         */}
-
         <Grid
           container
           sx={{
