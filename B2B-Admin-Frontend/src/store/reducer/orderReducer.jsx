@@ -1,4 +1,4 @@
-import { Order_LIST, ORDER_BY_LIST } from "../constants/actionTypes";
+import { ORDER_LIST, ORDER_BY_LIST } from "../constants/actionTypes";
 
 const initialState = {
     order: [],
@@ -7,7 +7,7 @@ const initialState = {
 };
 const orderReducer = (state = initialState, { type, payload } = {}) => {
     switch (type) {
-        case Order_LIST:
+        case ORDER_LIST:
             return {
                 ...state,
                 order: payload,

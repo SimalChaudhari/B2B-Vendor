@@ -1,6 +1,6 @@
 import { toast } from "sonner";
 import axiosInstance from "src/configs/axiosInstance";
-import { Order_LIST, ORDER_BY_LIST } from "../constants/actionTypes";
+import { ORDER_LIST, ORDER_BY_LIST } from "../constants/actionTypes";
 
 export const syncOrder = () => async (dispatch) => {
     try {
@@ -30,7 +30,7 @@ export const orderList = () => async (dispatch) => {
     try {
         const response = await axiosInstance.get('/order/get');
         dispatch({
-            type: Order_LIST,
+            type: ORDER_LIST,
             payload: response.data, // Assuming response contains the customers data
         });
         return true;
