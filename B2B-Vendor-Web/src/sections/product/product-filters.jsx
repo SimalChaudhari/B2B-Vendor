@@ -67,6 +67,8 @@ export function ProductFilters({ open, onOpen, onClose, canReset, filters, optio
   const handleFilterCategory = useCallback(
     (newValue) => {
       filters.setState({ category: newValue });
+      filters.setState({ subGroup1: 'all' });
+      filters.setState({ subGroup2: 'all' });
     },
     [filters]
   );
@@ -74,6 +76,8 @@ export function ProductFilters({ open, onOpen, onClose, canReset, filters, optio
   const handleFiltersubGroup1 = useCallback(
     (newValue) => {
       filters.setState({ subGroup1: newValue });
+      // filters.setState({ category: 'all' });
+      filters.setState({ subGroup2: 'all' });
     },
     [filters]
   );
@@ -185,7 +189,7 @@ export function ProductFilters({ open, onOpen, onClose, canReset, filters, optio
   const rendersubGroup1 = (
     <Box display="flex" flexDirection="column">
       <Typography variant="subtitle2" sx={{ mb: 1 }}>
-        subGroup1
+        Subgroup 1
       </Typography>
       {options.subGroups1.map((option) => (
         <FormControlLabel
@@ -195,10 +199,10 @@ export function ProductFilters({ open, onOpen, onClose, canReset, filters, optio
               checked={option === filters.state.subGroup1}
               onClick={() => {
                 handleFiltersubGroup1(option);
-                // Update the URL here when a category is selected
+                // Update URL with selected subgroup1
                 const url = new URLSearchParams(location.search);
                 url.set('subGroup1', option);
-                window.history.replaceState({}, '', `${location.pathname}?${url}`); // Update the URL without reloading
+                window.history.replaceState({}, '', `${location.pathname}?${url}`);
               }}
             />
           }
@@ -208,6 +212,7 @@ export function ProductFilters({ open, onOpen, onClose, canReset, filters, optio
       ))}
     </Box>
   );
+  
 
 
   const rendersubGroup2 = (
@@ -306,11 +311,11 @@ export function ProductFilters({ open, onOpen, onClose, canReset, filters, optio
             {renderColor}
             */}
             {renderCategory}
+            {rendersubGroup1}
+            {rendersubGroup2}
             {/*
-              {rendersubGroup1}
-              {rendersubGroup2}
+              {renderPrice}
               */}
-            {renderPrice}
           </Stack>
         </Scrollbar>
       </Drawer>

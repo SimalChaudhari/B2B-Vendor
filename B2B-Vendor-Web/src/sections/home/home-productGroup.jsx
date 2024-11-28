@@ -1,11 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { fetchProductsFailure, fetchProductsStart, fetchProductsSuccess } from 'src/redux/ProductReducer';
-import { fetchItems } from 'src/services/productApi'; 
+import { fetchItems } from 'src/services/productApi';
 import {
     Container,
-    Grid,
     CardMedia,
     Typography,
     CircularProgress,
@@ -13,8 +12,30 @@ import {
     Divider,
 } from '@mui/material';
 import { AiOutlineWarning } from 'react-icons/ai';
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
+import IconButton from '@mui/material/IconButton';
+import { styled } from '@mui/material/styles';
+
+
+// Styled buttons for better UI
+const StyledIconButton = styled(IconButton)(({ theme }) => ({
+    // backgroundColor: "#f0f0f0",
+    color: '#000',
+    borderRadius: "50%",
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+    // height: "100px",
+    transition: 'background-color 0.3s, transform 0.3s',
+    '&:hover': {
+        // backgroundColor: "#ccc",
+        transform: 'scale(1.05)',
+    },
+}));
 
 export function HomeProductGroup() {
+    const sliderRef = useRef(null);
     const dispatch = useDispatch();
     const navigate = useNavigate(); // Initialize navigate
     const { items: products = [], loading: productsLoading } = useSelector((state) => state.product);
@@ -33,6 +54,58 @@ export function HomeProductGroup() {
 
         getProducts();
     }, [dispatch]);
+
+    const settings = {
+        dots: false,
+        // infinite: true,
+        speed: 500,
+        slidesToShow: 7,
+        slidesToScroll: 1,
+        // autoplay: true,
+        autoplaySpeed: 3000,
+        arrows: false,
+        responsive: [
+        {
+            breakpoint: 1200, // For large screens
+            settings: {
+                slidesToShow: 5,
+            },
+        },
+        {
+            breakpoint: 992, // For medium screens (like tablets)
+            settings: {
+                slidesToShow: 4,
+            },
+        },
+        {
+            breakpoint: 768, // For small screens (e.g., large phones)
+            settings: {
+                slidesToShow: 3,
+            },
+        },
+        {
+            breakpoint: 576, // For very small screens (e.g., small phones)
+            settings: {
+                slidesToShow: 2,
+            },
+        },
+        {
+            breakpoint: 400, // For extra small screens
+            settings: {
+                slidesToShow: 1,
+            },
+        },
+    ],
+    };
+
+    // Handle previous and next actions
+    const handlePrev = () => {
+        sliderRef.current.slickPrev();
+    };
+
+    const handleNext = () => {
+        sliderRef.current.slickNext();
+    };
 
     if (productsLoading) {
         return <LoadingScreen />;
@@ -79,51 +152,72 @@ export function HomeProductGroup() {
 
     return (
         <Container className='containerCss'>
-            <Typography className='text-black mt-2 mb-2' variant="h4" component="h1" gutterBottom>
-                Product Categories
-            </Typography>
-            <Grid container spacing={2}>
-            {displayedProducts.map((product) => (
-                <Grid item xs={6} sm={4} md={2} key={product.id}>
-                    <button
-                        type="button" // Add this line to specify the button type
-                        className="card2"
-                        onClick={() => handleProductClick(product.group)}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                                handleProductClick(product.group);
-                            }
+            <Box className="Latest_PRG" sx={{ mb:2 }}>
+                <Box>
+                    <Typography className='text-black mt-1' variant="h4" component="h1" gutterBottom>
+                        Product Categories
+                    </Typography>
+                </Box>
+                {/* Custom Next and Previous Buttons */}
+                <Box sx={{ display: "flex", gap: "20px" }}>
+                    <Box
+                        sx={{
+                            zIndex: 10,
                         }}
+                    >
+                        <StyledIconButton onClick={handlePrev}>
+                            <FaAngleLeft size={20} />
+                        </StyledIconButton>
+                    </Box>
+                    <Box
+                        sx={{
+                            zIndex: 10,
+                        }}
+                    >
+                        <StyledIconButton onClick={handleNext}>
+                            <FaAngleRight size={20} />
+                        </StyledIconButton>
+                    </Box>
+                </Box>
+            </Box>
+            <Slider ref={sliderRef} {...settings} >
+                {uniqueGroups.map((product, index) => (
+                    <Box
+                        key={index}
+                        sx={{
+                            // padding: '10px',
+                            textAlign: 'center',
+                            cursor: 'pointer',
+                        }}
+                        onClick={() => handleProductClick(product.group)}
+                        className="card2"
                         style={{
                             background: 'none',
                             border: 'none',
                             padding: '0',
                             cursor: 'pointer',
-                            width: '100%',
-                            textAlign: 'left', // Ensure text is aligned left
-                        }} // Optional inline styles
-                        aria-label={`View products in category ${product.group}`} // Accessible label
+                            // width: '100%',
+                            // textAlign: 'left',
+                        }}
                     >
-                        <div>
-                            <span className='productCard'>
-                                <Typography variant="h6" className='productTitle'>
-                                    {product.group}
-                                </Typography>
-                                {product.productImages && product.productImages.length > 0 && (
-                                    <CardMedia
-                                        component="img"
-                                        image={product.productImages[0]}
-                                        alt={product.itemName}
-                                        className='productImage'
-                                    />
-                                )}
-                            </span>
-                        </div>
-                    </button>
-                </Grid>
-            ))}
-            
-            </Grid>
+                        <span className='productCard'>
+                            <Typography variant="h6" className='productTitle'>
+                                {product.group}
+                            </Typography>
+                            {product.productImages && product.productImages.length > 0 && (
+                                <CardMedia
+                                    component="img"
+                                    image={product.productImages[0]}
+                                    alt={product.itemName}
+                                    className='productImage'
+                                />
+                            )}
+                        </span>
+                    </Box>
+                ))}
+            </Slider>
+
+
 
             <Divider sx={{ borderStyle: 'dashed' }} className='mt-4' />
         </Container>

@@ -10,12 +10,12 @@ const metadata = { title: `Checkout - ${CONFIG.site.name}` };
 
 export default function Page() {
   return (
-    <>
+    <div>
       <Helmet>
         <title> {metadata.title}</title>
       </Helmet>
 
       <CheckoutView />
-    </>
+    </div>
   );
 }

@@ -2,14 +2,8 @@ import Stack from '@mui/material/Stack';
 import { BackToTop } from 'src/components/animate/back-to-top';
 import { ScrollProgress, useScrollProgress } from 'src/components/animate/scroll-progress';
 
-import { HomeHero } from '../home-hero';
 import { HomeCarousel } from '../home-crousel';
 import { HomeProductGroup } from '../home-productGroup';
-import { HomeFAQs } from '../home-faqs';
-import { HomeZoneUI } from '../home-zone-ui';
-import { HomePricing } from '../home-pricing';
-import { HomeTestimonials } from '../home-testimonials';
-import { HomeAdvertisement } from '../home-advertisement';
 import { HomeLetestProduct } from '../home-letestProduct';
 
 export function HomeView() {
@@ -30,15 +24,13 @@ export function HomeView() {
       <BackToTop />
 
       {/* Main Hero Section */}
-      {/**
-        <HomeHero />
-         */}
 
       {/* Content stack for homepage sections */}
       <Stack sx={{ position: 'relative', bgcolor: 'background.default' }} className='HeroHome'>
         <div className="small-circle circle-1" />
         <div className="small-circle circle-2" />
         {/* Pricing section for e-commerce plans, deals, or products */}
+        
         {/* Home Banner */}
         <HomeCarousel />
 
@@ -47,16 +39,6 @@ export function HomeView() {
 
         {/* Home Letest Product */}
         <HomeLetestProduct />
-
-        {/*
-        <HomePricing />
-        <HomeTestimonials />
-
-        <HomeFAQs />
-
-        <HomeZoneUI />
-        <HomeAdvertisement />
-         */}
 
 
       </Stack>

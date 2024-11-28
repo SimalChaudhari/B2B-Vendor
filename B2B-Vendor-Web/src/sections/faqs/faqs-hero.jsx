@@ -52,25 +52,27 @@ export function FaqsHero() {
             }}
           />
 
-          <m.div variants={varFade().in}>
-            <TextField
-              fullWidth
-              placeholder="Search support..."
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
-                  </InputAdornment>
-                ),
-              }}
-              sx={{
-                mt: 5,
-                maxWidth: 360,
-                [`& .${outlinedInputClasses.root}`]: { bgcolor: 'common.white' },
-                [`& .${outlinedInputClasses.input}`]: { typography: 'subtitle1' },
-              }}
-            />
-          </m.div>
+          {/*
+            <m.div variants={varFade().in}>
+              <TextField
+                fullWidth
+                placeholder="Search support..."
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{
+                  mt: 5,
+                  maxWidth: 360,
+                  [`& .${outlinedInputClasses.root}`]: { bgcolor: 'common.white' },
+                  [`& .${outlinedInputClasses.input}`]: { typography: 'subtitle1' },
+                }}
+              />
+            </m.div>
+          */}
         </Box>
       </Container>
     </Box>

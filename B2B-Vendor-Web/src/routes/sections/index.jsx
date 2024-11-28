@@ -1,7 +1,6 @@
 import { lazy, Suspense } from 'react';
 import { Navigate, useRoutes } from 'react-router-dom';
 
-import { authRoutes } from './auth';
 import { mainRoutes } from './main';
 import { SplashScreen } from 'src/components/loading-screen';
 import { MainLayout } from 'src/layouts/main';
@@ -21,8 +20,6 @@ export function Router() {
       ),
     },
 
-    // Auth
-    ...authRoutes,
 
     // Main
     ...mainRoutes,

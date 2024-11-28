@@ -1,7 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { useParams } from 'src/routes/hooks';
 import { CONFIG } from 'src/config-global';
-import { useGetProduct } from 'src/actions/product';
 import { ProductShopDetailsView } from 'src/sections/product/view';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
@@ -22,7 +21,6 @@ export default function Page() {
   const ProductData = useSelector((state) => state.product.items.data) || []; // Ensure ProductData is an array
   const ProductLoading = useSelector((state) => state.product.loading); // Ensure ProductData is an array
   const productFilterData = ProductData.find(item => item.id === id) || null;
-  const { productLoading } = useGetProduct(id);
 
   // Fetch products if ProductData is empty
   useEffect(() => {
@@ -53,13 +51,13 @@ export default function Page() {
   }
 
   return (
-    <>
+    <div>
       <Helmet>
         <title>{metadata.title}</title>
       </Helmet>
 
       {/* Render the product details if data is available */}
       <ProductShopDetailsView product={productFilterData} />
-    </>
+    </div>
   );
 }

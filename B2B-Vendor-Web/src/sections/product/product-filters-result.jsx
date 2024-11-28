@@ -93,16 +93,18 @@ export function ProductFiltersResult({ filters, totalResults, sx }) {
         ))}
       </FiltersBlock>
 
-      <FiltersBlock
-        label="Price:"
-        isShow={filters.state.priceRange[0] !== 0 || filters.state.priceRange[1] !== 200}
-      >
-        <Chip
-          {...chipProps}
-          label={`$${filters.state.priceRange[0]} - ${filters.state.priceRange[1]}`}
-          onDelete={handleRemovePrice}
-        />
-      </FiltersBlock>
+      {/*
+        <FiltersBlock
+          label="Price:"
+          isShow={filters.state.priceRange[0] !== 0 || filters.state.priceRange[1] !== 200}
+        >
+          <Chip
+            {...chipProps}
+            label={`$${filters.state.priceRange[0]} - ${filters.state.priceRange[1]}`}
+            onDelete={handleRemovePrice}
+          />
+        </FiltersBlock>
+         */}
 
       <FiltersBlock label="Rating:" isShow={!!filters.state.rating}>
         <Chip {...chipProps} label={filters.state.rating} onDelete={handleRemoveRating} />

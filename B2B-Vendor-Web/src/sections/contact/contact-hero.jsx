@@ -10,25 +10,6 @@ import { varAlpha, bgGradient } from 'src/theme/styles';
 
 import { varFade, AnimateText, MotionContainer, animateTextClasses } from 'src/components/animate';
 
-// ----------------------------------------------------------------------
-
-const CONTACTS = [
-  { country: 'Bali', address: '508 Bridle Avenue Newnan, GA 30263', phoneNumber: '(239) 555-0108' },
-  {
-    country: 'London',
-    address: '508 Bridle Avenue Newnan, GA 30263',
-    phoneNumber: '(319) 555-0115',
-  },
-  {
-    country: 'Prague',
-    address: '508 Bridle Avenue Newnan, GA 30263',
-    phoneNumber: '(252) 555-0126',
-  },
-  { country: 'Moscow', address: '508 Bridle', phoneNumber: '(307) 555-0133' },
-];
-
-// ----------------------------------------------------------------------
-
 export function ContactHero() {
   const theme = useTheme();
 
@@ -66,29 +47,6 @@ export function ContactHero() {
             }}
           />
 
-          <Box
-            columnGap={{ xs: 2, md: 5 }}
-            rowGap={{ xs: 5, md: 0 }}
-            display={{ xs: 'grid', md: 'flex' }}
-            gridTemplateColumns={{ xs: 'repeat(2, 1fr)' }}
-            sx={{ mt: 5, color: 'common.white' }}
-          >
-            {CONTACTS.map((contact) => (
-              <Box key={contact.country}>
-                <m.div variants={varFade({ distance: 24 }).inUp}>
-                  <Typography variant="h6" gutterBottom>
-                    {contact.country}
-                  </Typography>
-                </m.div>
-
-                <m.div variants={varFade({ distance: 24 }).inUp}>
-                  <Typography variant="body2" sx={{ opacity: 0.8 }}>
-                    {contact.address}
-                  </Typography>
-                </m.div>
-              </Box>
-            ))}
-          </Box>
         </Box>
       </Container>
     </Box>

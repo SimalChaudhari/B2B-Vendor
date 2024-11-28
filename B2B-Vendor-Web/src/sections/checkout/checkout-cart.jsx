@@ -21,6 +21,16 @@ import { CheckoutCartProductList } from './checkout-cart-product-list';
 export function CheckoutCart() {
   const checkout = useCheckoutContext();
 
+  // Calculate the subtotal by summing the selling price * quantity for each item
+  const subtotal = checkout.items.reduce((total, item) => {
+    const itemTotal = parseFloat(item.sellingPrice) * item.quantity;
+    return total + itemTotal;
+  }, 0);
+
+  // Calculate total only if discount is applied
+  const total = checkout.discount && checkout.discount > 0 ? subtotal - checkout.discount : subtotal;
+
+
   const empty = !checkout.items.length;
 
   return (
@@ -69,9 +79,11 @@ export function CheckoutCart() {
 
       <Grid xs={12} md={4}>
         <CheckoutSummary
-          total={checkout.total}
+          // total={checkout.total}
+          total={total}
           discount={checkout.discount}
-          subtotal={checkout.subtotal}
+          // subtotal={checkout.subtotal}
+          subtotal={subtotal}
           onApplyDiscount={checkout.onApplyDiscount}
         />
 

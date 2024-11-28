@@ -5,14 +5,12 @@ import Divider from '@mui/material/Divider';
 import { useTheme } from '@mui/material/styles';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 
 import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
 
 import { Logo } from 'src/components/logo';
-import { SocialIcon } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
@@ -32,7 +30,7 @@ const LINKS = [
     ],
   },
   { headline: 'Contact', children: [
-    { name: 'info@alovate.io', href: '#' },
+    // { name: 'info@alovate.io', href: '#' },
     { name: 'Contact us', href: paths.contact },
   ] },
 ];
@@ -48,17 +46,11 @@ export function Footer({ layoutQuery, sx }) {
 
       <Container
         sx={{
-          // pb: 5,
-          // pt: 10,
           py:5,
           textAlign: 'center',
           [theme.breakpoints.up(layoutQuery)]: { textAlign: 'unset' },
         }}
       >
-        {/*
-        <Logo />
-         */}
-
         <Grid
           container
           sx={{
@@ -81,7 +73,9 @@ export function Footer({ layoutQuery, sx }) {
               The starting point for your next project with Alovate, built on the newest version of
               Material-UI ©, ready to be customized to your style.
                */}
-              Techon Industrial Product private limited
+               <p style={{whiteSpace:"nowrap"}}>
+               Techon Industrial Product Pvt Ltd.
+               </p>
             </Typography>
 
             <Stack

@@ -12,6 +12,8 @@ import {
   CarouselArrowNumberButtons,
 } from 'src/components/carousel';
 
+import NOIMAGE from '../../DefaultImage/NOIMAGE.jpg';
+
 // ----------------------------------------------------------------------
 export function ProductDetailsCarousel({ images }) {
   const carousel = useCarousel({
@@ -31,26 +33,27 @@ export function ProductDetailsCarousel({ images }) {
   }, [carousel.mainApi, lightbox.open, lightbox.selected]);
 
   return (
-    <>
-      <div>
-        <Box sx={{ mb: 2.5, position: 'relative' }}>
+    <div>
+      <div >
+        <Box sx={{ mb: 2.5, position: 'relative' }}  >
           <CarouselArrowNumberButtons
             {...carousel.arrows}
             options={carousel.options}
             totalSlides={carousel.dots.dotCount}
             selectedIndex={carousel.dots.selectedIndex + 1}
-            sx={{ right: 16, bottom: 16, position: 'absolute' }}
+            sx={{ right: 16, bottom: 16, position: 'absolute' }} 
           />
 
           <Carousel carousel={carousel} sx={{ borderRadius: 2 }}>
             {slides.map((slide) => (
               <Image
-                key={slide.src}
-                alt={slide.src}
-                src={slide.src}
+                key={slide.src  || NOIMAGE}
+                alt={slide.src  || NOIMAGE}
+                src={slide.src  || NOIMAGE}
                 ratio="1/1"
-                onClick={() => lightbox.onOpen(slide.src)}
-                sx={{ cursor: 'zoom-in', minWidth: 320 }}
+                onClick={() => lightbox.onOpen(slide.src  || NOIMAGE)}
+                sx={{ cursor: 'zoom-in', minWidth: 320, borderRadius: 2 }}
+                // style={{height:"500px"}}
               />
             ))}
           </Carousel>
@@ -66,7 +69,7 @@ export function ProductDetailsCarousel({ images }) {
             <CarouselThumb
               key={item.src}
               index={index}
-              src={item.src}
+              src={item.src || NOIMAGE}
               selected={index === carousel.thumbs.selectedIndex}
               onClick={() => carousel.thumbs.onClickThumb(index)}
             />
@@ -81,6 +84,6 @@ export function ProductDetailsCarousel({ images }) {
         close={lightbox.onClose}
         onGetCurrentIndex={(index) => lightbox.setSelected(index)}
       />
-    </>
+    </div>
   );
 }

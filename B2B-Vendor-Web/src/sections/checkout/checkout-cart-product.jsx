@@ -1,7 +1,6 @@
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
-import Divider from '@mui/material/Divider';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
@@ -9,9 +8,7 @@ import Typography from '@mui/material/Typography';
 
 import { fCurrency } from 'src/utils/format-number';
 
-import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
-import { ColorPreview } from 'src/components/color-utils';
 
 import { IncrementerButton } from '../product/components/incrementer-button';
 
@@ -58,12 +55,14 @@ export function CheckoutCartProduct({ row, onDelete, onDecrease, onIncrease }) {
             onDecrease={onDecrease}
             onIncrease={onIncrease}
             disabledDecrease={row.quantity <= 1}
-            disabledIncrease={row.quantity >= row.available}
+            // disabledIncrease={row.quantity >= row.available}
           />
 
-          <Typography variant="caption" component="div" sx={{ color: 'text.secondary', mt: 1 }}>
-            available: {row.available}
-          </Typography>
+          {/*
+            <Typography variant="caption" component="div" sx={{ color: 'text.secondary', mt: 1 }}>
+              available: {row.available}
+            </Typography>
+          */}
         </Box>
       </TableCell>
 

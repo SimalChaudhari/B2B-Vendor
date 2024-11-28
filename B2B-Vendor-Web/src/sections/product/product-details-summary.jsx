@@ -25,6 +25,7 @@ import { IncrementerButton } from './components/incrementer-button';
 
 import { useDispatch } from 'react-redux';
 import { setProductDetails } from 'src/redux/orderProductAndAddressReducer';
+import { Paper, Table, TableBody, TableCell, TableContainer, TableRow } from '@mui/material';
 
 
 // ----------------------------------------------------------------------
@@ -69,11 +70,12 @@ export function ProductDetailsSummary({
     itemName,
     coverUrl,
     productImages,
-    available: "5",
+    // available: "5",
     sellingPrice,
     // colors: colors[0],
     // size: sizes[4],
-    quantity: available < 1 ? 0 : 1,
+    // quantity: available < 1 ? 0 : 1,
+    quantity: 1,
   };
 
   const methods = useForm({ defaultValues });
@@ -93,17 +95,17 @@ export function ProductDetailsSummary({
     if (data) {
       dispatch(setProductDetails({ productDetails: data, quantity: data.quantity }));
       onGotoStep?.(1); // Call to update the step in the context if necessary
-      router.push({ 
-          pathname: paths.product.checkout, 
-          query: { step: 1 } // Add step 1 to the query parameters
+      router.push({
+        pathname: paths.product.checkout,
+        query: { step: 1 } // Add step 1 to the query parameters
       });
     }
     // try {
-      // if (!existProduct) {
+    // if (!existProduct) {
     //     onAddCart?.({ ...data, colors: [values.colors], subtotal: data.sellingPrice * data.quantity });
-      // }
-      // onGotoStep?.(1);
-      // router.push(paths.product.checkout);
+    // }
+    // onGotoStep?.(1);
+    // router.push(paths.product.checkout);
     // } catch (error) {
     //   console.error(error);
     // }
@@ -111,7 +113,8 @@ export function ProductDetailsSummary({
 
   const handleAddCart = useCallback(() => {
     try {
-      onAddCart?.({ ...values, colors: [values.colors], subtotal: values.sellingPrice * values.quantity });
+      // onAddCart?.({ ...values, colors: [values.colors], subtotal: values.sellingPrice * values.quantity });
+      onAddCart?.({ ...values, subtotal: values.sellingPrice * values.quantity });
     } catch (error) {
       console.error(error);
     }
@@ -229,7 +232,7 @@ export function ProductDetailsSummary({
 
   const renderActions = (
     <Stack direction="row" spacing={2}>
-    {/*
+      {/*
       <Button
         fullWidth
         // disabled={isMaxQuantity || disableActions}
@@ -246,6 +249,7 @@ export function ProductDetailsSummary({
 
       <Button fullWidth size="large" type="submit" variant="contained"
       // disabled={disableActions}
+      onClick={handleAddCart}
       >
         Buy now
       </Button>
@@ -253,8 +257,36 @@ export function ProductDetailsSummary({
   );
 
   const renderSubDescription = (
-    <Typography variant="body2"  className='text-black font-lg'>
+    <Typography variant="body2" className='text-black font-lg'>
       {description}
+    </Typography>
+  );
+
+  const renderClassification = (
+    <Typography variant="body2" className='text-black font-lg' sx={{ width: '100%' }}>
+      
+            {/* Classifications Table */}
+            <Box mt={5} >
+              <Typography variant="subtitle1" gutterBottom>Classifications</Typography>
+              <TableContainer component={Paper} elevation={0}>
+                <Table size="small" aria-label="classification table">
+                  <TableBody>
+                    <TableRow>
+                      <TableCell className='bold'>Group</TableCell>
+                      <TableCell>{product?.group || '-'}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell className='bold'>SubGroup1</TableCell>
+                      <TableCell>{product?.subGroup1 || '-'}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell className='bold'>SubGroup2</TableCell>
+                      <TableCell>{product?.subGroup2 || '-'}</TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Box>
     </Typography>
   );
 
@@ -293,7 +325,16 @@ export function ProductDetailsSummary({
 
   return (
     <Form methods={methods} onSubmit={onSubmit}>
+                <Button
+                    size="small"
+                    color="inherit"
+                    onClick={() => window.history.back()}
+                    startIcon={<Iconify icon="eva:arrow-ios-back-fill" />}
+                >
+                    Back
+                </Button>
       <Stack spacing={3} sx={{ pt: 3 }} {...other}>
+      
         <Stack spacing={2} alignItems="flex-start">
           {/*
           {renderLabels}
@@ -310,10 +351,14 @@ export function ProductDetailsSummary({
             */}
 
           {renderPrice}
-          
+
           {renderSubDescription}
 
-          {renderRating}
+          {renderClassification}
+
+          {/*
+            {renderRating}
+             */}
         </Stack>
 
         {/*
@@ -329,7 +374,9 @@ export function ProductDetailsSummary({
 
         {renderActions}
 
-        {renderShare}
+        {/*
+          {renderShare}
+           */}
       </Stack>
     </Form>
   );
