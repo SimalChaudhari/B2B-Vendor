@@ -1,78 +1,60 @@
-// import { Navigate, useRoutes } from 'react-router-dom';
-// import { authRoutes } from './auth';
-// import { adminRoute } from './adminRoutes';
-// import { vendorRoutes } from './vendorRoute';
-// import { useEffect, useState } from 'react';
-
-// export function Router() {
-//   const [userRole, setUserRole] = useState(null);
-//   const [isRoleFetched, setIsRoleFetched] = useState(false); // Track role fetch status
-
-//   useEffect(() => {
-//     const handleRoleChange = () => {
-//       const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-//       setUserRole(userData?.user?.role || null);
-//       setIsRoleFetched(true); // Mark as fetched
-//     };
-
-//     window.addEventListener('storage', handleRoleChange);
-//     handleRoleChange(); // Initial fetch
-
-//     return () => {
-//       window.removeEventListener('storage', handleRoleChange);
-//     };
-//   }, []);
-
-//   // Define general routes
-//   const baseRoutes = [
-//     {
-//       path: '/',
-//       element: <Navigate to="/dashboard" replace />,
-//     },
-//     ...authRoutes,
-//   ];
-
-//   // Add role-specific routes only when `userRole` is known
-//   const roleSpecificRoutes =
-//     userRole === 'Admin'
-//       ? adminRoute
-//       : userRole === 'Vendor'
-//       ? vendorRoutes
-//       : [];
-
-//   const routes = [
-//     ...baseRoutes,
-//     ...roleSpecificRoutes,
-//     { path: '*', element: <Navigate to="/404" replace /> },
-//   ];
-
-//   // Always call `useRoutes`
-//   const element = useRoutes(routes);
-
-//   // Show a loading indicator while waiting for `userRole` to load
-//   if (!isRoleFetched) {
-//     return <div>Loading...</div>;
-//   }
-
-//   return element;
-// }
-
-
 import { Navigate, useRoutes } from 'react-router-dom';
 import { authRoutes } from './auth';
-import { dashboardRoutes } from './dashboard';
+import { adminRoute } from './adminRoutes';
+import { vendorRoutes } from './vendorRoute';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 export function Router() {
-  return useRoutes([
+  const { authUser } = useSelector((state) => state.auth);
+  const [userRole, setUserRole] = useState(null);
+  const [isRoleFetched, setIsRoleFetched] = useState(false);
+
+  // Fetch role from Redux or localStorage
+  useEffect(() => {
+    const fetchUserRole = () => {
+      if (authUser?.role) {
+        setUserRole(authUser.role);
+      } else {
+        const storedUserData = JSON.parse(localStorage.getItem('userData') || '{}');
+        setUserRole(storedUserData?.user?.role || null);
+      }
+      setIsRoleFetched(true); // Set role as fetched
+    };
+
+    fetchUserRole(); // Run on mount and whenever authUser changes
+  }, [authUser]);
+
+  // Define base routes for everyone
+  const baseRoutes = [
     {
       path: '/',
-      element: <Navigate to="/dashboard" replace />,
+      element: <Navigate to="/dashboard" replace />, // Redirect root to dashboard
     },
-    // Auth
-    ...authRoutes,
+    ...authRoutes, // Auth routes (e.g., login)
+  ];
 
-    // Dashboard
-    ...dashboardRoutes,
-    { path: '*', element: <Navigate to="/404" replace /> },
-  ]);
+  // Define role-specific routes based on user role
+  const roleSpecificRoutes = userRole
+    ? userRole === 'Admin'
+      ? adminRoute // Admin specific routes
+      : userRole === 'Vendor'
+      ? vendorRoutes // Vendor specific routes
+      : [] // Add more roles as needed
+    : []; // If no role is fetched, return empty array
+
+  // Combine general routes with role-specific ones and a fallback for unmatched paths
+  const routes = [
+    ...baseRoutes,
+    ...roleSpecificRoutes,
+    { path: '*', element: <Navigate to="/auth/sign-in" replace /> }, // Redirect to sign-in for unmatched routes
+  ];
+
+  const element = useRoutes(routes);
+  // Show a loading indicator until the role is fetched
+  if (!isRoleFetched) {
+    return <div>Loading...</div>; // Show loading until role is fetched
+  }
+
+  return element; // Render the matched routes based on current state
 }

@@ -66,7 +66,7 @@ export function OrderListView() {
     name: '',
     status: 'all',
     startDate: null,
-    endDate: null,
+    endDate: null,  
   });
 
   const dateError = fIsAfter(filters.state.startDate, filters.state.endDate);

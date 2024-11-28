@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, Navigate } from 'react-router-dom';
 import { AuthSplitLayout } from 'src/layouts/auth-split';
 import { SplashScreen } from 'src/components/loading-screen';
 import { GuestGuard } from 'src/auth/guard';
@@ -27,7 +27,11 @@ export const authRoutes = [
           </GuestGuard>
         ),
       },
-
+      // Catch-all route for any other path under 'auth'
+      {
+        path: '*',
+        element: <Navigate to="/auth/sign-in" replace />,
+      },
     ],
   },
 ];
