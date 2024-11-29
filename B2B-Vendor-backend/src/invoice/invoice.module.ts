@@ -9,7 +9,7 @@ import { JwtModule } from '@nestjs/jwt';
 
 import { UserEntity } from './../user/users.entity';
 import { SyncControlSettings } from './../settings/setting.entity';
-import { SyncLogEntity } from 'sync-log/sync-log.entity';
+import { SyncLogEntity } from './../sync-log/sync-log.entity';
 
 @Module({
     imports: [
