@@ -14,6 +14,8 @@ import { StockModule } from './stock/stock.module';
 import { UserModule } from './user/users.module';
 import { VendorModule } from './vendors/vendor.module';
 import { SyncLogModule } from './sync-log/sync-log.module';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 @Module({
   imports: [
@@ -45,5 +47,7 @@ import { SyncLogModule } from './sync-log/sync-log.module';
   StockModule,
   LedgerModule
   ],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule { }
