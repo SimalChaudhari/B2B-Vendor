@@ -13,7 +13,7 @@ import { SettingModule } from './settings/setting.module';
 import { StockModule } from './stock/stock.module';
 import { UserModule } from './user/users.module';
 import { VendorModule } from './vendors/vendor.module';
-import { SyncLogModule } from 'sync-log/sync-log.module';
+import { SyncLogModule } from './sync-log/sync-log.module';
 
 @Module({
   imports: [

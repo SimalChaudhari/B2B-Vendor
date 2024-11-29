@@ -7,7 +7,7 @@ import { ItemEntity } from './item.entity';
 import { ItemController } from './itemController';
 import { FirebaseService } from './../service/firebase.service';
 import { SyncControlSettings } from './../settings/setting.entity';
-import { SyncLogEntity } from 'sync-log/sync-log.entity';
+import { SyncLogEntity } from './../sync-log/sync-log.entity';
 import { SyncLogService } from 'sync-log/sync-log.service';
 
 @Module({
