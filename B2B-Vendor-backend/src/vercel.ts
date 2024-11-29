@@ -10,7 +10,7 @@ async function buildNestApp() {
   if (!cachedApp) {
     cachedApp = await NestFactory.create(AppModule);
     cachedApp.enableCors({
-      origin: 'https://techno-ebon.vercel.app', // Frontend URL
+      origin: process.env.FRONTEND_URL, // Frontend URL
       methods: 'GET, POST, PUT, DELETE',
       credentials: true,
     });
@@ -20,13 +20,13 @@ async function buildNestApp() {
 
 export default async (req: VercelRequest, res: VercelResponse) => {
   const app = await buildNestApp();
-  
+
   // Handle CORS in response headers
   res.setHeader('Access-Control-Allow-Origin', 'https://techno-ebon.vercel.app');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
-  
+
   // This will call the NestJS app
   await app.init();
   return app.getHttpAdapter().getInstance()(req, res);

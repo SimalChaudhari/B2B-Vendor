@@ -269,23 +269,26 @@ export class ItemService {
   }
 
   async deleteMultiple(ids: string[]): Promise<{ message: string }> {
+    const chunkSize = 100;  // Delete in batches of 100
     const notFoundIds: string[] = [];
+    
+    for (let i = 0; i < ids.length; i += chunkSize) {
+        const chunk = ids.slice(i, i + chunkSize);
 
-    for (const id of ids) {
-      const item = await this.findById(id);
-      if (!item) {
-        notFoundIds.push(id);
-        continue; // skip this ID if not found
-      }
-      await this.itemRepository.remove(item);
-    }
+        const items = await this.itemRepository.findByIds(chunk);
+        const foundIds = items.map(item => item.id);
+        notFoundIds.push(...chunk.filter(id => !foundIds.includes(id)));
 
-    if (notFoundIds.length > 0) {
-      throw new NotFoundException(`Items with ids ${notFoundIds.join(', ')} not found`);
+        if (notFoundIds.length > 0) {
+            throw new NotFoundException(`Items with ids ${notFoundIds.join(', ')} not found`);
+        }
+
+        await this.itemRepository.remove(items);
     }
 
     return { message: 'Products deleted successfully' };
-  }
+}
+
 
 
   //Cron Job Set
