@@ -9,11 +9,8 @@ import { ItemDto } from './item.dto';
 import { FirebaseService } from './../service/firebase.service';
 import { products } from '../tally/products';
 import { Cron } from '@nestjs/schedule';
-
-
-import { SyncControlSettings } from './../settings/setting.entity';
 import { SyncLogEntity, SyncLogStatus } from 'sync-log/sync-log.entity';
-import { SyncLogService } from 'sync-log/sync-log.service';
+import { SyncControlSettings } from 'settings/setting.entity';
 
 
 @Injectable()
@@ -25,7 +22,6 @@ export class ItemService {
 
     @InjectRepository(SyncLogEntity)
     private readonly syncLogRepository: Repository<SyncLogEntity>,
-    private readonly syncLogService: SyncLogService,
 
     @InjectRepository(SyncControlSettings)
     private readonly syncControlSettingsRepository: Repository<SyncControlSettings>,
