@@ -17,12 +17,19 @@ import { SyncLogModule } from './sync-log/sync-log.module';
 
 @Module({
   imports: [
-  TypeOrmModule.forRoot({
+    TypeOrmModule.forRoot({
       type: 'postgres',
       url: "postgresql://neondb_owner:5Ut6eOIPlkGr@ep-soft-poetry-a1bct69b.ap-southeast-1.aws.neon.tech:5432/b2b_vendor?sslmode=require",
-      autoLoadEntities: true, // Automatically load entities
-      synchronize: true, // Be careful using this in production
+      autoLoadEntities: true,
+      synchronize: true,
+      ssl: true, // Enable SSL
+      extra: {
+        ssl: {
+          rejectUnauthorized: false, // For self-signed certificates; ensure proper certificates in production
+        },
+      },
     }),
+    
   
   UserModule,
   AuthModule,
