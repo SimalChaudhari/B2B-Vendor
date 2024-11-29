@@ -15,7 +15,7 @@
     "rewrites": [
       {
         "source": "/auth/verify-otp",
-        "destination": "/api/auth/verify-otp"
+        "destination": "/auth/verify-otp"
       }
     ]
   
