@@ -1,8 +1,8 @@
 // dashboard.service.ts
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { ItemService } from './../fetch-products/item.service';
-import { OrderService } from './../order/order.service';
-import { UserService } from './../user/users.service';
+import { ItemService } from 'fetch-products/item.service';
+import { OrderService } from 'order/order.service';
+import { UserService } from 'user/users.service';
 
 
 @Injectable()
