@@ -19,7 +19,7 @@ import { SyncLogModule } from './sync-log/sync-log.module';
   imports: [
   TypeOrmModule.forRoot({
       type: 'postgres',
-      url: process.env.DATABASE_URL,
+      url: "postgresql://neondb_owner:5Ut6eOIPlkGr@ep-soft-poetry-a1bct69b.ap-southeast-1.aws.neon.tech:5432/b2b_vendor?sslmode=require",
       autoLoadEntities: true, // Automatically load entities
       synchronize: true, // Be careful using this in production
     }),

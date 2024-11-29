@@ -32,8 +32,6 @@ export class VendorService {
 
     async fetchAndStoreVendors(): Promise<void> {
         const REQUEST_TIMEOUT = 20000; // 20 seconds timeout
-
-
         // Check if "Manual Sync" is enabled for products
         const SyncSetting = await this.syncControlSettingsRepository.findOne({
             where: { moduleName: 'Vendors' },
