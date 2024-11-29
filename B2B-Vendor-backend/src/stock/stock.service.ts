@@ -10,7 +10,7 @@ import { summary } from '../tally/summary';
 import { Cron } from '@nestjs/schedule';
 
 import { SyncControlSettings } from './../settings/setting.entity';
-import { SyncLogEntity, SyncLogStatus } from 'sync-log/sync-log.entity';
+import { SyncLogEntity, SyncLogStatus } from './../sync-log/sync-log.entity';
 
 @Injectable()
 export class StockService {

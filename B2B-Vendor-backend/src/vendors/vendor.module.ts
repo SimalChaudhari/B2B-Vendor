@@ -9,7 +9,7 @@ import { UserEntity} from './../user/users.entity';
 import { AddressEntity } from './../addresses/addresses.entity';
 import { AddressesService } from './../addresses/addresses.service';
 import { SyncControlSettings } from './../settings/setting.entity';
-import { SyncLogEntity } from 'sync-log/sync-log.entity';
+import { SyncLogEntity } from './../sync-log/sync-log.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([VendorEntity,UserEntity,AddressEntity,SyncLogEntity,SyncControlSettings])], // Register the VendorEntity

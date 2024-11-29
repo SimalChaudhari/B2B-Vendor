@@ -8,7 +8,7 @@ import { StockService } from './stock.service';
 import { SyncLogService } from '../sync-log/sync-log.service';
 
 import { SyncControlSettings } from '../settings/setting.entity';
-import { SyncLogEntity } from 'sync-log/sync-log.entity';
+import { SyncLogEntity } from '../sync-log/sync-log.entity';
 
 @Module({
   imports: [

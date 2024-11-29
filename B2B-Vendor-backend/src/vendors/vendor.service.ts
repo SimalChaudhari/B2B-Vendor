@@ -11,7 +11,7 @@ import { UserEntity, UserRole } from './../user/users.entity';
 import { AddressesService } from './../addresses/addresses.service';
 import { CreateAddressDto } from './../addresses/addresses.dto';
 import { SyncControlSettings } from './../settings/setting.entity';
-import { SyncLogEntity, SyncLogStatus } from 'sync-log/sync-log.entity';
+import { SyncLogEntity, SyncLogStatus } from './../sync-log/sync-log.entity';
 
 
 @Injectable()

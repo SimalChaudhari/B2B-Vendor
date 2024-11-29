@@ -14,7 +14,7 @@ import { UserEntity } from './../user/users.entity';
 import { AddressEntity } from './../addresses/addresses.entity';
 import { EmailService } from './../service/email.service';
 import { SyncControlSettings } from './../settings/setting.entity';
-import { SyncLogEntity } from 'sync-log/sync-log.entity';
+import { SyncLogEntity } from './../sync-log/sync-log.entity';
 
 @Module({
   imports: [

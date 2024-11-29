@@ -9,7 +9,7 @@ import axios from 'axios';
 import { ledger } from '../tally/ledger';
 import { SyncControlSettings } from './../settings/setting.entity';
 import { Cron } from '@nestjs/schedule';
-import { SyncLogEntity, SyncLogStatus } from 'sync-log/sync-log.entity';
+import { SyncLogEntity, SyncLogStatus } from './../sync-log/sync-log.entity';
 
 @Injectable()
 export class LedgerService {
