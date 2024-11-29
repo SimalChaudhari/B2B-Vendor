@@ -31,7 +31,7 @@ export class VendorService {
     ) { }
 
     async fetchAndStoreVendors(): Promise<void> {
-        const REQUEST_TIMEOUT = 20000; // 20 seconds timeout
+        const REQUEST_TIMEOUT = 40000; // 20 seconds timeout
         // Check if "Manual Sync" is enabled for products
         const SyncSetting = await this.syncControlSettingsRepository.findOne({
             where: { moduleName: 'Vendors' },
@@ -179,7 +179,6 @@ export class VendorService {
 
         for (const id of ids) {
             const item = await this.findById(id);
-            console.log("🚀 ~ VendorService ~ deleteMultiple ~ item:", item)
             if (!item) {
                 notFoundIds.push(id);
                 continue; // skip this ID if not found
