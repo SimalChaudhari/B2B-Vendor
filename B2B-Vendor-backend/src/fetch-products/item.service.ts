@@ -9,8 +9,8 @@ import { ItemDto } from './item.dto';
 import { FirebaseService } from './../service/firebase.service';
 import { products } from '../tally/products';
 import { Cron } from '@nestjs/schedule';
-import { SyncControlSettings } from 'settings/setting.entity';
 import { SyncLogEntity, SyncLogStatus } from 'sync-log/sync-log.entity';
+import { SyncControlSettings } from './../settings/setting.entity';
 
 
 @Injectable()
