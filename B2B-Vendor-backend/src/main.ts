@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import express from 'express';
+import { Logger } from '@nestjs/common';
 
 const server = express();
 
@@ -17,6 +18,12 @@ async function bootstrap() {
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
       credentials: true,
     });
+
+    // Log all routes
+    const server = app.getHttpServer();
+    const router = server._events.request._router;
+    Logger.log(router.stack.map((layer: { route: { path: any; }; }) => layer.route?.path).filter(Boolean));
+
 
     await app.listen(port);
     console.log(`Server is running on: http://localhost:${port}`); // Log the port
