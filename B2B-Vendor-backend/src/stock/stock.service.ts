@@ -8,9 +8,9 @@ import { StockEntity } from './stock.entity';
 import { StockDto } from './stock.dto';
 import { summary } from '../tally/summary';
 import { Cron } from '@nestjs/schedule';
-import { SyncLogEntity, SyncLogStatus } from './../sync-log/sync-log.entity';
-import { SyncLogService } from './../sync-log/sync-log.service';
+
 import { SyncControlSettings } from './../settings/setting.entity';
+import { SyncLogEntity, SyncLogStatus } from 'sync-log/sync-log.entity';
 
 @Injectable()
 export class StockService {
@@ -20,8 +20,7 @@ export class StockService {
 
     @InjectRepository(SyncLogEntity)
     private readonly syncLogRepository: Repository<SyncLogEntity>,
-    private readonly syncLogService: SyncLogService,
-
+  
     @InjectRepository(SyncControlSettings)
     private readonly syncControlSettingsRepository: Repository<SyncControlSettings>,
   ) { }

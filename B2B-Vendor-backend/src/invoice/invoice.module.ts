@@ -6,9 +6,10 @@ import { InvoiceRetryService } from './invoice-retry.service';
 import { Invoice } from './invoice.entity';
 import { InvoiceController } from './Invoice.controller';
 import { JwtModule } from '@nestjs/jwt';
-import { SyncLogEntity } from './../sync-log/sync-log.entity';
+
 import { UserEntity } from './../user/users.entity';
 import { SyncControlSettings } from './../settings/setting.entity';
+import { SyncLogEntity } from 'sync-log/sync-log.entity';
 
 @Module({
     imports: [

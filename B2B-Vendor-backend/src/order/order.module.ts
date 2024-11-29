@@ -9,11 +9,12 @@ import { OrderItemEntity } from './order.item.entity';
 import { CartItemEntity } from './../cart/cart.entity';
 import { InvoiceRetryService } from './../invoice/invoice-retry.service';
 import { Invoice } from './../invoice/invoice.entity';
-import { SyncLogEntity } from './../sync-log/sync-log.entity';
+
 import { UserEntity } from './../user/users.entity';
 import { AddressEntity } from './../addresses/addresses.entity';
 import { EmailService } from './../service/email.service';
 import { SyncControlSettings } from './../settings/setting.entity';
+import { SyncLogEntity } from 'sync-log/sync-log.entity';
 
 @Module({
   imports: [
