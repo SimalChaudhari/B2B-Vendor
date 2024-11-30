@@ -240,9 +240,9 @@ function applyFilter({ inputData, filters, sortBy }) {
   // const max = priceRange[1];
   
   // Parse sellingPrice to Number for proper sorting
-  inputData = inputData.map((product) => ({
-    ...product,
-    sellingPrice: Number(product.sellingPrice.replace(/[^0-9.-]+/g, '')),
+  inputData = inputData?.map((product) => ({
+    ...product,sellingPrice: Number((product?.sellingPrice?.toString() || '').replace(/[^0-9.-]+/g, '')),
+
   }));
 
 
@@ -255,10 +255,10 @@ function applyFilter({ inputData, filters, sortBy }) {
       inputData = inputData.sort((a, b) => a.id.localeCompare(b.id));
       break;
     case 'priceDesc':
-      inputData = inputData.sort((a, b) => parseFloat(b.sellingPrice) - parseFloat(a.sellingPrice));
+      inputData = inputData.sort((a, b) => parseFloat(b?.sellingPrice) - parseFloat(a?.sellingPrice));
       break;
     case 'priceAsc':
-      inputData = inputData.sort((a, b) => parseFloat(a.sellingPrice) - parseFloat(b.sellingPrice));
+      inputData = inputData.sort((a, b) => parseFloat(a?.sellingPrice) - parseFloat(b?.sellingPrice));
       break;
     default:
       inputData = inputData.sort((a, b) => a.id.localeCompare(b.id));
