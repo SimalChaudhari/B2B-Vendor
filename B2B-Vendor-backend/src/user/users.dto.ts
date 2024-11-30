@@ -3,7 +3,6 @@ import { IsNotEmpty, IsOptional, IsString, IsBoolean, IsNumber, IsEmail, IsEnum 
 
 export enum UserRole {
     Admin = 'Admin',
-    Customer = 'Customer',
     Vendor = 'Vendor',
 }
 

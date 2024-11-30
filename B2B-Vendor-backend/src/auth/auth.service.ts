@@ -57,7 +57,7 @@ export class AuthService {
       // Create the new user
       const newUser = this.userRepository.create({
         ...authDto,
-        role: UserRole.Customer, // Default role to Customer
+        role: UserRole.Vendor, // Default role to Vendor
         slNo: 'N/A',  // Default values for other fields
         alias: 'N/A',
         active: 'N/A',

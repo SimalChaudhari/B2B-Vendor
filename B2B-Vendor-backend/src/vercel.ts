@@ -22,7 +22,8 @@ export default async (req: VercelRequest, res: VercelResponse) => {
   const app = await buildNestApp();
 
   // Handle CORS in response headers
-  res.setHeader('Access-Control-Allow-Origin', 'https://techno-ebon.vercel.app');
+  // res.setHeader('Access-Control-Allow-Origin', 'https://techno-ebon.vercel.app');
+  res.setHeader('Access-Control-Allow-Origin', '  http://localhost:3030');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.setHeader('Access-Control-Allow-Credentials', 'true');

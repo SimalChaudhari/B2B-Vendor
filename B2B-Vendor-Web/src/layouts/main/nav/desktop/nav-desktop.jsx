@@ -41,7 +41,7 @@ export function NavDesktop({ data, sx }) {
 
   // Extract unique groups from the items data
   const uniqueGroups = Array.from(
-    new Set(items.map(item => item.group)) // Create a Set of groups (Set automatically removes duplicates)
+    new Set(items?.map(item => item.group)) // Create a Set of groups (Set automatically removes duplicates)
   );
 
   // Group items by `group` and structure them

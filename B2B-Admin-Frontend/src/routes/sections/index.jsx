@@ -4,6 +4,7 @@ import { adminRoute } from './adminRoutes';
 import { vendorRoutes } from './vendorRoute';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { MotionLazy } from 'src/components/animate/motion-lazy';
 
 export function Router() {
   const { authUser } = useSelector((state) => state.auth);
@@ -39,8 +40,8 @@ export function Router() {
     ? userRole === 'Admin'
       ? adminRoute // Admin specific routes
       : userRole === 'Vendor'
-      ? vendorRoutes // Vendor specific routes
-      : [] // Add more roles as needed
+        ? vendorRoutes // Vendor specific routes
+        : [] // Add more roles as needed
     : []; // If no role is fetched, return empty array
 
   // Combine general routes with role-specific ones and a fallback for unmatched paths
@@ -53,7 +54,7 @@ export function Router() {
   const element = useRoutes(routes);
   // Show a loading indicator until the role is fetched
   if (!isRoleFetched) {
-    return <div>Loading...</div>; // Show loading until role is fetched
+    return <MotionLazy />
   }
 
   return element; // Render the matched routes based on current state

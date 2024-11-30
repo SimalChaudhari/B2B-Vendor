@@ -50,7 +50,7 @@ export function HomeCarousel({ sx, ...other }) {
     const getBannerData = async () => {
       try {
         const data = await fetchBanner();
-        const bannerImages = data.map((item) => item.BannerImages[0]); // Assuming BannerImages is an array
+        const bannerImages = data?.map((item) => item.BannerImages[0]); // Assuming BannerImages is an array
         setCarouselImages(bannerImages);
       } catch (err) { // Renamed `error` to `err` to avoid shadowing
         console.error('Failed to fetch banner data:', err);
