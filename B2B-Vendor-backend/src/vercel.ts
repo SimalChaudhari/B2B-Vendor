@@ -10,7 +10,7 @@ async function buildNestApp() {
   if (!cachedApp) {
     cachedApp = await NestFactory.create(AppModule);
     cachedApp.enableCors({
-      origin: process.env.FRONTEND_URL, // Frontend URL
+      origin:"*", // Frontend URL
       methods: 'GET, POST, PUT, DELETE',
       credentials: true,
     });
