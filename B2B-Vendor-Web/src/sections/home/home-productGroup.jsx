@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { fetchProductsFailure, fetchProductsStart, fetchProductsSuccess } from 'src/redux/ProductReducer';
@@ -10,6 +10,8 @@ import {
     CircularProgress,
     Box,
     Divider,
+    useTheme,
+    useMediaQuery,
 } from '@mui/material';
 import { AiOutlineWarning } from 'react-icons/ai';
 import Slider from 'react-slick';
@@ -18,6 +20,7 @@ import 'slick-carousel/slick/slick-theme.css';
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 import IconButton from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
+import NOIMAGE from '../../DefaultImage/NOIMAGE.jpg';
 
 
 // Styled buttons for better UI
@@ -39,6 +42,21 @@ export function HomeProductGroup() {
     const dispatch = useDispatch();
     const navigate = useNavigate(); // Initialize navigate
     const { items: products = [], loading: productsLoading } = useSelector((state) => state.product);
+    // Conditional rendering of next and previous buttons
+    const [showArrows, setShowArrows] = useState(false);
+    const theme = useTheme();
+    const matchesMobile = useMediaQuery(theme.breakpoints.down('sm'));
+    const matchesTablet = useMediaQuery(theme.breakpoints.down('md'));
+    const matchesDesktop = useMediaQuery(theme.breakpoints.down('lg')); 
+
+    // Calculate the number of slides to show based on screen size
+    const getSlidesToShow = () => {
+        if (matchesMobile) return 1;
+        if (matchesTablet) return 2;
+        if (matchesDesktop) return 4;
+        return 7; // Default for larger screens
+    };
+
 
     useEffect(() => {
         const getProducts = async () => {
@@ -59,8 +77,9 @@ export function HomeProductGroup() {
         dots: false,
         // infinite: true,
         speed: 500,
-        slidesToShow: 7,
-        slidesToScroll: 1,
+        // slidesToShow: 7,
+        slidesToShow: getSlidesToShow(),
+        slidesToScroll: showArrows ? 1 : 0,
         // autoplay: true,
         autoplaySpeed: 3000,
         arrows: false,
@@ -97,6 +116,10 @@ export function HomeProductGroup() {
         },
     ],
     };
+
+    useEffect(() => {
+        setShowArrows(products.length > settings.slidesToShow);
+    }, [products.length, settings.slidesToShow]);
 
     // Handle previous and next actions
     const handlePrev = () => {
@@ -159,26 +182,28 @@ export function HomeProductGroup() {
                     </Typography>
                 </Box>
                 {/* Custom Next and Previous Buttons */}
-                <Box sx={{ display: "flex", gap: "20px" }}>
-                    <Box
-                        sx={{
-                            zIndex: 10,
-                        }}
-                    >
-                        <StyledIconButton onClick={handlePrev}>
-                            <FaAngleLeft size={20} />
-                        </StyledIconButton>
+                {showArrows && (
+                    <Box sx={{ display: "flex", gap: "20px" }}>
+                        <Box
+                            sx={{
+                                zIndex: 10,
+                            }}
+                        >
+                            <StyledIconButton onClick={handlePrev}>
+                                <FaAngleLeft size={20} />
+                            </StyledIconButton>
+                        </Box>
+                        <Box
+                            sx={{
+                                zIndex: 10,
+                            }}
+                        >
+                            <StyledIconButton onClick={handleNext}>
+                                <FaAngleRight size={20} />
+                            </StyledIconButton>
+                        </Box>
                     </Box>
-                    <Box
-                        sx={{
-                            zIndex: 10,
-                        }}
-                    >
-                        <StyledIconButton onClick={handleNext}>
-                            <FaAngleRight size={20} />
-                        </StyledIconButton>
-                    </Box>
-                </Box>
+                )}
             </Box>
             <Slider ref={sliderRef} {...settings} >
                 {uniqueGroups.map((product, index) => (
@@ -207,7 +232,7 @@ export function HomeProductGroup() {
                             {product.productImages && product.productImages.length > 0 && (
                                 <CardMedia
                                     component="img"
-                                    image={product.productImages[0]}
+                                    image={product.productImages[0] || NOIMAGE}
                                     alt={product.itemName}
                                     className='productImage'
                                 />

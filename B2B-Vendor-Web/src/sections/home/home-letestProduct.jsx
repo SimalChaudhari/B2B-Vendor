@@ -16,6 +16,7 @@ import { AiOutlineWarning } from 'react-icons/ai';
 import { useNavigate } from 'react-router';
 import { MdOutlineKeyboardDoubleArrowRight } from "react-icons/md";
 import { fCurrency } from 'src/utils/format-number';
+import NOIMAGE from '../../DefaultImage/NOIMAGE.jpg';
 
 export function HomeLetestProduct() {
   const dispatch = useDispatch();
@@ -99,7 +100,7 @@ export function HomeLetestProduct() {
                     <div className=''>
                       <CardMedia
                         component="img"
-                        image={product.productImages[0]}
+                        image={product.productImages[0] || NOIMAGE}
                         alt={product.itemName}
                         className='letestProductImage' // Added class for styling
                       />
