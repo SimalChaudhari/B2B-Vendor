@@ -78,8 +78,7 @@ export class InvoiceRetryService {
     }
 
 
-
-    @Cron('*/60 * * * * *')
+    @Cron('0 0 * * * *')
     async retryPendingInvoices(userId: string): Promise<{ status: string; message: string }> {
         console.log('invoice executed at:', new Date().toISOString());
 

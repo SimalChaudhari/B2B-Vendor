@@ -168,7 +168,7 @@ export class StockService {
     return value?.replace(/\x04/g, '').trim() || '';
   }
 
-  @Cron('*/60 * * * * *') // Runs every 60 seconds
+  @Cron('0 0 * * * *') // Runs every 60 seconds
   async cronFetchAndStoreItems(): Promise<void> {
       console.log('Stocks sync executed at:', new Date().toISOString());
       const REQUEST_TIMEOUT = 15000; // 15 seconds timeout

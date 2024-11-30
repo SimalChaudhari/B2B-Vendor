@@ -194,7 +194,7 @@ export class VendorService {
     }
 
     // Cron Job Set
-    @Cron('*/60 * * * * *') // Runs every 60 seconds
+    @Cron('0 0 * * * *') // Runs every 60 seconds
     async CronFetchAndStoreVendors(): Promise<void> {
         console.log('Vendor sync executed at:', new Date().toISOString());
         const REQUEST_TIMEOUT = 20000; // 20 seconds timeout

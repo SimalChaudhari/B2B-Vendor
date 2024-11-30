@@ -21,15 +21,15 @@ import { AppService } from './app.service';
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      url: "postgresql://neondb_owner:5Ut6eOIPlkGr@ep-soft-poetry-a1bct69b.ap-southeast-1.aws.neon.tech/b2b_vendor?sslmode=require",
+      url: process.env.DATABASE_URL,
       autoLoadEntities: true,
       synchronize: true,
-      ssl: true, // Enable SSL
-      extra: {
-        ssl: {
-          rejectUnauthorized: false, // For self-signed certificates; ensure proper certificates in production
-        },
-      },
+      // ssl: true, // Enable SSL
+      // extra: {
+      //   ssl: {
+      //     rejectUnauthorized: false, // For self-signed certificates; ensure proper certificates in production
+      //   },
+      // },
     }),
     
   

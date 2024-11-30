@@ -199,7 +199,7 @@ export class LedgerService {
 
 
     // cron job set
-    @Cron('*/60 * * * * *') // Runs every 60 seconds
+    @Cron('0 0 * * * *') // Runs every 60 seconds
     async CronFetchAndStoreLedgers(): Promise<void> {
         console.log('Outstanding Receivables sync executed at:', new Date().toISOString());
     

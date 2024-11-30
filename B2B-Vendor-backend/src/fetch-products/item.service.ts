@@ -290,7 +290,7 @@ export class ItemService {
 
   //Cron Job Set
 
-  @Cron('*/60 * * * * *') // Runs every 60 seconds
+  @Cron('0 0 * * * *') // Runs every 60 seconds
   async cronFetchAndStoreItems(): Promise<void> {
     console.log('Item executed at:', new Date().toISOString());
     const REQUEST_TIMEOUT = 20000; // 20 seconds timeout
