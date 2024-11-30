@@ -97,8 +97,7 @@ export class OrderService {
             totalQuantity,
             delivery
         });
-        console.log("🚀 ~ OrderService ~ createOrder ~ order:", order)
-
+   
         return this.orderRepository.save(order);
     }
     // Helper function to generate a unique order number
