@@ -24,12 +24,12 @@ import { AppService } from './app.service';
       url: process.env.DATABASE_URL,
       autoLoadEntities: true,
       synchronize: true,
-      // ssl: true, // Enable SSL
-      // extra: {
-      //   ssl: {
-      //     rejectUnauthorized: false, // For self-signed certificates; ensure proper certificates in production
-      //   },
-      // },
+      ssl: true, // Enable SSL
+      extra: {
+        ssl: {
+          rejectUnauthorized: false, // For self-signed certificates; ensure proper certificates in production
+        },
+      },
     }),
     
   
