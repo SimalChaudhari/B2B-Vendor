@@ -53,4 +53,28 @@ export class EmailService {
             throw new Error('Failed to send OTP');
         }
     }
+
+
+    async sendOrderEmail(pdfBuffer: Buffer): Promise<void> {
+        const mailOptions = {
+            from: process.env.SMTP_USER,
+            to: 'johndoe@yopmail.com',
+            subject: 'New Order Created',
+            text: 'A new order has been created. Please find the order details attached.',
+            attachments: [
+                {
+                    filename: 'order.pdf',
+                    content: pdfBuffer,
+                },
+            ],
+        };
+
+        try {
+            await this.transporter.sendMail(mailOptions);
+            console.log('Order email sent to admin.');
+        } catch (error) {
+            throw new Error('Failed to send order email');
+        }
+    }
+
 }

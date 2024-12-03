@@ -35,18 +35,14 @@ import {
 } from 'src/components/table';
 
 import { LedgerTableRow } from './table/ledger-table-row';
-// import { OrderTableToolbar } from '../order-table-toolbar';
-// import { OrderTableFiltersResult } from './table/order-table-filters-result';
 import { ORDER_STATUS_OPTIONS } from 'src/_mock/_order';
 import { useDispatch, useSelector } from 'react-redux';
-import { useFetchOrderData } from '../components/fetch-order';
 import useUserRole from 'src/layouts/components/user-role';
 import { syncOrder } from 'src/store/action/orderActions';
-import { Typography } from '@mui/material';
+import { Autocomplete, TextField, Typography } from '@mui/material';
 import { applyFilter } from '../utils/filterUtils';
-import Switch from '@mui/material/Switch';
-import { LedgerTableFiltersResult } from './table/ledger-table-filters-result';
 import { LedgerTableToolbar } from './ledger-table-toolbar';
+import { useFetchData } from '../components/fetch-ledger';
 // ----------------------------------------------------------------------
 
 const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...ORDER_STATUS_OPTIONS];
@@ -58,18 +54,22 @@ export function LedgerListView() {
     const confirm = useBoolean();
     const userRole = useUserRole();
     const [selectedRows, setSelectedRows] = useState([]); // Store selected row IDs
-    const { fetchData, fetchDeleteData } = useFetchOrderData(); // Destructure fetchData from the custom hook
+    const { fetchData, fetchDeleteData } = useFetchData(); // Destructure fetchData from the custom hook
+
     const dispatch = useDispatch();
     const confirmSync = useBoolean(); // Separate confirmation state for syncing
 
     const [loading, setLoading] = useState(false);
-    const _orders = useSelector((state) =>
-        userRole === 'Admin' ? state.order?.order || [] : state.order?.order?.orders || []
-    );
-    const [tableData, setTableData] = useState(_orders);
+    const _ledger = useSelector((state) => state.accounting?.ledger);
+
+
+    const [partyOptions, setPartyOptions] = useState([]); // Store options for autocomplete
+    const [selectedParty, setSelectedParty] = useState(null); // Selected party
+
+    const [tableData, setTableData] = useState(_ledger);
     const filters = useSetState({
+        party: "",
         name: '',
-        status: 'all',
         startDate: null,
         endDate: null,
     });
@@ -78,19 +78,12 @@ export function LedgerListView() {
     //-----------------------------------------------------------------------------------------------------
 
     const TABLE_HEAD = [
-        ...(userRole === "Admin"
-            ? [
-                { id: 'Customer', label: 'Customer' },
-            ]
-            : []),
-        { id: 'CreditLimit', label: 'Credit Limit', align: 'center' },
-        { id: 'closingBalance', label: 'Closing Balance', align: 'center' }, // New column for discount
-        { id: 'FinalAmount', label: 'Final Amount', align: 'center' }, // New column for amount after discount  
-        { id: 'Delivery', label: 'Delivery Type' },
-        { id: 'createdAt', label: 'Order Date' },
-        { id: 'status', label: 'Status' },
-
-        { id: '', width: 88 },
+        { id: 'ledger', label: 'Ledger' },
+        { id: 'voucherNo', label: 'Voucher No', align: 'center' },
+        { id: 'voucherType', label: 'Voucher Type', align: 'center' },
+        { id: 'date', label: 'Date' },
+        { id: 'debitAmount', label: 'Debit Amount' },
+        { id: 'creditAmount', label: 'Credit Amount' },
     ];
 
 
@@ -100,8 +93,8 @@ export function LedgerListView() {
     }, []);
 
     useEffect(() => {
-        setTableData(_orders);
-    }, [_orders]);
+        setTableData(_ledger);
+    }, [_ledger]);
     //----------------------------------------------------------------------------------------------------
 
 
@@ -130,7 +123,6 @@ export function LedgerListView() {
 
     const canReset =
         !!filters.state.name ||
-        filters.state.status !== 'all' ||
         (!!filters.state.startDate && !!filters.state.endDate);
 
     const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
@@ -139,13 +131,7 @@ export function LedgerListView() {
 
     const handleViewRow = useCallback((id) => id, []);
 
-    const handleFilterStatus = useCallback(
-        (event, newValue) => {
-            table.onResetPage();
-            filters.setState({ status: newValue });
-        },
-        [filters, table]
-    );
+
 
     const handleSyncAPI = async () => {
         setLoading(true); // Set loading to true
@@ -162,6 +148,28 @@ export function LedgerListView() {
     };
 
     //--------------------------------------------------
+
+    // On component mount, fetch party options and set initial data
+  useEffect(() => {
+    if (_ledger?.length) {
+      setPartyOptions(_ledger.map((item) => ({ id: item.id, label: item.party }))); // Prepare options
+      setTableData(_ledger[0]?.vouchers || []); // Set initial data for the first party
+      setSelectedParty(_ledger[0]?.party); // Set initial selected party
+    }
+  }, [_ledger]);
+
+  // Handle party selection change
+  const handlePartyChange = useCallback((event, value) => {
+    setSelectedParty(value?.label || null);
+    if (value) {
+      const partyData = _ledger.find((item) => item.party === value.label);
+      setTableData(partyData?.vouchers || []);
+    } else {
+      setTableData([]);
+    }
+  }, [_ledger]);
+
+  //---------------------------------------------------------
     return (
         <div>
             <DashboardContent maxWidth="2xl">
@@ -190,43 +198,15 @@ export function LedgerListView() {
 
                 <Card>
 
-                    <Tabs
-                        value={filters.state.status}
-                        onChange={handleFilterStatus}
-                        sx={{
-                            px: 2.5,
-                            boxShadow: (theme) =>
-                                `inset 0 -2px 0 0 ${varAlpha(theme.vars.palette.grey['500Channel'], 0.08)}`,
-                        }}
-                    >
-                        {STATUS_OPTIONS.map((tab) => (
-                            <Tab
-                                key={tab.value}
-                                iconPosition="end"
-                                value={tab.value}
-                                label={tab.label}
-                                icon={
-                                    <Label
-                                        variant={
-                                            ((tab.value === 'all' || tab.value === filters.state.status) && 'filled') ||
-                                            'soft'
-                                        }
-                                        color={
-                                            (tab.value === 'completed' && 'success') ||
-                                            (tab.value === 'pending' && 'warning') ||
-                                            (tab.value === 'cancelled' && 'error') ||
-                                            'default'
-                                        }
-                                    >
-                                        {['completed', 'pending', 'cancelled'].includes(tab.value)
-                                            ? tableData.filter((user) => user.status === tab.value).length
-                                            : tableData.length}
-                                    </Label>
-                                }
-                            />
-                        ))}
-                    </Tabs>
-
+                    {/* Autocomplete Dropdown */}
+                    <Box sx={{ p: 2 }}>
+                        <Autocomplete
+                            options={partyOptions}
+                            value={partyOptions.find((option) => option.label === selectedParty) || null}
+                            onChange={handlePartyChange}
+                            renderInput={(params) => <TextField {...params} label="Select Party" />}
+                        />
+                    </Box>
 
                     <LedgerTableToolbar
                         filters={filters}
@@ -234,20 +214,6 @@ export function LedgerListView() {
                         dateError={dateError}
                         data={tableData}
                     />
-
-
-
-                    {canReset && (
-                        <LedgerTableFiltersResult
-                            filters={filters}
-                            totalResults={dataFiltered.length}
-                            onResetPage={table.onResetPage}
-                            sx={{ p: 2.5, pt: 0 }}
-                        />
-                    )}
-
-
-
                     <Box sx={{ position: 'relative' }}>
                         <TableSelectedAction
                             dense={table.dense}

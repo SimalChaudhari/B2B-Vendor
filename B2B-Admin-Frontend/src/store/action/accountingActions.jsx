@@ -1,6 +1,6 @@
 import { toast } from "sonner";
 import axiosInstance from "src/configs/axiosInstance";
-import { RECEIVABLE_GET_BY_LIST, RECEIVABLE_LIST } from "../constants/actionTypes";
+import { LEDGER_GET_BY_LIST, LEDGER_LIST, RECEIVABLE_GET_BY_LIST, RECEIVABLE_LIST } from "../constants/actionTypes";
 
 export const receivableList = () => async (dispatch) => {
     try {
@@ -87,3 +87,37 @@ export const deleteAllItem = (ids) => async (dispatch) => {
     return false; // Return false for any errors or unsuccessful attempts
 };
 
+
+// Ledger statement
+
+export const ledgerList = () => async (dispatch) => {
+    try {
+        const response = await axiosInstance.get('/ledgers/get-all');
+        dispatch({
+            type: LEDGER_LIST,
+            payload: response.data?.data, // Assuming response contains the customers data
+        });
+        return true;
+    } catch (error) {
+        // Check if error response exists and handle error message
+        const errorMessage = error?.response?.data?.message || 'An unexpected error occurred. Please try again.';
+        toast.error(errorMessage);
+    }
+    return false; // Return false for any errors
+};
+
+export const ledgerGetByList = (id) => async (dispatch) => {
+    try {
+        const response = await axiosInstance.get(`/ledgers/get/${id}`);
+        dispatch({
+            type: LEDGER_GET_BY_LIST,
+            payload: response.data?.data, // Assuming response contains the customers data
+        });
+        return true;
+    } catch (error) {
+        // Check if error response exists and handle error message
+        const errorMessage = error?.response?.data?.message || 'An unexpected error occurred. Please try again.';
+        toast.error(errorMessage);
+    }
+    return false; // Return false for any errors
+};

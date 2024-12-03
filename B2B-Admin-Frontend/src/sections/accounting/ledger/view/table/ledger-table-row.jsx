@@ -48,31 +48,22 @@ export function LedgerTableRow({ row, selected, onViewRow, onSelectRow, onDelete
           inputProps={{ id: `row-checkbox-${row.id}`, 'aria-label': `Row checkbox` }}
         />
       </TableCell>
-        <TableCell>
-          <Stack spacing={2} direction="row" alignItems="center">
-            <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
-              <Link color="inherit" sx={{ cursor: 'pointer' }}>
-                {row?.user?.name}
-              </Link>
-              <Box component="span" sx={{ color: 'text.disabled' }}>
-                {row?.user?.email}
-              </Box>
-
-              <Box component="span" sx={{ color: 'text.disabled' }}>
-                {row?.user?.mobile}
-              </Box>
-            </Stack>
+      <TableCell>
+        <Stack spacing={2} direction="row" alignItems="center">
+          <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
+            <Link color="inherit" sx={{ cursor: 'pointer' }}>
+              {row?.ledger || "not available"}
+            </Link>
           </Stack>
-        </TableCell>
-      <TableCell align="center"> {row?.totalQuantity} </TableCell>
-      <TableCell align="center"> {`${row.discount}%`} </TableCell>
-      <TableCell align="center"> {fCurrency(row.finalAmount)} </TableCell>
+        </Stack>
+      </TableCell>
 
-      <TableCell> {row.delivery} </TableCell>
+      <TableCell align="center"> {row?.voucherNo || "not available"}</TableCell>
+      <TableCell align="center"> {row.voucherType || "not available"} </TableCell>
       <TableCell>
         <ListItemText
-          primary={fDate(row.createdAt)}
-          secondary={fTime(row.createdAt)}
+          primary={fDate(row.date)}
+          secondary={fTime(row.date)}
           primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           secondaryTypographyProps={{
             mt: 0.5,
@@ -81,27 +72,11 @@ export function LedgerTableRow({ row, selected, onViewRow, onSelectRow, onDelete
           }}
         />
       </TableCell>
+      <TableCell > {row?.debitAmount || "not available"} </TableCell>
+      <TableCell > {row.creditAmount || "not available"} </TableCell>
 
-      <TableCell>
-        <Label
-          variant="soft"
-          color={
-            (row.status === 'completed' && 'success') ||
-            (row.status === 'pending' && 'warning') ||
-            (row.status === 'cancelled' && 'error') ||
-            'default'
-          }
-        >
-          {row?.status}
-        </Label>
-      </TableCell>
 
-      <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
 
-        <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
-          <Iconify icon="eva:more-vertical-fill" />
-        </IconButton>
-      </TableCell>
     </TableRow>
   );
 

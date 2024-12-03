@@ -2,11 +2,11 @@ import { BadRequestException, Injectable, InternalServerErrorException, Logger, 
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { parseStringPromise } from 'xml2js';
-import { LedgerEntity } from './ledger.entity';
+import { LedgerEntity, LedgerStatementEntity, LedgerVoucherEntity } from './ledger.entity';
 import { BillEntity } from './bill.entity';
 import { LedgerDto } from './ledger.dto';
 import axios from 'axios';
-import { ledger } from '../tally/ledger';
+import { ledger, receivable } from '../tally/ledger';
 import { SyncControlSettings } from './../settings/setting.entity';
 import { Cron } from '@nestjs/schedule';
 import { SyncLogEntity, SyncLogStatus } from './../sync-log/sync-log.entity';
@@ -27,7 +27,16 @@ export class LedgerService {
 
         @InjectRepository(SyncControlSettings)
         private readonly syncControlSettingsRepository: Repository<SyncControlSettings>,
+
+        @InjectRepository(LedgerStatementEntity)
+        private readonly ledgerStatementRepo: Repository<LedgerStatementEntity>,
+
+        @InjectRepository(LedgerVoucherEntity)
+        private readonly ledgerVoucherRepo: Repository<LedgerVoucherEntity>,
+
     ) { }
+
+    // OutStanding Receivables
 
     async fetchAndStoreLedgers(): Promise<void> {
         // Check if "Auto Sync" is enabled 
@@ -42,7 +51,7 @@ export class LedgerService {
         try {
             const response = await axios.get(process.env.TALLY_URL as string, {
                 headers: { 'Content-Type': 'text/xml' },
-                data: ledger,
+                data: receivable,
             });
 
             // Check for specific XML error patterns in the response
@@ -152,7 +161,7 @@ export class LedgerService {
     }
 
     private mapToLedgerDto(customer: any): LedgerDto {
-    
+
         return {
             customerName: customer?.CUSTOMERNAME?.[0] || 'Unknown Customer',
             creditLimit: parseFloat(customer?.CREDITLIMIT?.[0] || '0'),
@@ -202,36 +211,36 @@ export class LedgerService {
     @Cron('0 0 * * * *') // Runs every 60 seconds
     async CronFetchAndStoreLedgers(): Promise<void> {
         console.log('Outstanding Receivables sync executed at:', new Date().toISOString());
-    
+
         // Check if "Auto Sync" is enabled
         const syncSetting = await this.syncControlSettingsRepository.findOne({
             where: { moduleName: 'Outstanding Receivables' },
         });
-    
+
         if (!syncSetting?.isAutoSyncEnabled) {
             throw new BadRequestException('Auto Sync for Outstanding Receivables is disabled.');
         }
-    
+
         try {
             const response = await axios.get(process.env.TALLY_URL as string, {
                 headers: { 'Content-Type': 'text/xml' },
                 data: ledger, // Replace with your dynamic XML request
             });
-    
+
             // Check for specific XML error patterns in the response
             if (response.data.includes('<LINEERROR>')) {
                 throw new BadRequestException('Please log in to Tally.');
             }
-    
+
             const parsedData = await parseStringPromise(response.data, { explicitArray: true });
             const customers = Array.isArray(parsedData?.CUSTOMER)
                 ? parsedData.CUSTOMER
                 : parsedData?.CUSTOMER
-                ? [parsedData.CUSTOMER]
-                : [];
-    
+                    ? [parsedData.CUSTOMER]
+                    : [];
+
             await this.processAndStoreCustomers(customers);
-    
+
             // Log successful sync
             await this.syncLogRepository.save({
                 sync_type: 'Receivables',
@@ -243,20 +252,121 @@ export class LedgerService {
                 sync_type: 'Receivables',
                 status: SyncLogStatus.FAIL,
             });
-    
+
             if (error instanceof BadRequestException) throw error;
-    
+
             if (error.code === 'ECONNABORTED') {
                 throw new InternalServerErrorException(
                     'Tally request timed out. Please ensure Tally is open and accessible.',
                 );
             }
-    
+
             throw new InternalServerErrorException('Make sure Tally is open and logged in.');
         }
     }
-    
+
+    // Ledger Statements
+
+    private hasChanges(existingStatement: LedgerStatementEntity, newVouchers: Partial<LedgerVoucherEntity>[]): boolean {
+        if (existingStatement.vouchers.length !== newVouchers.length) {
+            return true; // Number of vouchers changed
+        }
+
+        // Compare each voucher
+        for (let i = 0; i < existingStatement.vouchers.length; i++) {
+            const existingVoucher = existingStatement.vouchers[i];
+            const newVoucher = newVouchers[i];
+
+            if (
+                existingVoucher.date !== newVoucher.date ||
+                existingVoucher.ledger !== newVoucher.ledger ||
+                existingVoucher.voucherType !== newVoucher.voucherType ||
+                existingVoucher.voucherNo !== newVoucher.voucherNo ||
+                existingVoucher.debitAmount !== newVoucher.debitAmount ||
+                existingVoucher.creditAmount !== newVoucher.creditAmount
+            ) {
+                return true; // At least one voucher differs
+            }
+        }
+
+        return false; // No changes detected
+    }
 
 
 
+    async fetchAndLedgers(): Promise<void> {
+        try {
+            const response = await axios.get(process.env.TALLY_URL as string, {
+                headers: { 'Content-Type': 'text/xml' },
+                data: ledger,
+            });
+
+            if (!response.data) {
+                throw new BadRequestException('No data received from Tally.');
+            }
+
+            // Parse the response XML
+            const parsedData = await parseStringPromise(response.data, { explicitArray: true });
+
+            const statementData = parsedData.LEDGERSTATEMENT;
+            if (!statementData) {
+                throw new BadRequestException('Invalid data received from Tally.');
+            }
+
+            // Extract vouchers
+            const newVouchers = statementData.LEDGERVOUCHERS.map((voucher: any) => ({
+                date: voucher.DATE[0],
+                ledger: voucher.LEDGER[0] || null,
+                voucherType: voucher.VCHTYPE[0],
+                voucherNo: voucher.VCHNO[0],
+                debitAmount: parseFloat(voucher.DEBITAMT[0] || '0'),
+                creditAmount: parseFloat(voucher.CREDITAMT[0] || '0'),
+            }));
+
+            // Check if a ledger statement already exists for the party
+            const existingStatement = await this.ledgerStatementRepo.findOne({
+                where: { party: statementData.PARTY[0] },
+                relations: ['vouchers'],
+            });
+
+            if (existingStatement) {
+                // Compare existing data with new data
+                const hasChanges = this.hasChanges(existingStatement, newVouchers);
+
+                if (hasChanges) {
+                    // Update the existing record
+                    existingStatement.vouchers = this.ledgerVoucherRepo.create(newVouchers); // Replace vouchers
+                    await this.ledgerStatementRepo.save(existingStatement);
+                    console.log(`Updated ledger for party: ${statementData.PARTY[0]}`);
+                } else {
+                    console.log(`No changes detected for party: ${statementData.PARTY[0]}`);
+                }
+            } else {
+                // Create a new record
+                const newLedgerStatement = this.ledgerStatementRepo.create({
+                    party: statementData.PARTY[0],
+                    vouchers: this.ledgerVoucherRepo.create(newVouchers),
+                });
+                await this.ledgerStatementRepo.save(newLedgerStatement);
+                console.log(`Inserted new ledger for party: ${statementData.PARTY[0]}`);
+            }
+        } catch (error: any) {
+            throw new InternalServerErrorException(`Error fetching data from Tally: ${error.message}`);
+        }
+    }
+
+
+    // Retrieve all ledger statements
+    async findLedgerData(): Promise<LedgerStatementEntity[]> {
+        return this.ledgerStatementRepo.find();
+    }
+
+    // Retrieve a specific ledger statement by ID
+    async findByIdLedgerData(id: string): Promise<LedgerStatementEntity> {
+        const statement = await this.ledgerStatementRepo.findOne({ where: { id } });
+        if (!statement) {
+            throw new NotFoundException('Ledger statement not found.');
+        }
+        return statement;
+    }
 }

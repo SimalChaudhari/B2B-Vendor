@@ -42,6 +42,12 @@ export const SYNC_LIST = "SYNC_LIST"
 export const SYNC_GET_BY_LIST = "SYNC_GET_BY_LIST"
 
 
+export const LEDGER_LIST = "LEDGER_LIST"
+export const LEDGER_GET_BY_LIST = "LEDGER_GET_BY_LIST"
+
+
+
+
 
 
 

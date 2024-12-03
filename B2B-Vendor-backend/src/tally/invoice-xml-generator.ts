@@ -37,7 +37,7 @@ export function generateInvoiceXML(order: OrderEntity, orderItems: OrderItemEnti
                  <ORDERDUEDATE P="01-Nov-2024">01-Nov-2024</ORDERDUEDATE>
             </BATCHALLOCATIONS.LIST>
             <ACCOUNTINGALLOCATIONS.LIST>
-                <LEDGERNAME>GST Sales</LEDGERNAME>
+                <LEDGERNAME>Sales</LEDGERNAME>
                 <GSTCLASS>&#4; Not Applicable</GSTCLASS>
                 <ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>
                 <AMOUNT>${orderItem.product.sellingPrice * orderItem.quantity}</AMOUNT>
@@ -57,7 +57,7 @@ export function generateInvoiceXML(order: OrderEntity, orderItems: OrderItemEnti
             <REQUESTDESC>
                 <REPORTNAME>Vouchers</REPORTNAME>
                  <STATICVARIABLES>
-                   <SVCURRENTCOMPANY>Sandbox Data</SVCURRENTCOMPANY>
+                   <SVCURRENTCOMPANY>Rgt</SVCURRENTCOMPANY>
                  </STATICVARIABLES>
             </REQUESTDESC>
             <REQUESTDATA>
@@ -86,6 +86,7 @@ export function generateInvoiceXML(order: OrderEntity, orderItems: OrderItemEnti
                         <PARTYLEDGERNAME>${user.name}</PARTYLEDGERNAME>
                         <BASICBUYERNAME>${user.name}</BASICBUYERNAME>
                         <CMPGSTREGISTRATIONTYPE>Regular</CMPGSTREGISTRATIONTYPE>
+                        <VOUCHERNUMBER>${orderNo}</VOUCHERNUMBER>
                         <REFERENCE>${orderNo}</REFERENCE>
                         <PARTYMAILINGNAME>${user.email}</PARTYMAILINGNAME>
                         <CONSIGNEEMAILINGNAME>${user.email}</CONSIGNEEMAILINGNAME>

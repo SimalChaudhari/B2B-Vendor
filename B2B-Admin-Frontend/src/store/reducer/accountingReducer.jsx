@@ -1,8 +1,10 @@
-import { RECEIVABLE_GET_BY_LIST, RECEIVABLE_LIST } from "../constants/actionTypes";
+import { LEDGER_GET_BY_LIST, LEDGER_LIST, RECEIVABLE_GET_BY_LIST, RECEIVABLE_LIST } from "../constants/actionTypes";
 
 const initialState = {
     receivable: [],
-    getByReceivable: ''
+    getByReceivable: '',
+    ledger: [],
+    getByLedger: ''
 
 };
 const AccountingReducer = (state = initialState, { type, payload } = {}) => {
@@ -17,6 +19,18 @@ const AccountingReducer = (state = initialState, { type, payload } = {}) => {
                 ...state,
                 getByReceivable: payload,
             };
+
+        case LEDGER_LIST:
+            return {
+                ...state,
+                ledger: payload,
+            };
+        case LEDGER_GET_BY_LIST:
+            return {
+                ...state,
+                getByLedger: payload,
+            };
+
         default:
             return state;
     }

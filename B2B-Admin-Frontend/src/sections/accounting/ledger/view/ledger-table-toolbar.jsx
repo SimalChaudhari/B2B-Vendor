@@ -7,18 +7,15 @@ import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { formHelperTextClasses } from '@mui/material/FormHelperText';
-import * as XLSX from 'xlsx'; // Import the XLSX library
-
-
 import { Iconify } from 'src/components/iconify';
 import { usePopover, CustomPopover } from 'src/components/custom-popover';
 import { fIsBetween } from 'src/utils/format-time';
 import { generatePrintableContent } from '../components/file-downlaod/pdf-generation';
 import { exportToExcel } from '../components/file-downlaod/excel-generation';
-
 // ----------------------------------------------------------------------
 
 export function LedgerTableToolbar({ filters, onResetPage, dateError, data }) {
+
   const popover = usePopover();
 
   const handleFilterName = useCallback(
@@ -44,7 +41,7 @@ export function LedgerTableToolbar({ filters, onResetPage, dateError, data }) {
     },
     [filters, onResetPage]
   );
-  
+
   const handlePrint = () => {
     if (!data || data.length === 0) {
       console.error('No data available for export.');
@@ -64,22 +61,22 @@ export function LedgerTableToolbar({ filters, onResetPage, dateError, data }) {
       return;
     }
 
-      // Generate printable content
-  const printableContent = generatePrintableContent(filteredData);
-  
+    // Generate printable content
+    const printableContent = generatePrintableContent(filteredData);
+
     // Open a new window and print the content
     const newWindow = window.open('', '_blank');
     newWindow.document.write(printableContent);
     newWindow.document.close();
     newWindow.print();
   };
-  
+
 
 
   const handleExport = () => {
     exportToExcel(data, filters, fIsBetween);
   };
-  
+
 
   return (
     <>
@@ -89,6 +86,9 @@ export function LedgerTableToolbar({ filters, onResetPage, dateError, data }) {
         direction={{ xs: 'column', md: 'row' }}
         sx={{ p: 2.5, pr: { xs: 2.5, md: 1 } }}
       >
+
+
+
         <DatePicker
           label="Start date"
           value={filters.state.startDate}
