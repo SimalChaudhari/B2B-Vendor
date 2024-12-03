@@ -38,7 +38,7 @@ export const syncReceivable = () => async (dispatch) => {
     try {
         const response = await axiosInstance.post('/ledgers/receivable/fetch');
         if (response && response.status >= 200 && response.status < 300) {
-            toast.success(response.data.message || 'ledgers fetched and stored successfully!');
+            toast.success(response.data.message || 'outstanding Receivable fetched and stored successfully!');
             return true;
         }
         return true;
@@ -121,3 +121,41 @@ export const ledgerGetByList = (id) => async (dispatch) => {
     }
     return false; // Return false for any errors
 };
+
+
+export const syncLedger = () => async (dispatch) => {
+    try {
+        const response = await axiosInstance.post('/ledgers/fetch');
+        if (response && response.status >= 200 && response.status < 300) {
+            toast.success(response.data.message || 'ledgers fetched and stored successfully!');
+            return true;
+        }
+        return true;
+    } catch (error) {
+        // Check if error response exists and handle error message
+        const errorMessage = error?.response?.data?.message || 'An unexpected error occurred. Please try again.';
+        toast.error(errorMessage);
+    }
+    return false; // Return false for any errors
+};
+
+export const deleteAllLedger = (ids) => async (dispatch) => {
+    try {
+        // Pass ids as the data property in the axios delete request
+        const response = await axiosInstance.delete(`/ledgers/delete/all-ledger`, {
+            data: { ids }
+        });
+
+        // Check if the response is successful
+        if (response && response.status >= 200 && response.status < 300) {
+            toast.success(response.data.message || 'Ledger deleted successfully!');
+            return true; // Indicate successful deletion
+        }
+    } catch (error) {
+        // Handle errors appropriately
+        const errorMessage = error?.response?.data?.message || 'An unexpected error occurred. Please try again.';
+        toast.error(errorMessage);
+    }
+    return false; // Return false for any errors or unsuccessful attempts
+};
+

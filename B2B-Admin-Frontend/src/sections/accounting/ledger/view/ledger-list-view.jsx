@@ -1,9 +1,6 @@
 
 import { useState, useCallback, useEffect } from 'react';
-
-import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
-import Tabs from '@mui/material/Tabs';
 import Card from '@mui/material/Card';
 import Table from '@mui/material/Table';
 import Button from '@mui/material/Button';
@@ -14,10 +11,7 @@ import { paths } from 'src/routes/paths';
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useSetState } from 'src/hooks/use-set-state';
 import { fIsAfter } from 'src/utils/format-time';
-import { varAlpha } from 'src/theme/styles';
 import { DashboardContent } from 'src/layouts/dashboard';
-import { Label } from 'src/components/label';
-import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 import { ConfirmDialog } from 'src/components/custom-dialog';
@@ -25,7 +19,6 @@ import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 import {
     useTable,
     emptyRows,
-    rowInPage,
     TableNoData,
     getComparator,
     TableEmptyRows,
@@ -35,18 +28,14 @@ import {
 } from 'src/components/table';
 
 import { LedgerTableRow } from './table/ledger-table-row';
-import { ORDER_STATUS_OPTIONS } from 'src/_mock/_order';
 import { useDispatch, useSelector } from 'react-redux';
 import useUserRole from 'src/layouts/components/user-role';
-import { syncOrder } from 'src/store/action/orderActions';
 import { Autocomplete, TextField, Typography } from '@mui/material';
 import { applyFilter } from '../utils/filterUtils';
 import { LedgerTableToolbar } from './ledger-table-toolbar';
 import { useFetchData } from '../components/fetch-ledger';
-// ----------------------------------------------------------------------
-
-const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...ORDER_STATUS_OPTIONS];
-
+import { LedgerTableFiltersResult } from './table/ledger-table-filters-result';
+import { syncLedger } from 'src/store/action/accountingActions';
 // ----------------------------------------------------------------------
 
 export function LedgerListView() {
@@ -54,7 +43,7 @@ export function LedgerListView() {
     const confirm = useBoolean();
     const userRole = useUserRole();
     const [selectedRows, setSelectedRows] = useState([]); // Store selected row IDs
-    const { fetchData, fetchDeleteData } = useFetchData(); // Destructure fetchData from the custom hook
+    const { fetchData } = useFetchData(); // Destructure fetchData from the custom hook
 
     const dispatch = useDispatch();
     const confirmSync = useBoolean(); // Separate confirmation state for syncing
@@ -97,21 +86,6 @@ export function LedgerListView() {
     }, [_ledger]);
     //----------------------------------------------------------------------------------------------------
 
-
-
-    const handleSelectRow = useCallback((id) => {
-        setSelectedRows((prev) =>
-            prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
-        );
-    }, []);
-
-    const handleDeleteSelectedRows = useCallback(() => {
-        selectedRows.forEach((id) => fetchDeleteData(id));
-        setSelectedRows([]);
-        fetchData(); // Refresh data after deletion
-        confirm.onFalse();
-    }, [selectedRows, fetchDeleteData, fetchData]);
-
     //----------------------------------------------------------------------------------------------------
     const dataFiltered = applyFilter({
         inputData: tableData,
@@ -127,7 +101,6 @@ export function LedgerListView() {
 
     const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
     //----------------------------------------------------
-    const handleDeleteRow = useCallback((id) => { fetchDeleteData(id) }, []);
 
     const handleViewRow = useCallback((id) => id, []);
 
@@ -136,7 +109,7 @@ export function LedgerListView() {
     const handleSyncAPI = async () => {
         setLoading(true); // Set loading to true
         try {
-            await dispatch(syncOrder());
+            await dispatch(syncLedger());
             fetchData(); // Fetch data after syncing
         } catch (error) {
             console.error('Error syncing order invoice:', error);
@@ -190,7 +163,7 @@ export function LedgerListView() {
                                 startIcon={<Iconify icon="eva:sync-fill" />}
                                 disabled={loading}
                             >
-                                {loading ? 'Syncing...' : 'Sync Invoices'}
+                                {loading ? 'Syncing...' : 'Sync Data'}
                             </Button>
                         )
                     }
@@ -214,6 +187,16 @@ export function LedgerListView() {
                         dateError={dateError}
                         data={tableData}
                     />
+
+        
+                  {canReset && (
+                    <LedgerTableFiltersResult
+                      filters={filters}
+                      totalResults={dataFiltered.length}
+                      onResetPage={table.onResetPage}
+                      sx={{ p: 2.5, pt: 0 }}
+                    />
+                  )}
                     <Box sx={{ position: 'relative' }}>
                         <TableSelectedAction
                             dense={table.dense}
@@ -256,8 +239,7 @@ export function LedgerListView() {
                                                 key={row.id}
                                                 row={row}
                                                 selected={selectedRows.includes(row.id)}
-                                                onSelectRow={() => handleSelectRow(row.id)}
-                                                onDeleteRow={() => handleDeleteRow(row.id)}
+                                          
                                                 onViewRow={() => handleViewRow(row.id)}
                                             />
                                         ))}
@@ -291,9 +273,9 @@ export function LedgerListView() {
                 onClose={confirmSync.onFalse}
                 content={
                     <Box>
-                        <Typography gutterBottom>Are you sure you want to sync the Invoices?</Typography>
+                        <Typography gutterBottom>Are you sure you want to sync?</Typography>
                         <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                            This action will update the Invoices data and may take a few moments.
+                            This action will update the data and may take a few moments.
                         </Typography>
                     </Box>
                 }
@@ -309,31 +291,6 @@ export function LedgerListView() {
                 }
             />
 
-            <ConfirmDialog
-                open={confirm.value}
-                onClose={confirm.onFalse}
-                title="Delete Orders?"
-                content={
-                    <Box>
-                        <Typography gutterBottom>Are you sure you want to delete the selected Orders?</Typography>
-                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                            This action cannot be undone.
-                        </Typography>
-                    </Box>
-                }
-                action={
-                    <Button
-                        variant="contained"
-                        color="error"
-                        onClick={() => {
-                            handleDeleteSelectedRows();
-                            confirm.onFalse();
-                        }}
-                    >
-                        Delete
-                    </Button>
-                }
-            />
         </div>
     );
 }

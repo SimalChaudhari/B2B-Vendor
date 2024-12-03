@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux';
-import { ledgerList, ledgerGetByList } from 'src/store/action/accountingActions';
+import { ledgerList, deleteAllLedger } from 'src/store/action/accountingActions';
 
 
 export const useFetchData = () => {
@@ -9,11 +9,10 @@ export const useFetchData = () => {
         await dispatch(ledgerList());
     };
 
-    const fetchByIdData = async (id) => {
-        await dispatch(ledgerGetByList(id));
+    const fetchDeleteData = async (id) => {
+        await dispatch(deleteAllLedger(id));
     };
 
-
-    return { fetchData, fetchByIdData };
+    return { fetchData, fetchDeleteData };
 };
 

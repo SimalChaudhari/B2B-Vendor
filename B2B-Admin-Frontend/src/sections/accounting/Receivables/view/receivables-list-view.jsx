@@ -268,9 +268,9 @@ export function ReceivablesListView() {
                 onClose={confirmSync.onFalse}
                 content={
                     <Box>
-                        <Typography gutterBottom>Are you sure you want to sync the Invoices?</Typography>
+                        <Typography gutterBottom>Are you sure you want to sync?</Typography>
                         <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                            This action will update the Invoices data and may take a few moments.
+                            This action will update the data and may take a few moments.
                         </Typography>
                     </Box>
                 }
@@ -292,7 +292,7 @@ export function ReceivablesListView() {
                 title="Delete ledger outstanding statements?"
                 content={
                     <Box>
-                        <Typography gutterBottom>Are you sure you want to delete the selected ledger outstanding statements?</Typography>
+                        <Typography gutterBottom>Are you sure you want to delete the selected Data?</Typography>
                         <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                             This action cannot be undone.
                         </Typography>

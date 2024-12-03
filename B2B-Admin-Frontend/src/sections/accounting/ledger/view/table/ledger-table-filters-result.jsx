@@ -14,11 +14,6 @@ export function LedgerTableFiltersResult({ filters, totalResults, onResetPage, s
     filters.setState({ name: '' });
   }, [filters, onResetPage]);
 
-  const handleRemoveStatus = useCallback(() => {
-    onResetPage();
-    filters.setState({ status: 'all' });
-  }, [filters, onResetPage]);
-
   const handleRemoveDate = useCallback(() => {
     onResetPage();
     filters.setState({ startDate: null, endDate: null });
@@ -31,14 +26,6 @@ export function LedgerTableFiltersResult({ filters, totalResults, onResetPage, s
 
   return (
     <FiltersResult totalResults={totalResults} onReset={handleReset} sx={sx}>
-      <FiltersBlock label="Status:" isShow={filters.state.status !== 'all'}>
-        <Chip
-          {...chipProps}
-          label={filters.state.status}
-          onDelete={handleRemoveStatus}
-          sx={{ textTransform: 'capitalize' }}
-        />
-      </FiltersBlock>
 
       <FiltersBlock
         label="Date:"
