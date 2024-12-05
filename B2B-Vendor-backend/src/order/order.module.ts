@@ -14,6 +14,7 @@ import { AddressEntity } from './../addresses/addresses.entity';
 import { EmailService } from './../service/email.service';
 import { SyncControlSettings } from './../settings/setting.entity';
 import { SyncLogEntity } from './../sync-log/sync-log.entity';
+import { FirebaseService } from 'service/firebase.service';
 
 @Module({
   imports: [
@@ -24,7 +25,7 @@ import { SyncLogEntity } from './../sync-log/sync-log.entity';
     }),
   ],
   controllers: [OrderController],
-  providers: [OrderService,EmailService],
+  providers: [OrderService,EmailService,FirebaseService],
   exports: [OrderService], // Exporting ItemService
 })
 export class OrderModule {}

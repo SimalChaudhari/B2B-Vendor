@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import admin, { ServiceAccount } from 'firebase-admin';
+import { readFileSync } from 'fs';
 
 // Define your service account object with correct property names
 const serviceAccount: ServiceAccount = {
@@ -86,6 +87,34 @@ export class FirebaseService {
     });
 
     await Promise.all(deletionPromises);
+  }
+
+
+
+  // Upload a local file to Firebase Storage and return its public URL
+  async uploadFileToFirebase(folderName: string, localFilePath: string, fileName: string): Promise<string> {
+    const bucket = admin.storage().bucket();
+    const destination = `${folderName}/${fileName}`; // Destination path in Firebase Storage
+
+    try {
+      // Read the file as a Buffer
+      const fileBuffer = readFileSync(localFilePath);
+
+      // Reference the file in Firebase Storage
+      const file = bucket.file(destination);
+
+      // Upload the file
+      await file.save(fileBuffer, { contentType: 'application/pdf' });
+
+      // Make the file publicly accessible
+      await file.makePublic();
+
+      // Return the public URL for the file
+      return `https://storage.googleapis.com/${bucket.name}/${file.name}`;
+    } catch (error) {
+      console.error('Error uploading file to Firebase:', error);
+      throw new Error('Failed to upload file to Firebase');
+    }
   }
 
 }

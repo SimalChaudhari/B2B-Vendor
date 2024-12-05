@@ -20,7 +20,7 @@ import { addQuantity, cartList } from 'src/store/action/cartActions';
 export function CheckoutCartProduct({ row, onDownload, onDelete }) {
   const isDownloadable = !!row.dimensionalFiles; // Check if pdfPath is available
 
-  const available = 10000000; // Change this to 0 to simulate product not available
+  const available = row.stockQuantity; // Change this to 0 to simulate product not available
 
   const [quantity, setQuantity] = useState(row.quantity); // Quantity state
   const [isLoading, setIsLoading] = useState(false); // State for loader

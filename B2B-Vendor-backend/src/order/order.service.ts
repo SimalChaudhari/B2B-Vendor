@@ -6,13 +6,17 @@ import { CreateItemOrderDto, CreateOrderDto } from './order.dto';
 import { ItemEntity } from './../fetch-products/item.entity';
 import { OrderItemEntity } from './order.item.entity';
 import { CartItemEntity } from './../cart/cart.entity';
-import { DataSource, Like, Repository } from 'typeorm';
+import { DataSource, IsNull, Like, Repository } from 'typeorm';
 import { generateInvoiceXML } from '../tally/invoice-xml-generator';
 import axios from 'axios';
 import { Invoice, InvoiceStatus } from './../invoice/invoice.entity';
 import { EmailService } from './../service/email.service';
 import { UserEntity } from './../user/users.entity';
 import { AddressEntity } from './../addresses/addresses.entity';
+import * as fs from 'fs';
+import * as path from 'path';
+import { FirebaseService } from 'service/firebase.service';
+import { Cron } from '@nestjs/schedule';
 
 
 @Injectable()
@@ -37,7 +41,11 @@ export class OrderService {
         @InjectRepository(Invoice)
         private readonly invoiceRepository: Repository<Invoice>,
 
-        private readonly emailService: EmailService
+        private readonly emailService: EmailService,
+
+        private firebaseService: FirebaseService, // Inject Firebase service
+
+        private readonly dataSource: DataSource
     ) { }
 
     async getAllOrders(): Promise<OrderEntity[]> {
@@ -72,7 +80,7 @@ export class OrderService {
     }
 
     async createOrder(userId: string, createOrderDto: CreateOrderDto): Promise<OrderEntity> {
-        const { addressId, totalPrice, totalQuantity,finalAmount,discount, delivery } = createOrderDto;
+        const { addressId, totalPrice, totalQuantity, finalAmount, discount, delivery } = createOrderDto;
 
         const user = await this.userRepository.findOne({ where: { id: userId } });
         if (!user) {
@@ -97,7 +105,7 @@ export class OrderService {
             totalQuantity,
             delivery
         });
-        console.log("🚀 ~ OrderService ~ createOrder ~ order:", order)
+
 
         return this.orderRepository.save(order);
     }
@@ -106,7 +114,7 @@ export class OrderService {
         try {
             // Get the current year
             const currentYear = new Date().getFullYear();
-    
+
             // Retrieve the highest order number for the current year
             const lastOrder = await this.orderRepository.find({
                 where: { orderNo: Like(`${currentYear}%`) },
@@ -114,9 +122,9 @@ export class OrderService {
                 order: { orderNo: 'DESC' },
                 take: 1,
             });
-    
+
             let nextOrderNo: string;
-    
+
             if (lastOrder.length > 0) {
                 // Extract the numeric part of the last order number and increment it
                 const lastSequentialNumber = parseInt(lastOrder[0].orderNo.slice(5), 10); // Extract the numeric part after the year and hyphen
@@ -126,15 +134,15 @@ export class OrderService {
                 // If no orders exist for the current year, start with 0001
                 nextOrderNo = `${currentYear}-0001`;
             }
-    
+
             // Return the formatted order number
             return nextOrderNo;
         } catch (error) {
             throw new InternalServerErrorException('Error generating unique order number');
         }
     }
-    
-    
+
+
 
 
     async getOrdersByUserId(userId: string): Promise<any> {
@@ -261,7 +269,7 @@ export class OrderService {
 
     async deleteMultiple(ids: string[]): Promise<{ message: string }> {
         const notFoundIds: string[] = [];
- 
+
         for (const id of ids) {
             try {
                 await this.deleteOrder(id);  // attempt to delete the order
@@ -269,15 +277,15 @@ export class OrderService {
                 notFoundIds.push(id);  // if an error occurs, track the not found ID
                 continue;  // skip to the next ID
             }
-        }  
+        }
         if (notFoundIds.length > 0) {
             throw new NotFoundException(`orders with ids ${notFoundIds.join(', ')} not found`);
         }
 
         return { message: 'orders deleted successfully' };
     }
-    
-    
+
+
     // order item
 
     async addItemToOrder(createItemOrderDto: CreateItemOrderDto): Promise<OrderItemEntity[]> {
@@ -325,8 +333,8 @@ export class OrderService {
             // Log error and continue without blocking order creation
         }
 
-     
-        
+
+
         return savedOrderItems;
     }
 
@@ -338,34 +346,34 @@ export class OrderService {
         unsentInvoice.status = InvoiceStatus.PENDING;
         await this.invoiceRepository.save(unsentInvoice);
     }
-    
+
     async postToTally(order: OrderEntity, savedOrderItems: OrderItemEntity[]): Promise<void> {
         const xml = generateInvoiceXML(order, savedOrderItems);
         let isInvoiceSaved = false;
-    
+
         try {
             const response = await axios.post(process.env.TALLY_URL as string, xml, {
                 headers: {
                     'Content-Type': 'application/xml',
                 },
             });
-    
+
             if (response.data.includes('<LINEERROR>')) {
                 await this.savePendingInvoice(order, xml);
                 isInvoiceSaved = true;
                 throw new Error(`Failed to post invoice to Tally due to line error.`);
             }
-    
+
         } catch (error) {
             console.log("General error during Tally posting");
             if (!isInvoiceSaved) {
                 await this.savePendingInvoice(order, xml);
             }
-    
+
             throw new Error('Failed to post invoice to Tally. It will be retried later.');
         }
     }
-    
+
 
     async getAll(): Promise<OrderItemEntity[]> {
         const address = await this.orderItemRepository.find();
@@ -386,4 +394,43 @@ export class OrderService {
         return { message: 'Order item deleted successfully' };
     }
 
+    @Cron('*/30 * * * * *')
+    async uploadAllInvoices(): Promise<void> {
+        console.log('Complete log cleanup started:', new Date().toISOString());
+        const localFolderPath = 'C:\\Tally\\Data\\Invoice'; // Local folder path
+        const orderRepository = this.dataSource.getRepository(OrderEntity);
+
+        try {
+            // Fetch all orders where invoicePdf is null (i.e., orders without an invoice)
+            const orders = await orderRepository.find({
+                where: { invoicePdf: IsNull() }, // Check for orders without an invoice PDF
+            });
+
+            if (orders.length === 0) {
+                console.log('No orders without an invoice PDF.');
+                return;
+            }
+
+            // Iterate through all orders and upload their invoices if they exist
+            for (const order of orders) {
+                const pdfFileName = `${order.orderNo}.pdf`; // Generate PDF filename based on order number
+                const pdfFilePath = path.join(localFolderPath, pdfFileName); // Create file path for local PDF file
+
+                if (fs.existsSync(pdfFilePath)) {
+                    // If the file exists, upload to Firebase
+                    const firebaseUrl = await this.firebaseService.uploadFileToFirebase('invoices', pdfFilePath, pdfFileName);
+
+                    // Save the Firebase URL in the database
+                    order.invoicePdf = firebaseUrl;
+                    await orderRepository.save(order);
+                    console.log(`Invoice for order ${order.orderNo} uploaded successfully.`);
+                } else {
+                    // If the file does not exist, log a message
+                    console.log(`PDF file ${pdfFileName} for order ${order.orderNo} does not exist.`);
+                }
+            }
+        } catch (error) {
+            console.error('Error uploading invoices:', error);
+        }
+    }
 }

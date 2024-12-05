@@ -7,6 +7,7 @@ const useCart = () => {
   const dispatch = useDispatch();
   
   const addToCartData = useSelector((state) => state.cart?.cart || []);
+  console.log("🚀 ~ useCart ~ addToCartData:", addToCartData)
 
   useEffect(() => {
     dispatch(cartList());
@@ -15,6 +16,7 @@ const useCart = () => {
   const mappedData = addToCartData.map((item) => ({
     id: item.id,
     quantity: item.quantity,
+    stockQuantity: item.stockQuantity,
     userId: item.userId,
     price: item.product.sellingPrice,
     totalAmount: item.product.sellingPrice * item.quantity,

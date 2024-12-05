@@ -47,6 +47,9 @@ export class OrderEntity {
     @Column({ type: 'enum', enum: OrderStatus, default: OrderStatus.PENDING })
     status!: OrderStatus; // Order status, default is 'pending'
 
+    @Column('simple-array', { nullable: true }) // For storing  file paths
+    invoicePdf!: string;
+
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     createdAt?: Date;
 

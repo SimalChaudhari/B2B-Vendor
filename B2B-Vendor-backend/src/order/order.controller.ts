@@ -91,4 +91,13 @@ export class OrderController {
         return this.orderService.deleteOrderItemById(orderItemId);
     }
 
-}
+     // Endpoint to trigger the update of the invoice PDF path based on the orderNo
+   // Endpoint to upload all invoices
+   @Post('upload-all-invoices')
+   async uploadAllInvoices(): Promise<string> {
+     await this.orderService.uploadAllInvoices();
+     return 'All invoices uploaded successfully (if files exist).';
+   }
+ }
+ 
+

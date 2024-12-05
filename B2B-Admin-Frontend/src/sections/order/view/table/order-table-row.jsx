@@ -26,11 +26,9 @@ import useUserRole from 'src/layouts/components/user-role';
 
 // ----------------------------------------------------------------------
 
-export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteRow }) {
+export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteRow, onDownload }) {
 
-  // const isDownloadable = !!row.dimensionalFiles; // Check if pdfPath is available
-  const isDownloadable = !!null; // Check if pdfPath is available
-
+  const isDownloadable = !!row.invoicePdf; // Check if pdfPath is available
 
   const confirm = useBoolean();
 
@@ -105,7 +103,7 @@ export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteR
         <Tooltip title={isDownloadable ? "Download File" : "File not available"}>
           <span> {/* Wrap in span to allow tooltip on disabled button */}
             <IconButton
-              // onClick={() => isDownloadable && onDownload(row.id)}
+              onClick={() => isDownloadable && onDownload(row.id)}
               sx={{ color: 'primary.main' }}
               disabled={!isDownloadable} // Disable if no pdfPath
             >
@@ -114,8 +112,6 @@ export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteR
           </span>
         </Tooltip>
       </TableCell>
-
-
 
       <TableCell align="center" sx={{ px: 1, whiteSpace: 'nowrap' }}>
         <Tooltip title="Product Information">
@@ -129,9 +125,9 @@ export function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteR
         </Tooltip>
 
         <Tooltip title="More Actions">
-        <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
-          <Iconify icon="eva:more-vertical-fill" />
-        </IconButton>
+          <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
+            <Iconify icon="eva:more-vertical-fill" />
+          </IconButton>
         </Tooltip>
       </TableCell>
     </TableRow>

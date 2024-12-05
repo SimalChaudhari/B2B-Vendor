@@ -65,8 +65,14 @@ export class CartController {
   @Get()
   async getCart(@Req() req: Request) {
     const userId = req.user.id;
-    return this.cartService.getCart(userId);
+    return this.cartService.getCartWithStockQuantity(userId);
   }
+
+  // @Get('matched-quantities')
+  // async getMatchedQuantities(@Req() req: Request) {
+  //   const userId = req.user.id;
+  //   return await this.cartService.getCartWithStockQuantity(userId);
+  // }
 
   @Delete('/delete/:cartItemId')
   async removeFromCart(

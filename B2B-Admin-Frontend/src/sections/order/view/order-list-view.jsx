@@ -40,6 +40,7 @@ import useUserRole from 'src/layouts/components/user-role';
 import { syncOrder } from 'src/store/action/orderActions';
 import { Typography } from '@mui/material';
 import { applyFilter } from '../utils/filterUtils';
+import { toast } from 'sonner';
 // ----------------------------------------------------------------------
 
 const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...ORDER_STATUS_OPTIONS];
@@ -55,7 +56,7 @@ export function OrderListView() {
   const dispatch = useDispatch();
   const confirmSync = useBoolean(); // Separate confirmation state for syncing
   const [deleting, setDeleting] = useState(false); // Track delete operation
-   
+
 
   const [loading, setLoading] = useState(false);
   const _orders = useSelector((state) =>
@@ -66,7 +67,7 @@ export function OrderListView() {
     name: '',
     status: 'all',
     startDate: null,
-    endDate: null,  
+    endDate: null,
   });
 
   const dateError = fIsAfter(filters.state.startDate, filters.state.endDate);
@@ -160,6 +161,15 @@ export function OrderListView() {
       setLoading(false); // Set loading to false after the API call completes
       confirmSync.onFalse(); // Close the confirmation dialog
 
+    }
+  };
+
+  const handleDownload = async (id) => {
+    const order = _orders.find((data) => data.id === id);
+    if (order && order.invoicePdf) {
+      window.open(order.invoicePdf, '_blank'); // Opens the PDF in a new tab
+    } else {
+      toast.warning('File Not found for this order', id);
     }
   };
 
@@ -290,6 +300,7 @@ export function OrderListView() {
                         onSelectRow={() => handleSelectRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.id)}
                         onViewRow={() => handleViewRow(row.id)}
+                        onDownload={() => handleDownload(row.id)}
                       />
                     ))}
 

@@ -7,9 +7,10 @@ import { CartService } from './cart.service';
 import { CartController } from './cart.controller';
 import { ItemEntity } from './../fetch-products/item.entity';
 import { JwtModule } from '@nestjs/jwt';
+import { StockEntity } from 'stock/stock.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([CartItemEntity, ItemEntity]),
+  imports: [TypeOrmModule.forFeature([CartItemEntity, ItemEntity,StockEntity]),
   JwtModule.register({
     secret: process.env.JWT_SECRET, // Use your JWT secret from the .env file
     signOptions: { }, // Set your token expiration

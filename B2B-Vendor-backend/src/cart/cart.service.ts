@@ -1,142 +1,180 @@
 // cart.service.ts
 import {
-    HttpException,
-    HttpStatus,
-    Injectable,
-    NotFoundException
-  } from '@nestjs/common';
-  import { InjectRepository } from '@nestjs/typeorm';
-  import { Repository } from 'typeorm';
-  import { CartItemEntity } from './cart.entity';
-  import { AddToCartDto, AddToCartItemDto } from './cart.dto';
-  import { ItemEntity } from './../fetch-products/item.entity';
-  
-  @Injectable()
-  export class CartService {
-    constructor(
-      @InjectRepository(CartItemEntity)
-      private readonly cartRepository: Repository<CartItemEntity>,
-      @InjectRepository(ItemEntity)
-      private readonly itemRepository: Repository<ItemEntity>
-    ) {}
-  
-    async addMultipleToCart(userId: string, addToCartDto: AddToCartDto): Promise<CartItemEntity[]> {
-        const items: AddToCartItemDto[] = addToCartDto.items || []; // Default to an empty array
-    
-        if (items.length === 0) {
-            throw new HttpException('No items provided to add to the cart', HttpStatus.BAD_REQUEST);
-        }
-    
-        const cartItems: CartItemEntity[] = [];
-    
-        for (const item of items) {
-            const { productId, quantity } = item;
-    
-            const product = await this.itemRepository.findOne({ where: { id: productId } });
-            if (!product) {
-                throw new NotFoundException(`Product with ID ${productId} not found`);
-            }
-    
-            let cartItem = await this.cartRepository.findOne({
-                where: { product: { id: productId }, userId }
-            });
-    
-            if (cartItem) {
-                cartItem.quantity += quantity;
-            } else {
-                cartItem = this.cartRepository.create({
-                    product,
-                    quantity,
-                    userId
-                });
-            }
-    
-            cartItems.push(await this.cartRepository.save(cartItem));
-        }
-    
-        return cartItems;
-    }
-    
-  
-    async getCart(userId: string): Promise<CartItemEntity[]> {
-      return this.cartRepository.find({ where: { userId }, relations: ['product'] });
-    }
-  
-    async removeFromCart(userId: string, cartItemId: string): Promise<void> {
-      const cartItem = await this.cartRepository.findOne({ where: { id: cartItemId, userId } });
-  
-      if (!cartItem) {
-        throw new NotFoundException('Cart item not found');
-      }
-  
-      await this.cartRepository.remove(cartItem);
-    }
-  
-    async clearCart(userId: string): Promise<void> {
-      await this.cartRepository.delete({ userId });
-    }
-  
-    // async updateCartItemQuantity(
-    //   userId: string,
-    //   cartItemId: string,
-    //   quantityChange: number
-    // ): Promise<CartItemEntity> {
-    //   const cartItem = await this.cartRepository.findOne({ where: { id: cartItemId, userId } });
-  
-    //   if (!cartItem) {
-    //     throw new NotFoundException('Cart item not found');
-    //   }
-  
-    //   cartItem.quantity += quantityChange;
-  
-    //   if (cartItem.quantity < 100) {
-    //     throw new HttpException('Quantity cannot be less than 100', HttpStatus.BAD_REQUEST);
-    //   }
-  
-    //   return this.cartRepository.save(cartItem);
-    // }
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { CartItemEntity } from './cart.entity';
+import { AddToCartDto, AddToCartItemDto } from './cart.dto';
+import { ItemEntity } from './../fetch-products/item.entity';
+import { StockEntity } from 'stock/stock.entity';
 
+@Injectable()
+export class CartService {
+  constructor(
+    @InjectRepository(CartItemEntity)
+    private readonly cartRepository: Repository<CartItemEntity>,
+    @InjectRepository(ItemEntity)
+    private readonly itemRepository: Repository<ItemEntity>,
+    @InjectRepository(StockEntity)
+    private stockRepository: Repository<StockEntity>,
+  ) { }
 
-    // Discount Apply 
-    
-    async updateCartItemQuantity(
-      userId: string,
-      cartItemId: string,
-      quantity: number
-    ): Promise<CartItemEntity> {
-      const cartItem = await this.cartRepository.findOne({ where: { id: cartItemId, userId } });
-  
-      if (!cartItem) {
-        throw new NotFoundException('Cart item not found');
-      }
-  
-      // Check for valid quantity
-      if (quantity < 1) {
-        throw new HttpException('Quantity must be greater than 0', HttpStatus.BAD_REQUEST);
-      }
-  
-      cartItem.quantity = quantity; // Update the cart item with the new quantity
-  
-      return this.cartRepository.save(cartItem);
+  async addMultipleToCart(userId: string, addToCartDto: AddToCartDto): Promise<CartItemEntity[]> {
+    const items: AddToCartItemDto[] = addToCartDto.items || []; // Default to an empty array
+
+    if (items.length === 0) {
+      throw new HttpException('No items provided to add to the cart', HttpStatus.BAD_REQUEST);
     }
-    async applyDiscount(cartId: string, userId: string, discount: number): Promise<any> {
-      // Fetch the cart by cartId and userId (to ensure the cart belongs to the user)
-      const cart = await this.cartRepository.findOne({ where: { id: cartId, userId } });
-  
-      if (!cart) {
-        throw new NotFoundException('Cart not found');
+
+    const cartItems: CartItemEntity[] = [];
+
+    for (const item of items) {
+      const { productId, quantity } = item;
+
+      const product = await this.itemRepository.findOne({ where: { id: productId } });
+      if (!product) {
+        throw new NotFoundException(`Product with ID ${productId} not found`);
       }
-  
-      // Validate the discount value
-      if (discount < 0 ) {
-        throw new HttpException(
-          'Invalid discount value. Discount must be between 0 and the cart subtotal.',
-          HttpStatus.BAD_REQUEST
-        );
+
+      let cartItem = await this.cartRepository.findOne({
+        where: { product: { id: productId }, userId }
+      });
+
+      if (cartItem) {
+        cartItem.quantity += quantity;
+      } else {
+        cartItem = this.cartRepository.create({
+          product,
+          quantity,
+          userId
+        });
       }
-  
-      cart.discount = discount; // Apply the discount to the cart
-      return this.cartRepository.save(cart); // Save the updated cart
+
+      cartItems.push(await this.cartRepository.save(cartItem));
     }
+
+    return cartItems;
   }
+
+
+  // async getCart(userId: string): Promise<CartItemEntity[]> {
+  //   return this.cartRepository.find({ where: { userId }, relations: ['product'] });
+  // }
+
+  async getCartWithStockQuantity(userId: string): Promise<any[]> {
+    // Fetch all cart items for the given user
+    const cartItems = await this.cartRepository.find({
+      where: { userId },
+      relations: ['product'], // Assuming 'product' relation holds the product info in CartItemEntity
+    });
+
+    if (!cartItems || cartItems.length === 0) {
+      // Return an empty array if no cart items are found
+      return [];
+    }
   
+    const result = [];
+
+    for (const cartItem of cartItems) {
+      const productName = cartItem.product.itemName; // Assuming product has a 'itemName' field in ItemEntity
+
+      // Fetch stock data based on product name
+      const stockData = await this.stockRepository
+        .createQueryBuilder('stock')
+        .where('stock.itemName = :itemName', { itemName: productName })
+        .getOne();
+
+      // Check if stockData and stockData.quantity are valid before using it
+      if (stockData && stockData.quantity !== undefined) {
+        // Convert quantity to number before dividing
+        const quantity = parseFloat(stockData.quantity);  // Ensure quantity is a number
+
+        if (!isNaN(quantity)) {
+          // Round the half quantity to the nearest whole number
+          const halfQuantity = Math.round(quantity / 2);
+
+          // Push cart item data and half stock quantity together
+          result.push({
+            ...cartItem,  // Include cart item data
+            stockQuantity: halfQuantity,  // Show half of stock quantity rounded to the nearest integer
+          });
+        } else {
+          // If the quantity can't be parsed to a number, default to 0
+          result.push({
+            ...cartItem,
+            stockQuantity: 0,
+          });
+        }
+      } else {
+        // Handle the case where stockData or quantity is missing (optional)
+        result.push({
+          ...cartItem,
+          stockQuantity: 0,  // Default to 0 if no quantity is found
+        });
+      }
+    }
+
+
+    return result;
+  }
+
+  async removeFromCart(userId: string, cartItemId: string): Promise<void> {
+    const cartItem = await this.cartRepository.findOne({ where: { id: cartItemId, userId } });
+
+    if (!cartItem) {
+      throw new NotFoundException('Cart item not found');
+    }
+
+    await this.cartRepository.remove(cartItem);
+  }
+
+  async clearCart(userId: string): Promise<void> {
+    await this.cartRepository.delete({ userId });
+  }
+
+  // Discount Apply 
+
+  async updateCartItemQuantity(
+    userId: string,
+    cartItemId: string,
+    quantity: number
+  ): Promise<CartItemEntity> {
+    const cartItem = await this.cartRepository.findOne({ where: { id: cartItemId, userId } });
+
+    if (!cartItem) {
+      throw new NotFoundException('Cart item not found');
+    }
+
+    // Check for valid quantity
+    if (quantity < 1) {
+      throw new HttpException('Quantity must be greater than 0', HttpStatus.BAD_REQUEST);
+    }
+
+    cartItem.quantity = quantity; // Update the cart item with the new quantity
+
+    return this.cartRepository.save(cartItem);
+  }
+  async applyDiscount(cartId: string, userId: string, discount: number): Promise<any> {
+    // Fetch the cart by cartId and userId (to ensure the cart belongs to the user)
+    const cart = await this.cartRepository.findOne({ where: { id: cartId, userId } });
+
+    if (!cart) {
+      throw new NotFoundException('Cart not found');
+    }
+
+    // Validate the discount value
+    if (discount < 0) {
+      throw new HttpException(
+        'Invalid discount value. Discount must be between 0 and the cart subtotal.',
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    cart.discount = discount; // Apply the discount to the cart
+    return this.cartRepository.save(cart); // Save the updated cart
+  }
+}
