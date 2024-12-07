@@ -1,22 +1,22 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne } from 'typeorm';
 import { BillEntity } from './bill.entity';
 
-@Entity('ledgers')
+@Entity('receivable')
 export class LedgerEntity {
-    @PrimaryGeneratedColumn('uuid')
-    id!: string;
+  @PrimaryGeneratedColumn('uuid')
+  id!: string;
 
-    @Column({ type: 'varchar' })
-    customerName!: string;
+  @Column({ type: 'varchar' })
+  customerName!: string;
 
-    @Column({ type: 'float' })
-    creditLimit!: number;
+  @Column({ type: 'float', nullable: true })
+  creditLimit?: number;
 
-    @Column({ type: 'float' })
-    closingBalance!: number;
+  @Column({ type: 'float', nullable: true })
+  closingBalance?: number;
 
-    @OneToMany(() => BillEntity, (bill) => bill.ledger, { cascade: true, eager: true })
-    bills!: BillEntity[];
+  @OneToMany(() => BillEntity, (bill) => bill.ledger, { cascade: true, eager: true })
+  bills!: BillEntity[];
 }
 
 
@@ -25,8 +25,20 @@ export class LedgerStatementEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Column()
-  party!: string;
+  @Column({ nullable: true })
+  party?: string;
+
+  @Column({ type: 'float', nullable: true })
+  openingBalance?: number;
+
+  @Column({ type: 'float', nullable: true })
+  closingBalance?: number;
+
+  @Column({ type: 'float', nullable: true })
+  totalDebitAmount?: number;
+
+  @Column({ type: 'float', nullable: true })
+  totalCreditAmount?: number;
 
   @OneToMany(() => LedgerVoucherEntity, (voucher) => voucher.ledgerStatement, {
     cascade: true,
@@ -40,24 +52,25 @@ export class LedgerVoucherEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Column()
-  date!: string;
+  @Column({ nullable: true })
+  date?: string;
 
   @Column({ nullable: true })
-  ledger!: string;
+  ledger?: string;
 
-  @Column()
-  voucherType!: string;
+  @Column({ nullable: true })
+  voucherType?: string;
 
-  @Column()
-  voucherNo!: string;
-
-  @Column({ type: 'float', nullable: true })
-  debitAmount!: number;
+  @Column({ nullable: true })
+  voucherNo?: string;
 
   @Column({ type: 'float', nullable: true })
-  creditAmount!: number;
+  debitAmount?: number;
 
-  @ManyToOne(() => LedgerStatementEntity, (ledger) => ledger.vouchers)
+  @Column({ type: 'float', nullable: true })
+  creditAmount?: number;
+
+  @ManyToOne(() => LedgerStatementEntity, (ledger) => ledger.vouchers, { onDelete: 'CASCADE' })
   ledgerStatement!: LedgerStatementEntity;
+
 }

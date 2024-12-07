@@ -54,7 +54,6 @@ export const useNavData = () => {
       items: [
         { title: 'Products', path: paths.products.root, icon: ICONS.products },
         { title: 'Vendors', path: paths.vendors.root, icon: ICONS.vendors },
-        { title: 'Orders', path: paths.orders.root, icon: ICONS.orders },
       ],
     },
 
@@ -64,6 +63,7 @@ export const useNavData = () => {
     {
       subheader: 'Reports',
       items: [
+        { title: 'Order Reports', path: paths.orders.root, icon: ICONS.orders },
         {
           title: 'Accounting',
           path: paths.accounts.root,
@@ -92,6 +92,7 @@ export const useNavData = () => {
     {
       subheader: 'Reports',
       items: [
+        { title: 'Orders Reports', path: paths.orders.root, icon: ICONS.orders },
         {
           title: 'Accounting',
           path: paths.accounts.root,
@@ -109,10 +110,9 @@ export const useNavData = () => {
 
   const vendorItems = [
     {
-      subheader: 'Management',
+      subheader: 'Sales',
       items: [
-        { title: 'Products', path: paths.items.root, icon: ICONS.products },
-        { title: 'Orders', path: paths.orders.root, icon: ICONS.orders },
+        { title: 'Sales Order', path: paths.items.root, icon: ICONS.products },
       ],
     },
 
@@ -124,6 +124,11 @@ export const useNavData = () => {
       items: [
         {
           title: 'Profile',
+          path: paths.settings.profile,
+          icon: ICONS.settings,
+        },
+        {
+          title: 'Make Payment',
           path: paths.settings.profile,
           icon: ICONS.settings,
         },
@@ -167,7 +172,7 @@ export const useNavData = () => {
 
   const navData = [
     ...commonItems,
-    ...(userRole === 'Admin' ? [...adminItems, ...reportsItem,...logsHistory, ...settingsItems, ] : []),
+    ...(userRole === 'Admin' ? [...adminItems, ...reportsItem, ...logsHistory, ...settingsItems,] : []),
     ...(userRole === 'Vendor' ? [...vendorItems, ...reportsVendorsItem, ...vendorSettingsItem] : []),
   ];
 

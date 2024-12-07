@@ -2,7 +2,7 @@ import { fIsBetween } from "src/utils/format-time";
 
 export function applyFilter({ inputData, comparator, filters, dateError, userRole }) {
   const { name, startDate, endDate } = filters;
- 
+
   const stabilizedThis = inputData.map((el, index) => [el, index]);
 
   stabilizedThis.sort((a, b) => {
@@ -15,15 +15,11 @@ export function applyFilter({ inputData, comparator, filters, dateError, userRol
 
   if (name) {
     inputData = inputData.filter((ledgers) =>
-      userRole === "Admin"
-        ? (ledgers.ledger?.toLowerCase()?.includes(name.toLowerCase()) || // Use optional chaining
-           ledgers.voucherNo?.toLowerCase()?.includes(name.toLowerCase()) ||
-           ledgers.voucherType?.toLowerCase()?.includes(name.toLowerCase()) ||
-           ledgers.debitAmount?.toString()?.includes(name.toLowerCase()) ||
-           ledgers.creditAmount?.toString()?.includes(name.toLowerCase()))
-        : (ledgers.debitAmount?.toString()?.includes(name.toLowerCase()) ||
-           ledgers.creditAmount?.toString()?.includes(name.toLowerCase()))
-    );
+      ledgers.ledger?.toLowerCase()?.includes(name.toLowerCase()) || // Use optional chaining
+      ledgers.voucherNo?.toLowerCase()?.includes(name.toLowerCase()) ||
+      ledgers.voucherType?.toLowerCase()?.includes(name.toLowerCase()) ||
+      ledgers.debitAmount?.toString()?.includes(name.toLowerCase()) ||
+      ledgers.creditAmount?.toString()?.includes(name.toLowerCase()))
   }
 
 

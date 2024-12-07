@@ -1,77 +1,97 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, NotFoundException, Param, Post, Res } from '@nestjs/common';
-import { Response } from 'express';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, NotFoundException, Param, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Response, Request } from 'express';
 import { LedgerService } from './ledger.service';
+import { JwtAuthGuard } from 'jwt/jwt-auth.guard';
+import { RolesGuard } from 'jwt/roles.guard';
+import { isAdmin, isVendor } from 'utils/auth.utils';
 
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('ledgers')
 export class LedgerController {
-    constructor(private readonly ledgerService: LedgerService) { }
+  constructor(private readonly ledgerService: LedgerService) { }
 
-    @Post('/receivable/fetch')
-    async fetchLedgers(@Res() response: Response) {
-        await this.ledgerService.fetchAndStoreLedgers();
-        return response.status(200).json({ message: 'Ledgers fetched and stored successfully.' });
+  @Post('/receivable/fetch')
+  async fetchLedgers(@Res() response: Response) {
+    await this.ledgerService.fetchAndStoreLedgers();
+    return response.status(200).json({ message: 'Outstanding Receivable fetched and stored successfully.' });
+  }
+
+  @Get('/receivable')
+  async findAll(@Res() response: Response) {
+    const ledgers = await this.ledgerService.findAll();
+    return response.status(200).json({ data: ledgers });
+  }
+
+  @Get('/receivable/:id')
+  async findById(@Param('id') id: string, @Res() response: Response) {
+    const ledger = await this.ledgerService.findById(id);
+    if (!ledger) {
+      throw new NotFoundException('Ledger not found');
     }
+    return response.status(200).json({ data: ledger });
+  }
 
-    @Get('/receivable')
-    async findAll(@Res() response: Response) {
-        const ledgers = await this.ledgerService.findAll();
-        return response.status(200).json({ data: ledgers });
+  @Delete('/receivable/:id')
+  async deleteById(@Param('id') id: string, @Res() response: Response) {
+    const deleted = await this.ledgerService.deleteById(id);
+    if (!deleted) {
+      throw new NotFoundException('Ledger not found');
     }
+    return response.status(200).json({ message: 'Ledger deleted successfully.' });
+  }
 
-    @Get('/receivable/:id')
-    async findById(@Param('id') id: string, @Res() response: Response) {
-        const ledger = await this.ledgerService.findById(id);
-        if (!ledger) {
-            throw new NotFoundException('Ledger not found');
-        }
-        return response.status(200).json({ data: ledger });
+  @Delete('delete/all')
+  async deleteMultiple(@Body('ids') ids: string[], @Res() response: Response) {
+    try {
+      const result = await this.ledgerService.deleteMultiple(ids);
+      return response.status(HttpStatus.OK).json(result);
+    } catch (error) {
+      // Handle the error appropriately
+      if (error instanceof NotFoundException) {
+        return response.status(HttpStatus.NOT_FOUND).json({ message: error.message });
+      }
+      return response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: 'An error occurred while deleting the data.' });
     }
-
-    @Delete('/receivable/:id')
-    async deleteById(@Param('id') id: string, @Res() response: Response) {
-        const deleted = await this.ledgerService.deleteById(id);
-        if (!deleted) {
-            throw new NotFoundException('Ledger not found');
-        }
-        return response.status(200).json({ message: 'Ledger deleted successfully.' });
-    }
-
-    @Delete('delete/all')
-    async deleteMultiple(@Body('ids') ids: string[], @Res() response: Response) {
-        try {
-            const result = await this.ledgerService.deleteMultiple(ids);
-            return response.status(HttpStatus.OK).json(result);
-        } catch (error) {
-            // Handle the error appropriately
-            if (error instanceof NotFoundException) {
-                return response.status(HttpStatus.NOT_FOUND).json({ message: error.message });
-            }
-            return response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: 'An error occurred while deleting the data.' });
-        }
-    }
+  }
 
 
-     // Fetch data from Tally and store in the database
+  // Fetch data from Tally and store in the database
   @Post('/fetch')
   async fetchAndStoreLedgers(@Res() res: Response): Promise<void> {
     try {
       await this.ledgerService.fetchAndLedgers();
       res.status(HttpStatus.OK).json({ message: 'Ledger statements fetched and stored successfully.' });
-    } catch (error:any) {
+    } catch (error: any) {
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
   }
 
   // Retrieve all ledger statements
   @Get('/get-all')
-  async findLedgerAll(@Res() res: Response): Promise<void> {
+  async findLedgerAll(@Req() req: Request, @Res() res: Response): Promise<Response> {  // Explicitly return Response
+    const user = req.user;
+    const userRole = user?.role;
+    const userName = user?.name;
+    const vendorId = user?.id;
+
+
     try {
-      const statements = await this.ledgerService.findLedgerData();
-      res.status(HttpStatus.OK).json({ data: statements });
-    } catch (error:any) {
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
+      if (isAdmin(userRole)) {
+        const statements = await this.ledgerService.findLedgerData();
+        return res.status(HttpStatus.OK).json({ data: statements });
+      }
+
+      if (isVendor(userRole) && userName) {
+        const statements = await this.ledgerService.findLedgerDataByUserName(userName);
+        return res.status(HttpStatus.OK).json({ data: statements });
+      }
+
+      return res.status(HttpStatus.FORBIDDEN).json({ message: 'Unauthorized access' });
+    } catch (error: any) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
   }
+
 
   // Retrieve a specific ledger statement by ID
   @Get('/get/:id')
@@ -79,7 +99,7 @@ export class LedgerController {
     try {
       const statement = await this.ledgerService.findByIdLedgerData(id);
       res.status(HttpStatus.OK).json({ data: statement });
-    } catch (error:any) {
+    } catch (error: any) {
       if (error instanceof HttpException) {
         res.status(error.getStatus()).json({ message: error.message });
       } else {
@@ -87,7 +107,5 @@ export class LedgerController {
       }
     }
   }
-
-
 
 }

@@ -18,11 +18,11 @@ export class BillEntity {
     @Column({ type: 'date', nullable: true })
     billDate?: string;
 
-    @Column({ type: 'float' })
-    openingBalance!: number;
+    @Column({ type: 'float', nullable: true })
+    openingBalance?: number;
 
-    @Column({ type: 'float' })
-    closingBalance!: number;
+    @Column({ type: 'float', nullable: true })
+    closingBalance?: number;
 
     @Column({ type: 'varchar', nullable: true })
     creditPeriod?: string;

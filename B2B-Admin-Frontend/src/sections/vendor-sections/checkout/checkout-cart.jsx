@@ -14,6 +14,9 @@ import useCart from './components/useCart';
 import { toast } from 'sonner';
 import { fCurrency } from 'src/utils/format-number';
 import { useState } from 'react';
+import { ConfirmDialog } from 'src/components/custom-dialog';
+import { useBoolean } from 'src/hooks/use-boolean';
+import { Box } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -21,8 +24,12 @@ export function CheckoutCart() {
   const dispatch = useDispatch();
   const [discount, setDiscount] = useState(0); // State to store the discount amount
   const [discountType, setDiscountType] = useState('fixed'); // 'fixed' or 'percentage'
-
+  const confirm = useBoolean();
   const mappedData = useCart();
+
+  const [deleting, setDeleting] = useState(false);
+  const [itemsToRemove, setItemsToRemove] = useState([]);
+
 
   const totalItems = mappedData.reduce((acc, item) => acc + item.quantity, 0);
   const subtotal = mappedData.reduce((acc, item) => acc + item.totalAmount, 0);
@@ -33,6 +40,42 @@ export function CheckoutCart() {
       : subtotal - discount; // Apply fixed discount
   // const discount = 0;
   //----------------------------------------------------------------------------------------------------
+  const checkoutConditions = async () => {
+    const itemsWithZeroStock = mappedData.filter(data => data.stockQuantity === 0);
+
+    if (itemsWithZeroStock.length > 0) {
+      setItemsToRemove(itemsWithZeroStock); // Store items to be removed
+      confirm.onTrue(); // Open the confirmation dialog
+    } else {
+      checkout.onNextStep(); // Proceed to the next step if no unavailable items
+    }
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      setDeleting(true); // Set deleting state to true to disable the button
+      // Remove each item with stockQuantity 0 from the cart
+      await Promise.all(
+        itemsToRemove.map(data => dispatch(deleteCartItem(data.id))) // Dispatch the remove action for each item
+      );
+      confirm.onFalse(); // Close the confirmation dialog after deletion is complete
+      setDeleting(false); // Reset deleting state
+      fetchData();
+    } catch (error) {
+      setDeleting(false); // Reset deleting state if an error occurs
+    }
+  };
+
+  const handleCheckCart = async () => {
+    try {
+      await checkoutConditions(); // Handle the checkout conditions
+    } catch (error) {
+      console.error("Failed to clear the cart:", error);
+    }
+  };
+
+
+
 
   const fetchData = async () => {
     await dispatch(cartList());
@@ -93,8 +136,37 @@ export function CheckoutCart() {
     }
   };
 
+
+
   return (
     <Grid container spacing={3}>
+
+      <ConfirmDialog
+        open={confirm.value}
+        onClose={confirm.onFalse}
+        title="Delete products?"
+        content={
+          <Box>
+            <Typography gutterBottom>
+              Some of the products in your cart are unavailable. Would you like to remove the unavailable ones and proceed with the available products?
+            </Typography>
+            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+              Note: After removing the unavailable products, you can continue to the next step of the checkout process.
+            </Typography>
+
+          </Box>
+        }
+        action={
+          <Button
+            variant="contained"
+            color="error"
+            onClick={handleConfirmDelete} // Handle the deletion on confirmation
+            disabled={deleting} // Disable the button while deletion is in progress
+          >
+            {deleting ? 'Deleting...' : 'Delete'}
+          </Button>
+        }
+      />
       <Grid xs={12} md={8}>
         <Card sx={{ mb: 3 }}>
           <CardHeader
@@ -155,7 +227,7 @@ export function CheckoutCart() {
           type="submit"
           variant="contained"
           disabled={empty}
-          onClick={checkout.onNextStep}
+          onClick={handleCheckCart}
         >
           Check out
         </Button>

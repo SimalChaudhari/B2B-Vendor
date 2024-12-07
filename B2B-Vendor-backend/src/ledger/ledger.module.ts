@@ -6,10 +6,17 @@ import { LedgerService } from './ledger.service';
 import { LedgerController } from './ledger.controller';
 import { SyncControlSettings } from './../settings/setting.entity';
 import { SyncLogEntity } from './../sync-log/sync-log.entity';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([LedgerEntity, BillEntity,SyncControlSettings,SyncLogEntity,LedgerStatementEntity, LedgerVoucherEntity])],
+    imports: [
+        TypeOrmModule.forFeature([LedgerEntity, BillEntity, SyncControlSettings, SyncLogEntity, LedgerStatementEntity, LedgerVoucherEntity]),
+        JwtModule.register({
+            secret: process.env.JWT_SECRET,  // Use JWT secret from .env file
+            signOptions: {},  // Set token expiration
+        }),
+    ],
     controllers: [LedgerController],
     providers: [LedgerService],
 })
-export class LedgerModule {}
+export class LedgerModule { }

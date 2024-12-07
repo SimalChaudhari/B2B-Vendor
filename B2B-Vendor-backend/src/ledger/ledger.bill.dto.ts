@@ -17,11 +17,13 @@ export class BillDto {
     @IsString()
     billDate?: string;
 
+    @IsOptional()
     @IsNumber()
-    openingBalance!: number;
+    openingBalance?: number;
 
+    @IsOptional()
     @IsNumber()
-    closingBalance!: number;
+    closingBalance?: number;
 
     @IsOptional()
     @IsString()

@@ -123,26 +123,26 @@ export function LedgerListView() {
     //--------------------------------------------------
 
     // On component mount, fetch party options and set initial data
-  useEffect(() => {
-    if (_ledger?.length) {
-      setPartyOptions(_ledger.map((item) => ({ id: item.id, label: item.party }))); // Prepare options
-      setTableData(_ledger[0]?.vouchers || []); // Set initial data for the first party
-      setSelectedParty(_ledger[0]?.party); // Set initial selected party
-    }
-  }, [_ledger]);
+    useEffect(() => {
+        if (_ledger?.length) {
+            setPartyOptions(_ledger.map((item) => ({ id: item.id, label: item.party }))); // Prepare options
+            setTableData(_ledger[0]?.vouchers || []); // Set initial data for the first party
+            setSelectedParty(_ledger[0]?.party); // Set initial selected party
+        }
+    }, [_ledger]);
 
-  // Handle party selection change
-  const handlePartyChange = useCallback((event, value) => {
-    setSelectedParty(value?.label || null);
-    if (value) {
-      const partyData = _ledger.find((item) => item.party === value.label);
-      setTableData(partyData?.vouchers || []);
-    } else {
-      setTableData([]);
-    }
-  }, [_ledger]);
+    // Handle party selection change
+    const handlePartyChange = useCallback((event, value) => {
+        setSelectedParty(value?.label || null);
+        if (value) {
+            const partyData = _ledger.find((item) => item.party === value.label);
+            setTableData(partyData?.vouchers || []);
+        } else {
+            setTableData([]);
+        }
+    }, [_ledger]);
 
-  //---------------------------------------------------------
+    //---------------------------------------------------------
     return (
         <div>
             <DashboardContent maxWidth="2xl">
@@ -171,32 +171,34 @@ export function LedgerListView() {
 
                 <Card>
 
-                    {/* Autocomplete Dropdown */}
-                    <Box sx={{ p: 2 }}>
-                        <Autocomplete
-                            options={partyOptions}
-                            value={partyOptions.find((option) => option.label === selectedParty) || null}
-                            onChange={handlePartyChange}
-                            renderInput={(params) => <TextField {...params} label="Select Party" />}
-                        />
-                    </Box>
+                    {userRole === 'Admin' && (
+                        <Box sx={{ p: 2 }}>
+                            <Autocomplete
+                                options={partyOptions}
+                                value={partyOptions.find((option) => option.label === selectedParty) || null}
+                                onChange={handlePartyChange}
+                                renderInput={(params) => <TextField {...params} label="Select Party" />}
+                            />
+                        </Box>
+                    )}
 
                     <LedgerTableToolbar
                         filters={filters}
+                        party = {selectedParty}
                         onResetPage={table.onResetPage}
                         dateError={dateError}
                         data={tableData}
                     />
 
-        
-                  {canReset && (
-                    <LedgerTableFiltersResult
-                      filters={filters}
-                      totalResults={dataFiltered.length}
-                      onResetPage={table.onResetPage}
-                      sx={{ p: 2.5, pt: 0 }}
-                    />
-                  )}
+
+                    {canReset && (
+                        <LedgerTableFiltersResult
+                            filters={filters}
+                            totalResults={dataFiltered.length}
+                            onResetPage={table.onResetPage}
+                            sx={{ p: 2.5, pt: 0 }}
+                        />
+                    )}
                     <Box sx={{ position: 'relative' }}>
                         <TableSelectedAction
                             dense={table.dense}
@@ -239,7 +241,7 @@ export function LedgerListView() {
                                                 key={row.id}
                                                 row={row}
                                                 selected={selectedRows.includes(row.id)}
-                                          
+
                                                 onViewRow={() => handleViewRow(row.id)}
                                             />
                                         ))}

@@ -394,7 +394,7 @@ export class OrderService {
         return { message: 'Order item deleted successfully' };
     }
 
-    @Cron('*/30 * * * * *')
+    @Cron('0 * * * *') // hour
     async uploadAllInvoices(): Promise<void> {
         console.log('Complete log cleanup started:', new Date().toISOString());
         const localFolderPath = 'C:\\Tally\\Data\\Invoice'; // Local folder path

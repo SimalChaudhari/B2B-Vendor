@@ -8,10 +8,10 @@ export class LedgerDto {
     customerName!: string;
 
     @IsNumber()
-    creditLimit!: number;
+    creditLimit?: number;
 
     @IsNumber()
-    closingBalance!: number;
+    closingBalance?: number;
 
     @IsArray()
     @ValidateNested({ each: true })
@@ -21,36 +21,51 @@ export class LedgerDto {
 
 
 export class LedgerVoucherDto {
-    @IsNotEmpty()
-    @IsString()
-    date!: string;
-  
-    @IsOptional()
-    @IsString()
-    ledger?: string;
-  
-    @IsNotEmpty()
-    @IsString()
-    voucherType!: string;
-  
-    @IsNotEmpty()
-    @IsString()
-    voucherNo!: string;
-  
-    @IsOptional()
-    @IsNumber()
-    debitAmount?: number;
-  
-    @IsOptional()
-    @IsNumber()
-    creditAmount?: number;
-  }
-  
-  export class LedgerStatementDto {
-    @IsNotEmpty()
-    @IsString()
-    party!: string;
-  
-    @IsArray()
-    vouchers!: LedgerVoucherDto[];
-  }
+  @IsOptional()
+  @IsString()
+  date?: string;
+
+  @IsOptional()
+  @IsString()
+  ledger?: string;
+
+  @IsOptional()
+  @IsString()
+  voucherType?: string;
+
+  @IsOptional()
+  @IsString()
+  voucherNo?: string;
+
+  @IsOptional()
+  @IsNumber()
+  debitAmount?: number;
+
+  @IsOptional()
+  @IsNumber()
+  creditAmount?: number;
+}
+
+export class LedgerStatementDto {
+  @IsNotEmpty()
+  @IsString()
+  party!: string;
+
+  @IsOptional()
+  openingBalance?: number;
+
+  @IsOptional()
+  closingBalance?: number;
+
+  @IsOptional()
+  totalDebitAmount?: number;
+
+  @IsOptional()
+  totalCreditAmount?: number;
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => LedgerVoucherDto)
+  ledgerVouchers!: LedgerVoucherDto[];
+
+}

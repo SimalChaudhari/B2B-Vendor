@@ -178,7 +178,7 @@ export function OrderListView() {
     <div>
       <DashboardContent maxWidth="2xl">
         <CustomBreadcrumbs
-          heading="List"
+          heading="Order Reports"
           links={[
             { name: 'Dashboard', href: paths.dashboard.root },
             { name: 'Orders', href: paths?.orders.root },

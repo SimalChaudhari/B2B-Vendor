@@ -91,24 +91,21 @@ export class CartService {
       // Check if stockData and stockData.quantity are valid before using it
       if (stockData && stockData.quantity !== undefined) {
         // Convert quantity to number before dividing
-        const quantity = parseFloat(stockData.quantity);  // Ensure quantity is a number
-
-        if (!isNaN(quantity)) {
-          // Round the half quantity to the nearest whole number
-          const halfQuantity = Math.round(quantity / 2);
-
-          // Push cart item data and half stock quantity together
-          result.push({
-            ...cartItem,  // Include cart item data
-            stockQuantity: halfQuantity,  // Show half of stock quantity rounded to the nearest integer
-          });
-        } else {
-          // If the quantity can't be parsed to a number, default to 0
-          result.push({
-            ...cartItem,
-            stockQuantity: 0,
-          });
+        let quantity = parseFloat(stockData.quantity);  // Ensure quantity is a number
+  
+        if (isNaN(quantity) || quantity < 0) {
+          // If quantity is negative or not a valid number, set it to 0
+          quantity = 0;
         }
+  
+        // Round the half quantity to the nearest whole number
+        const halfQuantity = Math.round(quantity / 2);
+  
+        // Push cart item data and half stock quantity together
+        result.push({
+          ...cartItem,  // Include cart item data
+          stockQuantity: halfQuantity,  // Show half of stock quantity rounded to the nearest integer
+        });
       } else {
         // Handle the case where stockData or quantity is missing (optional)
         result.push({
@@ -117,9 +114,9 @@ export class CartService {
         });
       }
     }
-
-
+  
     return result;
+  
   }
 
   async removeFromCart(userId: string, cartItemId: string): Promise<void> {

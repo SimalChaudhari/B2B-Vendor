@@ -7,8 +7,7 @@ const useCart = () => {
   const dispatch = useDispatch();
   
   const addToCartData = useSelector((state) => state.cart?.cart || []);
-  console.log("🚀 ~ useCart ~ addToCartData:", addToCartData)
-
+  
   useEffect(() => {
     dispatch(cartList());
   }, [dispatch]);

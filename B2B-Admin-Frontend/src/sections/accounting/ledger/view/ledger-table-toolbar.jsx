@@ -5,14 +5,16 @@ import InputAdornment from '@mui/material/InputAdornment';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { formHelperTextClasses } from '@mui/material/FormHelperText';
 import { Iconify } from 'src/components/iconify';
-import { usePopover } from 'src/components/custom-popover';
+import { CustomPopover, usePopover } from 'src/components/custom-popover';
 import { fIsBetween } from 'src/utils/format-time';
-import { generatePrintableContent } from '../components/file-downlaod/pdf-generation';
-import { exportToExcel } from '../components/file-downlaod/excel-generation';
+import { IconButton, MenuItem, MenuList, Tooltip } from '@mui/material';
+import { generatePDF, generatePrint } from '../utils/generatePDF';
+
 // ----------------------------------------------------------------------
 
-export function LedgerTableToolbar({ filters, onResetPage, dateError, data }) {
+export function LedgerTableToolbar({ filters,party, onResetPage, dateError, data }) {
 
+  const popover = usePopover();
 
   const handleFilterName = useCallback(
     (event) => {
@@ -38,16 +40,67 @@ export function LedgerTableToolbar({ filters, onResetPage, dateError, data }) {
     [filters, onResetPage]
   );
 
+  const handleDownloadPdf = () => {
+    if (!data || data.length === 0) {
+      console.error('No data available for download.');
+      return;
+    }
+  
+    const { startDate, endDate } = filters.state;
+  
+    // Filter data based on the date range
+    const filteredData = startDate && endDate
+      ? data.filter((item) => fIsBetween(item.date, startDate, endDate))
+      : data;
+
+    if (filteredData.length === 0) {
+      console.warn('No data found for the selected date range.');
+      return;
+    }
+  
+    // Call the generatePDF function to generate and download the PDF
+    generatePDF(filteredData,party);
+  }
+
+  const handlePrint = () => {
+    if (!data || data.length === 0) {
+      console.error('No data available for Print.');
+      return;
+    }
+
+    const { startDate, endDate } = filters.state;
+
+    // Filter data based on the date range
+
+    const filteredData = startDate && endDate
+      ? data.filter((item) => fIsBetween(item.date, startDate, endDate))
+      : data;
+
+    if (filteredData.length === 0) {
+      console.warn('No data found for the selected date range.');
+      return;
+    }
+
+      // Generate printable content
+  const printableContent = generatePrint(filteredData,party);
+  
+    // Open a new window and print the content
+    const newWindow = window.open('', '_blank');
+    newWindow.document.write(printableContent);
+    newWindow.document.close();
+    newWindow.print();
+  };
+  
 
   return (
+
+    <>
       <Stack
         spacing={2}
         alignItems={{ xs: 'flex-end', md: 'center' }}
         direction={{ xs: 'column', md: 'row' }}
         sx={{ p: 2.5, pr: { xs: 2.5, md: 1 } }}
       >
-
-
 
         <DatePicker
           label="Start date"
@@ -92,8 +145,45 @@ export function LedgerTableToolbar({ filters, onResetPage, dateError, data }) {
             }}
           />
 
-      
+          <Tooltip title="Print & Download">
+          <IconButton onClick={popover.onOpen}>
+            <Iconify icon="eva:more-vertical-fill" />
+          </IconButton>
+          </Tooltip>
         </Stack>
       </Stack>
+
+      <CustomPopover
+        open={popover.open}
+        anchorEl={popover.anchorEl}
+        onClose={popover.onClose}
+        slotProps={{ arrow: { placement: 'right-top' } }}
+      >
+        <MenuList>
+          <MenuItem
+            onClick={() => {
+              popover.onClose();
+              handlePrint()
+            }}
+          >
+            <Iconify icon="solar:printer-minimalistic-bold" />
+            Print
+          </MenuItem>
+
+          <MenuItem
+        
+          onClick={() => {
+            popover.onClose();
+            handleDownloadPdf()
+          }}>
+          <Iconify icon="eva:download-outline" sx={{color: 'primary.main'}} />
+         
+  
+            Download
+          </MenuItem>
+        </MenuList>
+      </CustomPopover>
+
+      </>
   );
 }

@@ -121,9 +121,9 @@ export class AuthService {
       if (!user) {
         throw new NotFoundException('User not found');
       }
-        // Check if the user's status is Suspended
-        if (user.status === UserStatus.Inactive) {
-          throw new UnauthorizedException('You are Inactive.Please contact the admin or company for assistance.');
+      // Check if the user's status is Suspended
+      if (user.status === UserStatus.Inactive) {
+        throw new UnauthorizedException('You are Inactive.Please contact the admin or company for assistance.');
       }
 
       const otp = generateOTP();
@@ -188,7 +188,7 @@ export class AuthService {
       user.otp = null;
       user.otpExpires = null;
       await this.userRepository.save(user); // Save the updated user
-      const payload = { email: user.email, id: user.id, role: user.role }; // You can add other properties as needed
+      const payload = { email: user.email, id: user.id, role: user.role, name: user.name }; // You can add other properties as needed
 
       // Exclude otp and otpExpires from the returned user
       const { otp, otpExpires, isDeleted, ...userWithoutOtp } = user;

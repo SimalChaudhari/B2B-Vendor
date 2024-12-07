@@ -11,10 +11,10 @@ export function CheckoutListView() {
   return (
     <DashboardContent maxWidth="2xl">
       <CustomBreadcrumbs
-        heading="Product Listing"
+        heading="Sales Order Listing"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Products', href: paths?.dashboard?.items?.root },
+          { name: 'Sales Order', href: paths?.dashboard?.items?.root },
           { name: 'List' },
         ]}
 
