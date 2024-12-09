@@ -88,3 +88,11 @@ export const TABLE_BANNER_HEAD = [
   { id: 'action', label: 'Actions' },
 ];
 
+export const TABLE_ACCOUNT_HEAD = [
+  { id: 'type', label: 'Account Type' },
+  { id: 'accountName', label: 'Account Name / UPI-ID / Paypal ID' },
+  { id: 'accountNumber', label: 'Account Number' },
+  { id: 'ifscCode', label: 'IFC CODE / Payment Type' },
+  { id: 'action', label: 'Actions' },
+];
+

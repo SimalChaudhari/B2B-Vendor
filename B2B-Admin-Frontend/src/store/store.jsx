@@ -15,6 +15,7 @@ import dashboardReducer from './reducer/dashboardReducer';
 import stockReducer from './reducer/stockSummaryReducer';
 import AccountingReducer from './reducer/accountingReducer';
 import logsReducer from './reducer/logsReducer';
+import paymentReducer from './reducer/paymentReducer';
 
 // Combine your reducers
 const rootReducer = combineReducers({
@@ -31,7 +32,9 @@ const rootReducer = combineReducers({
   dash: dashboardReducer,
   stock : stockReducer,
   accounting : AccountingReducer,
-  logs : logsReducer
+  logs : logsReducer,
+  payment : paymentReducer
+
 
 
 

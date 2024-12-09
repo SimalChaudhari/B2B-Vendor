@@ -90,6 +90,32 @@ export class FirebaseService {
   }
 
 
+  async deleteSingleImage(fileUrl: string): Promise<void> {
+    const bucket = admin.storage().bucket();
+
+    // Extract the full path from the URL after the bucket name
+    const filePath = fileUrl.split(`${bucket.name}/`)[1];
+
+    if (!filePath) {
+        console.warn(`Invalid URL format, cannot extract file path: ${fileUrl}`);
+        return;
+    }
+
+    const file = bucket.file(filePath);
+
+    try {
+        await file.delete();
+        console.log(`Successfully deleted file: ${filePath}`);
+    } catch (error: any) {
+        if (error.code === 404) {
+            console.warn(`File not found in Firebase Storage: ${filePath}`);
+        } else {
+            console.error(`Failed to delete file ${filePath}:`, error);
+        }
+    }
+}
+
+
 
   // Upload a local file to Firebase Storage and return its public URL
   async uploadFileToFirebase(folderName: string, localFilePath: string, fileName: string): Promise<string> {

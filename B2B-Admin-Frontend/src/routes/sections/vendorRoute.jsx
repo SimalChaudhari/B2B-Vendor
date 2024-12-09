@@ -7,6 +7,7 @@ import { AuthGuard } from 'src/auth/guard';
 import { ItemView } from 'src/sections/vendor-sections/product/view';
 import { OrderDetailsView } from 'src/sections/order/view';
 import { ReceivablesListDetails } from 'src/sections/accounting/Receivables/view/receivables-details';
+import { PaymentViewUi } from 'src/sections/payments/payment-vendor-view';
 
 // Overview
 const IndexPage = lazy(() => import('src/pages/dashboard'));
@@ -75,6 +76,16 @@ export const vendorRoutes = [
             { path: 'profile-settings', element: <ProfilePage /> },
         ],
     },
+    
+    {
+        path: 'payments',
+        element: CONFIG.auth.skip ? <>{layoutContent}</> : <AuthGuard>{layoutContent}</AuthGuard>,
+        children: [
+        { path: 'view', element: <PaymentViewUi/> },
+
+        ],
+      },
+      
 
     {
         path: 'logout',

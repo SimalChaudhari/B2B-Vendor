@@ -127,11 +127,7 @@ export const useNavData = () => {
           path: paths.settings.profile,
           icon: ICONS.settings,
         },
-        {
-          title: 'Make Payment',
-          path: paths.settings.profile,
-          icon: ICONS.settings,
-        },
+
         { title: 'Logout', path: paths.logout.root, icon: ICONS.logout },
       ],
     },
@@ -154,11 +150,39 @@ export const useNavData = () => {
             { title: 'Profile', path: paths.settings.profile },
           ],
         },
+
         { title: 'Logout', path: paths.logout.root, icon: ICONS.logout },
       ],
     },
   ];
 
+  const payments = [
+    {
+      subheader: 'Payments',
+      items: [
+        {
+          title: 'Make Payment',
+          path: paths.payments.root,
+          icon: ICONS.dashboard,
+        },
+      ]
+    },
+
+  ];
+
+  const paymentsVendor = [
+    {
+      subheader: 'Payments',
+      items: [
+        {
+          title: 'Make Payment',
+          path: paths.payments.viewPayment,
+          icon: ICONS.dashboard,
+        },
+      ]
+    },
+
+  ];
 
   const logsHistory = [
     {
@@ -172,8 +196,8 @@ export const useNavData = () => {
 
   const navData = [
     ...commonItems,
-    ...(userRole === 'Admin' ? [...adminItems, ...reportsItem, ...logsHistory, ...settingsItems,] : []),
-    ...(userRole === 'Vendor' ? [...vendorItems, ...reportsVendorsItem, ...vendorSettingsItem] : []),
+    ...(userRole === 'Admin' ? [...adminItems, ...reportsItem,  ...payments,...logsHistory, ...settingsItems,] : []),
+    ...(userRole === 'Vendor' ? [...vendorItems, ...reportsVendorsItem, ...paymentsVendor, ...vendorSettingsItem] : []),
   ];
 
   return navData;

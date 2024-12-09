@@ -75,9 +75,15 @@ export const paths = {
     createBanner: `/create`,
     editBanner: (id) => `/edit/${id}`,
     viewBanner: (id) => `/view/${id}`,
-
     sync: `/settings/sync`,
+  },
 
+  payments: {
+    root: `/payments`,
+    payment: `/payments/list`,
+    createPayment: `/create`,
+    editPayment: (id) => `/edit/${id}`,
+    viewPayment: `/payments/view`,
   },
 
   // Vendor  Panel 

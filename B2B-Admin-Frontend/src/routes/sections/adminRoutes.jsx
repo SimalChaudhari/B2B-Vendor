@@ -11,6 +11,9 @@ import { VendorEditView } from 'src/sections/vendor/view/vendor-edit';
 import { OrderDetailsView } from 'src/sections/order/view';
 import { BannerCreateView, BannerEditView, BannerView } from 'src/sections/setting/banner/view';
 import { ReceivablesListDetails } from 'src/sections/accounting/Receivables/view/receivables-details';
+import { PaymentCreateView } from 'src/sections/payments/payment-form';
+import { PaymentEditView } from 'src/sections/payments/payment-edit';
+import { PaymentViewUi } from 'src/sections/payments/payment-vendor-view';
 
 // Overview
 const IndexPage = lazy(() => import('src/pages/dashboard'));
@@ -29,6 +32,9 @@ const ProfilePage = lazy(() => import('src/pages/vendor-page/settings/profile'))
 const LogoutPage = lazy(() => import('src/pages/settings/logout'));
 
 const LogPage = lazy(() => import('src/pages/log-history'));
+
+const PaymentPage = lazy(() => import('src/pages/payments'));
+
 
 
 const SyncPage = lazy(() => import('src/pages/settings/sync'));
@@ -130,8 +136,22 @@ export const adminRoute =[
         { path: 'banner/edit/:id', element: <BannerEditView /> },
         { path: 'banner/view/:id', element: <BannerView /> },
         { path: 'sync', element: <SyncPage /> },
+
       ],
     },
+
+    {
+      path: 'payments',
+      element: CONFIG.auth.skip ? <>{layoutContent}</> : <AuthGuard>{layoutContent}</AuthGuard>,
+      children: [
+        {  element: <PaymentPage />, index: true }, // Default route for "/payment"
+        { path: 'create', element: <PaymentCreateView/> },
+        { path: 'edit/:id', element: <PaymentEditView/> },
+        { path: 'view', element: <PaymentViewUi/> },
+
+      ],
+    },
+    
   
     {
       path: 'logout',
