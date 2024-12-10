@@ -1,7 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne } from 'typeorm';
-import { BillEntity } from './bill.entity';
 
-@Entity('receivable')
+@Entity('receivable_statements')
 export class LedgerEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
@@ -19,6 +18,37 @@ export class LedgerEntity {
   bills!: BillEntity[];
 }
 
+@Entity('receivable_bills')
+export class BillEntity {
+    @PrimaryGeneratedColumn('uuid')
+    id!: string;
+
+    @Column({ type: 'varchar', nullable: true })
+    tallyOrdId?: string;
+
+    @Column({ type: 'varchar', nullable: true })
+    nxOrderId?: string;
+
+    @Column({ type: 'varchar', nullable: true })
+    tallyInvNo?: string;
+
+    @Column({ nullable: true })
+    billDate?: string;
+
+    @Column({ type: 'float', nullable: true })
+    openingBalance?: number;
+
+    @Column({ type: 'float', nullable: true })
+    closingBalance?: number;
+
+    @Column({ type: 'varchar', nullable: true })
+    creditPeriod?: string;
+
+    @ManyToOne(() => LedgerEntity, (ledger) => ledger.bills, { onDelete: 'CASCADE' })
+    ledger!: LedgerEntity;
+}
+
+
 
 @Entity('ledger_statements')
 export class LedgerStatementEntity {
@@ -27,6 +57,9 @@ export class LedgerStatementEntity {
 
   @Column({ nullable: true })
   party?: string;
+
+  @Column({ nullable: true })
+  alias?: string;
 
   @Column({ type: 'float', nullable: true })
   openingBalance?: number;

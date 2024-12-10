@@ -52,12 +52,10 @@ export function ReceivablesTableRow({ row, selected, onViewRow, onSelectRow, onD
           }}
         >
           <Iconify icon="solar:eye-bold" />
-          <span>View</span>
+        
         </MenuItem>
       </MenuList>
     </TableCell>
-    
-
     </TableRow>
   );
 

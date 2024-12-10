@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { LedgerEntity, LedgerStatementEntity, LedgerVoucherEntity } from './ledger.entity';
-import { BillEntity } from './bill.entity';
+import { BillEntity, LedgerEntity, LedgerStatementEntity, LedgerVoucherEntity } from './ledger.entity';
 import { LedgerService } from './ledger.service';
 import { LedgerController } from './ledger.controller';
 import { SyncControlSettings } from './../settings/setting.entity';

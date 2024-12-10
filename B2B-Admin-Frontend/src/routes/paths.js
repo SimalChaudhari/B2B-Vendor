@@ -59,6 +59,8 @@ export const paths = {
     ledger: `/accounts/ledger`,
     receivable: `/accounts/receivable`,
     viewReceivable: (id) => `/accounts/view/${id}`,
+    viewLedger: (id) => `/accounts/view/${id}`,
+
   },
 
   settings: {

@@ -11,15 +11,36 @@ export class LedgerController {
   constructor(private readonly ledgerService: LedgerService) { }
 
   @Post('/receivable/fetch')
-  async fetchLedgers(@Res() response: Response) {
-    await this.ledgerService.fetchAndStoreLedgers();
-    return response.status(200).json({ message: 'Outstanding Receivable fetched and stored successfully.' });
+  async fetchLedgers(@Res() res: Response): Promise<void> {
+    try {
+      await this.ledgerService.fetchAndStoreLedgers();
+      res.status(HttpStatus.OK).json({ message: 'receivable statements fetched and stored successfully.' });
+    } catch (error: any) {
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
+    }
   }
 
+
   @Get('/receivable')
-  async findAll(@Res() response: Response) {
-    const ledgers = await this.ledgerService.findAll();
-    return response.status(200).json({ data: ledgers });
+  async findAll(@Req() req: Request, @Res() res: Response): Promise<Response> {  // Explicitly return Response
+    const user = req.user;
+    const userRole = user?.role;
+    const userName = user?.name;
+    const vendorId = user?.id;
+    try {
+      if (isAdmin(userRole)) {
+        const ledgers = await this.ledgerService.findAll();
+        return res.status(HttpStatus.OK).json({ data: ledgers });
+      }
+      if (isVendor(userRole) && userName) {
+        const ledgers = await this.ledgerService.findAllDataByUserName(userName);
+        return res.status(HttpStatus.OK).json({ data: ledgers });
+      }
+
+      return res.status(HttpStatus.FORBIDDEN).json({ message: 'Unauthorized access' });
+    } catch (error: any) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
+    }
   }
 
   @Get('/receivable/:id')
@@ -73,8 +94,6 @@ export class LedgerController {
     const userRole = user?.role;
     const userName = user?.name;
     const vendorId = user?.id;
-
-
     try {
       if (isAdmin(userRole)) {
         const statements = await this.ledgerService.findLedgerData();

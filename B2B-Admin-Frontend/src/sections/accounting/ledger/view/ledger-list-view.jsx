@@ -50,12 +50,11 @@ export function LedgerListView() {
 
     const [loading, setLoading] = useState(false);
     const _ledger = useSelector((state) => state.accounting?.ledger);
-
-
-    const [partyOptions, setPartyOptions] = useState([]); // Store options for autocomplete
-    const [selectedParty, setSelectedParty] = useState(null); // Selected party
-
+ 
+     const [selectedParty, setSelectedParty] = useState(null); // Selected party
+ 
     const [tableData, setTableData] = useState(_ledger);
+
     const filters = useSetState({
         party: "",
         name: '',
@@ -67,12 +66,14 @@ export function LedgerListView() {
     //-----------------------------------------------------------------------------------------------------
 
     const TABLE_HEAD = [
-        { id: 'ledger', label: 'Ledger' },
-        { id: 'voucherNo', label: 'Voucher No', align: 'center' },
-        { id: 'voucherType', label: 'Voucher Type', align: 'center' },
-        { id: 'date', label: 'Date' },
-        { id: 'debitAmount', label: 'Debit Amount' },
-        { id: 'creditAmount', label: 'Credit Amount' },
+        { id: 'party', label: 'Party' },
+        { id: 'alias', label: 'Alias', align: 'center' },
+        { id: 'openingBalance', label: 'Opening Balance',align: 'center' },
+        { id: 'closingBalance', label: 'Closing Balance' ,align: 'center'},
+        { id: 'totalDebitAmount', label: 'Total Debit Amount',align: 'center' },
+        { id: 'totalCreditAmount', label: 'Total Credit Amount',align: 'center' },
+        { id: 'actions', label: 'Actions' }
+
     ];
 
 
@@ -120,28 +121,6 @@ export function LedgerListView() {
         }
     };
 
-    //--------------------------------------------------
-
-    // On component mount, fetch party options and set initial data
-    useEffect(() => {
-        if (_ledger?.length) {
-            setPartyOptions(_ledger.map((item) => ({ id: item.id, label: item.party }))); // Prepare options
-            setTableData(_ledger[0]?.vouchers || []); // Set initial data for the first party
-            setSelectedParty(_ledger[0]?.party); // Set initial selected party
-        }
-    }, [_ledger]);
-
-    // Handle party selection change
-    const handlePartyChange = useCallback((event, value) => {
-        setSelectedParty(value?.label || null);
-        if (value) {
-            const partyData = _ledger.find((item) => item.party === value.label);
-            setTableData(partyData?.vouchers || []);
-        } else {
-            setTableData([]);
-        }
-    }, [_ledger]);
-
     //---------------------------------------------------------
     return (
         <div>
@@ -170,17 +149,6 @@ export function LedgerListView() {
                 />
 
                 <Card>
-
-                    {userRole === 'Admin' && (
-                        <Box sx={{ p: 2 }}>
-                            <Autocomplete
-                                options={partyOptions}
-                                value={partyOptions.find((option) => option.label === selectedParty) || null}
-                                onChange={handlePartyChange}
-                                renderInput={(params) => <TextField {...params} label="Select Party" />}
-                            />
-                        </Box>
-                    )}
 
                     <LedgerTableToolbar
                         filters={filters}

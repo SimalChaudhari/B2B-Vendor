@@ -12,7 +12,7 @@ import { generatePDF, generatePrint } from '../utils/generatePDF';
 
 // ----------------------------------------------------------------------
 
-export function LedgerTableToolbar({ filters,party, onResetPage, dateError, data }) {
+export function LedgerTableToolbar({ filters, party, onResetPage, dateError, data }) {
 
   const popover = usePopover();
 
@@ -45,9 +45,9 @@ export function LedgerTableToolbar({ filters,party, onResetPage, dateError, data
       console.error('No data available for download.');
       return;
     }
-  
+
     const { startDate, endDate } = filters.state;
-  
+
     // Filter data based on the date range
     const filteredData = startDate && endDate
       ? data.filter((item) => fIsBetween(item.date, startDate, endDate))
@@ -57,9 +57,9 @@ export function LedgerTableToolbar({ filters,party, onResetPage, dateError, data
       console.warn('No data found for the selected date range.');
       return;
     }
-  
+
     // Call the generatePDF function to generate and download the PDF
-    generatePDF(filteredData,party);
+    generatePDF(filteredData, party);
   }
 
   const handlePrint = () => {
@@ -81,16 +81,16 @@ export function LedgerTableToolbar({ filters,party, onResetPage, dateError, data
       return;
     }
 
-      // Generate printable content
-  const printableContent = generatePrint(filteredData,party);
-  
+    // Generate printable content
+    const printableContent = generatePrint(filteredData, party);
+
     // Open a new window and print the content
     const newWindow = window.open('', '_blank');
     newWindow.document.write(printableContent);
     newWindow.document.close();
     newWindow.print();
   };
-  
+
 
   return (
 
@@ -101,7 +101,7 @@ export function LedgerTableToolbar({ filters,party, onResetPage, dateError, data
         direction={{ xs: 'column', md: 'row' }}
         sx={{ p: 2.5, pr: { xs: 2.5, md: 1 } }}
       >
-
+        {/* 
         <DatePicker
           label="Start date"
           value={filters.state.startDate}
@@ -130,6 +130,7 @@ export function LedgerTableToolbar({ filters,party, onResetPage, dateError, data
           }}
         />
 
+        */}
         <Stack direction="row" alignItems="center" spacing={2} flexGrow={1} sx={{ width: 1 }}>
           <TextField
             fullWidth
@@ -146,9 +147,9 @@ export function LedgerTableToolbar({ filters,party, onResetPage, dateError, data
           />
 
           <Tooltip title="Print & Download">
-          <IconButton onClick={popover.onOpen}>
-            <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
+            <IconButton onClick={popover.onOpen}>
+              <Iconify icon="eva:more-vertical-fill" />
+            </IconButton>
           </Tooltip>
         </Stack>
       </Stack>
@@ -171,19 +172,19 @@ export function LedgerTableToolbar({ filters,party, onResetPage, dateError, data
           </MenuItem>
 
           <MenuItem
-        
-          onClick={() => {
-            popover.onClose();
-            handleDownloadPdf()
-          }}>
-          <Iconify icon="eva:download-outline" sx={{color: 'primary.main'}} />
-         
-  
+
+            onClick={() => {
+              popover.onClose();
+              handleDownloadPdf()
+            }}>
+            <Iconify icon="eva:download-outline" sx={{ color: 'primary.main' }} />
+
+
             Download
           </MenuItem>
         </MenuList>
       </CustomPopover>
 
-      </>
+    </>
   );
 }

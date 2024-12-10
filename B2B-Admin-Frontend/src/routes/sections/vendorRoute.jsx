@@ -8,6 +8,7 @@ import { ItemView } from 'src/sections/vendor-sections/product/view';
 import { OrderDetailsView } from 'src/sections/order/view';
 import { ReceivablesListDetails } from 'src/sections/accounting/Receivables/view/receivables-details';
 import { PaymentViewUi } from 'src/sections/payments/payment-vendor-view';
+import { LedgerListDetails } from 'src/sections/accounting/ledger/view/ledger-details';
 
 // Overview
 const IndexPage = lazy(() => import('src/pages/dashboard'));
@@ -67,6 +68,8 @@ export const vendorRoutes = [
             { path: 'ledger', element: <LedgerPage /> },
             { path: 'receivable', element: <ReceivablesPage /> },
             { path: 'view/:id', element: <ReceivablesListDetails /> },
+            { path: 'ledger/view/:id', element: <LedgerListDetails /> },
+
         ],
     },
     {
@@ -76,16 +79,16 @@ export const vendorRoutes = [
             { path: 'profile-settings', element: <ProfilePage /> },
         ],
     },
-    
+
     {
         path: 'payments',
         element: CONFIG.auth.skip ? <>{layoutContent}</> : <AuthGuard>{layoutContent}</AuthGuard>,
         children: [
-        { path: 'view', element: <PaymentViewUi/> },
+            { path: 'view', element: <PaymentViewUi /> },
 
         ],
-      },
-      
+    },
+
 
     {
         path: 'logout',

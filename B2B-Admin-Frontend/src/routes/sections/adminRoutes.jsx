@@ -14,6 +14,7 @@ import { ReceivablesListDetails } from 'src/sections/accounting/Receivables/view
 import { PaymentCreateView } from 'src/sections/payments/payment-form';
 import { PaymentEditView } from 'src/sections/payments/payment-edit';
 import { PaymentViewUi } from 'src/sections/payments/payment-vendor-view';
+import { LedgerListDetails } from 'src/sections/accounting/ledger/view/ledger-details';
 
 // Overview
 const IndexPage = lazy(() => import('src/pages/dashboard'));
@@ -99,6 +100,7 @@ export const adminRoute =[
           { path: 'ledger', element: <LedgerPage /> },
           { path: 'receivable', element: <ReceivablesPage /> },
           { path: 'view/:id', element: <ReceivablesListDetails /> },
+          { path: 'ledger/view/:id', element: <LedgerListDetails /> },
         ],
       },
   

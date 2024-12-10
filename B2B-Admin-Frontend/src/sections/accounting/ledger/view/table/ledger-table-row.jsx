@@ -35,28 +35,39 @@ export function LedgerTableRow({ row, selected, onSelectRow, onDeleteRow }) {
         <Stack spacing={2} direction="row" alignItems="center">
           <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
             <Link color="inherit" sx={{ cursor: 'pointer' }}>
-              {row?.ledger || "not available"}
+              {row?.party || "-"}
             </Link>
           </Stack>
         </Stack>
       </TableCell>
+      <TableCell align="center"> {row?.alias || "-"}</TableCell>
+      <TableCell align="center"> {row?.openingBalance || "-"}</TableCell>
+      <TableCell align="center"> {row.closingBalance || "-"} </TableCell>
+      <TableCell align="center"> {row?.totalDebitAmount || "-"} </TableCell>
+      <TableCell align="center"> {row.totalCreditAmount || "-"} </TableCell>
 
-      <TableCell align="center"> {row?.voucherNo || "not available"}</TableCell>
-      <TableCell align="center"> {row.voucherType || "not available"} </TableCell>
-      <TableCell>
-        <ListItemText
-          primary={fDate(row.date)}
-          secondary={fTime(row.date)}
-          primaryTypographyProps={{ typography: 'body2', noWrap: true }}
-          secondaryTypographyProps={{
-            mt: 0.5,
-            component: 'span',
-            typography: 'caption',
-          }}
-        />
+      <TableCell sx={{ px: 1, whiteSpace: 'nowrap' }}>
+        <MenuList>
+          <MenuItem
+            component={RouterLink}
+            to={`/accounts/ledger/view/${row.id}`}
+            sx={{
+
+              color: 'green',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              '&:hover': {
+                backgroundColor: 'transparent', // Removes background color on hover
+                cursor: 'pointer', // Optional: prevent the pointer cursor on hover
+              },
+            }}
+          >
+            <Iconify icon="solar:eye-bold" />
+
+          </MenuItem>
+        </MenuList>
       </TableCell>
-      <TableCell > {row?.debitAmount || "not available"} </TableCell>
-      <TableCell > {row.creditAmount || "not available"} </TableCell>
 
 
 
@@ -67,46 +78,7 @@ export function LedgerTableRow({ row, selected, onSelectRow, onDeleteRow }) {
   return (
     <>
       {renderPrimary}
-      <CustomPopover
-        open={popover.open}
-        anchorEl={popover.anchorEl}
-        onClose={popover.onClose}
-        slotProps={{ arrow: { placement: 'right-top' } }}
-      >
-        <MenuList>
-          <MenuItem
-            onClick={() => {
-              confirm.onTrue();
-              popover.onClose();
-            }}
-            sx={{ color: 'error.main' }}
-          >
-            <Iconify icon="solar:trash-bin-trash-bold" />
-            Delete
-          </MenuItem>
 
-          <MenuItem
-            component={RouterLink} // Set the component to Link
-            to={`/orders/details/${row.id}`} // Set the destination URL
-            sx={{ color: 'green' }} // Keep your existing styling
-          >
-            <Iconify icon="solar:eye-bold" />
-            View
-          </MenuItem>
-        </MenuList>
-      </CustomPopover>
-
-      <ConfirmDialog
-        open={confirm.value}
-        onClose={confirm.onFalse}
-        title="Delete"
-        content="Are you sure want to delete?"
-        action={
-          <Button variant="contained" color="error" onClick={onDeleteRow}>
-            Delete
-          </Button>
-        }
-      />
     </>
   );
 }

@@ -15,11 +15,12 @@ export function applyFilter({ inputData, comparator, filters, dateError, userRol
 
   if (name) {
     inputData = inputData.filter((ledgers) =>
-      ledgers.ledger?.toLowerCase()?.includes(name.toLowerCase()) || // Use optional chaining
-      ledgers.voucherNo?.toLowerCase()?.includes(name.toLowerCase()) ||
-      ledgers.voucherType?.toLowerCase()?.includes(name.toLowerCase()) ||
-      ledgers.debitAmount?.toString()?.includes(name.toLowerCase()) ||
-      ledgers.creditAmount?.toString()?.includes(name.toLowerCase()))
+      ledgers.party?.toLowerCase()?.includes(name.toLowerCase()) ||
+      ledgers.alias?.toLowerCase()?.includes(name.toLowerCase()) ||
+      ledgers.totalDebitAmount?.toString()?.includes(name.toLowerCase()) ||
+      ledgers.totalCreditAmount?.toString()?.includes(name.toLowerCase()) ||
+      ledgers.openingBalance?.toString()?.includes(name.toLowerCase()) ||
+      ledgers.closingBalance?.toString()?.includes(name.toLowerCase()))
   }
 
 
