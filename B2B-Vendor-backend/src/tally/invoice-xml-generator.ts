@@ -3,14 +3,15 @@
 import { OrderEntity } from "./../order/order.entity";
 import { OrderItemEntity } from "./../order/order.item.entity";
 
-export function generateInvoiceXML(order: OrderEntity, orderItems: OrderItemEntity[]): string {
+export function generateInvoiceXML(order: OrderEntity, orderItems: OrderItemEntity[], adminState: string | null): string {
+
     const { user, address, totalPrice, orderNo, createdAt } = order;
-     // Check if createdAt is defined, or use the current date as fallback
-     const formattedDate = createdAt ? formatDate(new Date(createdAt)) : formatDate(new Date());
-     const formattedDateT = createdAt ? formatDateT(new Date(createdAt)) : formatDate(new Date());
+    // Check if createdAt is defined, or use the current date as fallback
+    const formattedDate = createdAt ? formatDate(new Date(createdAt)) : formatDate(new Date());
+    const formattedDateT = createdAt ? formatDateT(new Date(createdAt)) : formatDate(new Date());
 
 
-     
+
     // Generate XML for each product in the order
     const inventoryEntriesXML = orderItems.map(orderItem => `
         <ALLINVENTORYENTRIES.LIST>
@@ -46,6 +47,48 @@ export function generateInvoiceXML(order: OrderEntity, orderItems: OrderItemEnti
             ${generateRateDetails()}
         </ALLINVENTORYENTRIES.LIST>
     `).join('');
+
+    // Determine tax type and amount based on adminState
+    const isSameState = adminState === address.state;
+    const cgstSgstAmount = totalPrice * 0.09;
+    const igstAmount = totalPrice * 0.18;
+
+    // Conditional GST logic
+    const gstXML = totalPrice > 0
+        ? isSameState
+            ? `
+            <LEDGERENTRIES.LIST>
+              <APPROPRIATEFOR>&#4; Not Applicable</APPROPRIATEFOR>
+                <ROUNDTYPE>&#4; Not Applicable</ROUNDTYPE>
+                 <LEDGERNAME>CGST</LEDGERNAME>
+                   <GSTCLASS>&#4; Not Applicable</GSTCLASS>
+                     <ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>
+                       <AMOUNT>${cgstSgstAmount.toFixed(2)}</AMOUNT>
+                         <VATEXPAMOUNT>${cgstSgstAmount.toFixed(2)}</VATEXPAMOUNT>
+            </LEDGERENTRIES.LIST>
+
+            <LEDGERENTRIES.LIST>
+             <APPROPRIATEFOR>&#4; Not Applicable</APPROPRIATEFOR>
+                <ROUNDTYPE>&#4; Not Applicable</ROUNDTYPE>
+                 <LEDGERNAME>SGST</LEDGERNAME>
+                  <GSTCLASS>&#4; Not Applicable</GSTCLASS>f
+                    <ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>
+                      <AMOUNT>${cgstSgstAmount.toFixed(2)}</AMOUNT>
+                      <VATEXPAMOUNT>${cgstSgstAmount.toFixed(2)}</VATEXPAMOUNT>
+            </LEDGERENTRIES.LIST>
+            `
+            : `
+            <LEDGERENTRIES.LIST>
+                 <APPROPRIATEFOR>&#4; Not Applicable</APPROPRIATEFOR>
+                            <ROUNDTYPE>&#4; Not Applicable</ROUNDTYPE>
+                            <LEDGERNAME>IGST</LEDGERNAME>
+                            <GSTCLASS>&#4; Not Applicable</GSTCLASS>
+                            <ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>
+                <AMOUNT>${igstAmount.toFixed(2)}</AMOUNT>
+                <VATEXPAMOUNT>${igstAmount.toFixed(2)}</VATEXPAMOUNT>
+            </LEDGERENTRIES.LIST>
+            `
+        : '';
 
     return `
 <ENVELOPE>
@@ -111,24 +154,7 @@ export function generateInvoiceXML(order: OrderEntity, orderItems: OrderItemEnti
                             <ISLASTDEEMEDPOSITIVE>Yes</ISLASTDEEMEDPOSITIVE>
                             <AMOUNT>-${totalPrice}</AMOUNT>
                         </LEDGERENTRIES.LIST>
-                        <LEDGERENTRIES.LIST>
-                            <APPROPRIATEFOR>&#4; Not Applicable</APPROPRIATEFOR>
-                            <ROUNDTYPE>&#4; Not Applicable</ROUNDTYPE>
-                            <LEDGERNAME>CGST</LEDGERNAME>
-                            <GSTCLASS>&#4; Not Applicable</GSTCLASS>
-                            <ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>
-                            <AMOUNT>${(totalPrice * 0.09).toFixed(2)}</AMOUNT>
-                            <VATEXPAMOUNT>${(totalPrice * 0.09).toFixed(2)}</VATEXPAMOUNT>
-                        </LEDGERENTRIES.LIST>
-                        <LEDGERENTRIES.LIST>
-                            <APPROPRIATEFOR>&#4; Not Applicable</APPROPRIATEFOR>
-                            <ROUNDTYPE>&#4; Not Applicable</ROUNDTYPE>
-                            <LEDGERNAME>SGST</LEDGERNAME>
-                            <GSTCLASS>&#4; Not Applicable</GSTCLASS>
-                            <ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>
-                            <AMOUNT>${(totalPrice * 0.09).toFixed(2)}</AMOUNT>
-                            <VATEXPAMOUNT>${(totalPrice * 0.09).toFixed(2)}</VATEXPAMOUNT>
-                        </LEDGERENTRIES.LIST>
+                          ${gstXML}
                     </VOUCHER>
                 </TALLYMESSAGE>
             </REQUESTDATA>

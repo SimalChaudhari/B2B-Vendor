@@ -7,11 +7,14 @@ import { OrderItemEntity } from './order.item.entity';
 import { isAdmin } from './../utils/auth.utils';
 import { JwtAuthGuard } from './../jwt/jwt-auth.guard';
 import { RolesGuard } from './../jwt/roles.guard';
+import { UserService } from './../user/users.service';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('order')
 export class OrderController {
-    constructor(private readonly orderService: OrderService) { }
+    constructor(private readonly orderService: OrderService,
+        private readonly userService: UserService, // Inject UserService
+    ) { }
 
     @Post('generate')
     async createOrder(@Req() req: Request, @Body() createOrderDto: CreateOrderDto) {
@@ -81,23 +84,32 @@ export class OrderController {
     }
 
     // order item
+    // @Post('add-items')
+    // async addItemsToOrder(@Body() createItemOrderDto: CreateItemOrderDto): Promise<OrderItemEntity[]> {
+    //     return this.orderService.addItemToOrder(createItemOrderDto);
+    // }
+
     @Post('add-items')
     async addItemsToOrder(@Body() createItemOrderDto: CreateItemOrderDto): Promise<OrderItemEntity[]> {
-        return this.orderService.addItemToOrder(createItemOrderDto);
+        // Step 1: Fetch all users with the Admin role
+        const adminState = (await this.userService.getAdminState()) ?? 'Not Specified';
+
+        return this.orderService.addItemToOrder(createItemOrderDto, adminState);
     }
+
 
     @Delete('item-order/:orderItemId')
     async deleteOrderItemById(@Param('orderItemId') orderItemId: string): Promise<{ message: string }> {
         return this.orderService.deleteOrderItemById(orderItemId);
     }
 
-     // Endpoint to trigger the update of the invoice PDF path based on the orderNo
-   // Endpoint to upload all invoices
-   @Post('upload-all-invoices')
-   async uploadAllInvoices(): Promise<string> {
-     await this.orderService.uploadAllInvoices();
-     return 'All invoices uploaded successfully (if files exist).';
-   }
- }
- 
+    // Endpoint to trigger the update of the invoice PDF path based on the orderNo
+    // Endpoint to upload all invoices
+    @Post('upload-all-invoices')
+    async uploadAllInvoices(): Promise<string> {
+        await this.orderService.uploadAllInvoices();
+        return 'All invoices uploaded successfully (if files exist).';
+    }
+}
+
 

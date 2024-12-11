@@ -41,8 +41,6 @@ export class OrderService {
         @InjectRepository(Invoice)
         private readonly invoiceRepository: Repository<Invoice>,
 
-        private readonly emailService: EmailService,
-
         private firebaseService: FirebaseService, // Inject Firebase service
 
         private readonly dataSource: DataSource
@@ -288,7 +286,7 @@ export class OrderService {
 
     // order item
 
-    async addItemToOrder(createItemOrderDto: CreateItemOrderDto): Promise<OrderItemEntity[]> {
+    async addItemToOrder(createItemOrderDto: CreateItemOrderDto, adminState: string): Promise<OrderItemEntity[]> {
         const { orderId, products } = createItemOrderDto;
 
         // Find the order by orderId and load relations for User and Address
@@ -326,7 +324,7 @@ export class OrderService {
         await this.cartRepository.delete({ userId: order.user.id });
         // Attempt to post the invoice to Tally
         try {
-            await this.postToTally(order, savedOrderItems);
+            await this.postToTally(order, savedOrderItems, adminState);
             console.log('Invoice posted to Tally successfully');
         } catch (error) {
             console.error('Failed to post invoice to Tally:', error);
@@ -347,8 +345,8 @@ export class OrderService {
         await this.invoiceRepository.save(unsentInvoice);
     }
 
-    async postToTally(order: OrderEntity, savedOrderItems: OrderItemEntity[]): Promise<void> {
-        const xml = generateInvoiceXML(order, savedOrderItems);
+    async postToTally(order: OrderEntity, savedOrderItems: OrderItemEntity[],adminState: string | null): Promise<void> {
+        const xml = generateInvoiceXML(order, savedOrderItems,adminState);
         let isInvoiceSaved = false;
 
         try {

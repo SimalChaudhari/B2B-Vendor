@@ -17,13 +17,13 @@ export class SMSService {
      * @param mobile Recipient mobile number
      * @param otp The one-time password
      */
-    async sendOTP(mobile: string, otp: string): Promise<string> {
+    async sendTextOTP(mobile: string, otp: string): Promise<string> {
         try {
             const message = await this.twilioClient.messages.create({
                 body: `Your verification code is ${otp}. This code is valid for 5 minutes. 
                        Please do not share it with anyone. If you did not request this, please contact our support team.`,
                 from: process.env.TWILIO_PHONE_NUMBER,
-                to: mobile,
+                to: `+91${mobile}`,
             });
 
             console.log(`SMS sent to ${mobile}: SID ${message.sid}`);

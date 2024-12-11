@@ -32,6 +32,13 @@ export class UserController {
         });
     }
 
+    @Get('admin-state')
+    async getAdminState(): Promise<string | null> {
+        return this.userService.getAdminState();
+    }
+    
+    
+
 
     @Get(':id')
     async getUserById(@Param('id') id: string, @Res() response: Response) {

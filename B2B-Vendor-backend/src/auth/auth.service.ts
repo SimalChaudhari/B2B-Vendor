@@ -10,6 +10,7 @@ import { UserEntity } from './../user/users.entity';
 import { UserRole, UserStatus } from './../user/users.entity';
 import { EmailService } from './../service/email.service';
 import { AddressesService } from './../addresses/addresses.service';
+import { SMSService } from './../service/sms.service';
 
 const generateOTP = (): string => {
   const otp = Math.floor(100000 + Math.random() * 900000).toString(); // Generate a 6-digit OTP
@@ -39,6 +40,8 @@ export class AuthService {
     private userRepository: Repository<UserEntity>,
     private readonly JwtService: JwtService, // Inject JwtService
     private readonly emailService: EmailService,
+    private readonly smsService: SMSService,
+
     // private readonly mailerService: MailerService, // If used
     private readonly addressesService: AddressesService,
   ) { }
@@ -135,7 +138,7 @@ export class AuthService {
       await this.userRepository.save(user); // Save the updated user
 
       // Send OTP
-      isEmail ? await this.emailService.sendOTP(user.email, otp) : await sendOtpSms(user.mobile, otp);
+      isEmail ? await this.emailService.sendOTP(user.email, otp) : await this.smsService.sendTextOTP(user.mobile, otp);
 
       return { message: 'OTP sent successfully' };
 
