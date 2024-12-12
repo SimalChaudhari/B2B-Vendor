@@ -47,6 +47,7 @@ export function CheckoutCartProductList({
           {products.map((row) => (
             <CheckoutCartProduct
               key={row.id}
+              productID={row.productID}
               row={row}
               onDownload={() => onDownload(row.id)}
               onDelete={() => openConfirmDialog(row.id)} // Open confirm dialog for specific product

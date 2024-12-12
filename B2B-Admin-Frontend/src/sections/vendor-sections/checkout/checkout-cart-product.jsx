@@ -14,10 +14,11 @@ import { TextField, Tooltip, CircularProgress, FormHelperText, InputAdornment } 
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { addQuantity, cartList } from 'src/store/action/cartActions';
+import { Link } from 'react-router-dom';
 
 // ----------------------------------------------------------------------
 
-export function CheckoutCartProduct({ row, onDownload, onDelete }) {
+export function CheckoutCartProduct({ productID, row, onDownload, onDelete }) {
   const isDownloadable = !!row.dimensionalFiles; // Check if pdfPath is available
 
   const available = row.stockQuantity; // Change this to 0 to simulate product not available
@@ -90,19 +91,27 @@ export function CheckoutCartProduct({ row, onDownload, onDelete }) {
   return (
     <TableRow>
       <TableCell>
-        <Stack spacing={2} direction="row" alignItems="center">
-          <Avatar
-            variant="rounded"
-            alt={row.name}
-            src={row.coverUrl}
-            sx={{ width: 64, height: 64 }}
-          />
-          <Stack spacing={0.5}>
-            <Typography noWrap variant="subtitle2" sx={{ maxWidth: 240 }}>
-              {row.name}
-            </Typography>
-          </Stack>
-        </Stack>
+        <Tooltip title="Click To Product Details" arrow>
+          <Link
+            to={`/items/view/${productID}`}
+            style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center' }}
+          >
+            <Stack spacing={2} direction="row" alignItems="center" sx={{ cursor: "pointer" }}>
+              <Avatar
+                variant="rounded"
+                alt={row.name}
+                src={row.coverUrl}
+                sx={{ width: 64, height: 64 }}
+              />
+              <Stack spacing={0.5}>
+                <Typography noWrap variant="subtitle2" sx={{ maxWidth: 240 }}>
+                  {row.name}
+                </Typography>
+              </Stack>
+
+            </Stack>
+          </Link>
+        </Tooltip>
       </TableCell>
 
       <TableCell>{fCurrency(row.price)}</TableCell>

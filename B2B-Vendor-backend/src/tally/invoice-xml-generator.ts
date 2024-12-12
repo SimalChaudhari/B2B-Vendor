@@ -44,53 +44,16 @@ export function generateInvoiceXML(order: OrderEntity, orderItems: OrderItemEnti
                 <AMOUNT>${orderItem.product.sellingPrice * orderItem.quantity}</AMOUNT>
             </ACCOUNTINGALLOCATIONS.LIST>
             <DUTYHEADDETAILS.LIST></DUTYHEADDETAILS.LIST>
-            ${generateRateDetails()}
+            ${generateRateDetails(orderItem.product.gstRate)}
         </ALLINVENTORYENTRIES.LIST>
     `).join('');
 
     // Determine tax type and amount based on adminState
     const isSameState = adminState === address.state;
-    const cgstSgstAmount = totalPrice * 0.09;
-    const igstAmount = totalPrice * 0.18;
+    // Generate GST entries if applicable
+    const gstXML = generateGSTDetails(isSameState, totalPrice);
 
-    // Conditional GST logic
-    const gstXML = totalPrice > 0
-        ? isSameState
-            ? `
-            <LEDGERENTRIES.LIST>
-              <APPROPRIATEFOR>&#4; Not Applicable</APPROPRIATEFOR>
-                <ROUNDTYPE>&#4; Not Applicable</ROUNDTYPE>
-                 <LEDGERNAME>CGST</LEDGERNAME>
-                   <GSTCLASS>&#4; Not Applicable</GSTCLASS>
-                     <ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>
-                       <AMOUNT>${cgstSgstAmount.toFixed(2)}</AMOUNT>
-                         <VATEXPAMOUNT>${cgstSgstAmount.toFixed(2)}</VATEXPAMOUNT>
-            </LEDGERENTRIES.LIST>
-
-            <LEDGERENTRIES.LIST>
-             <APPROPRIATEFOR>&#4; Not Applicable</APPROPRIATEFOR>
-                <ROUNDTYPE>&#4; Not Applicable</ROUNDTYPE>
-                 <LEDGERNAME>SGST</LEDGERNAME>
-                  <GSTCLASS>&#4; Not Applicable</GSTCLASS>f
-                    <ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>
-                      <AMOUNT>${cgstSgstAmount.toFixed(2)}</AMOUNT>
-                      <VATEXPAMOUNT>${cgstSgstAmount.toFixed(2)}</VATEXPAMOUNT>
-            </LEDGERENTRIES.LIST>
-            `
-            : `
-            <LEDGERENTRIES.LIST>
-                 <APPROPRIATEFOR>&#4; Not Applicable</APPROPRIATEFOR>
-                            <ROUNDTYPE>&#4; Not Applicable</ROUNDTYPE>
-                            <LEDGERNAME>IGST</LEDGERNAME>
-                            <GSTCLASS>&#4; Not Applicable</GSTCLASS>
-                            <ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>
-                <AMOUNT>${igstAmount.toFixed(2)}</AMOUNT>
-                <VATEXPAMOUNT>${igstAmount.toFixed(2)}</VATEXPAMOUNT>
-            </LEDGERENTRIES.LIST>
-            `
-        : '';
-
-    return `
+return `
 <ENVELOPE>
     <HEADER>
         <TALLYREQUEST>Import Data</TALLYREQUEST>
@@ -154,7 +117,7 @@ export function generateInvoiceXML(order: OrderEntity, orderItems: OrderItemEnti
                             <ISLASTDEEMEDPOSITIVE>Yes</ISLASTDEEMEDPOSITIVE>
                             <AMOUNT>-${totalPrice}</AMOUNT>
                         </LEDGERENTRIES.LIST>
-                          ${gstXML}
+                            ${gstXML}
                     </VOUCHER>
                 </TALLYMESSAGE>
             </REQUESTDATA>
@@ -164,23 +127,64 @@ export function generateInvoiceXML(order: OrderEntity, orderItems: OrderItemEnti
 `;
 }
 
+
+
+
+
+// Helper function to generate GST details for CGST, SGST, or IGST
+function generateGSTDetails(isSameState: boolean, totalPrice: number): string {
+    return isSameState
+        ? `
+                             <LEDGERENTRIES.LIST>
+              <APPROPRIATEFOR>&#4; Not Applicable</APPROPRIATEFOR>
+                <ROUNDTYPE>&#4; Not Applicable</ROUNDTYPE>
+                 <LEDGERNAME>CGST</LEDGERNAME>
+                            <GSTCLASS>&#4; Not Applicable</GSTCLASS>
+                            <ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>
+                            <AMOUNT>${(totalPrice * 0.09).toFixed(2)}</AMOUNT>
+                            <VATEXPAMOUNT>${(totalPrice * 0.09).toFixed(2)}</VATEXPAMOUNT>
+            </LEDGERENTRIES.LIST>
+
+            <LEDGERENTRIES.LIST>
+             <APPROPRIATEFOR>&#4; Not Applicable</APPROPRIATEFOR>
+                <ROUNDTYPE>&#4; Not Applicable</ROUNDTYPE>
+               <LEDGERNAME>SGST</LEDGERNAME>
+                            <GSTCLASS>&#4; Not Applicable</GSTCLASS>
+                            <ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>
+                            <AMOUNT>${(totalPrice * 0.09).toFixed(2)}</AMOUNT>
+                            <VATEXPAMOUNT>${(totalPrice * 0.09).toFixed(2)}</VATEXPAMOUNT>
+            </LEDGERENTRIES.LIST>
+        `
+        : `
+        <LEDGERENTRIES.LIST>
+                            <APPROPRIATEFOR>&#4; Not Applicable</APPROPRIATEFOR>
+                            <ROUNDTYPE>&#4; Not Applicable</ROUNDTYPE>
+                            <LEDGERNAME>IGST</LEDGERNAME>
+                            <GSTCLASS>&#4; Not Applicable</GSTCLASS>
+                            <ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>
+                            <AMOUNT>${(totalPrice * 0.18).toFixed(2)}</AMOUNT>
+                            <VATEXPAMOUNT>${(totalPrice * 0.18).toFixed(2)}</VATEXPAMOUNT>
+                        </LEDGERENTRIES.LIST>
+        `;
+}
+
 // Helper function to generate RATEDETAILS.LIST for GST rates
-function generateRateDetails(): string {
+function generateRateDetails(gstRate: number): string {
     return `
         <RATEDETAILS.LIST>
             <GSTRATEDUTYHEAD>CGST</GSTRATEDUTYHEAD>
             <GSTRATEVALUATIONTYPE>Based on Value</GSTRATEVALUATIONTYPE>
-            <GSTRATE>9</GSTRATE>
+            <GSTRATE>${gstRate}</GSTRATE>
         </RATEDETAILS.LIST>
         <RATEDETAILS.LIST>
             <GSTRATEDUTYHEAD>SGST/UTGST</GSTRATEDUTYHEAD>
             <GSTRATEVALUATIONTYPE>Based on Value</GSTRATEVALUATIONTYPE>
-            <GSTRATE>9</GSTRATE>
+             <GSTRATE>${gstRate}</GSTRATE>
         </RATEDETAILS.LIST>
         <RATEDETAILS.LIST>
             <GSTRATEDUTYHEAD>IGST</GSTRATEDUTYHEAD>
             <GSTRATEVALUATIONTYPE>Based on Value</GSTRATEVALUATIONTYPE>
-            <GSTRATE>18</GSTRATE>
+             <GSTRATE>${gstRate}</GSTRATE>
         </RATEDETAILS.LIST>
         <RATEDETAILS.LIST>
             <GSTRATEDUTYHEAD>Cess</GSTRATEDUTYHEAD>
