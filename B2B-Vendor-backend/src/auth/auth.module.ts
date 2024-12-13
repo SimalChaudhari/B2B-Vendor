@@ -11,7 +11,7 @@ import { EmailService } from './../service/email.service';
 import { AddressEntity } from './../addresses/addresses.entity';
 import { AddressesService } from './../addresses/addresses.service';
 import { AddressesModule } from './../addresses/addresses.module';
-import { SMSService } from 'service/sms.service';
+import { SMSService } from './../service/sms.service';
 dotenv.config(); // Load environment variables
 @Module({
   imports: [TypeOrmModule.forFeature([UserEntity,AddressEntity,AddressesModule]),
