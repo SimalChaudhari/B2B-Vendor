@@ -4,9 +4,10 @@ import { LedgerService } from './ledger.service';
 import { JwtAuthGuard } from './../jwt/jwt-auth.guard';
 import { RolesGuard } from './../jwt/roles.guard';
 import { isAdmin, isVendor } from './../utils/auth.utils';
+import { SessionGuard } from './../jwt/session.guard';
 
-@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('ledgers')
+@UseGuards(SessionGuard,JwtAuthGuard)
 export class LedgerController {
   constructor(private readonly ledgerService: LedgerService) { }
 

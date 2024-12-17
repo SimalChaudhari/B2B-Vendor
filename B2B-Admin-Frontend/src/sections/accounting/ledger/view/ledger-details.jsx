@@ -22,6 +22,7 @@ import { useFetchData } from '../components/fetch-ledger';
 import { useParams } from 'react-router';
 import { useSelector } from 'react-redux';
 import { writeFile, utils } from 'xlsx'; // Library for Excel export
+import { generatePDF } from '../utils/generatePDF';
 
 export function LedgerListDetails({ invoice }) {
     const { fetchByIdData } = useFetchData();
@@ -46,28 +47,37 @@ export function LedgerListDetails({ invoice }) {
         fetchByIdData(id);
     }, []);
 
-    const handleExportData = () => {
-        if (!filteredVouchers?.length) {
-            alert('No data available for export.');
-            return;
+      const handleDownloadPdf = () => {
+        if (!filteredVouchers || filteredVouchers.length === 0) {
+          console.error('No data available for download.');
+          return;
         }
+        // Call the generatePDF function to generate and download the PDF
+        generatePDF(filteredVouchers,ledger.party);
+      }
 
-        const data = filteredVouchers.map((row, index) => ({
-            '#No': index + 1,
-            'Voucher No': row.voucherNo || '-',
-            'Ledger': row.ledger,
-            'Date': fDate(row.date),
-            'Voucher Type': row.voucherType || '-',
-            'Debit Balance': fCurrency(row.debitAmount) || '-',
-            'Credit Balance': fCurrency(row.creditAmount) || '-',
-        }));
+    // const handleExportData = () => {
+    //     if (!filteredVouchers?.length) {
+    //         alert('No data available for export.');
+    //         return;
+    //     }
 
-        const worksheet = utils.json_to_sheet(data);
-        const workbook = utils.book_new();
-        utils.book_append_sheet(workbook, worksheet, 'Ledger');
+    //     const data = filteredVouchers.map((row, index) => ({
+    //         '#No': index + 1,
+    //         'Voucher No': row.voucherNo || '-',
+    //         'Ledger': row.ledger,
+    //         'Date': fDate(row.date),
+    //         'Voucher Type': row.voucherType || '-',
+    //         'Debit Balance': fCurrency(row.debitAmount) || '-',
+    //         'Credit Balance': fCurrency(row.creditAmount) || '-',
+    //     }));
 
-        writeFile(workbook, `Ledger_${id}.xlsx`);
-    };
+    //     const worksheet = utils.json_to_sheet(data);
+    //     const workbook = utils.book_new();
+    //     utils.book_append_sheet(workbook, worksheet, 'Ledger');
+
+    //     writeFile(workbook, `Ledger_${id}.xlsx`);
+    // };
 
     // Handle pagination changes
     const handleChangePage = (event, newPage) => {
@@ -145,8 +155,8 @@ export function LedgerListDetails({ invoice }) {
                     { name: 'View' },
                 ]}
                 action={
-                    <Button variant="contained" onClick={handleExportData}>
-                        Export Data
+                    <Button variant="contained" onClick={handleDownloadPdf}>
+                       Download
                     </Button>
                 }
                 sx={{ mb: { xs: 3, md: 5 } }}

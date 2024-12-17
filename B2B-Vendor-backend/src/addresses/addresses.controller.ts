@@ -18,9 +18,10 @@ import { AddressesService } from './addresses.service';
 import { CreateAddressDto, UpdateAddressDto } from './addresses.dto';
 import { Request, Response } from 'express';
 import { JwtAuthGuard } from './../jwt/jwt-auth.guard';
+import { SessionGuard } from './../jwt/session.guard';
 
-@UseGuards(JwtAuthGuard) // Protect all routes in this controller
 @Controller('addresses')
+@UseGuards(SessionGuard,JwtAuthGuard)
 export class AddressesController {
     constructor(private readonly addressesService: AddressesService) { }
 

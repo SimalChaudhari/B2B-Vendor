@@ -22,6 +22,7 @@ import { useFetchData } from '../components/fetch-receivable';
 import { useParams } from 'react-router';
 import { useSelector } from 'react-redux';
 import { writeFile, utils } from 'xlsx';
+import { generatePDF } from '../utils/generatePDF';
 
 export function ReceivablesListDetails({ invoice }) {
     const { fetchByIdData } = useFetchData();
@@ -41,34 +42,44 @@ export function ReceivablesListDetails({ invoice }) {
             String(value).toLowerCase().includes(searchQuery.toLowerCase())
         )
     );
+  
 
     useEffect(() => {
         fetchByIdData(id);
     }, []);
 
-    const handleExportData = () => {
-        if (!filteredBills?.length) {
-            alert('No data available for export.');
+    const handleDownloadPdf = () => {
+        if (!filteredBills || filteredBills.length === 0) {
+            console.error('No data available for download.');
             return;
         }
+        // Call the generatePDF function to generate and download the PDF
+        generatePDF(filteredBills, receivable.party);
+    }
 
-        const data = filteredBills.map((row, index) => ({
-            '#No': index + 1,
-            'Tally Invoice No': row.tallyInvNo,
-            'Tally Order ID': row.tallyOrdId || '-',
-            'NX Order ID': row.nxOrderId || '-',
-            'Opening Balance': fCurrency(row.openingBalance) || '-',
-            'Closing Balance': fCurrency(row.closingBalance) || '-',
-            'Credit Period': row.creditPeriod || '-',
-            'Bill Date': fDate(row.billDate),
-        }));
+    // const handleExportData = () => {
+    //     if (!filteredBills?.length) {
+    //         alert('No data available for export.');
+    //         return;
+    //     }
 
-        const worksheet = utils.json_to_sheet(data);
-        const workbook = utils.book_new();
-        utils.book_append_sheet(workbook, worksheet, 'Receivables');
+    //     const data = filteredBills.map((row, index) => ({
+    //         '#No': index + 1,
+    //         'Tally Invoice No': row.tallyInvNo,
+    //         'Tally Order ID': row.tallyOrdId || '-',
+    //         'NX Order ID': row.nxOrderId || '-',
+    //         'Opening Balance': fCurrency(row.openingBalance) || '-',
+    //         'Closing Balance': fCurrency(row.closingBalance) || '-',
+    //         'Credit Period': row.creditPeriod || '-',
+    //         'Bill Date': fDate(row.billDate),
+    //     }));
 
-        writeFile(workbook, `Receivables_${id}.xlsx`);
-    };
+    //     const worksheet = utils.json_to_sheet(data);
+    //     const workbook = utils.book_new();
+    //     utils.book_append_sheet(workbook, worksheet, 'Receivables');
+
+    //     writeFile(workbook, `Receivables_${id}.xlsx`);
+    // };
 
     // Handle pagination changes
     const handleChangePage = (event, newPage) => {
@@ -148,8 +159,8 @@ export function ReceivablesListDetails({ invoice }) {
                     { name: 'View' },
                 ]}
                 action={
-                    <Button variant="contained" onClick={handleExportData}>
-                        Export Data
+                    <Button variant="contained" onClick={handleDownloadPdf}>
+                        Download
                     </Button>
                 }
                 sx={{ mb: { xs: 3, md: 5 } }}
@@ -191,7 +202,7 @@ export function ReceivablesListDetails({ invoice }) {
                     fullWidth
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                      sx={{ mb: 2,mt:2 }}
+                    sx={{ mb: 2, mt: 2 }}
                 />
 
                 {renderList}

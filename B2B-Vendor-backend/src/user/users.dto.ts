@@ -83,6 +83,11 @@ export class VendorDto {
     @IsEnum(UserRole)
     role?: UserRole;
 
+    
+    @IsOptional()
+    sessionToken?: string | null; // Token for session management
+
+
     @IsOptional()
     otp?: string | null;
 
@@ -94,7 +99,6 @@ export class VendorDto {
 
     @IsOptional()
     is_allow_place_order?: boolean; // Optional additional details
-
 
     @IsOptional()
     createdAt?: Date;

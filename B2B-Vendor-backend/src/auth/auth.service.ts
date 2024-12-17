@@ -11,6 +11,7 @@ import { UserRole, UserStatus } from './../user/users.entity';
 import { EmailService } from './../service/email.service';
 import { AddressesService } from './../addresses/addresses.service';
 import { SMSService } from './../service/sms.service';
+import { v4 as uuidv4 } from 'uuid'; // Install uuid for unique session tokens
 
 const generateOTP = (): string => {
   const otp = Math.floor(100000 + Math.random() * 900000).toString(); // Generate a 6-digit OTP
@@ -187,14 +188,20 @@ export class AuthService {
         throw new UnauthorizedException('Invalid OTP');
       }
 
+
+      // Generate a new sessionToken and invalidate old sessions
+      const newSessionToken = uuidv4();
+
       // Clear OTP after successful login
       user.otp = null;
       user.otpExpires = null;
+      user.sessionToken = newSessionToken;
+
       await this.userRepository.save(user); // Save the updated user
-      const payload = { email: user.email, id: user.id, role: user.role, name: user.name }; // You can add other properties as needed
+      const payload = { email: user.email, id: user.id, role: user.role, name: user.name,sessionToken: newSessionToken };
 
       // Exclude otp and otpExpires from the returned user
-      const { otp, otpExpires, isDeleted, ...userWithoutOtp } = user;
+      const { otp, otpExpires, isDeleted,sessionToken, ...userWithoutOtp } = user;
 
       return {
         message: 'User Logged in successfully',

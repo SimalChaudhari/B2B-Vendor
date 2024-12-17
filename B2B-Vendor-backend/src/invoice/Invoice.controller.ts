@@ -5,10 +5,11 @@ import { Invoice, InvoiceStatus } from './invoice.entity';
 import { InvoiceRetryService } from './invoice-retry.service';
 import { Request } from 'express';
 import { JwtAuthGuard } from './../jwt/jwt-auth.guard';
+import { SessionGuard } from './../jwt/session.guard';
 
-
-@UseGuards(JwtAuthGuard)
 @Controller('retry-invoice')
+@UseGuards(SessionGuard,JwtAuthGuard)
+
 export class InvoiceController {
     constructor(
         @InjectRepository(Invoice)

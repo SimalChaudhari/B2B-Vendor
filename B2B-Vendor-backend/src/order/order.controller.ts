@@ -8,9 +8,10 @@ import { isAdmin } from './../utils/auth.utils';
 import { JwtAuthGuard } from './../jwt/jwt-auth.guard';
 import { RolesGuard } from './../jwt/roles.guard';
 import { UserService } from './../user/users.service';
+import { SessionGuard } from './../jwt/session.guard';
 
-@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('order')
+@UseGuards(SessionGuard,JwtAuthGuard,RolesGuard)
 export class OrderController {
     constructor(private readonly orderService: OrderService,
         private readonly userService: UserService, // Inject UserService

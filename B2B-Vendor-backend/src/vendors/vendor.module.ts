@@ -10,9 +10,15 @@ import { AddressEntity } from './../addresses/addresses.entity';
 import { AddressesService } from './../addresses/addresses.service';
 import { SyncControlSettings } from './../settings/setting.entity';
 import { SyncLogEntity } from './../sync-log/sync-log.entity';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([VendorEntity,UserEntity,AddressEntity,SyncLogEntity,SyncControlSettings])], // Register the VendorEntity
+  imports: [TypeOrmModule.forFeature([VendorEntity,UserEntity,AddressEntity,SyncLogEntity,SyncControlSettings]),
+  JwtModule.register({
+      secret: process.env.JWT_SECRET, // Use your JWT secret from the .env file
+      signOptions: { }, // Set your token expiration
+    }),
+], // Register the VendorEntity
   controllers: [VendorController], // Register the VendorController
   providers: [VendorService,AddressesService,SyncLogService], // Register the VendorService and FirebaseService
 })

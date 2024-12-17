@@ -12,7 +12,7 @@ import { generatePDF, generatePrint } from '../utils/generatePDF';
 
 // ----------------------------------------------------------------------
 
-export function LedgerTableToolbar({ filters, party, onResetPage, dateError, data }) {
+export function LedgerTableToolbar({ filters, onResetPage, dateError, data }) {
 
   const popover = usePopover();
 
@@ -46,20 +46,16 @@ export function LedgerTableToolbar({ filters, party, onResetPage, dateError, dat
       return;
     }
 
-    const { startDate, endDate } = filters.state;
+    // const { startDate, endDate } = filters.state;
 
-    // Filter data based on the date range
-    const filteredData = startDate && endDate
-      ? data.filter((item) => fIsBetween(item.date, startDate, endDate))
-      : data;
+    // // Filter data based on the date range
+    // const filteredData = startDate && endDate
+    //   ? data.filter((item) => fIsBetween(item.date, startDate, endDate))
+    //   : data;
 
-    if (filteredData.length === 0) {
-      console.warn('No data found for the selected date range.');
-      return;
-    }
 
     // Call the generatePDF function to generate and download the PDF
-    generatePDF(filteredData, party);
+    generatePDF(data);
   }
 
   const handlePrint = () => {
@@ -68,21 +64,15 @@ export function LedgerTableToolbar({ filters, party, onResetPage, dateError, dat
       return;
     }
 
-    const { startDate, endDate } = filters.state;
+    // const { startDate, endDate } = filters.state;
 
     // Filter data based on the date range
 
-    const filteredData = startDate && endDate
-      ? data.filter((item) => fIsBetween(item.date, startDate, endDate))
-      : data;
-
-    if (filteredData.length === 0) {
-      console.warn('No data found for the selected date range.');
-      return;
-    }
-
+    // const filteredData = startDate && endDate
+    //   ? data.filter((item) => fIsBetween(item.date, startDate, endDate))
+    //   : data;
     // Generate printable content
-    const printableContent = generatePrint(filteredData, party);
+    const printableContent = generatePrint(data);
 
     // Open a new window and print the content
     const newWindow = window.open('', '_blank');
@@ -145,12 +135,13 @@ export function LedgerTableToolbar({ filters, party, onResetPage, dateError, dat
               ),
             }}
           />
-
+  {/* 
           <Tooltip title="Print & Download">
             <IconButton onClick={popover.onOpen}>
               <Iconify icon="eva:more-vertical-fill" />
             </IconButton>
           </Tooltip>
+          */}
         </Stack>
       </Stack>
 

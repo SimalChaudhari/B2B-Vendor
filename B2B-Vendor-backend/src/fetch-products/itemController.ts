@@ -1,12 +1,18 @@
-import { Controller, HttpStatus, Post, Get, Res, Param, UploadedFiles, UseInterceptors, BadRequestException, Delete, Body, NotFoundException } from '@nestjs/common';
+import { Controller, HttpStatus, Post, Get, Res, Param, UploadedFiles, UseInterceptors, BadRequestException, Delete, Body, NotFoundException, UseGuards } from '@nestjs/common';
 import { Response } from 'express'; // Import Response from express
 import { ItemService } from './item.service';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ItemEntity } from './item.entity';
 
+import { SessionGuard } from './../jwt/session.guard';
+import { JwtAuthGuard } from './../jwt/jwt-auth.guard';
+
+
 @Controller('items')
+@UseGuards(SessionGuard,JwtAuthGuard)
 export class ItemController {
   constructor(private readonly itemService: ItemService) { }
+
 
   @Post('/fetch')
   async fetchItems() {

@@ -15,9 +15,10 @@ import { CartService } from './cart.service';
 import { AddToCartDto } from './cart.dto';
 import { Request, Response } from 'express';
 import { JwtAuthGuard } from './../jwt/jwt-auth.guard';
+import { SessionGuard } from './../jwt/session.guard';
 
-@UseGuards(JwtAuthGuard) // Protect all routes in this controller
 @Controller('cart')
+@UseGuards(SessionGuard,JwtAuthGuard)
 export class CartController {
   constructor(private readonly cartService: CartService) { }
 

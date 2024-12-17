@@ -8,12 +8,17 @@ import {
     Delete,
     Body,
     NotFoundException,
+    UseGuards,
 
 } from '@nestjs/common';
 import { Response } from 'express';
 import { VendorService } from './vendor.service';
+import { JwtAuthGuard } from './../jwt/jwt-auth.guard';
+import { SessionGuard } from './../jwt/session.guard';
+
 
 @Controller('vendors')
+@UseGuards(SessionGuard,JwtAuthGuard)
 export class VendorController {
     constructor(private readonly vendorService: VendorService) { }
 

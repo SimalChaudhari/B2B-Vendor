@@ -1,15 +1,18 @@
 // src/faq/faq.controller.ts
 
-import { Controller, Post, Get, Delete, Param, Body, Put, HttpStatus, Res, UseInterceptors, UploadedFile, UploadedFiles } from '@nestjs/common';
+import { Controller, Post, Get, Delete, Param, Body, Put, HttpStatus, Res, UseInterceptors, UploadedFile, UploadedFiles, UseGuards } from '@nestjs/common';
 import {  BannerService, ContactUsService, FaqService, PrivacyPolicyService, SyncControlSettingsService, TermsConditionsService } from './setting.service';
 import {  CreateBannerDto, CreateContactDto, CreateFaqDto, CreatePrivacyPolicyDto, CreateTermsConditionsDto, UpdateBannerDto, UpdateFaqDto, UpdateSyncControlSettingsDto } from './setting.dto';
 import { ContactUs, PrivacyPolicy, TermsConditions } from './setting.entity';
 import { Response } from 'express';
 import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
+import { JwtAuthGuard } from './../jwt/jwt-auth.guard';
+import { SessionGuard } from './../jwt/session.guard';
 
 
 // FAQ Controller
 @Controller('faq')
+@UseGuards(SessionGuard,JwtAuthGuard)
 export class FaqController {
     constructor(private readonly faqService: FaqService) { }
 
@@ -59,6 +62,7 @@ export class FaqController {
 }
 
 @Controller('privacy-policies')
+@UseGuards(SessionGuard,JwtAuthGuard)
 export class PrivacyPolicyController {
     constructor(private readonly privacyPolicyService: PrivacyPolicyService) { }
 
@@ -90,6 +94,7 @@ export class PrivacyPolicyController {
 //terms-conditions
 
 @Controller('terms-conditions')
+@UseGuards(SessionGuard,JwtAuthGuard)
 export class TermsConditionsController {
     constructor(private readonly termsConditionsService: TermsConditionsService) { }
 
@@ -109,6 +114,7 @@ export class TermsConditionsController {
 }
 // contact as Controller
 @Controller('contact')
+@UseGuards(SessionGuard,JwtAuthGuard)
 export class ContactUsController {
     constructor(private readonly contactService: ContactUsService) { }
 
@@ -128,6 +134,7 @@ export class ContactUsController {
 }
 
 @Controller('banner')
+@UseGuards(SessionGuard,JwtAuthGuard)
 export class BannerController {
     constructor(private readonly bannerService: BannerService) { }
 
@@ -172,6 +179,7 @@ export class BannerController {
 
 // Controller: api_control_settings.controller.ts
 @Controller('sync-control-settings')
+@UseGuards(SessionGuard,JwtAuthGuard)
 export class SyncControlSettingsController {
   constructor(private readonly service: SyncControlSettingsService) {}
 

@@ -17,9 +17,9 @@ export const generatePDF = (filteredData, party) => {
   doc.text(`Ledger Statement of ${party}`, 15, 20);
 
   // Get current date in "dd/mm/yyyy" format
-  const currentDate = new Date();
-  const formattedDate = `${currentDate.getDate().toString().padStart(2, '0')}/${(currentDate.getMonth() + 1).toString().padStart(2, '0')}/${currentDate.getFullYear()}`;
-  doc.text(formattedDate, 170, 20);
+  // const currentDate = new Date();
+  // const formattedDate = `${currentDate.getDate().toString().padStart(2, '0')}/${(currentDate.getMonth() + 1).toString().padStart(2, '0')}/${currentDate.getFullYear()}`;
+  // doc.text(formattedDate, 170, 20);
 
   // Table header and data (Updated to match filteredData)
   const headers = [['Voucher No', 'Voucher Type', 'Ledger', 'Date', 'Credit Amount', 'Debit Amount']];
@@ -92,9 +92,9 @@ export const generatePrint = (filteredData, party) => {
   doc.text(`Ledger Statement of ${party}`, 15, 20);
 
   // Get current date in "dd/mm/yyyy" format
-  const currentDate = new Date();
-  const formattedDate = `${currentDate.getDate().toString().padStart(2, '0')}/${(currentDate.getMonth() + 1).toString().padStart(2, '0')}/${currentDate.getFullYear()}`;
-  doc.text(formattedDate, 170, 20);
+  // const currentDate = new Date();
+  // const formattedDate = `${currentDate.getDate().toString().padStart(2, '0')}/${(currentDate.getMonth() + 1).toString().padStart(2, '0')}/${currentDate.getFullYear()}`;
+  // doc.text(formattedDate, 170, 20);
 
   // Table header and data (Updated to match filteredData)
   const headers = [['Voucher No', 'Voucher Type', 'Ledger', 'Date', 'Credit Amount', 'Debit Amount']];

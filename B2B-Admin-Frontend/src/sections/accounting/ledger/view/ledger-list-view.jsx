@@ -152,7 +152,6 @@ export function LedgerListView() {
 
                     <LedgerTableToolbar
                         filters={filters}
-                        party = {selectedParty}
                         onResetPage={table.onResetPage}
                         dateError={dateError}
                         data={tableData}

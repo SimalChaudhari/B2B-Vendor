@@ -1,9 +1,13 @@
 // stock.controller.ts
-import { Body, Controller, Delete, Get, HttpStatus, NotFoundException, Post, Res } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, NotFoundException, Post, Res, UseGuards } from '@nestjs/common';
 import { StockService } from './stock.service';
 import { Response } from 'express'; // Import Response from express
 
+import { JwtAuthGuard } from './../jwt/jwt-auth.guard';
+import { SessionGuard } from './../jwt/session.guard';
+
 @Controller('stocks')
+@UseGuards(SessionGuard,JwtAuthGuard)
 export class StockController {
   constructor(private readonly stockService: StockService) {}
 

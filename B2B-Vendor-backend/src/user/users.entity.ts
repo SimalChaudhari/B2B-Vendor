@@ -51,7 +51,7 @@ export class UserEntity {
     @Column({ type: 'varchar' })
     mobile!: string; // Vendor phone number
 
-    @Column({ type: 'varchar'}) // Ensure email is unique
+    @Column({ type: 'varchar' }) // Ensure email is unique
     email!: string; // Vendor email address
 
     @Column({ type: 'varchar' })
@@ -106,6 +106,10 @@ export class UserEntity {
 
     @UpdateDateColumn({ type: 'timestamp' })
     updatedAt!: Date;
+
+
+    @Column({ nullable: true, type: 'varchar' })
+    sessionToken?: string | null; // Token for session management
 
     // @OneToMany(() => OrderEntity, (order) => order.user, { onDelete: 'CASCADE' })
     // orders?: OrderEntity[];

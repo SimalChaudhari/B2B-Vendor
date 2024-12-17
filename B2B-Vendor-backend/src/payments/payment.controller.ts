@@ -9,13 +9,17 @@ import {
     ParseUUIDPipe,
     UseInterceptors,
     UploadedFiles,
+    UseGuards,
 } from '@nestjs/common';
 import { BankAccountService } from './payment.service';
 import { BankAccountDto } from './payment.dto';
 import { BankAccountEntity } from './payment.entity';
 import { FilesInterceptor } from '@nestjs/platform-express';
+import { JwtAuthGuard } from './../jwt/jwt-auth.guard';
+import { SessionGuard } from './../jwt/session.guard';
 
 @Controller('bank-accounts')
+@UseGuards(SessionGuard,JwtAuthGuard)
 export class BankAccountController {
     constructor(private readonly bankAccountService: BankAccountService) { }
 
