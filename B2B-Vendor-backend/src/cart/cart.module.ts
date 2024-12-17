@@ -7,7 +7,7 @@ import { CartService } from './cart.service';
 import { CartController } from './cart.controller';
 import { ItemEntity } from './../fetch-products/item.entity';
 import { JwtModule } from '@nestjs/jwt';
-import { StockEntity } from 'stock/stock.entity';
+import { StockEntity } from './../stock/stock.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([CartItemEntity, ItemEntity,StockEntity]),
