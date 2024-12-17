@@ -7,6 +7,7 @@ import { useParams } from 'react-router';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { itemGetByList } from 'src/store/action/productActions';
+import { Box } from '@mui/material';
 
 // Dummy product data
 // ----------------------------------------------------------------------
@@ -34,9 +35,9 @@ export function ProductEditView() {
                 sx={{ mb: { xs: 3, md: 5 } }}
             />
 
-            <PageContentLayout>
+            <Box>
                 <ProductNewEditForm currentProduct={product} />
-            </PageContentLayout>
+            </Box>
         </DashboardContent>
     );
 }

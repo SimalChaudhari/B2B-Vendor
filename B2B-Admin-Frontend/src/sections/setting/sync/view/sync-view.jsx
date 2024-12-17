@@ -121,7 +121,7 @@ export function SyncView() {
     );
 
     return (
-        <DashboardContent maxWidth="lg">
+        <DashboardContent maxWidth="2xl">
             <CustomBreadcrumbs
                 heading="Sync Settings"
                 links={[

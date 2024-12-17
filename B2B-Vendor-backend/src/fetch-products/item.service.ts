@@ -28,7 +28,7 @@ export class ItemService {
 
   ) { }
   async fetchAndStoreItems(): Promise<void> {
-    const REQUEST_TIMEOUT = 20000; // 20 seconds timeout
+    const REQUEST_TIMEOUT = 60000; // 20 seconds timeout
 
     const productSyncSetting = await this.syncControlSettingsRepository.findOne({
       where: { moduleName: 'Products' },

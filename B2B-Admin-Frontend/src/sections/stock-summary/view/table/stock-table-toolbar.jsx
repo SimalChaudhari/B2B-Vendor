@@ -122,7 +122,8 @@ export function StockTableToolbar({ options, filters, onResetPage }) {
             direction={{ xs: 'column', md: 'row' }}
             sx={{ p: 2.5, pr: { xs: 2.5, md: 1 } }}
         >
-            {/* Group Filter */}
+            {/* Group Filter
+            
             <FormControl sx={{ flexShrink: 0, width: { xs: 1, md: 200 } }}>
                 <InputLabel htmlFor="group-filter-select-label">Group</InputLabel>
                 <Select
@@ -146,8 +147,9 @@ export function StockTableToolbar({ options, filters, onResetPage }) {
                     ))}
                 </Select>
             </FormControl>
+             */}
 
-            {/* SubGroup1 Filter */}
+            {/* SubGroup1 Filter
             <FormControl sx={{ flexShrink: 0, width: { xs: 1, md: 200 } }}>
                 <InputLabel htmlFor="subgroup1-filter-select-label">Sub-Group 1</InputLabel>
                 <Select
@@ -171,8 +173,9 @@ export function StockTableToolbar({ options, filters, onResetPage }) {
                     ))}
                 </Select>
             </FormControl>
+             */}
 
-            {/* SubGroup2 Filter */}
+            {/* SubGroup2 Filter 
             <FormControl sx={{ flexShrink: 0, width: { xs: 1, md: 200 } }}>
                 <InputLabel htmlFor="subgroup2-filter-select-label">Sub-Group 2</InputLabel>
                 <Select
@@ -195,7 +198,7 @@ export function StockTableToolbar({ options, filters, onResetPage }) {
                         </MenuItem>
                     ))}
                 </Select>
-            </FormControl>
+            </FormControl>  */}
 
             {/* Search Filter */}
             <Stack direction="row" alignItems="center" spacing={2} flexGrow={1} sx={{ width: 1 }}>
