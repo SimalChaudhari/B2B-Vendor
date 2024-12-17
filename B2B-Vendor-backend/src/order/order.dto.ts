@@ -4,7 +4,7 @@ import { ArrayMinSize, IsEnum, IsNotEmpty, IsNumber, IsOptional, ValidateNested 
 export enum DeliveryType {
     FREE = 'free',
     transportation = "Transportation",
-    sales_pickup = "Self Pickup"
+    self_pickup = "Self Pickup"
 }
 export class CreateOrderDto {
 
