@@ -20,7 +20,7 @@ import { useForm } from 'react-hook-form';
 
 const DELIVERY_OPTIONS = [
   { id: 'Transportation', value: 0, label: 'Transportation', description: '3-5 days delivery' },
-  { id: 'Sales Pickup', value: 0, label: 'Sales Pickup', description: '2-3 days delivery' },
+  { id: 'Self Pickup', value: 0, label: 'Self Pickup', description: '2-3 days delivery' },
 ]
 
 export function CheckoutBillingAddress() {

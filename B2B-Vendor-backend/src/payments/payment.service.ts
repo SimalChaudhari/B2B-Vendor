@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { BankAccountEntity } from './payment.entity';
 import { BankAccountDto, PaymentType } from './payment.dto';
-import { FirebaseService } from 'service/firebase.service';
+import { FirebaseService } from './../service/firebase.service';
 
 @Injectable()
 export class BankAccountService {

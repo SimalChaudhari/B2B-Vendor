@@ -13,7 +13,7 @@ import { TextInput } from "react-native-paper";
 
 const DELIVERY_TYPES = {
     TRANSPORTATION: "Transportation",
-    SALES_PICKUP: "Sales Pickup",
+    SALES_PICKUP: "Self Pickup",
 };
 
 const VendorConfirmationScreen = () => {

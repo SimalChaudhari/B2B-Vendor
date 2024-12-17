@@ -77,7 +77,7 @@ function OptionItem({ option, selected, ...other }) {
       {...other}
     >
       {label === 'Transportation' && <Iconify icon="carbon:delivery" width={40} />}
-      {label === 'Sales Pickup' && <Iconify icon="carbon:user" width={40} />}
+      {label === 'Self Pickup' && <Iconify icon="carbon:user" width={40} />}
 
 
       <ListItemText

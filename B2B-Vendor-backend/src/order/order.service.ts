@@ -15,7 +15,7 @@ import { UserEntity } from './../user/users.entity';
 import { AddressEntity } from './../addresses/addresses.entity';
 import * as fs from 'fs';
 import * as path from 'path';
-import { FirebaseService } from 'service/firebase.service';
+import { FirebaseService } from './../service/firebase.service';
 import { Cron } from '@nestjs/schedule';
 
 

@@ -22,7 +22,7 @@ export function CheckoutPayment({ deliveryOptions, methods }) {
 
 // const DELIVERY_OPTIONS = [
 //   { value: 0, label: 'Transportation', description: '3-5 days delivery' },
-//   { value: 20, label: 'Sales Pickup', description: '2-3 days delivery' },
+//   { value: 20, label: 'Self Pickup', description: '2-3 days delivery' },
 // ];
 
 // export function CheckoutPayment() {
