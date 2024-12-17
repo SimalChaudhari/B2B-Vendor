@@ -16,7 +16,7 @@ import { VendorModule } from './vendors/vendor.module';
 import { SyncLogModule } from './sync-log/sync-log.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { BankAccountModule } from 'payments/payment.module';
+import { BankAccountModule } from './payments/payment.module';
 
 @Module({
   imports: [

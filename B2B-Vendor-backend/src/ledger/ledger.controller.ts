@@ -1,9 +1,9 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, NotFoundException, Param, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { LedgerService } from './ledger.service';
-import { JwtAuthGuard } from 'jwt/jwt-auth.guard';
-import { RolesGuard } from 'jwt/roles.guard';
-import { isAdmin, isVendor } from 'utils/auth.utils';
+import { JwtAuthGuard } from './../jwt/jwt-auth.guard';
+import { RolesGuard } from './../jwt/roles.guard';
+import { isAdmin, isVendor } from './../utils/auth.utils';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('ledgers')
