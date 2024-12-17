@@ -1,19 +1,33 @@
+import { VercelRequest, VercelResponse } from '@vercel/node';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { INestApplication } from '@nestjs/common';
 
-let cachedServer: any;
 
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  await app.init();  // Initialize the NestJS app
-  return app.getHttpAdapter().getInstance();
+let cachedApp: INestApplication<any>;
+
+async function buildNestApp() {
+  if (!cachedApp) {
+    cachedApp = await NestFactory.create(AppModule);
+    cachedApp.enableCors({
+      origin:"*", // Frontend URL
+      methods: 'GET, POST, PUT, DELETE',
+      credentials: true,
+    });
+  }
+  return cachedApp;
 }
 
-const server = async (req: any, res: any) => {
-  if (!cachedServer) {
-    cachedServer = await bootstrap();  // Lazy initialization on the first request
-  }
-  cachedServer(req, res);  // Pass request and response to the server instance
-};
+export default async (req: VercelRequest, res: VercelResponse) => {
+  const app = await buildNestApp();
 
-export default server;
+  // Handle CORS in response headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+
+  // This will call the NestJS app
+  await app.init();
+  return app.getHttpAdapter().getInstance()(req, res);
+};
