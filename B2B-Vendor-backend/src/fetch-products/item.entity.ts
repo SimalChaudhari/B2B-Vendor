@@ -40,8 +40,8 @@ export class ItemEntity {
   @Column({ type: 'varchar', nullable: true })
   denominator!: number;
 
-  @Column({ type: 'date', nullable: true })
-  sellingPriceDate!: Date;
+  @Column({ type: 'varchar', nullable: true })
+  sellingPriceDate!: string;
 
   @Column() // Set default value for discount
   sellingPrice!: number;
@@ -49,8 +49,8 @@ export class ItemEntity {
   @Column({ type: 'varchar', nullable: true })
   gstApplicable!: string;
 
-  @Column({ type: 'date', nullable: true })
-  gstApplicableDate!: Date;
+  @Column({ type: 'varchar', nullable: true })
+  gstApplicableDate!: string;
 
   @Column({ type: 'varchar', nullable: true })
   taxability!: string;

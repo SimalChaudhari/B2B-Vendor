@@ -73,6 +73,7 @@ export class ItemService {
         }
       }
     } catch (error: any) {
+      console.log("🚀 ~ ItemService ~ fetchAndStoreItems ~ error:", error)
       // If the error is already a BadRequestException, rethrow it
       if (error instanceof BadRequestException) {
         throw error;
@@ -102,10 +103,10 @@ export class ItemService {
       itemDto.alternateUnit = this.cleanString(item.ALTERNATEUNIT?.[0]);
       itemDto.conversion = this.cleanString(item.CONVERSION?.[0]);
       itemDto.denominator = parseInt(item.DENOMINATOR?.[0], 10) || 1;
-      itemDto.sellingPriceDate = new Date(item.SELLINGPRICEDATE?.[0]);
+      itemDto.sellingPriceDate = this.cleanString(item.SELLINGPRICEDATE?.[0]);  
       itemDto.sellingPrice = parseFloat(item.SELLINGPRICE?.[0]) || 0;
       itemDto.gstApplicable = this.cleanString(item.GSTAPPLICABLE?.[0]);
-      itemDto.gstApplicableDate = new Date(item.GSTAPPLICABLEDATE?.[0]);
+      itemDto.gstApplicableDate = this.cleanString(item.GSTAPPLICABLEDATE?.[0]);
       itemDto.taxability = this.cleanString(item.TAXABILITY?.[0]);
       itemDto.gstRate = parseFloat(item.GSTRATE?.[0]) || 0;
 
@@ -132,10 +133,10 @@ export class ItemService {
       existingProduct.alternateUnit !== newItem.alternateUnit ||
       existingProduct.conversion !== newItem.conversion ||
       existingProduct.denominator !== newItem.denominator ||
-      existingProduct.sellingPriceDate.getTime() !== newItem.sellingPriceDate.getTime() || // For dates, compare using getTime()
+      existingProduct.sellingPriceDate !== newItem.sellingPriceDate || // For dates, compare using getTime()
       existingProduct.sellingPrice !== newItem.sellingPrice ||
       existingProduct.gstApplicable !== newItem.gstApplicable ||
-      existingProduct.gstApplicableDate.getTime() !== newItem.gstApplicableDate.getTime() ||
+      existingProduct.gstApplicableDate !== newItem.gstApplicableDate ||
       existingProduct.taxability !== newItem.taxability ||
       existingProduct.gstRate !== newItem.gstRate
     );

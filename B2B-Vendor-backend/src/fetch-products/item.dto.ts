@@ -48,7 +48,7 @@ export class ItemDto {
 
     @IsNotEmpty()
     @IsDateString()
-    sellingPriceDate?: Date;
+    sellingPriceDate?: string;
 
     @IsNotEmpty()
     @IsNumber()
@@ -60,7 +60,7 @@ export class ItemDto {
 
     @IsNotEmpty()
     @IsDateString()
-    gstApplicableDate?: Date;
+    gstApplicableDate?: string;
 
     @IsNotEmpty()
     @IsString()
