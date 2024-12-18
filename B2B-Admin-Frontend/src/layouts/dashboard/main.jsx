@@ -16,7 +16,9 @@ export function Main({ children, isNavHorizontal, sx, ...other }) {
       sx={{
         display: 'flex',
         flex: '1 1 auto',
+        pt:1,
         flexDirection: 'column',
+        backgroundColor: "#f0f3f5",
         ...(isNavHorizontal && {
           '--layout-dashboard-content-pt': '40px',
         }),

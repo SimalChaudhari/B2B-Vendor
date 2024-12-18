@@ -69,6 +69,7 @@ export function HeaderSection({
       className={layoutClasses.header}
       sx={{
         zIndex: 'var(--layout-header-zIndex)',
+        backgroundColor: 'rgb(230, 77, 84)', // Change AppBar color to red
         ...sx,
       }}
       {...other}
@@ -80,7 +81,7 @@ export function HeaderSection({
         {...slotProps?.toolbar}
         sx={{
           ...toolbarStyles.default,
-          ...(!disableOffset && offsetTop && toolbarStyles.offset),
+          ...(!disableOffset && offsetTop),
           ...slotProps?.toolbar?.sx,
         }}
       >

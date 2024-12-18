@@ -42,16 +42,7 @@ export function AccountButton({ open, photoURL, displayName, sx, ...other }) {
       {...other}
     >
       <NoSsr fallback={renderFallback}>
-        <AnimateAvatar
-          slotProps={{
-            avatar: { src: photoURL, alt: displayName },
-            overlay: {
-              border: 1,
-              spacing: 2,
-              color: `conic-gradient(${theme.vars.palette.primary.main}, ${theme.vars.palette.warning.main}, ${theme.vars.palette.primary.main})`,
-            },
-          }}
-        >
+        <AnimateAvatar>
           {displayName?.charAt(0).toUpperCase()}
         </AnimateAvatar>
       </NoSsr>

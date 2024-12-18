@@ -15,7 +15,16 @@ export function SettingsButton({ sx, ...other }) {
     <IconButton
       aria-label="settings"
       onClick={settings.onToggleDrawer}
-      sx={{ p: 0, width: 40, height: 40, ...sx }}
+      sx={{
+        p: 0, width: 40,
+        height: 40,
+        ...sx,
+        background: "white",
+        "&:hover": {
+          background: "white", // Ensures hover background remains white
+        },
+
+      }}
       {...other}
     >
       <Badge color="error" variant="dot" invisible={!settings.canReset}>
