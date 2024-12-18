@@ -20,7 +20,9 @@ export function applyFilter({ inputData, comparator, filters, dateError, userRol
               order.user.email.toLowerCase().includes(name.toLowerCase()) ||
               order.user.mobile.toLowerCase().includes(name.toLowerCase()) ||
               order.totalPrice.toString().includes(name.toLowerCase()) ||
-              order.totalQuantity.toString().includes(name.toLowerCase())
+              order.totalQuantity.toString().includes(name.toLowerCase()) ||
+              order.finalAmount.toString().includes(name.toLowerCase()) || 
+              order.discount.toString().includes(name.toLowerCase())
               : order.totalPrice.toString().includes(name.toLowerCase()) ||
               order.totalQuantity.toString().includes(name.toLowerCase())
           );
