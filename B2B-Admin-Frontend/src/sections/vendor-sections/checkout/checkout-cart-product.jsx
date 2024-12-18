@@ -15,6 +15,7 @@ import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { addQuantity, cartList } from 'src/store/action/cartActions';
 import { Link } from 'react-router-dom';
+import { DUMMY_IMAGE } from 'src/components/constants';
 
 // ----------------------------------------------------------------------
 
@@ -91,27 +92,33 @@ export function CheckoutCartProduct({ productID, row, onDownload, onDelete }) {
   return (
     <TableRow>
       <TableCell>
-        <Tooltip title="Click To Product Details" arrow>
-          <Link
-            to={`/items/view/${productID}`}
-            style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center' }}
-          >
-            <Stack spacing={2} direction="row" alignItems="center" sx={{ cursor: "pointer" }}>
-              <Avatar
-                variant="rounded"
-                alt={row.name}
-                src={row.coverUrl}
-                sx={{ width: 64, height: 64 }}
-              />
-              <Stack spacing={0.5}>
-                <Typography noWrap variant="subtitle2" sx={{ maxWidth: 240 }}>
-                  {row.name}
-                </Typography>
-              </Stack>
 
+        <Link
+          to={`/items/view/${productID}`}
+          style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center' }}
+        >
+          <Stack spacing={2} direction="row" alignItems="center" sx={{ cursor: "pointer" }}>
+            <Avatar
+              variant="rounded"
+              alt={row?.productImages?.[0] || "Product Image"}
+              src={row?.productImages && row?.productImages?.length ? row.productImages?.[0] : DUMMY_IMAGE}
+              // sx={{ width: 64, height: 64 }}
+            />
+            <Stack spacing={0.5}>
+              <Typography noWrap variant="subtitle2" sx={{ maxWidth: 240 }}>
+                {row.name}
+              </Typography>
+              {/* Secondary data */}
+              <Tooltip title={row.description} arrow>
+                <Typography noWrap variant="body2" color="textSecondary" sx={{ maxWidth: 240 }}>
+                  {row.description} {/* Secondary data */}
+                </Typography>
+              </Tooltip>
             </Stack>
-          </Link>
-        </Tooltip>
+
+          </Stack>
+        </Link>
+
       </TableCell>
 
       <TableCell>{fCurrency(row.price)}</TableCell>

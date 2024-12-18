@@ -18,6 +18,7 @@ const useCart = () => {
     stockQuantity: item.stockQuantity,
     userId: item.userId,
     price: item.product.sellingPrice,
+    description: item.product.description,
     totalAmount: item.product.sellingPrice * item.quantity,
     name: item.product.itemName,
     productID: item.product.id,

@@ -5,11 +5,15 @@ import { OrderItemEntity } from "./../order/order.item.entity";
 
 export function generateInvoiceXML(order: OrderEntity, orderItems: OrderItemEntity[], adminState: string | null): string {
 
-    const { user, address, totalPrice, orderNo, createdAt } = order;
+
+    const { user, address, totalPrice, orderNo, discount,createdAt } = order;
     // Check if createdAt is defined, or use the current date as fallback
     const formattedDate = createdAt ? formatDate(new Date(createdAt)) : formatDate(new Date());
     const formattedDateT = createdAt ? formatDateT(new Date(createdAt)) : formatDate(new Date());
 
+    const finalAmount = totalPrice * discount / 100
+    const formattedAmount = `-${Math.abs(finalAmount).toFixed(2)}`;
+    const formattedVatExpAmount = `-${Math.abs(finalAmount).toFixed(2)}`;
 
 
     // Generate XML for each product in the order
@@ -53,7 +57,7 @@ export function generateInvoiceXML(order: OrderEntity, orderItems: OrderItemEnti
     // Generate GST entries if applicable
     const gstXML = generateGSTDetails(isSameState, totalPrice);
 
-return `
+    return `
 <ENVELOPE>
     <HEADER>
         <TALLYREQUEST>Import Data</TALLYREQUEST>
@@ -117,6 +121,16 @@ return `
                             <ISLASTDEEMEDPOSITIVE>Yes</ISLASTDEEMEDPOSITIVE>
                             <AMOUNT>-${totalPrice}</AMOUNT>
                         </LEDGERENTRIES.LIST>
+
+                         <LEDGERENTRIES.LIST>
+                              <APPROPRIATEFOR>&#4; Not Applicable</APPROPRIATEFOR>
+                               <ROUNDTYPE>&#4; Not Applicable</ROUNDTYPE>
+                                 <LEDGERNAME>Discount</LEDGERNAME>
+                                  <GSTCLASS>&#4; Not Applicable</GSTCLASS>
+                                      <ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>
+                                       <AMOUNT>${formattedAmount}</AMOUNT>
+                                      <VATEXPAMOUNT>${formattedVatExpAmount}</VATEXPAMOUNT>
+                             </LEDGERENTRIES.LIST>
                             ${gstXML}
                     </VOUCHER>
                 </TALLYMESSAGE>

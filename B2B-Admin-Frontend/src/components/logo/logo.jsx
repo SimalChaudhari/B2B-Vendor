@@ -12,7 +12,7 @@ import pngLogo from './assets/tech.png'
 // ----------------------------------------------------------------------
 
 export const Logo = forwardRef(
-  ({ width = 100, height = 80, disableLink = false, className, href = '/', sx, ...other }, ref) => {
+  ({ width = 72, height = 72, disableLink = false, className, href = '/', sx, ...other }, ref) => {
     const theme = useTheme();
 
     const gradientId = useId();

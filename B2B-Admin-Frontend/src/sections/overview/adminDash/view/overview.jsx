@@ -51,7 +51,7 @@ export function Overview() {
     };
 
     return (
-        <DashboardContent sx={{ pt: 5 }} maxWidth="2xl">
+        <DashboardContent sx={{ pt: 2 }} maxWidth="2xl">
             <Grid container spacing={3} disableEqualOverflow>
                 <Grid xs={12} md={4}>
                     <Summary

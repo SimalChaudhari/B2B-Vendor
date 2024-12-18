@@ -13,25 +13,25 @@ function colorVars(theme, variant) {
   } = theme;
 
   return {
-    '--nav-item-color': 'black',
-    '--nav-item-hover-bg': "grey",
+    '--nav-item-color': palette.text.secondary,
+    '--nav-item-hover-bg': palette.action.hover,
     '--nav-item-caption-color': palette.text.disabled,
     // root
-    '--nav-item-root-active-color': "blue",
-    '--nav-item-root-active-color-on-dark': "white",
-    '--nav-item-root-active-bg': "white",
-    '--nav-item-root-active-hover-bg': "white",
-    '--nav-item-root-open-color': "white",
-    '--nav-item-root-open-bg': "grey",
+    '--nav-item-root-active-color': palette.primary.main,
+    '--nav-item-root-active-color-on-dark': palette.primary.light,
+    '--nav-item-root-active-bg': varAlpha(palette.primary.mainChannel, 0.08),
+    '--nav-item-root-active-hover-bg': varAlpha(palette.primary.mainChannel, 0.16),
+    '--nav-item-root-open-color': palette.text.primary,
+    '--nav-item-root-open-bg': palette.action.hover,
     // sub
-    '--nav-item-sub-active-color': "white",
+    '--nav-item-sub-active-color': palette.text.primary,
     '--nav-item-sub-active-bg': palette.action.selected,
-    '--nav-item-sub-open-color': "white",
+    '--nav-item-sub-open-color': palette.text.primary,
     '--nav-item-sub-open-bg': palette.action.hover,
     ...(variant === 'vertical' && {
-      '--nav-item-sub-active-bg': "#afaaa9",
-      '--nav-subheader-color': "white",
-      '--nav-subheader-hover-color': "white",
+      '--nav-item-sub-active-bg': palette.action.hover,
+      '--nav-subheader-color': palette.text.disabled,
+      '--nav-subheader-hover-color': palette.text.primary,
     }),
   };
 }

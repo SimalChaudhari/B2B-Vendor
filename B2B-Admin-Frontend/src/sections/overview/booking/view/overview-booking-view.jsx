@@ -46,7 +46,7 @@ export function OverviewBookingView() {
   const pendingOrders = allMonths.map((month) => monthLookup[month]?.pending || 0);
 
   return (
-    <DashboardContent maxWidth="xl">
+    <DashboardContent maxWidth="2xl" sx={{pt:2}}>
       <Grid container spacing={3} disableEqualOverflow>
         <Grid xs={12} md={3}>
           <BookingWidgetSummary

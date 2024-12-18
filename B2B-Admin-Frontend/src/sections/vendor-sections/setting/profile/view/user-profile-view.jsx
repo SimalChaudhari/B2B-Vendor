@@ -17,7 +17,7 @@ export function UserProfileView() {
   const tabs = useTabs('profile');
 
   return (
-    <DashboardContent>
+    <DashboardContent maxWidth="2xl">
       <CustomBreadcrumbs
         heading="Profile"
         links={[

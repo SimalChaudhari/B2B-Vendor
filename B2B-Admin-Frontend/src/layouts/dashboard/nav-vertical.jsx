@@ -14,7 +14,7 @@ export function NavVertical({ sx, data, slots, isNavMini, layoutQuery, onToggleN
   const renderNavVertical = (
     <>
       {slots?.topArea ?? (
-        <Box sx={{ pl: 3.5, pt: 2.5, pb: 1 }}>
+        <Box sx={{ pl: 3.5,backgroundColor: 'rgb(230, 77, 84)' }}>
           <Logo />
         </Box>
       )}
@@ -30,7 +30,7 @@ export function NavVertical({ sx, data, slots, isNavMini, layoutQuery, onToggleN
   const renderNavMini = (
     <>
       {slots?.topArea ?? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 2.5 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', py: 0,backgroundColor: 'rgb(230, 77, 84)'}}>
           <Logo />
         </Box>
       )}
@@ -54,7 +54,7 @@ export function NavVertical({ sx, data, slots, isNavMini, layoutQuery, onToggleN
         display: 'none',
         position: 'fixed',
         flexDirection: 'column',
-        bgcolor: 'rgb(230, 77, 84)',
+        bgcolor: 'var(--layout-nav-bg)',
         zIndex: 'var(--layout-nav-zIndex)',
         width: isNavMini ? 'var(--layout-nav-mini-width)' : 'var(--layout-nav-vertical-width)',
         borderRight: `1px solid var(--layout-nav-border-color, ${varAlpha(theme.vars.palette.grey['500Channel'], 0.12)})`,

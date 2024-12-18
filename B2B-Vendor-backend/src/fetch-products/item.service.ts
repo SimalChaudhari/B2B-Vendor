@@ -54,10 +54,10 @@ export class ItemService {
       const existingItems = await this.itemRepository.find();
 
       // Create a Map of existing items for quick lookup by alias
-      const existingItemMap = new Map(existingItems.map(item => [item.alias, item]));
+      const existingItemMap = new Map(existingItems.map(item => [item.itemName, item]));
 
       for (const item of items) {
-        const existingItem = existingItemMap.get(item.alias);
+        const existingItem = existingItemMap.get(item.itemName);
 
         if (existingItem) {
           // If the item exists, compare and update if necessary

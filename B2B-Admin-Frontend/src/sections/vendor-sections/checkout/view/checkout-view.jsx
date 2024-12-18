@@ -28,10 +28,12 @@ export function CheckoutView() {
     <Box>
       {checkout.activeStep === 0 && (
         <Box>
-          <ProductFilterView />
+          <Box sx={{ background: "white", p: 2, borderRadius: "12px 12px 12px 12px" }}>
+            <ProductFilterView />
+          </Box>
           <Box mt={3}>
-          <CheckoutCart /> {/* Pass setDiscount function to CheckoutCart */}
-     
+            <CheckoutCart /> {/* Pass setDiscount function to CheckoutCart */}
+
           </Box>
         </Box>
       )}
