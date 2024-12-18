@@ -11,8 +11,8 @@ import {
   CarouselThumbs,
   CarouselArrowNumberButtons,
 } from 'src/components/carousel';
+import { DUMMY_IMAGE } from 'src/constfile/dummyImage';
 
-import NOIMAGE from '../../DefaultImage/NOIMAGE.jpg';
 
 // ----------------------------------------------------------------------
 export function ProductDetailsCarousel({ images }) {
@@ -22,7 +22,11 @@ export function ProductDetailsCarousel({ images }) {
     },
   });
 
-  const slides = images?.map((img) => ({ src: img })) || [];
+  // const slides = images?.map((img) => ({ src: img })) || [];
+   // Handle null or undefined images
+   const slides = (images?.length > 0 
+    ? images.map((img) => ({ src: img || DUMMY_IMAGE }))
+    : [{ src: DUMMY_IMAGE }]); // Show DUMMY_IMAGE if images is empty or null
 
   const lightbox = useLightBox(slides);
 
@@ -47,11 +51,11 @@ export function ProductDetailsCarousel({ images }) {
           <Carousel carousel={carousel} sx={{ borderRadius: 2 }}>
             {slides.map((slide) => (
               <Image
-                key={slide.src  || NOIMAGE}
-                alt={slide.src  || NOIMAGE}
-                src={slide.src  || NOIMAGE}
+                key={slide.src  || DUMMY_IMAGE}
+                alt={slide.src  || DUMMY_IMAGE}
+                src={slide.src  || DUMMY_IMAGE}
                 ratio="1/1"
-                onClick={() => lightbox.onOpen(slide.src  || NOIMAGE)}
+                onClick={() => lightbox.onOpen(slide.src  || DUMMY_IMAGE)}
                 sx={{ cursor: 'zoom-in', minWidth: 320, borderRadius: 2 }}
                 // style={{height:"500px"}}
               />
@@ -69,7 +73,7 @@ export function ProductDetailsCarousel({ images }) {
             <CarouselThumb
               key={item.src}
               index={index}
-              src={item.src || NOIMAGE}
+              src={item.src || DUMMY_IMAGE}
               selected={index === carousel.thumbs.selectedIndex}
               onClick={() => carousel.thumbs.onClickThumb(index)}
             />

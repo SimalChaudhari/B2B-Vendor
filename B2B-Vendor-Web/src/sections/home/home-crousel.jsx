@@ -11,6 +11,7 @@ import { styled } from '@mui/material/styles';
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 
 import { fetchBanner } from 'src/services/bannerApi';
+import { DUMMY_IMAGE } from 'src/constfile/dummyImage';
 
 // Styled buttons for better UI
 const StyledIconButton = styled(IconButton)(({ theme }) => ({
@@ -33,24 +34,27 @@ export function HomeCarousel({ sx, ...other }) {
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state
 
-  // Slider settings
-  const settings = {
-    dots: true,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 3000,
-    arrows: false,
-  };
-
   // Fetch banner images
   useLayoutEffect(() => {
     const getBannerData = async () => {
       try {
         const data = await fetchBanner();
-        const bannerImages = data?.map((item) => item.BannerImages[0]); // Assuming BannerImages is an array
+        // Check if `data` is empty or invalid
+      if (!data || data.length === 0) {
+        console.warn("No data received. Setting fallback image.");
+        setCarouselImages([
+          DUMMY_IMAGE,
+        ]);
+        return;
+      }
+
+        const bannerImages = data?.map((item) => {
+          if (Array.isArray(item.BannerImages) && item.BannerImages[0]) {
+            return item.BannerImages[0];
+          }
+          return 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzExfZMR3qeDM9TSiSRyCBxzQARlfVlygIZQ&s'; // Fallback if `BannerImages` is invalid
+        });
+        
         setCarouselImages(bannerImages);
       } catch (err) { // Renamed `error` to `err` to avoid shadowing
         console.error('Failed to fetch banner data:', err);
@@ -62,6 +66,19 @@ export function HomeCarousel({ sx, ...other }) {
 
     getBannerData();
   }, []);
+    
+  // Slider settings
+  const settings = {
+    dots: true,
+    infinite: carouselImages.length > 1,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 3000,
+    arrows: false,
+  };
+
 
   // Handle previous and next actions
   const handlePrev = () => {

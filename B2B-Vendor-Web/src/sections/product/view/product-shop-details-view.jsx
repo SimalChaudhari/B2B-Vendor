@@ -15,7 +15,6 @@ import { Divider, Stack } from '@mui/material';
 
 
 export function ProductShopDetailsView({ product }) {
-
   const checkout = useCheckoutContext();
 
   return (

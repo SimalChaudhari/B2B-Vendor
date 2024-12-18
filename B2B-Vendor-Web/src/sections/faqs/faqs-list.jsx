@@ -2,6 +2,7 @@ import Accordion from '@mui/material/Accordion';
 import Typography from '@mui/material/Typography';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
+import parse from 'html-react-parser';
 
 import { _faqs } from 'src/_mock';
 
@@ -61,7 +62,9 @@ export function FaqsList() {
           </AccordionSummary>
 
           <AccordionDetails>
-            <Typography>{accordion.answer}</Typography>
+            <Typography>
+            {parse(accordion?.answer || '<p>No Answer Available</p>')}
+            </Typography>
           </AccordionDetails>
         </Accordion>
       ))}

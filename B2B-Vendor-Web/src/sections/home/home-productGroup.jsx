@@ -20,7 +20,7 @@ import 'slick-carousel/slick/slick-theme.css';
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 import IconButton from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
-import NOIMAGE from '../../DefaultImage/NOIMAGE.jpg';
+import { DUMMY_IMAGE } from 'src/constfile/dummyImage';
 
 
 // Styled buttons for better UI
@@ -47,7 +47,7 @@ export function HomeProductGroup() {
     const theme = useTheme();
     const matchesMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const matchesTablet = useMediaQuery(theme.breakpoints.down('md'));
-    const matchesDesktop = useMediaQuery(theme.breakpoints.down('lg')); 
+    const matchesDesktop = useMediaQuery(theme.breakpoints.down('lg'));
 
     // Calculate the number of slides to show based on screen size
     const getSlidesToShow = () => {
@@ -84,37 +84,37 @@ export function HomeProductGroup() {
         autoplaySpeed: 3000,
         arrows: false,
         responsive: [
-        {
-            breakpoint: 1200, // For large screens
-            settings: {
-                slidesToShow: 5,
+            {
+                breakpoint: 1200, // For large screens
+                settings: {
+                    slidesToShow: 5,
+                },
             },
-        },
-        {
-            breakpoint: 992, // For medium screens (like tablets)
-            settings: {
-                slidesToShow: 4,
+            {
+                breakpoint: 992, // For medium screens (like tablets)
+                settings: {
+                    slidesToShow: 4,
+                },
             },
-        },
-        {
-            breakpoint: 768, // For small screens (e.g., large phones)
-            settings: {
-                slidesToShow: 3,
+            {
+                breakpoint: 768, // For small screens (e.g., large phones)
+                settings: {
+                    slidesToShow: 3,
+                },
             },
-        },
-        {
-            breakpoint: 576, // For very small screens (e.g., small phones)
-            settings: {
-                slidesToShow: 2,
+            {
+                breakpoint: 576, // For very small screens (e.g., small phones)
+                settings: {
+                    slidesToShow: 2,
+                },
             },
-        },
-        {
-            breakpoint: 400, // For extra small screens
-            settings: {
-                slidesToShow: 1,
+            {
+                breakpoint: 400, // For extra small screens
+                settings: {
+                    slidesToShow: 1,
+                },
             },
-        },
-    ],
+        ],
     };
 
     useEffect(() => {
@@ -175,7 +175,7 @@ export function HomeProductGroup() {
 
     return (
         <Container className='containerCss'>
-            <Box className="Latest_PRG" sx={{ mb:2 }}>
+            <Box className="Latest_PRG" sx={{ mb: 2 }}>
                 <Box>
                     <Typography className='text-black mt-1' variant="h4" component="h1" gutterBottom>
                         Product Categories
@@ -227,16 +227,21 @@ export function HomeProductGroup() {
                     >
                         <span className='productCard'>
                             <Typography variant="h6" className='productTitle'>
-                                {product.group}
+                                {product.group.length > 19
+                                    ? `${product.group.slice(0, 19)}...`
+                                    : product.group}
+
                             </Typography>
-                            {product.productImages && product.productImages.length > 0 && (
-                                <CardMedia
-                                    component="img"
-                                    image={product.productImages[0] || NOIMAGE}
-                                    alt={product.itemName}
-                                    className='productImage'
-                                />
-                            )}
+                            <CardMedia
+                                component="img"
+                                image={
+                                    product.productImages && product.productImages.length > 0
+                                        ? product.productImages[0] // Show the first image if available
+                                        : DUMMY_IMAGE // Fallback image if null or empty
+                                }
+                                alt={product.itemName}
+                                className='productImage'
+                            />
                         </span>
                     </Box>
                 ))}

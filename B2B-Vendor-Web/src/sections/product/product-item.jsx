@@ -15,7 +15,7 @@ import { useCheckoutContext } from '../checkout/context';
 import { Button } from '@mui/material';
 import { useNavigate } from 'react-router';
 
-import NOIMAGE from '../../DefaultImage/NOIMAGE.jpg';
+import { DUMMY_IMAGE } from 'src/constfile/dummyImage';
 
 export function ProductItem({ product }) {
   const navigate = useNavigate();
@@ -71,7 +71,7 @@ export function ProductItem({ product }) {
       </Fab>
       <Image
         alt={itemName}
-        src={productImages?.[0] || NOIMAGE}
+        src={productImages?.[0] || DUMMY_IMAGE}
         ratio="1/1"
         sx={{
           borderRadius: 1.5,

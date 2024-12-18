@@ -16,7 +16,7 @@ import { AiOutlineWarning } from 'react-icons/ai';
 import { useNavigate } from 'react-router';
 import { MdOutlineKeyboardDoubleArrowRight } from "react-icons/md";
 import { fCurrency } from 'src/utils/format-number';
-import NOIMAGE from '../../DefaultImage/NOIMAGE.jpg';
+import { DUMMY_IMAGE } from 'src/constfile/dummyImage';
 
 export function HomeLetestProduct() {
   const dispatch = useDispatch();
@@ -96,16 +96,16 @@ export function HomeLetestProduct() {
               <div className="card-content">
 
                 <span className=''>
-                  {product.productImages && product.productImages.length > 0 && (
-                    <div className=''>
-                      <CardMedia
-                        component="img"
-                        image={product.productImages[0] || NOIMAGE}
-                        alt={product.itemName}
-                        className='letestProductImage' // Added class for styling
-                      />
-                    </div>
-                  )}
+                  <CardMedia
+                    component="img"
+                    image={
+                      product.productImages && product.productImages.length > 0
+                        ? product.productImages[0] // Show the first image if available
+                        : DUMMY_IMAGE // Fallback image if null or empty
+                    }
+                    alt={product.itemName}
+                    className='letestProductImage'
+                  />
                   <CardContent>
                     <Typography variant="h6" className='productTitle' sx={{ textAlign: 'left', marginBottom: "5px" }}>
                       {product.itemName}
