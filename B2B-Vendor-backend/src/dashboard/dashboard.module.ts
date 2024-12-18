@@ -32,4 +32,4 @@ import { Invoice } from './../invoice/invoice.entity';
   providers: [DashboardService, ItemService, UserService, OrderService, FirebaseService, SyncLogService],
   controllers: [DashboardController],
 })
-export class DashboardModule { }
+export class DashboardModule {}

@@ -142,12 +142,12 @@ export const useNavData = () => {
           path: paths.settings.root,
           icon: ICONS.settings,
           children: [
-            { title: 'FAQs', path: paths.settings.faq },
-            { title: 'Contact Us', path: paths.settings.contact_us },
-            { title: 'Terms & Conditions', path: paths.settings.terms_conditions },
-            { title: 'Banner', path: paths.settings.banner },
-            { title: 'Sync Data', path: paths.settings.sync },
+            { title: 'Sync Setting', path: paths.settings.sync },
             { title: 'Profile', path: paths.settings.profile },
+            { title: 'Contact Us', path: paths.settings.contact_us },
+            { title: 'FAQs', path: paths.settings.faq },
+            { title: 'Terms & Conditions', path: paths.settings.terms_conditions },
+            { title: 'Banner Setting', path: paths.settings.banner },
           ],
         },
 

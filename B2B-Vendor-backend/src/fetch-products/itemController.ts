@@ -3,13 +3,7 @@ import { Response } from 'express'; // Import Response from express
 import { ItemService } from './item.service';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ItemEntity } from './item.entity';
-
-import { SessionGuard } from './../jwt/session.guard';
-import { JwtAuthGuard } from './../jwt/jwt-auth.guard';
-
-
 @Controller('items')
-@UseGuards(SessionGuard,JwtAuthGuard)
 export class ItemController {
   constructor(private readonly itemService: ItemService) { }
 

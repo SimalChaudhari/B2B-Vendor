@@ -6,14 +6,8 @@ import { FaqController, PrivacyPolicyController, TermsConditionsController, Cont
 import { FaqService, PrivacyPolicyService, TermsConditionsService, ContactUsService, BannerService, SyncControlSettingsService } from './setting.service';
 import { Faq, PrivacyPolicy, TermsConditions, ContactUs, Banner, SyncControlSettings } from './setting.entity';
 import { FirebaseService } from './../service/firebase.service';
-import { JwtModule } from '@nestjs/jwt';
-import { UserEntity } from './../user/users.entity';
 @Module({
-    imports: [TypeOrmModule.forFeature([Faq, PrivacyPolicy, TermsConditions, ContactUs,Banner,SyncControlSettings,UserEntity]),
-    JwtModule.register({
-      secret: process.env.JWT_SECRET, // Use your JWT secret from the .env file
-      signOptions: { }, // Set your token expiration
-    }),
+    imports: [TypeOrmModule.forFeature([Faq, PrivacyPolicy, TermsConditions, ContactUs,Banner,SyncControlSettings])
 ],
     controllers: [FaqController, PrivacyPolicyController, TermsConditionsController, ContactUsController,BannerController,SyncControlSettingsController],
     providers: [FaqService, PrivacyPolicyService, TermsConditionsService, ContactUsService,BannerService,FirebaseService,SyncControlSettingsService],
