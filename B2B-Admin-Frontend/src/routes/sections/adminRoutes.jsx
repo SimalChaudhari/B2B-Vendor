@@ -39,6 +39,8 @@ const PaymentPage = lazy(() => import('src/pages/payments'));
 
 
 const SyncPage = lazy(() => import('src/pages/settings/sync'));
+const TallyPage = lazy(() => import('src/pages/settings/tally'));
+
 
 // Error
 const Page500 = lazy(() => import('src/pages/error/500'));
@@ -138,6 +140,8 @@ export const adminRoute =[
         { path: 'banner/edit/:id', element: <BannerEditView /> },
         { path: 'banner/view/:id', element: <BannerView /> },
         { path: 'sync', element: <SyncPage /> },
+        { path: 'tally', element: <TallyPage /> },
+
 
       ],
     },

@@ -78,6 +78,7 @@ export const paths = {
     editBanner: (id) => `/edit/${id}`,
     viewBanner: (id) => `/view/${id}`,
     sync: `/settings/sync`,
+    tally: `/settings/tally`,
   },
 
   payments: {
