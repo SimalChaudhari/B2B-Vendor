@@ -5,9 +5,10 @@ import { BankAccountController } from './payment.controller';
 import { BankAccountEntity } from './payment.entity';
 import { FirebaseService } from './../service/firebase.service';
 import { JwtModule } from '@nestjs/jwt';
+import { UserEntity } from './../user/users.entity';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([BankAccountEntity]),
+    imports: [TypeOrmModule.forFeature([UserEntity,BankAccountEntity]),
     JwtModule.register({
       secret: process.env.JWT_SECRET, // Use your JWT secret from the .env file
       signOptions: { }, // Set your token expiration

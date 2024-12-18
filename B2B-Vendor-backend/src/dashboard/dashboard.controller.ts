@@ -5,7 +5,7 @@ import { SessionGuard } from './../jwt/session.guard';
 import { JwtAuthGuard } from './../jwt/jwt-auth.guard';
 
 @Controller('dashboard')
-@UseGuards(SessionGuard,JwtAuthGuard)
+// @UseGuards(SessionGuard)
 export class DashboardController {
   constructor(private readonly dashboardService: DashboardService) {}
   
