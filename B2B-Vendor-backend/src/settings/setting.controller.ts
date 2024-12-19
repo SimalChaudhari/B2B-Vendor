@@ -1,8 +1,8 @@
 // src/faq/faq.controller.ts
 
-import { Controller, Post, Get, Delete, Param, Body, Put, HttpStatus, Res, UseInterceptors, UploadedFile, UploadedFiles, UseGuards } from '@nestjs/common';
-import {  BannerService, ContactUsService, FaqService, PrivacyPolicyService, SyncControlSettingsService, TermsConditionsService } from './setting.service';
-import {  CreateBannerDto, CreateContactDto, CreateFaqDto, CreatePrivacyPolicyDto, CreateTermsConditionsDto, UpdateBannerDto, UpdateFaqDto, UpdateSyncControlSettingsDto } from './setting.dto';
+import { Controller, Post, Get, Delete, Param, Body, Put, HttpStatus, Res, UseInterceptors, UploadedFile, UploadedFiles, UseGuards, NotFoundException } from '@nestjs/common';
+import { BannerService, ContactUsService, FaqService, PrivacyPolicyService, SyncControlSettingsService, TallySettingsService, TermsConditionsService } from './setting.service';
+import { CreateBannerDto, CreateContactDto, CreateFaqDto, CreatePrivacyPolicyDto, CreateTermsConditionsDto, UpdateBannerDto, UpdateFaqDto, UpdateSyncControlSettingsDto, UpdateTallySettingsDto } from './setting.dto';
 import { ContactUs, PrivacyPolicy, TermsConditions } from './setting.entity';
 import { Response } from 'express';
 import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
@@ -20,7 +20,6 @@ export class FaqController {
             message: result.message,
             data: result.data,
         });
-
     }
 
     @Get()
@@ -173,10 +172,37 @@ export class BannerController {
 // Controller: api_control_settings.controller.ts
 @Controller('sync-control-settings')
 export class SyncControlSettingsController {
-  constructor(private readonly service: SyncControlSettingsService) {}
+    constructor(private readonly service: SyncControlSettingsService) { }
+
+    @Post()
+    async createOrUpdate(@Body() dto: UpdateSyncControlSettingsDto) {
+        return this.service.createOrUpdate(dto);
+    }
+
+    @Get()
+    async findAll() {
+        return this.service.findAll();
+    }
+
+    @Put(':id')
+    async update(@Param('id') id: number, @Body() dto: UpdateSyncControlSettingsDto) {
+        return this.service.createOrUpdate(dto);
+    }
+
+    @Delete(':id')
+    async delete(@Param('id') id: number) {
+        await this.service.delete(id);
+        return { message: 'Sync setting deleted successfully' };
+    }
+}
+
+
+@Controller('tally-settings')
+export class TallySettingsController {
+  constructor(private readonly service: TallySettingsService) {}
 
   @Post()
-  async createOrUpdate(@Body() dto: UpdateSyncControlSettingsDto) {
+  async createOrUpdate(@Body() dto: UpdateTallySettingsDto) {
     return this.service.createOrUpdate(dto);
   }
 
@@ -186,14 +212,23 @@ export class SyncControlSettingsController {
   }
 
   @Put(':id')
-  async update(@Param('id') id: number, @Body() dto: UpdateSyncControlSettingsDto) {
+  async update(@Param('id') id: string, @Body() dto: UpdateTallySettingsDto) {
     return this.service.createOrUpdate(dto);
   }
 
+  @Get(':id')
+  async findById(@Param('id') id: string) {
+    const setting = await this.service.findById(id);
+    if (!setting) {
+      throw new NotFoundException('Tally setting not found');
+    }
+    return setting;
+  }
+
   @Delete(':id')
-  async delete(@Param('id') id: number) {
+  async delete(@Param('id') id: string) {
     await this.service.delete(id);
-    return { message: 'Sync setting deleted successfully' };
+    return { message: 'Tally setting deleted successfully' };
   }
 }
 

@@ -16,14 +16,14 @@ import { OrderEntity } from './../order/order.entity';
 import { FirebaseService } from './../service/firebase.service';
 import { SyncLogEntity } from './../sync-log/sync-log.entity';
 import { SyncLogService } from './../sync-log/sync-log.service';
-import { Banner, ContactUs, Faq, PrivacyPolicy, SyncControlSettings, TermsConditions } from './../settings/setting.entity';
+import { Banner, ContactUs, Faq, PrivacyPolicy, SyncControlSettings, TallySettings, TermsConditions } from './../settings/setting.entity';
 import { AddressEntity } from './../addresses/addresses.entity';
 import { OrderItemEntity } from './../order/order.item.entity';
 import { CartItemEntity } from './../cart/cart.entity';
 import { Invoice } from './../invoice/invoice.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ItemEntity, UserEntity, OrderEntity, SyncLogEntity, Faq, PrivacyPolicy, TermsConditions, ContactUs, Banner, SyncControlSettings, AddressEntity, OrderItemEntity, CartItemEntity, Invoice]),
+  imports: [TypeOrmModule.forFeature([ItemEntity, UserEntity, OrderEntity, SyncLogEntity, Faq, PrivacyPolicy,TallySettings, TermsConditions, ContactUs, Banner, SyncControlSettings, AddressEntity, OrderItemEntity, CartItemEntity, Invoice]),
   JwtModule.register({
     secret: process.env.JWT_SECRET,  // Use JWT secret from .env file
     signOptions: {},  // Set token expiration

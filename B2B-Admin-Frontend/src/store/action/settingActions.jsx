@@ -1,6 +1,6 @@
 import { toast } from "sonner";
 import axiosInstance from "src/configs/axiosInstance";
-import {BANNER_GET_BY_LIST, BANNER_LIST, CONTACT_GET_BY_LIST, CONTACT_LIST, FAQ_GET_BY_LIST, FAQ_LIST, SYNC_GET_BY_LIST, SYNC_LIST, TERM_GET_BY_LIST, TERM_LIST } from "../constants/actionTypes";
+import {BANNER_GET_BY_LIST, BANNER_LIST, CONTACT_GET_BY_LIST, CONTACT_LIST, FAQ_GET_BY_LIST, FAQ_LIST, FETCH_TALLY_DATA, SYNC_GET_BY_LIST, SYNC_LIST, TERM_GET_BY_LIST, TERM_LIST, UPDATE_TALLY } from "../constants/actionTypes";
 
 // FAQ Settings
 export const FAQList = () => async (dispatch) => {
@@ -319,3 +319,43 @@ export const deleteSyncSetting = (id) => async (dispatch) => {
     }
     return false; // Return false for any errors or unsuccessful attempts
 };
+
+
+// Tally Data 
+
+export const fetchTallyAPIData = () => async (dispatch) => {
+    try {
+      const response = await axiosInstance.get('/tally-settings'); // Backend API endpoint
+      dispatch({ type: FETCH_TALLY_DATA, payload: response.data });
+      return true;
+    } catch (error) {
+        // Handle errors appropriately
+        const errorMessage = error?.response?.data?.message || 'An unexpected error occurred. Please try again.';
+        toast.error(errorMessage);
+    }
+    return false; // Return false for any errors or unsuccessful attempt
+  };
+  
+  export const updateTallyAPI = (id,data) => async (dispatch) => {
+    try {
+      await axiosInstance.put(`/tally-settings/${id}`,data); // Backend API endpoint
+      dispatch({ type: UPDATE_TALLY, payload: data });
+      return true;
+    } catch (error) {
+        // Handle errors appropriately
+        const errorMessage = error?.response?.data?.message || 'An unexpected error occurred. Please try again.';
+        toast.error(errorMessage);
+    }
+    return false; // Return false for any errors or unsuccessful attempts
+  };
+
+  export const fetchTallyById = (id) => async (dispatch) => {
+    try {
+      const response = await axiosInstance.get(`/tally-settings/${id}`); // API call to get ledger by ID
+      return response.data; // Return the fetched ledger details
+    } catch (error) {
+      console.error('Error fetching tally data by ID:', error);
+      return null;
+    }
+  };
+  

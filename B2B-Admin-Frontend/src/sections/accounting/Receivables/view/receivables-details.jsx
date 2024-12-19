@@ -24,11 +24,10 @@ import { useSelector } from 'react-redux';
 import { writeFile, utils } from 'xlsx';
 import { generatePDF } from '../utils/generatePDF';
 
-export function ReceivablesListDetails({ invoice }) {
+export function ReceivablesListDetails() {
     const { fetchByIdData } = useFetchData();
     const { id } = useParams();
     const receivable = useSelector((state) => state.accounting?.getByReceivable || []);
-
     // Pagination state
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -54,7 +53,7 @@ export function ReceivablesListDetails({ invoice }) {
             return;
         }
         // Call the generatePDF function to generate and download the PDF
-        generatePDF(filteredBills, receivable.party);
+        generatePDF(filteredBills, receivable.customerName);
     }
 
     // const handleExportData = () => {

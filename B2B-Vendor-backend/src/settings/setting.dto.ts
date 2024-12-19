@@ -77,3 +77,14 @@ export class UpdateSyncControlSettingsDto {
     @IsBoolean()
     isManualSyncEnabled!: boolean; // Manual Sync status
   }
+
+  export class UpdateTallySettingsDto {
+    @IsNotEmpty()
+    @IsString()
+    name!: string; // Name of the ledger
+  
+    @IsOptional()
+    @IsString()
+    value?: string; // Value of the ledger
+  }
+  

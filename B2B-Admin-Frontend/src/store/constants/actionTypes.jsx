@@ -48,6 +48,10 @@ export const LEDGER_GET_BY_LIST = "LEDGER_GET_BY_LIST"
 export const PAYMENT_LIST = "PAYMENT_LIST"
 export const PAYMENT_GET_BY_LIST = "PAYMENT_GET_BY_LIST"
 
+export const FETCH_TALLY_DATA = "FETCH_TALLY_DATA"
+export const UPDATE_TALLY = "UPDATE_TALLY"
+
+
 
 
 

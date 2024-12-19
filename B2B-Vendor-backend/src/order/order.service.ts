@@ -17,6 +17,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { FirebaseService } from './../service/firebase.service';
 import { Cron } from '@nestjs/schedule';
+import { TallySettings } from 'settings/setting.entity';
 
 
 @Injectable()
@@ -29,6 +30,9 @@ export class OrderService {
         private readonly userRepository: Repository<UserEntity>,
         @InjectRepository(AddressEntity)
         private readonly addressRepository: Repository<AddressEntity>,
+
+        @InjectRepository(TallySettings)
+        private readonly TallySettingsService: Repository<TallySettings>,
 
         @InjectRepository(ItemEntity)
         private readonly productRepository: Repository<ItemEntity>,
@@ -322,9 +326,15 @@ export class OrderService {
         }
         // Clear the cart for this user once all items are added
         await this.cartRepository.delete({ userId: order.user.id });
+
+        // Fetch Tally settings data
+        const tallySettings = await this.TallySettingsService.find();
+        if (!tallySettings || tallySettings.length === 0) {
+            throw new NotFoundException('Tally settings not found');
+        }
         // Attempt to post the invoice to Tally
         try {
-            await this.postToTally(order, savedOrderItems, adminState);
+            await this.postToTally(order, savedOrderItems, adminState,tallySettings);
             console.log('Invoice posted to Tally successfully');
         } catch (error) {
             console.error('Failed to post invoice to Tally:', error);
@@ -345,8 +355,8 @@ export class OrderService {
         await this.invoiceRepository.save(unsentInvoice);
     }
 
-    async postToTally(order: OrderEntity, savedOrderItems: OrderItemEntity[],adminState: string | null): Promise<void> {
-        const xml = generateInvoiceXML(order, savedOrderItems,adminState);
+    async postToTally(order: OrderEntity, savedOrderItems: OrderItemEntity[], adminState: string | null , tallySettings : TallySettings[]): Promise<void> {
+        const xml = generateInvoiceXML(order, savedOrderItems, adminState,tallySettings);
         let isInvoiceSaved = false;
 
         try {

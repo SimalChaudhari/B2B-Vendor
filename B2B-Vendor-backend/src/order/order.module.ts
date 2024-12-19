@@ -12,14 +12,14 @@ import { Invoice } from './../invoice/invoice.entity';
 import { UserEntity } from './../user/users.entity';
 import { AddressEntity } from './../addresses/addresses.entity';
 import { EmailService } from './../service/email.service';
-import { SyncControlSettings } from './../settings/setting.entity';
+import { SyncControlSettings, TallySettings } from './../settings/setting.entity';
 import { SyncLogEntity } from './../sync-log/sync-log.entity';
 import { FirebaseService } from './../service/firebase.service';
 import { UserService } from './../user/users.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([OrderEntity,ItemEntity,UserEntity,AddressEntity,OrderItemEntity,CartItemEntity,Invoice, SyncLogEntity,SyncControlSettings]),
+    TypeOrmModule.forFeature([OrderEntity,ItemEntity,UserEntity,AddressEntity,OrderItemEntity,CartItemEntity,Invoice, SyncLogEntity,SyncControlSettings,TallySettings]),
     JwtModule.register({
       secret: process.env.JWT_SECRET,  // Use JWT secret from .env file
       signOptions: {},  // Set token expiration

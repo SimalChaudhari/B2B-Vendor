@@ -1,12 +1,13 @@
 // invoice-xml-generator.ts
 
+import { TallySettings } from "settings/setting.entity";
 import { OrderEntity } from "./../order/order.entity";
 import { OrderItemEntity } from "./../order/order.item.entity";
 
-export function generateInvoiceXML(order: OrderEntity, orderItems: OrderItemEntity[], adminState: string | null): string {
+export function generateInvoiceXML(order: OrderEntity, orderItems: OrderItemEntity[], adminState: string | null, tallySettings: TallySettings[]): string {
 
 
-    const { user, address, totalPrice, orderNo, discount,createdAt } = order;
+    const { user, address, totalPrice, orderNo, discount, createdAt } = order;
     // Check if createdAt is defined, or use the current date as fallback
     const formattedDate = createdAt ? formatDate(new Date(createdAt)) : formatDate(new Date());
     const formattedDateT = createdAt ? formatDateT(new Date(createdAt)) : formatDate(new Date());
@@ -14,6 +15,14 @@ export function generateInvoiceXML(order: OrderEntity, orderItems: OrderItemEnti
     const finalAmount = totalPrice * discount / 100
     const formattedAmount = `-${Math.abs(finalAmount).toFixed(2)}`;
     const formattedVatExpAmount = `-${Math.abs(finalAmount).toFixed(2)}`;
+
+    // Map Tally settings
+    const salesLedger = tallySettings.find((setting) => setting.name === "Sales")?.value || "Sales";
+    const discountLedger = tallySettings.find((setting) => setting.name === "Discount")?.value || "Discount";
+    const cgstLedger = tallySettings.find((setting) => setting.name === "Central Tax Ledger")?.value || "CGST";
+    const sgstLedger = tallySettings.find((setting) => setting.name === "State Tax Ledger")?.value || "SGST";
+    const igstLedger = tallySettings.find((setting) => setting.name === "Interstate Tax Ledger")?.value || "IGST";
+
 
 
     // Generate XML for each product in the order
@@ -42,7 +51,7 @@ export function generateInvoiceXML(order: OrderEntity, orderItems: OrderItemEnti
                  <ORDERDUEDATE P="01-Nov-2024">01-Nov-2024</ORDERDUEDATE>
             </BATCHALLOCATIONS.LIST>
             <ACCOUNTINGALLOCATIONS.LIST>
-                <LEDGERNAME>Sales</LEDGERNAME>
+                <LEDGERNAME>${salesLedger}</LEDGERNAME>
                 <GSTCLASS>&#4; Not Applicable</GSTCLASS>
                 <ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>
                 <AMOUNT>${orderItem.product.sellingPrice * orderItem.quantity}</AMOUNT>
@@ -55,7 +64,7 @@ export function generateInvoiceXML(order: OrderEntity, orderItems: OrderItemEnti
     // Determine tax type and amount based on adminState
     const isSameState = adminState === address.state;
     // Generate GST entries if applicable
-    const gstXML = generateGSTDetails(isSameState, totalPrice);
+    const gstXML = generateGSTDetails(isSameState, totalPrice, cgstLedger, sgstLedger, igstLedger);
 
     return `
 <ENVELOPE>
@@ -125,7 +134,7 @@ export function generateInvoiceXML(order: OrderEntity, orderItems: OrderItemEnti
                          <LEDGERENTRIES.LIST>
                               <APPROPRIATEFOR>&#4; Not Applicable</APPROPRIATEFOR>
                                <ROUNDTYPE>&#4; Not Applicable</ROUNDTYPE>
-                                 <LEDGERNAME>Discount</LEDGERNAME>
+                                 <LEDGERNAME>${discountLedger}</LEDGERNAME>
                                   <GSTCLASS>&#4; Not Applicable</GSTCLASS>
                                       <ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>
                                        <AMOUNT>${formattedAmount}</AMOUNT>
@@ -141,18 +150,14 @@ export function generateInvoiceXML(order: OrderEntity, orderItems: OrderItemEnti
 `;
 }
 
-
-
-
-
 // Helper function to generate GST details for CGST, SGST, or IGST
-function generateGSTDetails(isSameState: boolean, totalPrice: number): string {
+function generateGSTDetails(isSameState: boolean, totalPrice: number, cgstLedger: string, sgstLedger: string, igstLedger: string): string {
     return isSameState
         ? `
                              <LEDGERENTRIES.LIST>
               <APPROPRIATEFOR>&#4; Not Applicable</APPROPRIATEFOR>
                 <ROUNDTYPE>&#4; Not Applicable</ROUNDTYPE>
-                 <LEDGERNAME>CGST</LEDGERNAME>
+                 <LEDGERNAME>${cgstLedger}</LEDGERNAME>
                             <GSTCLASS>&#4; Not Applicable</GSTCLASS>
                             <ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>
                             <AMOUNT>${(totalPrice * 0.09).toFixed(2)}</AMOUNT>
@@ -162,7 +167,7 @@ function generateGSTDetails(isSameState: boolean, totalPrice: number): string {
             <LEDGERENTRIES.LIST>
              <APPROPRIATEFOR>&#4; Not Applicable</APPROPRIATEFOR>
                 <ROUNDTYPE>&#4; Not Applicable</ROUNDTYPE>
-               <LEDGERNAME>SGST</LEDGERNAME>
+               <LEDGERNAME>${sgstLedger}</LEDGERNAME>
                             <GSTCLASS>&#4; Not Applicable</GSTCLASS>
                             <ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>
                             <AMOUNT>${(totalPrice * 0.09).toFixed(2)}</AMOUNT>
@@ -173,7 +178,7 @@ function generateGSTDetails(isSameState: boolean, totalPrice: number): string {
         <LEDGERENTRIES.LIST>
                             <APPROPRIATEFOR>&#4; Not Applicable</APPROPRIATEFOR>
                             <ROUNDTYPE>&#4; Not Applicable</ROUNDTYPE>
-                            <LEDGERNAME>IGST</LEDGERNAME>
+                            <LEDGERNAME>${igstLedger}</LEDGERNAME>
                             <GSTCLASS>&#4; Not Applicable</GSTCLASS>
                             <ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>
                             <AMOUNT>${(totalPrice * 0.18).toFixed(2)}</AMOUNT>

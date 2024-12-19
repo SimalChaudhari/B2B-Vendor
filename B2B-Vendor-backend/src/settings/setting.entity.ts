@@ -114,3 +114,21 @@ export class SyncControlSettings {
     @UpdateDateColumn({ type: 'timestamp' })
     updatedAt!: Date;
 }
+
+@Entity('tally_settings')
+export class TallySettings {
+  @PrimaryGeneratedColumn('uuid')
+  id!: string;
+
+  @Column()
+  name!: string; // Name of the ledger (e.g., "Central Tax Ledger")
+
+  @Column({ nullable: true })
+  value!: string; // Value of the ledger (default: empty)
+
+  @CreateDateColumn({ type: 'timestamp' })
+  createdAt!: Date;
+
+  @UpdateDateColumn({ type: 'timestamp' })
+  updatedAt!: Date;
+}

@@ -3,8 +3,8 @@
 import { Injectable, NotFoundException, InternalServerErrorException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import {  Banner, ContactUs, Faq, PrivacyPolicy, SyncControlSettings, TermsConditions } from './setting.entity';
-import {  CreateBannerDto, CreateContactDto, CreateFaqDto, CreateLogoDto, CreatePrivacyPolicyDto, CreateTermsConditionsDto, UpdateBannerDto, UpdateFaqDto, UpdateLogoDto, UpdateSyncControlSettingsDto } from './setting.dto';
+import {  Banner, ContactUs, Faq, PrivacyPolicy, SyncControlSettings, TallySettings, TermsConditions } from './setting.entity';
+import {  CreateBannerDto, CreateContactDto, CreateFaqDto, CreateLogoDto, CreatePrivacyPolicyDto, CreateTermsConditionsDto, UpdateBannerDto, UpdateFaqDto, UpdateLogoDto, UpdateSyncControlSettingsDto, UpdateTallySettingsDto } from './setting.dto';
 import { FirebaseService } from './../service/firebase.service';
 
 @Injectable()
@@ -379,4 +379,41 @@ export class SyncControlSettingsService {
 }
 
 
+@Injectable()
+export class TallySettingsService {
+  constructor(
+    @InjectRepository(TallySettings)
+    private readonly repository: Repository<TallySettings>,
+  ) {}
+
+  async createOrUpdate(dto: UpdateTallySettingsDto): Promise<TallySettings> {
+    const { name, value } = dto;
+
+    let setting = await this.repository.findOne({ where: { name } });
+    if (!setting) {
+      setting = this.repository.create({ name, value });
+    } else {
+      setting.value = value ?? setting.value;
+    }
+
+    return this.repository.save(setting);
+  }
+
+  async findAll(): Promise<TallySettings[]> {
+    return this.repository.find();
+  }
+
+  async findById(id: string): Promise<TallySettings> {
+    const setting = await this.repository.findOne({ where: { id } });
+    if (!setting) {
+      throw new NotFoundException('Tally setting not found');
+    }
+    return setting;
+  }
+
+  async delete(id: string): Promise<void> {
+    const setting = await this.findById(id);
+    await this.repository.remove(setting);
+  }
+}
 

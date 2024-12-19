@@ -27,7 +27,7 @@ import { generatePDF } from '../utils/generatePDF';
 export function LedgerListDetails({ invoice }) {
     const { fetchByIdData } = useFetchData();
     const { id } = useParams(); // Get the vendor ID from URL
-    const ledger = useSelector((state) => state.accounting?.getByLedger || []);
+    const ledger = useSelector((state) => state.accounting.getByLedger || []);
 
     // Pagination state
     const [page, setPage] = useState(0);
@@ -53,7 +53,7 @@ export function LedgerListDetails({ invoice }) {
           return;
         }
         // Call the generatePDF function to generate and download the PDF
-        generatePDF(filteredVouchers,ledger.party);
+        generatePDF(filteredVouchers,ledger.customerName);
       }
 
     // const handleExportData = () => {
