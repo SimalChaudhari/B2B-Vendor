@@ -464,15 +464,57 @@
     margin: 0 0 15px;
   }
   
-  .productImage {
-    width: 100px !important;
-    height: 100px !important;
-    object-fit: contain !important;
-    /* height: auto; */
-    border-radius: 4px;
-    margin: 10px 0;
-    
+.productImage {
+  width: 100%; /* Full width of the card */
+  height: 200px; /* Default fixed height for larger screens */
+  object-fit: cover; /* Maintain aspect ratio while cropping excess parts */
+  background-color: #f4f4f4; /* Placeholder background for missing images */
+  border-radius: 8px; /* Optional: rounded corners */
+}
+
+
+
+@media (min-width: 1440px) {
+    .productImage {
+      height: 450px; /* Height for screens 1700px and above */
+
+    }
   }
+
+  /* Media Query for Tablets */
+@media (min-width: 1240px) {
+    .productImage {
+      height: 350px; /* Reduce height for medium-sized screens */
+    }
+  }
+   
+@media (min-width: 1240px) {
+    .productImage {
+      height: 240px; /* Reduce height for medium-sized screens */
+    }
+  }
+  
+@media (max-width: 1040px) {
+    .productImage {
+      height: 180px; /* Reduce height for medium-sized screens */
+    }
+  }
+  
+/* Media Query for Tablets */
+@media (max-width: 768px) {
+  .productImage {
+    height: 140px; /* Reduce height for medium-sized screens */
+  }
+}
+
+/* Media Query for Mobile Devices */
+@media (max-width: 480px) {
+  .productImage {
+    height: 120px; /* Further reduce height for smaller screens */
+    border-radius: 4px; /* Smaller rounded corners for compact view */
+  }
+}
+
   .letestProductImage {
     width: 100%; 
     max-width: 300px;

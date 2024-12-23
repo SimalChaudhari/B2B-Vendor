@@ -73,7 +73,6 @@ export class ItemService {
         }
       }
     } catch (error: any) {
-      console.log("🚀 ~ ItemService ~ fetchAndStoreItems ~ error:", error)
       // If the error is already a BadRequestException, rethrow it
       if (error instanceof BadRequestException) {
         throw error;
@@ -96,8 +95,8 @@ export class ItemService {
       itemDto.alias = this.cleanString(item.ALIAS?.[0]);
       itemDto.partNo = this.cleanString(item.PARTNO?.[0]);
       itemDto.description = this.cleanString(item.DESCRIPTION?.[0]);
-      itemDto.group = this.cleanString(item.GROUP?.[0]);
-      itemDto.subGroup1 = this.cleanString(item.SUBGROUP1?.[0]);
+      itemDto.group = this.cleanString(item.GROUP?.[0] || "Non Primary");
+      itemDto.subGroup1 = this.cleanString(item.SUBGROUP1?.[0] || "Non Primary");
       itemDto.subGroup2 = this.cleanString(item.SUBGROUP2?.[0]);
       itemDto.baseUnit = this.cleanString(item.BASEUNIT?.[0]);
       itemDto.alternateUnit = this.cleanString(item.ALTERNATEUNIT?.[0]);

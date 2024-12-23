@@ -97,7 +97,7 @@ export function NavDesktop({ data, sx }) {
           <button
             type="button"
             onClick={() => handleSubGroup1Click(key)}
-            className="group-btn"
+            className="group-btn12"
           >
             {key} <span className="expand">»</span>
           </button>
@@ -108,7 +108,7 @@ export function NavDesktop({ data, sx }) {
                   <button
                     type="button"
                     onClick={() => handleSubGroup2Click(subGroup2Item)}
-                    className="group-btn"
+                    className="group-btn12"
                   >
                     {subGroup2Item}
                   </button>

@@ -271,7 +271,7 @@ function applyFilter({ inputData, filters, sortBy }) {
   }
 
   if (category !== 'all') {
-    inputData = inputData.filter((products) => products.group === category);
+    inputData = inputData.filter((products) => products.subGroup1 === category);
   }
 
   if (subGroup1 !== 'all') {

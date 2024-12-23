@@ -105,13 +105,13 @@ export function HomeProductGroup() {
             {
                 breakpoint: 576, // For very small screens (e.g., small phones)
                 settings: {
-                    slidesToShow: 2,
+                    slidesToShow: 3,
                 },
             },
             {
                 breakpoint: 400, // For extra small screens
                 settings: {
-                    slidesToShow: 1,
+                    slidesToShow: 2,
                 },
             },
         ],
@@ -162,9 +162,11 @@ export function HomeProductGroup() {
     }
 
     // Filter to get unique groups
-    const uniqueGroups = Array.from(new Set(products.map(product => product.group))).map(group =>
-        products.find(product => product.group === group)
+    const uniqueGroups = Array.from(new Set(products.map(product => product.subGroup1))).map(group =>
+        products.find(product => product.subGroup1 === group)
     );
+
+
 
     const displayedProducts = uniqueGroups.slice(0, 6);
 
@@ -214,7 +216,7 @@ export function HomeProductGroup() {
                             textAlign: 'center',
                             cursor: 'pointer',
                         }}
-                        onClick={() => handleProductClick(product.group)}
+                        onClick={() => handleProductClick(product.subGroup1)}
                         className="card2"
                         style={{
                             background: 'none',
@@ -226,12 +228,33 @@ export function HomeProductGroup() {
                         }}
                     >
                         <span className='productCard'>
-                            <Typography variant="h6" className='productTitle'>
-                                {product.group.length > 19
-                                    ? `${product.group.slice(0, 19)}...`
-                                    : product.group}
+                            <Typography
+                                variant="h6"
+                                className="productTitle"
+                                sx={{
+                                    fontSize: {
+                                        xs: '0.75rem', // Small screens
+                                        sm: '0.90rem',     // Medium screens
+                                        md: '1.00rem',  // Large screens
+                                        xl: '1.00rem',  // Large screens
+                                    },
+                                    whiteSpace: 'nowrap',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    maxWidth: {
+                                        xs: '100px', // Restrict width for small screens
+                                        sm: '120px', // Medium screens
+                                        md: '120px', // Larger screens
+                                        xl: '200px', // Larger screens
 
+                                    },
+                                }}
+                            >
+                                {product.subGroup1.length > 19
+                                    ? `${product.subGroup1.slice(0, 10)}...`
+                                    : product.subGroup1}
                             </Typography>
+
                             <CardMedia
                                 component="img"
                                 image={
