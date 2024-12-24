@@ -34,6 +34,11 @@
 
 .child {
     display: none;
+    max-height: 300px; 
+    /* overflow-y: auto; 
+    overflow-x: hidden;  */
+    background-color: #E4EFF7;
+    border: 1px solid #ddd;
 }
 
 .child li {
@@ -51,6 +56,7 @@ ul {
     margin: 0;
     padding: 0px;
     min-width: 12em;
+    /* min-width: 8em; */
 }
 
 ul ul ul {
@@ -61,6 +67,9 @@ ul ul ul {
 
 .parent:hover {
     background-color: #EC2932;
+}
+.parent:hover > .child {
+    display: block;
 }
 
 .parent li:hover {
@@ -92,13 +101,14 @@ ul ul ul {
     background: none;
     border: none;
     font-weight: 600;
-    width: 300px;
-    font-size: 15px;
-    height: 40px !important;
+    width: 200px;
+    font-size: 13px;
+    /* height: 40px !important; */
+    min-height: 40px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 10px;
+    padding: 10px 10px;
     cursor: pointer;
     transition: background-color 0.2s ease, color 0.2s ease;
     color: #333; /* Base text color */
@@ -106,13 +116,18 @@ ul ul ul {
     white-space: normal; /* Allow text to wrap */
     word-wrap: break-word; /* Break long words into the next line */
     overflow-wrap: break-word; /* Additional support for word-breaking */
+    border-bottom: 1px solid #ccc !important;
 }
 
 
+.group-btn12:hover {
+    color: #ffffff !important; /* Base text color */
+}
 .group-btn:hover {
-    color: #ffffff; /* Base text color */
+    color: #ffffff !important; /* Base text color */
+}
+.md{
+    max-height: 200px !important;
 }
 
 
-
-  
